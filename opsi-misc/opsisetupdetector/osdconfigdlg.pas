@@ -54,10 +54,8 @@ begin
   LabelCfgDlgHead.Caption := rsCnfdTitle;
   TIPropertyGrid1.TIObject := myconfiguration;
   TIPropertyGrid1.CheckboxForBoolean := True;
-  //TIPropertyGrid1.PropertyEditorHook;
   myconfigurationhints.Clear;
   myconfigurationhints.Add('workbench_Path=' + rsworkbench_Path);
-  //myconfigurationhints.Add('preInstallLines = '+rsPreInstallLines);
   myconfigurationhints.Add('workbench_mounted=' + rsworkbench_mounted);
   myconfigurationhints.Add('config_filled=' + rsconfig_filled);
   myconfigurationhints.Add('registerInFilemanager=' + rsRegisterInFilemanager);
@@ -84,12 +82,6 @@ begin
   myconfigurationhints.Add('Service_pass=' + rsService_pass);
   myconfigurationhints.Add('preferSilent=' + rsPreferSilent);
 
-  //myconfigurationhints.Add('UseService=' + rsUseService);
-  (*
-  myconfigurationhints.Add('CreateQuiet='+rsCreateQuiet);
-  myconfigurationhints.Add('CreateBuild='+rsCreateBuild);
-  myconfigurationhints.Add('CreateInstall='+rsCreateInstall);
-  *)
   Repaint;
 end;
 
@@ -98,7 +90,6 @@ begin
   // Create Config Hints
   myconfigurationhints := TStringList.Create;
   DataModule1.SetFontName(TControl(Sender), myFont);
-  //LabelCfgDlgHead.Caption := rsCnfdTitle;
 end;
 
 procedure TFOSDConfigdlg.FormDestroy(Sender: TObject);
@@ -166,8 +157,5 @@ initialization
     TFileNamePropertyEditor);
   RegisterPropertyEditor(TypeInfo(string), TConfiguration, 'Service_pass',
     TPasswordStringPropertyEditor);
-
-  // RegisterPropertyEditor(TypeInfo(TPProperties), TConfiguration, 'Properties',
-  //   TCollectionPropertyEditor);
 
 end.

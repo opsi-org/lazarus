@@ -25,9 +25,8 @@ uses
   oslog,
   osdbasedata,
   oscheckbinarybitness,
-   masks,
+  masks,
   osparserhelper;
-
 
 function getPacketIDfromFilename(str: string): string;
 function getPacketIDShort(str: string): string;
@@ -212,7 +211,7 @@ begin
     begin
       LogDatei.log('Exception in analyze_markerlist', LLcritical);
       LogDatei.log('Error: Message: ' + E.message, LLcritical);
-      system.ExitCode:=1;
+      system.ExitCode := 1;
     end;
   end;
 end;
@@ -228,17 +227,13 @@ var
   var mysetup: TSetupFile);
   var
     i: integer;
-    aktpattern : string;
+    aktpattern: string;
   begin
     for i := 0 to installerArray[integer(instId)].patterns.Count - 1 do
     begin
-      //LogDatei.log('check: ' + line + ' for: ' + installerToInstallerstr(instId), LLDebug2);
       aktpattern := LowerCase(installerArray[integer(instId)].patterns[i]);
-      //if aktpattern = 'bitrock-lzma' then
-      //  LogDatei.log('check: ' + line + ' for: ' + installerToInstallerstr(instId), LLNotice);
       if 0 <> pos(aktpattern, line) then
       begin
-        //aktProduct.markerlist.add(installerArray[integer(instId)].Name + IntToStr(i));
         mysetup.markerlist.add(installerArray[integer(instId)].patterns[i]);
         LogDatei.log('For: ' + installerToInstallerstr(instId) +
           ' found: ' + LowerCase(installerArray[integer(instId)].patterns[i]), LLNotice);
@@ -253,10 +248,8 @@ var
   begin
     for i := 0 to installerArray[integer(instId)].infopatterns.Count - 1 do
     begin
-      //LogDatei.log('check: ' + line + ' for: ' + installerToInstallerstr(instId), LLDebug2);
       if 0 <> pos(LowerCase(installerArray[integer(instId)].infopatterns[i]), line) then
       begin
-        //aktProduct.markerlist.add(installerArray[integer(instId)].Name + IntToStr(i));
         mysetup.infolist.add(line);
         LogDatei.log('For: ' + installerToInstallerstr(instId) +
           ' found info: ' + line, LLinfo);
@@ -293,7 +286,7 @@ var
   msg: string;
   setuptype: TKnownInstaller;
   progress, lastprogress: int64;
-  fileextension : string;
+  fileextension: string;
 
 begin
   MinLen := 5;
@@ -362,7 +355,7 @@ begin
           fileextension := lowercase(ExtractFileExt(myfilename));
 
           //if MatchesMaskList(myfilename,'.exe;.bin;.sh; .run') then
-          if not ('.msi' = fileextension)  then
+          if not ('.msi' = fileextension) then
           begin
             if verbose then
             begin
@@ -414,4 +407,3 @@ end;
 
 
 end.
-

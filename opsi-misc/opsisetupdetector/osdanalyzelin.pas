@@ -69,12 +69,10 @@ begin
   mysetup.installerId := installerId;
   mysetup.link := installerArray[integer(mysetup.installerId)].Link;
   mysetup.setupFullFileName := myfilename;
-  //mysetup.setupFileNamePath := ExtractFileDir(myfilename);
   mysetup.installerSourceDir := '%scriptpath%/files' + IntToStr(mysetup.ID);
   mysetup.installCommandLine :=
     'set $exitcode$ = shellCall(''' + '$installerSourceDir$ + ' +
     '"/' + mysetup.setupFileName;
-  //    '"%scriptpath%/files' + IntToStr(mysetup.ID) + '/' + mysetup.setupFileName +
   if mysetup.preferSilent then
     mysetup.installCommandLine :=
       mysetup.installCommandLine + '" ' +
@@ -98,8 +96,7 @@ begin
     str1 := copy(product, 0, pos('-', product) - 1);
     aktProduct.productdata.productName := str1;
   end;
-  // installdir
-  // Unknown
+  // installdir: Unknown
   // version
   str1 := ExtractVersionFromFilename(product);
   mysetup.SoftwareVersion := str1;
@@ -164,16 +161,10 @@ var
     commands := ['-qp', '--queryformat', '"%{' + fieldname + '}\n"', filename];
     //-qp --queryformat "%{description}\n"
     Options := [poWaitOnExit, poNoConsole];
-    (*
-    if not FileExists(cmd) then
-      // we are on Linux but no dpkg - lets try to install it
-      getCommandResult(cmd: string)
-      *)
     if RunCommand(cmd, commands, outstr, Options, swoHIDE) then
     begin
       LogDatei.log('RPM-Info for: ' + fieldname + ' is: ' + outstr, LLnotice);
       outstr := opsiunquotestr2(outstr, '""');
-      //outstr := StringReplace(outstr,'#10','',[rfReplaceAll]);
       outstr := TrimRightSet(outstr, [#10, #13]);
       LogDatei.log('RPM-Info for: ' + fieldname + ' is: ' + outstr, LLnotice);
       Result := outstr;
@@ -185,53 +176,49 @@ begin
   mysetup.installCommandLine :=
     'set $exitcode$ = linuxInstallOneFile($installerSourceDir$ + ' +
     '"/' + mysetup.setupFileName + '") ';
-  try
     {$IFDEF LINUX}
-    mysetup.installDirectory := '<none>';
-    // product ID
-    packageId := getFieldInfoFromRpm(myfilename, 'name');
-    aktProduct.productdata.productId := 'l-' + getPacketIDShort(packageId);
-    // product name
-    aktProduct.productdata.productName := packageId;
-    // Softwareversion
-    tmpstr := getFieldInfoFromRpm(myfilename, 'version');
-    aktProduct.productdata.productversion := tmpstr;
-    mysetup.SoftwareVersion := tmpstr;
-    // Description
-    aktProduct.productdata.description := getFieldInfoFromRpm(myfilename, 'description');
-    // Advice
-    tmpstr := getFieldInfoFromRpm(myfilename, 'Vendor');
-    if tmpstr <> '' then outstr := 'Vendor: ' + tmpstr + LineEnding;
-    tmpstr := getFieldInfoFromRpm(myfilename, 'License');
-    if tmpstr <> '' then outstr := outstr + 'License: ' + tmpstr + LineEnding;
-    tmpstr := getFieldInfoFromRpm(myfilename, 'Architecture');
-    if tmpstr <> '' then outstr := outstr + 'Architecture: ' + tmpstr + LineEnding;
-    tmpstr := getFieldInfoFromRpm(myfilename, 'Url');
-    if tmpstr <> '' then outstr := outstr + 'Homepage: ' + tmpstr + LineEnding;
-    aktProduct.productdata.advice := outstr;
-    // size;
-    tmpstr := getFieldInfoFromRpm(myfilename, 'Size');
-    fsize := StrToInt64(tmpstr);
-    fsizemb := fsize div (1024 * 1024);
-    if fsizemb < 1 then
-      fsizemb := 1;
-    mysetup.requiredSpace := round(fsizemb);
-    // uninstall
-    mysetup.uninstallCheck.Clear;
-    mysetup.uninstallCheck.Add('if stringToBool(isOneInstalled(' +
-      'CreateStringlist("' + packageId + '")))');
-    mysetup.uninstallCheck.Add('	set $oldProgFound$ = "true"');
-    mysetup.uninstallCheck.Add('endif');
-    mysetup.uninstallCommandLine :=
-      'set $exitcode$ = linuxRemoveOnePackage("' + packageId + '")';
+  mysetup.installDirectory := '<none>';
+  // product ID
+  packageId := getFieldInfoFromRpm(myfilename, 'name');
+  aktProduct.productdata.productId := 'l-' + getPacketIDShort(packageId);
+  // product name
+  aktProduct.productdata.productName := packageId;
+  // Softwareversion
+  tmpstr := getFieldInfoFromRpm(myfilename, 'version');
+  aktProduct.productdata.productversion := tmpstr;
+  mysetup.SoftwareVersion := tmpstr;
+  // Description
+  aktProduct.productdata.description := getFieldInfoFromRpm(myfilename, 'description');
+  // Advice
+  tmpstr := getFieldInfoFromRpm(myfilename, 'Vendor');
+  if tmpstr <> '' then outstr := 'Vendor: ' + tmpstr + LineEnding;
+  tmpstr := getFieldInfoFromRpm(myfilename, 'License');
+  if tmpstr <> '' then outstr := outstr + 'License: ' + tmpstr + LineEnding;
+  tmpstr := getFieldInfoFromRpm(myfilename, 'Architecture');
+  if tmpstr <> '' then outstr := outstr + 'Architecture: ' + tmpstr + LineEnding;
+  tmpstr := getFieldInfoFromRpm(myfilename, 'Url');
+  if tmpstr <> '' then outstr := outstr + 'Homepage: ' + tmpstr + LineEnding;
+  aktProduct.productdata.advice := outstr;
+  // size;
+  tmpstr := getFieldInfoFromRpm(myfilename, 'Size');
+  fsize := StrToInt64(tmpstr);
+  fsizemb := fsize div (1024 * 1024);
+  if fsizemb < 1 then
+    fsizemb := 1;
+  mysetup.requiredSpace := round(fsizemb);
+  // uninstall
+  mysetup.uninstallCheck.Clear;
+  mysetup.uninstallCheck.Add('if stringToBool(isOneInstalled(' +
+    'CreateStringlist("' + packageId + '")))');
+  mysetup.uninstallCheck.Add('	set $oldProgFound$ = "true"');
+  mysetup.uninstallCheck.Add('endif');
+  mysetup.uninstallCommandLine :=
+    'set $exitcode$ = linuxRemoveOnePackage("' + packageId + '")';
   {$ELSE LINUX}
-    LogDatei.log('Detailed anlyze of rpm files can only be done at linux', LLWarning);
-    MessageDlg(rsRpmAnalyze, rsRPMAnalyzeNotLinux,
-      mtInformation, [mbOK], '');
+  LogDatei.log('Detailed anlyze of rpm files can only be done at linux', LLWarning);
+  MessageDlg(rsRpmAnalyze, rsRPMAnalyzeNotLinux,
+    mtInformation, [mbOK], '');
   {$ENDIF LINUX}
-  finally
-    //FreeAndNil(outlist);
-  end;
   LogDatei.log('Finished with get_rpm_info', LLinfo);
 end;
 
@@ -253,11 +240,6 @@ var
     cmd := '/usr/bin/dpkg-deb';
     commands := ['--field', filename, fieldname];
     Options := [poWaitOnExit, poNoConsole];
-    (*
-    if not FileExists(cmd) then
-      // we are on Linux but no dpkg - lets try to install it
-      getCommandResult(cmd: string)
-      *)
     if RunCommand(cmd, commands, outstr, Options, swoHIDE) then
     begin
       outstr := opsiunquotestr2(outstr, '""');
@@ -268,57 +250,52 @@ var
 
 begin
   LogDatei.log('Start with get_deb_info', LLinfo);
-  try
-    //outlist := TStringList.Create;
-    mysetup.installDirectory := '<none>';
-    mysetup.installCommandLine :=
-      'set $exitcode$ = linuxInstallOneFile($installerSourceDir$ + ' +
-      '"/' + mysetup.setupFileName + '") ';
+  mysetup.installDirectory := '<none>';
+  mysetup.installCommandLine :=
+    'set $exitcode$ = linuxInstallOneFile($installerSourceDir$ + ' +
+    '"/' + mysetup.setupFileName + '") ';
   {$IFDEF LINUX}
-    // product ID
-    packageId := getFieldInfoFromDeb(myfilename, 'package');
-    aktProduct.productdata.productId := 'l-' + getPacketIDShort(packageId);
-    // product name
-    aktProduct.productdata.productName := packageId;
-    // Softwareversion
-    tmpstr := getFieldInfoFromDeb(myfilename, 'version');
-    aktProduct.productdata.productversion := tmpstr;
-    mysetup.SoftwareVersion := tmpstr;
-    // Description
-    aktProduct.productdata.description := getFieldInfoFromDeb(myfilename, 'description');
-    // Advice
-    tmpstr := getFieldInfoFromDeb(myfilename, 'Vendor');
-    if tmpstr <> '' then outstr := 'Vendor: ' + tmpstr + LineEnding;
-    tmpstr := getFieldInfoFromDeb(myfilename, 'License');
-    if tmpstr <> '' then outstr := outstr + 'License: ' + tmpstr + LineEnding;
-    tmpstr := getFieldInfoFromDeb(myfilename, 'Architecture');
-    if tmpstr <> '' then outstr := outstr + 'Architecture: ' + tmpstr + LineEnding;
-    tmpstr := getFieldInfoFromDeb(myfilename, 'Homepage');
-    if tmpstr <> '' then outstr := outstr + 'Homepage: ' + tmpstr + LineEnding;
-    aktProduct.productdata.advice := outstr;
-    // size;
-    tmpstr := getFieldInfoFromDeb(myfilename, 'Installed-Size');
-    fsize := StrToInt64(tmpstr);
-    fsizemb := fsize div (1024 * 1024);
-    if fsizemb < 1 then
-      fsizemb := 1;
-    mysetup.requiredSpace := round(fsizemb);
-    // uninstall
-    mysetup.uninstallCheck.Clear;
-    mysetup.uninstallCheck.Add('if stringToBool(isOneInstalled(' +
-      'CreateStringlist("' + packageId + '")))');
-    mysetup.uninstallCheck.Add('	set $oldProgFound$ = "true"');
-    mysetup.uninstallCheck.Add('endif');
-    mysetup.uninstallCommandLine :=
-      'set $exitcode$ = linuxRemoveOnePackage("' + packageId + '")';
+  // product ID
+  packageId := getFieldInfoFromDeb(myfilename, 'package');
+  aktProduct.productdata.productId := 'l-' + getPacketIDShort(packageId);
+  // product name
+  aktProduct.productdata.productName := packageId;
+  // Softwareversion
+  tmpstr := getFieldInfoFromDeb(myfilename, 'version');
+  aktProduct.productdata.productversion := tmpstr;
+  mysetup.SoftwareVersion := tmpstr;
+  // Description
+  aktProduct.productdata.description := getFieldInfoFromDeb(myfilename, 'description');
+  // Advice
+  tmpstr := getFieldInfoFromDeb(myfilename, 'Vendor');
+  if tmpstr <> '' then outstr := 'Vendor: ' + tmpstr + LineEnding;
+  tmpstr := getFieldInfoFromDeb(myfilename, 'License');
+  if tmpstr <> '' then outstr := outstr + 'License: ' + tmpstr + LineEnding;
+  tmpstr := getFieldInfoFromDeb(myfilename, 'Architecture');
+  if tmpstr <> '' then outstr := outstr + 'Architecture: ' + tmpstr + LineEnding;
+  tmpstr := getFieldInfoFromDeb(myfilename, 'Homepage');
+  if tmpstr <> '' then outstr := outstr + 'Homepage: ' + tmpstr + LineEnding;
+  aktProduct.productdata.advice := outstr;
+  // size;
+  tmpstr := getFieldInfoFromDeb(myfilename, 'Installed-Size');
+  fsize := StrToInt64(tmpstr);
+  fsizemb := fsize div (1024 * 1024);
+  if fsizemb < 1 then
+    fsizemb := 1;
+  mysetup.requiredSpace := round(fsizemb);
+  // uninstall
+  mysetup.uninstallCheck.Clear;
+  mysetup.uninstallCheck.Add('if stringToBool(isOneInstalled(' +
+    'CreateStringlist("' + packageId + '")))');
+  mysetup.uninstallCheck.Add('	set $oldProgFound$ = "true"');
+  mysetup.uninstallCheck.Add('endif');
+  mysetup.uninstallCommandLine :=
+    'set $exitcode$ = linuxRemoveOnePackage("' + packageId + '")';
   {$ELSE LINUX}
-    LogDatei.log('Detailed anlyze of deb files can only be done at linux', LLWarning);
-    MessageDlg(rsDebAnalyze, rsDebAnalyzeNotLinux,
-      mtInformation, [mbOK], '');
+  LogDatei.log('Detailed anlyze of deb files can only be done at linux', LLWarning);
+  MessageDlg(rsDebAnalyze, rsDebAnalyzeNotLinux,
+    mtInformation, [mbOK], '');
   {$ENDIF LINUX}
-  finally
-    //FreeAndNil(outlist);
-  end;
   LogDatei.log('Finished with get_deb_info', LLinfo);
 end;
 
@@ -341,13 +318,11 @@ begin
 
     mysetup.uninstallCheck.Add('	set $oldProgFound$ = "true"');
     mysetup.uninstallCheck.Add('endif');
-    str1 := 'set $exitcode$ = shellCall(''"' + mysetup.uninstallProg ;
+    str1 := 'set $exitcode$ = shellCall(''"' + mysetup.uninstallProg;
     if mysetup.preferSilent then
-      str1 := str1 +
-      '" ' + installerArray[integer(mysetup.installerId)].unattendeduninstall + ''')'
+      str1 := str1 + '" ' + installerArray[integer(mysetup.installerId)].unattendeduninstall + ''')'
     else
-      str1 := str1 +
-      '" ' + installerArray[integer(mysetup.installerId)].silentuninstall + ''')';
+      str1 := str1 + '" ' + installerArray[integer(mysetup.installerId)].silentuninstall + ''')';
     mysetup.uninstallCommandLine := str1;
   end
   else

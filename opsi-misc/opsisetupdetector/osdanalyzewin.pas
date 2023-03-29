@@ -27,19 +27,6 @@ uses
   oscheckbinarybitness,
   Controls;
 
-
-(*
-const
-
-  SetupType_AdvancedMSI = 'AdvancedMSI';
-  SetupType_Inno = 'Inno';
-  SetupType_InstallShield = 'InstallShield';
-  SetupType_InstallShieldMSI = 'InstallShieldMSI';
-  SetupType_MSI = 'MSI';
-  SetupType_NSIS = 'NSIS';
-  SetupType_7zip = '7zip';
-*)
-
 procedure get_aktProduct_general_info_win(installerId: TKnownInstaller;
   myfilename: string; var mysetup: TSetupFile);
 procedure get_msi_info(myfilename: string; var mysetup: TSetupFile); overload;
@@ -58,18 +45,7 @@ procedure get_sfxcab_info(myfilename: string; var mysetup: TSetupFile);
 procedure get_bitrock_info(myfilename: string; var mysetup: TSetupFile);
 procedure get_selfextrackting_info(myfilename: string; var mysetup: TSetupFile);
 // marker for add installers
-//procedure stringsgrep(myfilename: string; verbose,skipzero: boolean);
 procedure Analyze(FileName: string; var mysetup: TSetupFile; verbose: boolean);
-//procedure grepmsi(instring: string);
-//procedure grepmarker(instring: string);
-(*
-function analyze_binary(myfilename: string; verbose, skipzero: boolean;
-  var mysetup: TSetupFile): TKnownInstaller;
-
-function getPacketIDfromFilename(str: string): string;
-function getPacketIDShort(str: string): string;
-function ExtractVersion(str: string): string;
-*)
 function getProductInfoFromResource(infokey: string; filename: string): string;
 
 resourcestring
@@ -140,174 +116,6 @@ begin
   {$ENDIF WINDOWS}
 end;
 
-(*
-function getPacketIDfromFilename(str: string): string;
-var
-  strnew: string;
-  i: integer;
-  myChar: char;
-begin
-  strnew := '';
-  for i := 1 to Length(str) do
-  begin
-    myChar := str[i];
-    if myChar in ['A'..'Z', 'a'..'z', '0'..'9', '_', '-'] then
-      strnew := strnew + myChar
-    else
-    if (myChar <> #195) then
-      strnew := strnew + '-';
-  end;
-  Result := strnew;
-end;
-
-
-function getPacketIDShort(str: string): string;
-var
-  strnew: string;
-  i: integer;
-  myChar: char;
-  preChar: char = ' ';
-begin
-  strnew := '';
-  str := lowercase(str);
-  for i := 1 to Length(str) do
-  begin
-    myChar := str[i];
-    if myChar in ['a'..'z', '0'..'9', '_', '-'] then
-    begin
-      strnew := strnew + myChar;
-      preChar := myChar;
-    end
-    else
-    begin
-      if ((myChar <> #195) and (i > 1) and (strnew[Length(strnew) - 1] <> '_') and
-        (strnew[Length(strnew) - 1] <> '-') and (i < Length(str))) then
-        if (preChar <> '-') then
-        begin
-          strnew := strnew + '-';
-          preChar := '-';
-        end;
-    end;
-  end;
-  Result := strnew;
-end;
-
-
-function ExtractVersion(str: string): string;
-var
-  i: integer;
-  outstr: string = '';
-begin
-  str := StringReplace(str, 'w32', '', [rfReplaceAll, rfIgnoreCase]);
-  str := StringReplace(str, 'w64', '', [rfReplaceAll, rfIgnoreCase]);
-  str := StringReplace(str, 'win32', '', [rfReplaceAll, rfIgnoreCase]);
-  str := StringReplace(str, 'win64', '', [rfReplaceAll, rfIgnoreCase]);
-  for i := 1 to Length(str) do
-  begin
-    if str[i] in ['0'..'9', '.'] then
-    begin
-      if (Length(outstr) > 0) and (not (str[i - 1] in ['0'..'9', '.'])) then
-        outstr := '';
-      outstr := outstr + str[i];
-    end
-    else;
-  end;
-  Result := outstr;
-end;
-
-
-function grepexe(instring: string): string;
-var
-  lowerstring: string;
-begin
-  Result := '';
-  lowerstring := lowercase(instring);
-  if (0 < pos('installshield', lowerstring)) or (0 < pos('inno', lowerstring)) or
-    (0 < pos('wise', lowerstring)) or (0 < pos('nullsoft', lowerstring)) or
-    (0 < pos('wixquery', lowerstring)) or
-    (0 < pos('product_build_number{', lowerstring)) or
-    (0 < pos('productcode{', lowerstring)) or (0 < pos('msiexec', lowerstring)) or
-    (0 < pos('extract', lowerstring)) or
-    // (0 < pos('setup', lowerstring)) or
-    (0 < pos('installer', lowerstring)) then
-    Result := instring;
-end;
-
-function grepinstr(instring: string; searchstr: string): string;
-var
-  lowerstring: string;
-begin
-  Result := '';
-  lowerstring := lowercase(instring);
-  if (0 < pos(lowercase(searchstr), lowerstring)) then
-    Result := instring;
-end;
-*)
-(*
-procedure analyze_binstr(instring: string; var mysetup: TSetupFile);
-var
-  lowerstring: string;
-  counter: integer;
-  aktId: TKnownInstaller;
-
-
-  procedure check_line_for_installer(line: string; instId: TKnownInstaller;
-  var mysetup: TSetupFile);
-  var
-    i: integer;
-  begin
-    for i := 0 to installerArray[integer(instId)].patterns.Count - 1 do
-    begin
-      //LogDatei.log('check: ' + line + ' for: ' + installerToInstallerstr(instId), LLDebug2);
-      if 0 <> pos(LowerCase(installerArray[integer(instId)].patterns[i]), line) then
-      begin
-        //aktProduct.markerlist.add(installerArray[integer(instId)].Name + IntToStr(i));
-        mysetup.markerlist.add(installerArray[integer(instId)].patterns[i]);
-        LogDatei.log('For: ' + installerToInstallerstr(instId) +
-          ' found: ' + LowerCase(installerArray[integer(instId)].patterns[i]), LLinfo);
-      end;
-    end;
-  end;
-
-  procedure check_line_for_infoline(line: string; instId: TKnownInstaller;
-  var mysetup: TSetupFile);
-  var
-    i: integer;
-  begin
-    for i := 0 to installerArray[integer(instId)].infopatterns.Count - 1 do
-    begin
-      //LogDatei.log('check: ' + line + ' for: ' + installerToInstallerstr(instId), LLDebug2);
-      if 0 <> pos(LowerCase(installerArray[integer(instId)].infopatterns[i]), line) then
-      begin
-        //aktProduct.markerlist.add(installerArray[integer(instId)].Name + IntToStr(i));
-        mysetup.infolist.add(line);
-        LogDatei.log('For: ' + installerToInstallerstr(instId) +
-          ' found info: ' + line, LLinfo);
-      end;
-    end;
-  end;
-
-begin
-  lowerstring := lowercase(instring);
-  for counter := 0 to knownInstallerList.Count - 1 do
-  begin
-    aktId := installerArray[counter].installerId;
-    if aktId <> stUnknown then
-    begin
-      check_line_for_installer(lowerstring, aktId, mysetup);
-      check_line_for_infoline(lowerstring, aktId, mysetup);
-    end;
-  end;
-end;
-*)
-(*
-procedure grepmsi(instring: string);
-begin
-  if (0 < pos('product_build_number{', lowercase(instring))) or
-    (0 < pos('productcode{', lowercase(instring))) then
-    mywrite(instring);
-end;
-*)
 procedure get_aktProduct_general_info_win(installerId: TKnownInstaller;
   myfilename: string; var mysetup: TSetupFile);
 var
@@ -335,7 +143,6 @@ begin
   mysetup.installerId := installerId;
   mysetup.link := installerArray[integer(mysetup.installerId)].Link;
   mysetup.setupFullFileName := myfilename;
-  //mysetup.setupFileNamePath := ExtractFileDir(myfilename);
   mysetup.installerSourceDir := '%scriptpath%\files' + IntToStr(mysetup.ID);
   if mysetup.preferSilent then
     mysetup.installCommandLine :=
@@ -485,12 +292,6 @@ begin
     begin
       mywrite(myoutlines.Strings[i]);
       mysetup.analyze_progess := mysetup.analyze_progess + 1;
-
-      // sSearch := 'Manufacturer: ';
-      // iPos := Pos (sSearch, myoutlines.Strings[i]);
-      // if (iPos <> 0) then
-      //   resultForm1.Edit2.Text := Copy(myoutlines.Strings[i], Length(sSearch)+1, Length(myoutlines.Strings[i])-Length(sSearch));
-
       sSearch := 'ProductName: ';
       iPos := Pos(sSearch, myoutlines.Strings[i]);
       if (iPos <> 0) then
@@ -516,7 +317,6 @@ begin
           Length(myoutlines.Strings[i]) - Length(sSearch));
 
     end;
-    //if aktproduct.productdata.productversion = '' then
     aktproduct.productdata.productversion := trim(mysetup.softwareversion);
   end;
   myoutlines.Free;
@@ -544,12 +344,6 @@ begin
     begin
       LogDatei.log(myoutlines.Strings[i], LLDebug);
       mysetup.analyze_progess := mysetup.analyze_progess + 1;
-
-      // sSearch := 'Manufacturer: ';
-      // iPos := Pos (sSearch, myoutlines.Strings[i]);
-      // if (iPos <> 0) then
-      //   resultForm1.Edit2.Text := Copy(myoutlines.Strings[i], Length(sSearch)+1, Length(myoutlines.Strings[i])-Length(sSearch));
-
       sSearch := 'ProductName';
       iPos := Pos(sSearch, myoutlines.Strings[i]);
       if (iPos <> 0) then
@@ -600,38 +394,13 @@ begin
 
     mysetup.mstAllowed := True;
   end;
-  (*
-  Now part of the delincmsi templates
-  mysetup.uninstallCheck.Clear;
-  mysetup.uninstallCheck.Add('set $UninstallList$ = addtolist($UninstallList$,"' +
-    mysetup.SoftwareVersion + '=' + mysetup.msiId + '")');
-  mysetup.uninstallCheck.Add('; you may add later additional msiids to this list');
-  mysetup.uninstallCheck.Add(
-    '; set $UninstallList$ = addtolist($UninstallList$,"<version>=<GUID>")');
-  mysetup.uninstallCheck.Add('');
-  mysetup.uninstallCheck.Add(
-    'for %uninstallEntry% in $UninstallList$ do sub_uninstall_msi-list');
-  mysetup.uninstallCheck.Add('');
-  mysetup.uninstallCheck.Add('[sub_uninstall_msi-list]');
-  mysetup.uninstallCheck.Add(
-    'set $MsiVersion$ = TakeString(0, splitstring("%uninstallEntry%", "="))');
-  mysetup.uninstallCheck.Add(
-    'set $MsiId$ = TakeString(1, splitstring("%uninstallEntry%", "="))');
-  mysetup.uninstallCheck.Add('');
-  mysetup.uninstallCheck.Add('set $oldProgFound$ = "false"');
-  //mysetup.uninstallCheck.Add('if stringtobool(checkForMsiProduct("' +mysetup.msiId + '"))');
-  mysetup.uninstallCheck.Add('if stringtobool(checkForMsiProduct($MsiId$))');
-  mysetup.uninstallCheck.Add('  set $oldProgFound$ = "true"');
-  mysetup.uninstallCheck.Add('  set $ProdVersion$ = $MsiVersion$');
-  mysetup.uninstallCheck.Add('endif');
-  *)
 
   if mysetup.preferSilent then
     mysetup.uninstallCommandLine :=
-    'msiexec /x $MsiId$ ' + installerArray[integer(stMsi)].silentuninstall
+      'msiexec /x $MsiId$ ' + installerArray[integer(stMsi)].silentuninstall
   else
-  mysetup.uninstallCommandLine :=
-    'msiexec /x $MsiId$ ' + installerArray[integer(stMsi)].unattendeduninstall;
+    mysetup.uninstallCommandLine :=
+      'msiexec /x $MsiId$ ' + installerArray[integer(stMsi)].unattendeduninstall;
 
 
   LogDatei.log('get_MSI_info finished', LLInfo);
@@ -820,69 +589,11 @@ begin
         (0 = pos('x86', lowercase(ArchitecturesInstallIn64BitMode))) then
       begin
         DefaultDirName := translateInnoConstants(DefaultDirName, '64');
-        (*
-        if pos('{pf}', DefaultDirName) > 0 then
-        begin
-          DefaultDirName := StringReplace(DefaultDirName, '{pf}',
-            '%ProgramFiles64Dir%', [rfReplaceAll, rfIgnoreCase]);
-        end;
-        if pos('{autopf}', DefaultDirName) > 0 then
-        begin
-          DefaultDirName := StringReplace(DefaultDirName, '{autopf}',
-            '%ProgramFiles64Dir%', [rfReplaceAll, rfIgnoreCase]);
-        end;
-        if pos('{code:DefDirRoot}', DefaultDirName) > 0 then
-        begin
-          DefaultDirName := StringReplace(DefaultDirName, '{code:DefDirRoot}',
-            '%ProgramFiles64Dir%', [rfReplaceAll, rfIgnoreCase]);
-        end;
-        if pos('{code:installDir}', DefaultDirName) > 0 then
-        begin
-          DefaultDirName := StringReplace(DefaultDirName, '{code:installDir}',
-            '%ProgramFiles64Dir%\<unknown>', [rfReplaceAll, rfIgnoreCase]);
-        end;
-        if pos('{code:DefaultDirName}', DefaultDirName) > 0 then
-        begin
-          DefaultDirName := StringReplace(DefaultDirName, '{code:DefaultDirName}',
-            '%ProgramFiles64Dir%\<unknown>', [rfReplaceAll, rfIgnoreCase]);
-        end;
-        *)
       end
       else
       begin
         DefaultDirName := translateInnoConstants(DefaultDirName, '32');
-         (*
-        if pos('{pf}', DefaultDirName) > 0 then
-        begin
-          DefaultDirName := StringReplace(DefaultDirName, '{pf}',
-            '%ProgramFiles32Dir%', [rfReplaceAll, rfIgnoreCase]);
-        end;
-        if pos('{autopf}', DefaultDirName) > 0 then
-        begin
-          DefaultDirName := StringReplace(DefaultDirName, '{autopf}',
-            '%ProgramFiles32Dir%', [rfReplaceAll, rfIgnoreCase]);
-        end;
-        if pos('{code:DefDirRoot}', DefaultDirName) > 0 then
-        begin
-          DefaultDirName := StringReplace(DefaultDirName, '{code:DefDirRoot}',
-            '%ProgramFiles32Dir%', [rfReplaceAll, rfIgnoreCase]);
-        end;
-        if pos('{code:installDir}', DefaultDirName) > 0 then
-        begin
-          DefaultDirName := StringReplace(DefaultDirName, '{code:installDir}',
-            '%ProgramFiles32Dir%\<unknown>', [rfReplaceAll, rfIgnoreCase]);
-        end;
-        if pos('{code:DefaultDirName}', DefaultDirName) > 0 then
-        begin
-          DefaultDirName := StringReplace(DefaultDirName, '{code:DefaultDirName}',
-            '%ProgramFiles32Dir%\<unknown>', [rfReplaceAll, rfIgnoreCase]);
-        end;
-        *)
       end;
-      (*
-      DefaultDirName := StringReplace(DefaultDirName, '{sd}',
-        '%Systemdrive%', [rfReplaceAll, rfIgnoreCase]);
-        *)
       mysetup.installDirectory := DefaultDirName;
       aktProduct.productdata.comment := AppVerName;
       with mysetup do
@@ -932,7 +643,6 @@ begin
   Mywrite('Analyzing InstallShield+MSI Setup: ' + myfilename);
   mysetup.installerId := stInstallShieldMSI;
   mysetup.setupFullFileName := myfilename;
-  //&mysetup.setupFileNamePath := ExtractFileDir(myfilename);
 
   if DirectoryExists(opsitmp) then
     DeleteDirectory(opsitmp, True);
@@ -1015,7 +725,6 @@ begin
   Mywrite('Analyzing AdvancedMSI Setup: ' + myfilename);
   mysetup.installerId := stAdvancedMSI;
   mysetup.setupFileName := ExtractFileName(myfilename);
-  //mysetup.setupFileNamePath := ExtractFileDir(myfilename);
 
   {$IFDEF WINDOWS}
   // extract and analyze MSI from setup
@@ -1132,8 +841,6 @@ var
   pos1, pos2, i: integer;
 begin
   Mywrite('Analyzing generic MS Installer-Setup:');
-  //mysetup.install_waitforprocess:=ExtractFileName(myfilename);
-  //mysetup.SoftwareVersion := getProductInfoFromResource('FileVersion',myfilename);
   mysetup.uninstallProg := 'C:\ProgramData\{<UNKNOWN GUID>}\' +
     ExtractFileName(myfilename);
   mywrite('get_genmsinstaller_info finished');
@@ -1277,8 +984,6 @@ begin
   resultForm1.ProgressBarAnalyze.Position := 0;
   procmess;
   {$ENDIF OSDGUI}
-  //aktProduct.setup32FileNamePath := FileName;
-  //resultform1.clearAllTabs;
   setupType := stUnknown;
   if '.msi' = lowercase(ExtractFileExt(FileName)) then
   begin
@@ -1290,9 +995,7 @@ begin
   end
   else
   begin
-    //stringsgrep(FileName, false, false); // filename, verbose, skipzero
     setupType := analyze_binary(FileName, verbose, False, mysetup);
-    // filename, verbose, skipzero
 
     sleep(2000);
 
@@ -1310,7 +1013,6 @@ begin
         setupType := installerstrToInstaller(
           FChooseInstallerDlg.ComboBoxChooseInstaller.Text);
         mysetup.installerId := setupType;
-        //resultform1.BtAnalyzeNextStepClick(nil);
       end;
     end;
      {$ENDIF OSDGUI}
@@ -1378,29 +1080,11 @@ begin
   mysetup.installerId := setupType;
   if setupType = stUnknown then
   begin
-    (*
-    {$IFDEF OSDGUI}
-    FChooseInstallerDlg.ComboBoxChooseInstaller.Clear;
-    for i := 0 to integer(stUnknown) - 1 do
-      FChooseInstallerDlg.ComboBoxChooseInstaller.Items.Add(
-        installerToInstallerstr(TKnownInstaller(i)));
-    if FChooseInstallerDlg.ShowModal = mrOk then
-    begin
-      setupType := installerstrToInstaller(
-        FChooseInstallerDlg.ComboBoxChooseInstaller.Text);
-      mysetup.installerId:=setupType;
-      resultform1.BtAnalyzeNextStepClick(nil);
-    end;
-    {$ENDIF OSDGUI}
-    *)
   end
   else
   begin
     resultform1.BtAnalyzeNextStepClick(nil);
   end;
 end;
-
-
-
 
 end.

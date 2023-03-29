@@ -1,7 +1,7 @@
 object FNewDepDlg: TFNewDepDlg
-  Left = 367
+  Left = 541
   Height = 420
-  Top = 184
+  Top = 215
   Width = 444
   Caption = 'opsi-setup-detector: Dependency Editor'
   ClientHeight = 420
@@ -176,7 +176,6 @@ object FNewDepDlg: TFNewDepDlg
       FlowStyle = fsRightLeftTopBottom
       ParentFont = False
       TabOrder = 1
-      OnClick = FlowPanel2Click
       object Label2: TLabel
         Left = 53
         Height = 30

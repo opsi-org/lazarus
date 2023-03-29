@@ -162,12 +162,14 @@ begin
       CloseFile(outfileHandle);
     except
       on E: EInOutError do
-        logdatei.log('patchScript file error: ' + E.ClassName + '/' + E.Message, LLError);
+        logdatei.log('patchScript file error: ' + E.ClassName + '/' +
+          E.Message, LLError);
     end;
   {$I-}//end use exceptions
   end
   else
-    logdatei.log('patchScript file warning: infile for: ' + ExtractFileName(outfile) + ' not found', LLwarning);
+    logdatei.log('patchScript file warning: infile for: ' +
+      ExtractFileName(outfile) + ' not found', LLwarning);
 end;
 
 procedure patchThisList(var targetlist: TStringList);
@@ -267,7 +269,6 @@ var
     mylist: TStringList;
   begin
     mylist := TStringList.Create;
-    //myfilepath := templatePath + Pathdelim + 'win' + Pathdelim + myfilename;
     myfilepath := getFilePath(myfilename);
     if FileExists(myfilepath) then
     begin
@@ -338,13 +339,6 @@ begin
         str := str + 'DefVar $LicenseError$' + LineEnding;
         str := str + 'DefVar $LicenseHandledByScript$ = "true"' + LineEnding;
       end
-(*
-      else if (proptmpstr = LowerCase('DesktopIcon')) then
-        str := str + 'DefVar $DesktopIcon$' + LineEnding
-
-      else if (proptmpstr = ('install_architecture')) then
-        str := str + 'DefVar $install_architecture$' + LineEnding
-      *)
       else
         str := str + 'DefVar $' + proptmpstr + '$' + LineEnding;
     end;
@@ -422,20 +416,10 @@ begin
     str := myconfiguration.preInstallLines.Text;
     if str <> '' then
       preinstalllist.Add(myconfiguration.preInstallLines.Text + LineEnding);
-    (*
-      str := 'comment "Start Pre Install hook :"' + LineEnding +
-        myconfiguration.preInstallLines.Text;
-    patchlist.add('#@preInstallLines*#=' + str);
-    *)
 
     str := myconfiguration.postInstallLines.Text;
     if str <> '' then
       postinstalllist.Add(myconfiguration.postInstallLines.Text + LineEnding);
-    (*
-      str := 'comment "Start Post UnInstall hook :"' + LineEnding +
-        myconfiguration.postInstallLines.Text;
-    patchlist.add('#@postInstallLines*#=' + str);
-    *)
 
     str := myconfiguration.preUninstallLines.Text;
     if str <> '' then
@@ -446,11 +430,6 @@ begin
     str := myconfiguration.postUnInstallLines.Text;
     if str <> '' then
       postUnInstallList.Add(myconfiguration.postUnInstallLines.Text + LineEnding);
-    (*
-      str := 'comment "Start Post UnInstall hook :"' + LineEnding +
-        myconfiguration.postUnInstallLines.Text;
-    patchlist.add('#@postUninstallLines*#=' + str);
-    *)
 
     str := '';
     if aktProduct.properties.propExists('DesktopIcon') then
@@ -464,54 +443,8 @@ begin
     end;
     patchlist.add('#@DelsubHandleDesktopIcon*#=' + str);
 
-      (*
-      filepath := templatePath + Pathdelim + 'win' + Pathdelim +
-        'SetupHandleDesktopIcon.opsiscript';
-      strlist.Clear;
-      if FileExists(filepath) then
-        strlist.LoadFromFile(filepath)
-      else
-        LogDatei.log('Error: File not found: ' + filepath, LLerror);
-      ;
-      str := 'comment "Start Desktop Icon Handling :"' + LineEnding + strlist.Text;
-
-    end;
-    //patchlist.add('#@SetupHandleDesktopIcon*#=' + str);
-
-    str := '';
-
-    if aktProduct.properties.propExists('DesktopIcon') then
-    begin
-      //strlist.LoadFromFile(templatePath + Pathdelim + 'DelsubHandleDesktopIcon.opsiscript');
-      str := 'comment "Start Desktop Icon Handling :"' + LineEnding +
-        'Linkfolder_remove_desktop_icon';
-    end;
-
-    //patchlist.add('#@DelsubHandleDesktopIcon*#=' + str);
-
-    str := '';
-    if aktProduct.properties.propExists('DesktopIcon') then
-    begin
-      strlist.LoadFromFile(templatePath + Pathdelim + 'win' + Pathdelim +
-        'SetupDesktopIconSection.opsiscript');
-      str := strlist.Text;
-    end;
-    patchlist.add('#@SetupDesktopiconSectionLines*#=' + str);
-
-    str := '';
-    if aktProduct.properties.propExists('DesktopIcon') then
-    begin
-      strlist.LoadFromFile(templatePath + Pathdelim + 'win' + Pathdelim +
-        'DelsubDesktopIconSection.opsiscript');
-      str := strlist.Text;
-    end;
-    patchlist.add('#@DelsubDesktopiconSectionLines*#=' + str);
-    *)
-
-
     str := '';
     patchlist.add('#@Profileconfigurationlines*#=' + str);
-
 
     str := '';
     patchlist.add('#@LicenseInstallLines*#=' + str);
@@ -721,8 +654,6 @@ begin
   if (osdsettings.runmode = analyzeCreateWithUser) then
     pre_id := 'with-user';
 
-  //templatePath := templatePath + Pathdelim + pre_id;
-
   try
     try
       patchlist := TStringList.Create;
@@ -802,17 +733,6 @@ begin
           for i := 0 to infilelist.Count - 1 do
           begin
             infilename := getFilePath(infilelist.Strings[i]);
-            (*
-            infilename := templatePath + PathDelim + templateChannelDir +
-              Pathdelim + pre_id + PathDelim + infilelist.Strings[i];
-            if not FileExists(infilename) then
-            begin
-              infilename := templatePath + PathDelim + 'default' +
-                Pathdelim + pre_id + PathDelim + infilelist.Strings[i];
-              logdatei.log('File: ' + infilelist.Strings[i] +
-                ' not found at template channel: ' + templateChannelDir +
-                ' - fall back to default', LLinfo);
-            end; *)
             outfilename := clientpath + PathDelim + infilelist.Strings[i];
             outfilename := StringReplace(outfilename, 'msi', '', []);
             patchScript(infilename, outfilename);
@@ -898,10 +818,10 @@ begin
         // add existing libraries '*.opsilib'
         // create list of existing *.opsilib files in channel
         channelLibraryFilelist :=
-           FindAllFiles(templatePath + PathDelim + templateChannelDir + Pathdelim + pre_id,
-                        '*.opsilib',false);
+          FindAllFiles(templatePath + PathDelim + templateChannelDir +
+          Pathdelim + pre_id, '*.opsilib', False);
         // copy library files to client path
-        for i := 0 to channelLibraryFilelist.Count -1 do
+        for i := 0 to channelLibraryFilelist.Count - 1 do
         begin
           infilename := channelLibraryFilelist.Strings[i];
           outfilename := ExtractFileName(infilename);
@@ -989,50 +909,6 @@ begin
             outfilename := clientpath + PathDelim + tmpname + tmpext;
           patchScript(infilename, outfilename);
         end;
-
-
-      (*
-      // define_vars_multi
-      // none at windows template or createMeta
-      if not (((osdsettings.runmode = createTemplate) and
-        (osWin in aktProduct.productdata.targetOSset)) or
-        (osdsettings.runmode = createMeta) or
-        // none at analyzeCreateWithUser
-        (osdsettings.runmode = analyzeCreateWithUser) or
-        // none at template channel training
-        (aktProduct.productdata.channelDir = 'training') or
-        // none at template channel structured
-        (aktProduct.productdata.channelDir = 'structured')) then
-      begin
-        //infilename := genericTemplatePath + Pathdelim + 'define_vars_multi.opsiscript';
-        infilename := templatePath + PathDelim + templateChannelDir +
-              Pathdelim + pre_id + PathDelim + 'declarations.opsiinc';
-            if not FileExists(infilename) then
-            begin
-              infilename := templatePath + PathDelim + 'default' +
-                Pathdelim + pre_id + PathDelim + infilelist.Strings[i];
-              logdatei.log('File: ' + infilename +
-                ' not found at template channel: ' + templateChannelDir +
-                ' - fall back to default', LLinfo);
-            end;
-        outfilename := clientpath + PathDelim + 'define_vars_multi.opsiscript';
-        patchScript(infilename, outfilename);
-      end;
-      *)
-
-    (*
-    // setup script
-    infilename := templatePath + Pathdelim + insetup;
-    outfilename := clientpath + PathDelim + aktProduct.productdata.setupscript;
-    patchScript(infilename, outfilename);
-    // delsub script
-    infilename := templatePath + Pathdelim + indelsub;
-    outfilename := clientpath + PathDelim + aktProduct.productdata.delsubscript;
-    patchScript(infilename, outfilename);
-    // uninstall script
-    infilename := templatePath + Pathdelim + inuninstall;
-    outfilename := clientpath + PathDelim + aktProduct.productdata.uninstallscript;
-    patchScript(infilename, outfilename);    *)
 
       subdir := '';
       if osdsettings.runmode = analyzeCreateWithUser then
@@ -1283,13 +1159,15 @@ begin
         if stringListToJsonArray(helplist, tmpstr) then
           textlist.Add('values: ' + tmpstr)
         else
-          LogDatei.log('Failed to write property values entry for property: '+myprop.Property_Name,LLerror);
+          LogDatei.log('Failed to write property values entry for property: ' +
+            myprop.Property_Name, LLerror);
         helplist.Text := myprop.GetDefaultLines.Text;
         opsiquotelist(helplist, '"');
         if stringListToJsonArray(helplist, tmpstr) then
           textlist.Add('default: ' + tmpstr)
         else
-          LogDatei.log('Failed to write property default entry for property: '+myprop.Property_Name,LLerror);
+          LogDatei.log('Failed to write property default entry for property: ' +
+            myprop.Property_Name, LLerror);
       end;
     end;
     textlist.SaveToFile(opsipath + pathdelim + 'control');
@@ -1363,41 +1241,6 @@ function bakupOldProductDir: boolean;
     Application.ProcessMessages;
     for i := 0 to backupfiles.Count - 1 do
       MakeBakFiles(backupfiles.Strings[i], 3);
-    (*
-    Result := True;
-    backupfiles := TStringList.Create;
-    // Del really old files
-    FindAllFiles(backupfiles, mydir, '*.3', False);
-    Application.ProcessMessages;
-    for i := 0 to backupfiles.Count - 1 do
-      if not DeleteFileUTF8(backupfiles.Strings[i]) then
-        Result := False;
-    Application.ProcessMessages;
-    // backup old files
-    for k := 2 downto 1 do
-    begin
-      FindAllFiles(backupfiles, mydir, '*.' + IntToStr(k), False);
-      for i := 0 to backupfiles.Count - 1 do
-      begin
-        fname := backupfiles.Strings[i];
-        fbakname := ExtractFileNameWithoutExt(fname) + '.' + IntToStr(k + 1);
-        if not CopyFile(fname, fbakname, [cffOverwriteFile, cffPreserveTime]) then
-          Result := False;
-        Application.ProcessMessages;
-      end;
-      //Application.ProcessMessages;
-    end;
-    // backup last files
-    FindAllFiles(backupfiles, mydir, '*', False);
-    for i := 0 to backupfiles.Count - 1 do
-    begin
-      fname := backupfiles.Strings[i];
-      fbakname := fname + '.1';
-      if not CopyFile(fname, fbakname, [cffOverwriteFile, cffPreserveTime]) then
-        Result := False;
-      Application.ProcessMessages;
-    end;
-    *)
   end;
 
 begin

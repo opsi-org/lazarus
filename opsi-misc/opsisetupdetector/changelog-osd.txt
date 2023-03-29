@@ -90,6 +90,9 @@ opsi-setup-detector (4.2.2.0-1) stable; urgency=low
    * rmove old unused resource strings
    * fix corrected english resource strings (thanks to m.knauer)
 
+   todo:
+   remove all mywrite
+
 
 -- Detlef Oertel <d.oertel@uib.de>  Wed,  29 Mar 2023 : 15:00:00 +0200
 

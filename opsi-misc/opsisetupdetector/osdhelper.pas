@@ -38,7 +38,6 @@ var
   IsAdmin: boolean; //for testing
 begin
   myreg := TRegistry.Create(KEY_ALL_ACCESS);
-  //myreg.RootKey := HKEY_CURRENT_USER;
   myreg.RootKey := HKEY_CLASSES_ROOT;
   //remove old registration
   myreg.DeleteKey('Software\Classes\*\shell\opsi setup detector\Command');
@@ -93,20 +92,13 @@ begin
     begin
       if SHGetPathFromIDList(csidl, namebuf) then
         Result := StrPas(namebuf);
-      // Freecsidl(csidl);
     end;
   end
   else
-    //Fix:
-    // if assigned(SHGetFolderPath) and ((csidlvalue = CSIDL_APPDATA) or
-    //   (csidlvalue = CSIDL_PERSONAL)) then
   begin
     if SUCCEEDED(SHGetFolderPath(0, csidlValue, 0, 0, namebuf)) then
       Result := StrPas(namebuf);
   end;
-  //debugmessages.Add('getSpecialFolder: '+inttostr(csidlValue)+' -> ' + result);
-  //if Assigned(LogDatei) then
-  //LogDatei.DependentAdd('getSpecialFolder: '+inttostr(csidlValue)+' -> ' + result, LLDebug2);
 end;
 
 {$ENDIF WINDOWS}
@@ -125,9 +117,7 @@ begin
     (0 < pos('wixquery', lowerstring)) or
     (0 < pos('product_build_number{', lowerstring)) or
     (0 < pos('productcode{', lowerstring)) or (0 < pos('msiexec', lowerstring)) or
-    (0 < pos('extract', lowerstring)) or
-    // (0 < pos('setup', lowerstring)) or
-    (0 < pos('installer', lowerstring)) then
+    (0 < pos('extract', lowerstring)) or (0 < pos('installer', lowerstring)) then
     Result := instring;
 end;
 
@@ -139,7 +129,6 @@ const
   ReadBufferSize = 2048;
 
 var
-  //myStringlist : TStringlist;
   S: TStringList;
   M: TMemoryStream;
   FpcProcess: TProcess;
@@ -158,7 +147,6 @@ begin
       FpcProcess.Options := [poUsePipes, poStderrToOutput];
       FpcProcess.ShowWindow := swoMinimize;
       FpcProcess.Execute;
-      //mywrite('RunCommandAndCaptureOut: started: ' + cmd);
       while FpcProcess.Running do
       begin
         // stellt sicher, dass wir Platz haben
@@ -168,18 +156,14 @@ begin
         if FpcProcess.Output.NumBytesAvailable > 0 then
         begin
           n := FpcProcess.Output.Read((M.Memory + BytesRead)^, ReadBufferSize);
-          //mywrite('RunCommandAndCaptureOut: read: ' + IntToStr(n) + ' bytes');
           if n > 0 then
           begin
             Inc(BytesRead, n);
-            //mywrite('RunCommandAndCaptureOut: read: ' + IntToStr(n) + ' bytes');
-            //Write('.')
           end;
         end
         else
         begin
           // keine Daten, warte 100 ms
-          //mywrite('RunCommandAndCaptureOut: no data - waiting....');
           Sleep(100);
         end;
       end;
@@ -194,28 +178,19 @@ begin
           if n > 0 then
           begin
             Inc(BytesRead, n);
-            //mywrite('RunCommandAndCaptureOut: read: ' + IntToStr(n) + ' bytes');
-            //Write('.');
           end;
         end
         else
           n := 0;
       until n <= 0;
-      //if BytesRead > 0 then WriteLn;
       M.SetSize(BytesRead);
-      //mywrite('RunCommandAndCaptureOut: -- executed --');
-      //WriteLn('-- executed --');
 
       S := TStringList.Create;
       S.LoadFromStream(M);
-      //mywrite('RunCommandAndCaptureOut: -- linecount = ' + IntToStr(S.Count));
-      //WriteLn('-- linecount = ', S.Count, ' --');
       for n := 0 to S.Count - 1 do
       begin
-        //WriteLn('| ', S[n]);
         outlines.Add(S[n]);
       end;
-      //WriteLn('-- end --');
     except
       on e: Exception do
       begin
@@ -335,9 +310,6 @@ var
   doublevalue2: double;
   string1: string;
   string2: string;
-
-  ///partCompareResult : Integer;
-  ///isEqual : Boolean;
 
 begin
 

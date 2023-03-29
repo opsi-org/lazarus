@@ -766,8 +766,6 @@ procedure TPProperty.init;
 begin
   Fpname := '';
   Fdescription := '';
-  //FStrvalues := TStringList.Create;
-  //FStrdefault := TStringList.Create;
   Ftype := bool;
   Fmultivalue := False;
   Feditable := False;
@@ -782,83 +780,22 @@ begin
   inherited;
 end;
 
-(*
-procedure TPProperty.SetValueLines(const AValue: TStrings);
-var
-  tmpstr : string;
-begin
-  if Assigned(AValue) then
-  //FStrvalues.Assign(AValue);
-    FStrvalues.SetStrings(AValue);
-  if not stringListToJsonArray(TStringlist(AValue),tmpstr) then
-   logdatei.log('Could not convert stringlist to json array',LLerror)
-   else FStrvaluesStr := tmpstr;
-end;
-
-procedure TPProperty.SetDefaultLines(const AValue: TStrings);
-begin
-  if Assigned(AValue) then
-  //FStrDefault.Assign(AValue);
-   FStrDefault.Text:= AValue.Text;
-  if not stringListToJsonArray(TStringlist(AValue),FStrDefaultStr) then
-    logdatei.log('Could not convert stringlist to json array',LLerror);
-end;
-
-function TPProperty.GetValueLines: TStringlist;
-var
-  i : integer;
-  tmpstr : string;
-begin
-  result := TStringlist.Create;
-  //result.Clear;
-  //result.SetStrings(FStrvalues);
-  for i := 0 to FStrvalues.Count-1 do
-  begin
-    tmpstr := FStrvalues[i];
-    result.Add(tmpstr);
-  end;
-end;
-
-
-function TPProperty.GetDefaultLines: TStrings;
-begin
-  result := TStrings.Create;
-  result.SetStrings(FStrDefault);
-end;
-*)
-
 
 // Defaults
 function TPProperty.GetDefaultLines: TStrings;
 begin
   Result := TStringList.Create;
-        (*
-  if globimportMode then
-    begin
-      // return empty
-    end
-  else
-  *)
   Result.DelimitedText := FStrDefaultStr;
 end;
 
 procedure TPProperty.SetDefaultLines(const AValue: TStrings);
 begin
-  (*
-   if globimportMode then
-    begin
-      // do nothing
-    end
-  else
-  *)
   FStrDefaultStr := AValue.DelimitedText;
-
 end;
 
 procedure TPProperty.SetDefaultStr(const AValue: string);
 begin
   FStrDefaultStr := AValue;
-  //FStrDefault.DelimitedText := AValue;
 end;
 
 function TPProperty.GetDefaultStr: string;
@@ -871,34 +808,17 @@ end;
 function TPProperty.GetValueLines: TStrings;
 begin
   Result := TStringList.Create;
-  (*
-  if globimportMode then
-    begin
-      // return empty
-    end
-  else
-  *)
   Result.DelimitedText := FStrvaluesStr;
 end;
 
 procedure TPProperty.SetValueLines(const AValue: TStrings);
 begin
-  (*
-  if globimportMode then
-    begin
-      // do nothing
-    end
-  else
-  begin
-  *)
-  //FStrvalues.SetStrings(AValue);
   FStrvaluesStr := AValue.DelimitedText;
 end;
 
 procedure TPProperty.SetValueStr(const AValue: string);
 begin
   FStrvaluesStr := AValue;
-  //FStrvalues.DelimitedText := AValue;
 end;
 
 function TPProperty.GetValueStr: string;
@@ -918,12 +838,6 @@ begin
   globimportMode := False;
 end;
 
-(*
-function TPProperty.GetDisplayName: string;
-begin
-  Result := Fpname;
-end;
-*)
 
 { TPProperties }
 
@@ -932,25 +846,11 @@ begin
   inherited Create(AOwner, TPProperty);
 end;
 
-(*
-function TPProperties.GetItems(Index: integer): TPProperty;
-begin
-  Result := TPProperty(inherited Items[Index]);
-end;
-
-procedure TPProperties.SetItems(Index: integer; AValue: TPProperty);
-begin
-  Items[Index].Assign(AValue);
-end;
-*)
-
 
 function TPProperties.GetItem(Index: integer): TPProperty;
 begin
   Result := TPProperty(inherited GetItem(Index));
 end;
-
-
 
 function TPProperties.Insert(Index: integer): TPProperty;
 begin
@@ -1028,15 +928,6 @@ begin
 
 end;
 
-(*
-procedure TPProperties.activateImportMode;
-var
-  i : integer;
-begin
-  for i := 0 to count - 1 do
-    ITems[i].activateImportMode;
-end;
-*)
 procedure makeProperties;
 var
   //myprop: TStringList;
@@ -1047,34 +938,6 @@ var
   myrunmode: TRunMode;
 begin
   myrunmode := osdsettings.runmode;
-  (*
-  // clear existing props in StringGridProp
-  StringGridProp.Clean([gzNormal, gzFixedRows]);
-  StringGridProp.RowCount := 1;
-
-  if myconfiguration.UsePropDesktopicon and
-    (StringGridProp.Cols[1].IndexOf('DesktopIcon') = -1) then
-  begin
-    index := StringGridProp.RowCount;
-    //Inc(index);
-    //StringGridProp.InsertColRow(false,index);
-    //StringGridProp.RowCount := index;
-    myprop := TStringList.Create;
-    myprop.Add(IntToStr(index));
-    myprop.Add('DesktopIcon');
-    myprop.Add('Soll es ein Desktop Icon geben ?');
-    myprop.Add('bool');  //type
-    myprop.Add('False');      //multivalue
-    myprop.Add('False');      //editable
-    myprop.Add('[]');      //possible values
-    myprop.Add('False');      //default values
-    //StringGridProp.InsertRowWithValues(index,myprop);
-    StringGridProp.InsertColRow(False, index);
-    StringGridProp.Rows[index].Clear;
-    StringGridProp.Rows[index].SetStrings(myprop);
-    myprop.Free;
-    *)
-
   propexists := aktProduct.properties.propExists('DesktopIcon');
   if (aktProduct.productdata.desktopicon) and not propexists then
   begin
@@ -1085,10 +948,6 @@ begin
     myprop.Property_Type := bool;
     myprop.multivalue := False;
     myprop.editable := False;
-    //tmpstrlist := TStringList.Create;
-    //myprop.SetValueLines(tmpstrlist);
-    //myprop.SetDefaultLines(tmpstrlist);
-    //FreeAndNil(tmpstrlist);
     myprop.boolDefault := False;
   end
   else if propexists and not (aktProduct.productdata.desktopicon) then
@@ -1260,39 +1119,9 @@ procedure TopsiProduct.writeProjectFileToFile(myfilename: string);
 var
   Streamer: TJSONStreamer;
   JSONString: string;
-  //myfilename: string;
   configDir: array[0..MaxPathLen] of char; //Allocate memory
   configDirUtf8: utf8string;
   pfile: TextFile;
-
-  (*
-  // http://wiki.freepascal.org/File_Handling_In_Pascal
-  // SaveStringToFile: function to store a string of text into a diskfile.
-  //   If the function result equals true, the string was written ok.
-  //   If not then there was some kind of error.
-  function SaveStringToFile(theString, filePath: ansistring): boolean;
-  var
-    fsOut: TFileStream;
-  begin
-    // By default assume the writing will fail.
-    Result := False;
-
-    // Write the given string to a file, catching potential errors in the process.
-    try
-      fsOut := TFileStream.Create(filePath, fmCreate);
-      fsOut.Write(theString[1], length(theString));
-      fsOut.Free;
-
-      // At his point it is known that the writing went ok.
-      Result := True
-
-    except
-      on E: Exception do
-        LogDatei.log('String could not be written. Details: ' +
-          E.ClassName + ': ' + E.Message, LLError);
-    end;
-  end;
-  *)
 
 begin
   try
@@ -1329,22 +1158,12 @@ begin
       JSONString := Streamer.ObjectToJSONString(aktProduct.productdata);
       writeln(pfile, JSONString);
       activateImportMode;
-      // has to be fixed: JSONString := Streamer.ObjectToJSONString(aktProduct.properties);
-      //JSONString := Streamer.CollectionToJSON(aktProduct.properties);
       JSONString := Streamer.ObjectToJSONString(aktProduct.properties);
       writeln(pfile, JSONString);
       deactivateImportMode;
       JSONString := Streamer.ObjectToJSONString(aktProduct.dependencies);
-      //JSONString := Streamer.CollectionToJSON(aktProduct.dependencies);
       writeln(pfile, JSONString);
-      //writeln(pfile,aktProduct.FtargetOS);
       CloseFile(pfile);
-      (*
-      logdatei.log('Config: ' + JSONString, LLDebug);
-      if not SaveStringToFile(JSONString, myfilename) then
-        if Assigned(logdatei) then
-          LogDatei.log('failed write project file', LLError);
-      *)
 
     finally
       Streamer.Destroy;
@@ -1361,21 +1180,6 @@ begin
 end;
 
 
-(*
-procedure TSetupFile.OnRestoreProperty(Sender: TObject; AObject: TObject;
-  Info: PPropInfo; AValue: TJSONData; var Handled: Boolean);
-begin
-  Handled := False;
-  if (Info^.Name = 'setupFullFileName') then
-  begin
-    Handled := True;
-    SetSetupFullFileName(AValue.AsString);
-  end;
-  if (Info^.Name = 'setupFileNamePath') then
-    Handled := True;
-end;
-*)
-
 procedure TopsiProduct.readProjectFile(filename: string);
 var
   DeStreamer: TJSONDeStreamer;
@@ -1390,46 +1194,11 @@ var
   aktproperty: TPProperty;
   i: integer;
 
-  (*
-  // http://wiki.freepascal.org/File_Handling_In_Pascal
-  // LoadStringFromFile: function to load a string of text from a diskfile.
-  //   If the function result equals true, the string was load ok.
-  //   If not then there was some kind of error.
-  function LoadStringFromFile(theString, filePath: ansistring): boolean;
-  var
-    fsOut: TFileStream;
-  begin
-    // By default assume the writing will fail.
-    Result := False;
-
-    // Write the given string to a file, catching potential errors in the process.
-    try
-      fsOut := TFileStream.Create(filePath, fmOpenRead);
-      fsOut.Read(theString[1], length(theString));
-      fsOut.Free;
-
-      // At his point it is known that the writing went ok.
-      Result := True
-
-    except
-      on E: Exception do
-        if Assigned(logdatei) then
-          LogDatei.log('String could not be read. Details: ' +
-            E.ClassName + ': ' + E.Message, LLError)
-        else
-          ShowMessage('readProjectFile: String could not be read. Details: ' +
-            E.ClassName + ': ' + E.Message);
-    end;
-  end;
-  *)
-
 begin
   try
     if Assigned(logdatei) then
       logdatei.log('Start readProjectFile', LLDebug);
     // project file name
-    //configDir := IncludeTrailingPathDelimiter(path);
-    //myfilename := configDir + 'opsi-project.osd';
     myfilename := filename;
     myfilename := ExpandFileName(myfilename);
     if Assigned(logdatei) then
@@ -1472,13 +1241,10 @@ begin
 
               end;
             end;
-            //DeStreamer.JSONToObject(JSONString, aktProduct.properties);
-            //DeStreamer.JSONToCollection(JSONString, aktProduct.properties);
           end;
         deactivateImportMode;
         readln(pfile, JSONString);
         DeStreamer.JSONToObject(JSONString, aktProduct.dependencies);
-        //DeStreamer.JSONToCollection(JSONString, aktProduct.dependencies);
         // Cleanup
       finally
         DeStreamer.Destroy;
@@ -1663,7 +1429,6 @@ begin
 
     if (Femail_address = 'missing') or (FFullName = 'missing') or
       (Fworkbench_Path = 'missing') then
-      //or (FPathToOpsiPackageBuilder = 'missing') then
       Fconfig_filled := False
     else
       Fconfig_filled := True;
@@ -1682,15 +1447,11 @@ begin
       if not SaveStringToFile(JSONString, myfilename) then
         if Assigned(logdatei) then
           LogDatei.log('failed save configuration', LLError);
-      //AssignFile(myfile, myfilename);
-      //Rewrite(myfile);
-      //Write(myfile, JSONString);
       {$IFDEF WINDOWS}
       registerForWinExplorer(FregisterInFilemanager);
   {$ELSE}
   {$ENDIF WINDOWS}
     finally
-      //CloseFile(myfile);
       Streamer.Destroy;
       FService_pass := decryptStringBlow('opsi-setup-detector' +
         FService_user, FService_pass);
@@ -1710,7 +1471,6 @@ end;
 procedure TConfiguration.readconfig;
 var
   DeStreamer: TJSONDeStreamer;
-  //Streamer: TJSONStreamer;
   JSONString: string;
   myfilename: string;
   configDir: array[0..MaxPathLen] of char; //Allocate memory
@@ -1872,12 +1632,10 @@ end;
 
 function detectedbypatternwithor(parent: TClass; markerlist: TStringList): boolean;
 var
-  //tmpint: integer;
   patternindex: integer;
   pattern: string;
 begin
   Result := False;
-  //markerlist.Sort;
   for patternindex := 0 to TInstallerData(parent).patterns.Count - 1 do
   begin
     pattern := TInstallerData(parent).patterns[patternindex];
@@ -1888,13 +1646,11 @@ end;
 
 function detectedbypatternwithAnd(parent: TClass; markerlist: TStringList): boolean;
 var
-  //tmpint: integer;
   patternindex: integer;
   pattern: string;
   numberOfPatterndetected: integer = 0;
 begin
   Result := False;
-  //markerlist.Sort;
   for patternindex := 0 to TInstallerData(parent).patterns.Count - 1 do
   begin
     pattern := TInstallerData(parent).patterns[patternindex];
@@ -1909,8 +1665,6 @@ procedure initaktproduct;
 var
   i: integer;
   str: string;
-  //newdep: TPDependency;
-  //defaultIconFullFileName :string;
 begin
   LogDatei.log('Start initaktproduct ... ', LLInfo);
   i := 0;
@@ -2023,14 +1777,7 @@ end;
 function cleanOpsiId(opsiId: string): string; // clean up productId
 begin
   opsiId := LowerCase(opsiId);
-  (*
-  opsiId := StringReplace(opsiId,' '.'_',[frReplaceAll]);
-  opsiId := Stringsreplace(opsiId,[' ','/','\','"','''',':',],
-                                  ['_','_','_','_','_', '_','_',],
-                                  [frReplaceAll]);
-                                  *)
   Result := stringReplaceRegex(opsiId, '[^a-z0-9_-]', '_');
-
   // [^A-Za-z0-9._-]
 end;
 
