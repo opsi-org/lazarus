@@ -313,6 +313,9 @@ type
     TICheckBoxInstallFromLocal: TTICheckBox;
     TICheckBoxHandleLiceneKey: TTICheckBox;
     TICheckBoxS1Mst: TTICheckBox;
+    TICheckBoxS1Silent: TTICheckBox;
+    TICheckBoxS3Silent: TTICheckBox;
+    TICheckBoxS2Silent: TTICheckBox;
     TICheckBoxS2Mst: TTICheckBox;
     TICheckBoxS3Mst: TTICheckBox;
     TIComboBoxChannel: TTIComboBox;
@@ -465,6 +468,7 @@ type
     procedure TaskPanelWinClick(Sender: TObject);
     procedure TICheckBoxlicenseRequiredChange(Sender: TObject);
     procedure TICheckBoxS1MstChange(Sender: TObject);
+    procedure TICheckBoxS1SilentChange(Sender: TObject);
     procedure TICheckBoxS2MstChange(Sender: TObject);
     procedure TIComboBoxChannelChange(Sender: TObject);
     procedure TIComboBoxChannelEditingDone(Sender: TObject);
@@ -685,22 +689,22 @@ resourcestring
   rsInstalldirHint =
     'The (unquoted) directory path where the software will be installed.' +
     LineEnding +
-    'You may also choose the directory via the selection button on the right (if the product is installed).' +
+    'You may also choose the directory via the selection button on the right (if the product is installed).'
+    +
     LineEnding +
-    'If you there get a path like "C:\program Files" or "C:\program Files (x86)", ' +
-    LineEnding +
+    'If you there get a path like "C:\program Files" or "C:\program Files (x86)", '
+    + LineEnding +
     'it will be replaced by the matching opsi-script constant (e.g."%ProgramFiles32Dir%").';
   rsTargetProgHint =
     'The main program of the software that has to be installed.' +
-    LineEnding +
-    'Will be used for creating desktop icons or start menu entries.' +
+    LineEnding + 'Will be used for creating desktop icons or start menu entries.' +
     LineEnding + 'and to check before installaion if the program is running.' +
     LineEnding +
-    'Will be not detected. You have to choose it via the selection button on the right (if the product is installed).' +
+    'Will be not detected. You have to choose it via the selection button on the right (if the product is installed).'
+    +
     LineEnding + 'Unquoted file name.';
   rsUninstallProgHint =
-    'The unqoted path to the detected uninstall program.' +
-    LineEnding +
+    'The unqoted path to the detected uninstall program.' + LineEnding +
     'You may also choose the file via the selection button on the right (if the product is installed).';
 
 
@@ -861,6 +865,9 @@ begin
       TIS1Url.Link.SetObjectAndProperty(SetupFiles[0], 'link');
       TIS2Url.Link.SetObjectAndProperty(SetupFiles[1], 'link');
       TIS3Url.Link.SetObjectAndProperty(SetupFiles[2], 'link');
+      TICheckBoxS1Silent.Link.SetObjectAndProperty(SetupFiles[0], 'preferSilent');
+      TICheckBoxS2Silent.Link.SetObjectAndProperty(SetupFiles[1], 'preferSilent');
+      TICheckBoxS3Silent.Link.SetObjectAndProperty(SetupFiles[2], 'preferSilent');
       // product
       TIEditProdVersion3.Link.SetObjectAndProperty(productdata, 'productVersion');
       TISpinEditPackageVers.Link.SetObjectAndProperty(productdata, 'packageVersion');
@@ -900,24 +907,32 @@ begin
       TICheckBoxCustomdir.Hint := rsSupportCustomDirectoryHint;
       TICheckBoxDesktopIcon.Hint := rsUsePropDesktopicon;
       TICheckBoxCustomizeProfile.Hint := rsCustomizeProfileHint;
-      TIEditInstallDir1.Hint:= rsInstalldirHint;
-      TIEditInstallDir2.Hint:= rsInstalldirHint;
-      TIEditInstallDir3.Hint:= rsInstalldirHint;
-      TIEditSetup1UnProgram.Hint:= rsUninstallProgHint;
-      TIEditSetup2UnProgram.Hint:= rsUninstallProgHint;
-      TIEditSetup3UnProgram.Hint:= rsUninstallProgHint;
-      TIEditSetup1TargetProgram.Hint:= rsTargetProgHint;
-      TIEditSetup2TargetProgram.Hint:= rsTargetProgHint;
-      TIEditSetup3TargetProgram.Hint:= rsTargetProgHint;
-      TIEditInstallDir1.ShowHint:= true;
-      TIEditInstallDir2.ShowHint:= true;
-      TIEditInstallDir3.ShowHint:= true;
-      TIEditSetup1UnProgram.ShowHint:= true;
-      TIEditSetup2UnProgram.ShowHint:= true;
-      TIEditSetup3UnProgram.ShowHint:= true;
-      TIEditSetup1TargetProgram.ShowHint:= true;
-      TIEditSetup2TargetProgram.ShowHint:= true;
-      TIEditSetup3TargetProgram.ShowHint:= true;
+      TIEditInstallDir1.Hint := rsInstalldirHint;
+      TIEditInstallDir2.Hint := rsInstalldirHint;
+      TIEditInstallDir3.Hint := rsInstalldirHint;
+      TIEditSetup1UnProgram.Hint := rsUninstallProgHint;
+      TIEditSetup2UnProgram.Hint := rsUninstallProgHint;
+      TIEditSetup3UnProgram.Hint := rsUninstallProgHint;
+      TIEditSetup1TargetProgram.Hint := rsTargetProgHint;
+      TIEditSetup2TargetProgram.Hint := rsTargetProgHint;
+      TIEditSetup3TargetProgram.Hint := rsTargetProgHint;
+      TICheckBoxS1Silent.Hint := rsPreferSilent;
+      TICheckBoxS2Silent.Hint := rsPreferSilent;
+      TICheckBoxS3Silent.Hint := rsPreferSilent;
+
+
+      TIEditInstallDir1.ShowHint := True;
+      TIEditInstallDir2.ShowHint := True;
+      TIEditInstallDir3.ShowHint := True;
+      TIEditSetup1UnProgram.ShowHint := True;
+      TIEditSetup2UnProgram.ShowHint := True;
+      TIEditSetup3UnProgram.ShowHint := True;
+      TIEditSetup1TargetProgram.ShowHint := True;
+      TIEditSetup2TargetProgram.ShowHint := True;
+      TIEditSetup3TargetProgram.ShowHint := True;
+      TICheckBoxS1Silent.ShowHint:= True;
+      TICheckBoxS2Silent.ShowHint:= True;
+      TICheckBoxS3Silent.ShowHint:= True;
 
     end;
     TIEditworkbenchpath.Link.SetObjectAndProperty(myconfiguration, 'workbench_path');
@@ -1513,7 +1528,7 @@ begin
       //analyze_binary(myfilename, False, False, aktProduct.SetupFiles[0]);
       //if (not resultForm1.RadioButtonCreateOnly.Checked) then
       //if False then
-      if osdsettings.runmode <> analyzeOnly then
+      if (osdsettings.runmode <> analyzeOnly) and (not resultForm1.RadioButtonCreateOnly.Checked) then
       begin
         LogDatei.log('Start callServiceOrPackageBuilder in NOGUI mode: ', LLnotice);
         LogDatei.log('Start callServiceOrPackageBuilder with build + install: ',
@@ -2378,20 +2393,26 @@ begin
   FNewDepDlg.ComboBoxActState.Text := '';
   FNewDepDlg.RadioButtonState.Checked := True;
   FNewDepDlg.RadioButtonActionChange(Sender);
+
   // avoid nonsense dependencies in meta product
   if osdsettings.runmode = createMeta then
   begin
-    // allow  action setup for neted meta products
-    // (std is state installed)
-    //FNewDepDlg.GroupBox1.Enabled := False;
-    // ComboBoxActState will be corectly switched by groupbox1
-    FNewDepDlg.ComboBoxActState.Enabled := False;
+    // set required mode to 'state'
+    FNewDepDlg.RadioButtonState.Checked := True;
+    FNewDepDlg.RadioButtonAction.Checked:= False;
+    // fill combobox 'Action or State'
+    FNewDepDlg.RadioButtonActionChange(Sender);
+    // set Requirement type to empty
+    FNewDepDlg.ComboBoxReqType.Text:= '';
     // deny requirement types before / after
     FNewDepDlg.ComboBoxReqType.Enabled := False;
+    // allow  action setup for nested meta products
+    // (std is state installed)
+    FNewDepDlg.ComboBoxActState.Enabled := False;
   end
   else
   begin
-    FNewDepDlg.GroupBox1.Enabled := True;
+    //FNewDepDlg.GroupBox1.Enabled := True;
     FNewDepDlg.ComboBoxActState.Enabled := True;
     FNewDepDlg.ComboBoxReqType.Enabled := True;
   end;
@@ -3099,21 +3120,21 @@ end;
 
 procedure TResultform1.updateUninstaller(var mysetup: TSetupFile);
 var
-  str: string;
+  uninstcheckstr: string;
 begin
   // update uninstall program relevant data
   if mysetup.uninstallProg <> '' then
   begin
-    (*
-    str := mysetup.uninstallProg;
-    str := opsiunquotestr2(str, '"');
-    str := opsiunquotestr2(str, '''');
-    mysetup.uninstallProg := str;
-    *)
 
     mysetup.uninstallCheck.Clear;
-    mysetup.uninstallCheck.Add('if fileexists("' +
-      mysetup.uninstallProg + '")');
+    uninstcheckstr := mysetup.uninstallProg;
+    // the use of the  $installdir$ variable for the promary section function fileexists
+    // will for example result to:
+    // if fileexists(""+$installdir$+"\uninst.exe")
+    uninstcheckstr := StringReplace(uninstcheckstr, '$installdir$',
+      '"+$installdir$+"', [rfIgnoreCase]);
+
+    mysetup.uninstallCheck.Add('if fileexists("' + uninstcheckstr + '")');
     mysetup.uninstallCheck.Add('	set $oldProgFound$ = "true"');
     mysetup.uninstallCheck.Add('endif');
     mysetup.uninstallCommandLine :=
@@ -4339,6 +4360,63 @@ begin
   end;
 end;
 
+procedure TResultform1.TICheckBoxS1SilentChange(Sender: TObject);
+var
+  setupindex: integer;
+  cmdstr, fromstr, tostr: string;
+begin
+  if (Sender as TTICheckBox).Name = 'TICheckBoxS1Silent' then setupindex := 0
+  else if (Sender as TTICheckBox).Name = 'TICheckBoxS2Silent' then setupindex := 1
+  else if (Sender as TTICheckBox).Name = 'TICheckBoxS3Silent' then setupindex := 2;
+
+  if (Sender as TTICheckBox).State = cbChecked then
+  begin
+    { install }
+    { get the command line }
+    cmdstr := aktProduct.SetupFiles[setupindex].installCommandLine;
+    { get the string to replace }
+    fromstr := installerArray[integer(aktProduct.SetupFiles[setupindex].installerId)].unattendedsetup;
+    { get the string to replace with}
+    tostr := installerArray[integer(aktProduct.SetupFiles[setupindex].installerId)].silentsetup;
+    cmdstr := ReplaceText(cmdstr, fromstr, tostr);
+    { set the command line }
+    aktProduct.SetupFiles[setupindex].installCommandLine := cmdstr;
+    { uninstall }
+    { get the command line }
+    cmdstr := aktProduct.SetupFiles[setupindex].uninstallCommandLine;
+    { get the string to replace }
+    fromstr := installerArray[integer(aktProduct.SetupFiles[setupindex].installerId)].unattendeduninstall;
+    { get the string to replace with}
+    tostr := installerArray[integer(aktProduct.SetupFiles[setupindex].installerId)].silentuninstall;
+    cmdstr := ReplaceText(cmdstr, fromstr, tostr);
+    { set the command line }
+    aktProduct.SetupFiles[setupindex].uninstallCommandLine := cmdstr;
+  end
+  else
+  begin
+    { install }
+    { get the command line }
+    cmdstr := aktProduct.SetupFiles[setupindex].installCommandLine;
+    { get the string to replace }
+    fromstr := installerArray[integer(aktProduct.SetupFiles[setupindex].installerId)].silentsetup;
+    { get the string to replace with}
+    tostr := installerArray[integer(aktProduct.SetupFiles[setupindex].installerId)].unattendedsetup;
+    cmdstr := ReplaceText(cmdstr, fromstr, tostr);
+    { set the command line }
+    aktProduct.SetupFiles[setupindex].installCommandLine := cmdstr;
+    { uninstall }
+    { get the command line }
+    cmdstr := aktProduct.SetupFiles[setupindex].uninstallCommandLine;
+    { get the string to replace }
+    fromstr := installerArray[integer(aktProduct.SetupFiles[setupindex].installerId)].silentuninstall;
+    { get the string to replace with}
+    tostr := installerArray[integer(aktProduct.SetupFiles[setupindex].installerId)].unattendeduninstall;
+    cmdstr := ReplaceText(cmdstr, fromstr, tostr);
+    { set the command line }
+    aktProduct.SetupFiles[setupindex].uninstallCommandLine := cmdstr;
+  end;
+end;
+
 procedure TResultform1.TICheckBoxS2MstChange(Sender: TObject);
 begin
   if (Sender as TTICheckBox).State = cbChecked then
@@ -4398,7 +4476,7 @@ end;
 procedure TResultform1.TIEditSetup1UnProgramEditingDone(Sender: TObject);
 begin
   updateUninstaller(aktProduct.SetupFiles[0]);
-  TTIEdit(sender).Refresh;
+  TTIEdit(Sender).Refresh;
 end;
 
 procedure TResultform1.TIEditSetup2UnProgramEditingDone(Sender: TObject);
