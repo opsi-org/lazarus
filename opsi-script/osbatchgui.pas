@@ -624,6 +624,9 @@ begin
           myStringToTColor(skinIni.ReadString('ProgressBar', 'StartColor', 'clBlack'));
         ProgressBar.FinalColor :=
           myStringToTColor(skinIni.ReadString('ProgressBar', 'FinalColor', 'clBlack'));
+        if ProgressBar.StartColor <> ProgressBar.FinalColor then
+          startupmessages.Append('Warning: StartColor and FinalColor for ProgressBar in skin.ini must have the same value.' +
+            ' Therefore we set FinalColor internally to the value of StartColor.');
         ProgressBar.ShapeColor :=
           myStringToTColor(skinIni.ReadString('ProgressBar', 'ShapeColor', 'clBlack'));
         ProgressBar.backgroundColor :=
