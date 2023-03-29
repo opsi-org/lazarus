@@ -578,49 +578,20 @@ var
 
 resourcestring
 
-  sMBoxHeader = 'opsi setup detector';
-  sHelpHeader = 'opsi setup detector Help';
-  // dialogs
-  sAskCreatePacket = 'Create packet %0:s?';
-  sHelpFile = 'languages\Help.de.html';
-  sLogfileInfo = 'Logfile created: %s';
-  // Error messages
-  //sErrFldInstDirEmpty = 'Error: Field Install Directory is empty!';
-  sErrFldMsiProductCodeEmpty =
-    'Error: Field MSI Product Code is empty!' + Lineending +
-    'The MSI Product Code is needed for correct Uninstall process.' +
-    Lineending +
-    'Please install this Product and check for the MSI Product Code and write it to the delsub script';
+  // old before 4.1.0.2 ******************************************************************
   sErrProductIdEmpty = 'Error: Field opsi Product ID is empty!';
   sErrProductVersionEmpty = 'Error: Field Product Version is empty!';
-  //sErrFldSetupEmpty = 'Error: No setup file selected!';
-  //sErrMSINotFound = 'Error: MSI file does not exist!';
-  sErrMSTNotFound =
-    'Error: MST file does not exist in the MSI-directory!';
   sErrOpsiPackageBuilderStart = 'Error invoking opsi package builder';
-  //sErrOpsiPackageBuilderErrCode =
-  //  'Error invoking OPSI Package Builder (error code=%0:d). Please remove quiet option to check for further information.';
   sErrPacketBaseDirNotFound =
-    'Error: The Path to opsi-work-bench is empty or not valid!';
-  //sErrProductVersionInvalid = 'Error: for Product Version only numbers allowed !';
-  //sErrSelectInstallType =
-  //  'First select setup type tab (MSI, Inno Setup ...) and fill out form';
-  //sErrSetupFileNotFound = 'Error: Setup file does not exist!';
-  //sErrPacketDirExists = 'Error: opsi packet folder %s already exists!';
-  sErrExtractMSIfailed = 'Error: extracting MSI from %s failed!';
+    'Error: The path to the opsi_workbench is empty or not valid!';
   sInfoFinished = 'Create opsi package finished.';
   sInfoFailedBuild = 'Opsi package files created but build / install package failed';
   sInfoFailedCreate = 'Create opsi package files failed';
-  //sWarnInstDirEmptyNoDeinstall =
-  //  'Warning: Install Directory is empty, deinstall script cannot be patched!';
-
-  //sErrProductIdEmpty = 'We need a productId.';
-  //sErrProductVersionEmpty = 'We need a productVersion.';
   sWarnInstalldirUnknown = 'Error: Field Install Directory is empty or not valid!' +
     Lineending + 'For this Installer the Installdir could not be detected.' +
-    Lineending + 'The Installdir is needed for correct Uninstall process.' +
+    Lineending + 'The Installdir is needed for the uninstallation process.' +
     Lineending +
-    'Please install this Product and check for the Installdir and write it to the setup and the uninstall script';
+    'Please install this product manually and determine the Installdir. Then add it to the setup and the uninstall script';
 
   // new for 4.1.0.2 ******************************************************************
   rsNotImplemented = 'Not implemented right now.';
@@ -651,23 +622,23 @@ resourcestring
   rsCopyFileOnlyCap = 'Only selected file';
   //    'Should we copy not only the setup file. but the complete directory ?';
   rsSelectAppOrDir =
-    'First select MacOS .app or Directory where to find MacOS Installer files';
-  rsSelectMacFile = 'Now select MacOS installer file.';
-  rsRpmAnalyze = 'Analyze of RPM files';
-  rsRPMAnalyzeNotLinux = 'Detailed anlyze of deb files can only be done at linux';
-  rsDebAnalyze = 'Analyze of DEB files';
-  rsDebAnalyzeNotLinux = 'Detailed anlyze of deb files can only be done at linux';
+    'First select MacOS .app a directory that contains the MacOS installer files';
+  rsSelectMacFile = 'Now select the MacOS installer file.';
+  rsRpmAnalyze = 'Analysis of RPM files';
+  rsRPMAnalyzeNotLinux = 'Detailed analysis of rpm files can only be done in linux';
+  rsDebAnalyze = 'Analysis of DEB files';
+  rsDebAnalyzeNotLinux = 'Detailed analysis of deb files can only be done in linux';
   rscheckEntriesTitle = 'Please keep in mind:';
   rscheckEntriesMsg =
-    'The following data are automatically detected.' + Lineending +
-    'You have to check every data field if this data are correct or plausible.' +
-    Lineending + 'For some data you may have to install the program once ' +
-    Lineending + 'and than get the needed data from the completed installation.';
+    'The following data fields are automatically detected.' + Lineending +
+    'You have to check every data field to verify the data is correct or plausible.' +
+    Lineending + 'For some data fields you may have to install the program once manually' +
+    Lineending + 'and then retrieve the needed data from the completed installation.';
   rscheckEntriesRememberMe = 'Do not show this Message again';
-  rsMac3stepSelectionText = 'To select a MacOS installer we have a two Steps' +
-    LineEnding + 'Firststep is Dialog to select a Directory where to find the installer '
-    + LineEnding + 'or the "installer.app" Directory' + LineEnding +
-    'Second step (if needed) is a Dialog to select a installer file';
+  rsMac3stepSelectionText = 'To select a MacOS installer there are two Steps' +
+    LineEnding + 'The first step is a dialog to select a directory that contains the installer '
+    + LineEnding + 'or the "installer.app" directory' + LineEnding +
+    'The second step (if needed) is a dialog to select an installer file';
   rsMac3stepSelectionTitle = 'Attention: Two Step Selection Dialog';
   rsMacSelectionRememberMe = 'Do not show this Message again';
   rsServiceConnectionFailed =
@@ -680,10 +651,10 @@ resourcestring
     LineEnding + 'use action request "update" to enable mouse and keyboard again.';
   // Hints
   rsTemlateChannelHint =
-    'Choose what kind of templates should be used. If templates are not found, is default the fallback.';
+    'Choose what kind of templates should be used. If the templates are not found, default is the fallback.';
   rsSupportCustomDirectoryHint = 'Should we add code to support "custom" directories ?';
   rsInstallFromLocalHint =
-    'Should we add code to copy installer to local before installation ?';
+    'Should we add code to copy the installer locally before the installation ?';
   rsCustomizeProfileHint =
     'Should we add code to customize the installation in user profiles ?';
   rsInstalldirHint =
@@ -730,10 +701,6 @@ begin
   begin
     resultform1.memoadd(line);
   end;
-  (*
-  else
-    writeln(line);
-    *)
   LogDatei.log(line, loglevel);
 end;
 

@@ -74,7 +74,7 @@ function getProductInfoFromResource(infokey: string; filename: string): string;
 
 resourcestring
   sWarnMultipleMsi =
-    'Multiple (more than one) msi files found. Look to log file and directory: ';
+    'Multiple (more than one) msi files found. Check the log file and directory: ';
 
 implementation
 

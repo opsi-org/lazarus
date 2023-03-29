@@ -46,20 +46,20 @@ procedure opsiquotelist(var list1: TStringList; s2: string);
 resourcestring
   // new for 4.1.0.2 ******************************************************************
   rsDirectory = 'Directory ';
-  rsStillExitsWarningDeleteOverwrite = ' still exits. Should we make backup files ?';
+  rsStillExitsWarningDeleteOverwrite = ' still exits. Should we create backup files ?';
   rsCouldNotCreateDirectoryWarning = 'Could not create directory: ';
   rsConfirmBackupOrRemovalTitle =
-    'Should we use the existing directory and make backup files of old files, before creating the new ones ?  Otherwise the exiting directory will be deleted before creating a new one.';
+    'Should we use the existing directory and create a backup of the old files before creating the new ones ?  Otherwise the exiting directory will be deleted before creating a new one.';
   rsConfirmBackupCaption = 'Yes (Backup)';
   rsConfirmAbortCaption = 'Abort';
   rsConfirmDeleteCaption = 'No';
   rsConfirmAbortHint = 'Leave existing directory unchanged and abort';
   rsConfirmDeleteHint = 'Delete the complete directory before creating the new one.';
   rsConfirmBackupHint =
-    'All files that are directly in the directories "CLIENT_DATA" and "OPSI" will copy to an backup file.';
+    'All files that are directly in the directories "CLIENT_DATA" and "OPSI" will be copied to a backup file.';
   rsConfirmExpandButton = 'More Information ...';
   rsConfirmExpandedText =
-    'Yes: All files that are directly in the directories "CLIENT_DATA" and "OPSI" will be saved to an backup file before the new files are created' + LineEnding + 'No: Delete the complete directory before creating the new one.' + LineEnding + 'Abort: Leave existing directory unchanged and abort';
+    'Yes: All files that are located in the directories "CLIENT_DATA" and "OPSI" will be saved to a backup file before the new files are created\nNo: Delete the complete directory before creating the new one.\nAbort: Leave existing directory unchanged and abort';
 
 
 implementation

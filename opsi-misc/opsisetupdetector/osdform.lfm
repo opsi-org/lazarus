@@ -625,7 +625,7 @@ object resultForm1: TresultForm1
             object BtCreateMeta: TBitBtn
               Left = 5
               Height = 53
-              Hint = 'A product that installs nothing '#10'but may have a lot of dependencies'
+              Hint = 'A product that installs nothing '#13#10'but may have multiple dependencies'
               Top = 41
               Width = 528
               Align = alTop
@@ -863,7 +863,7 @@ object resultForm1: TresultForm1
             object BtSingleAnalyzeAndCreateLin: TBitBtn
               Left = 5
               Height = 58
-              Hint = 'Analyze some existing Setupfile '#10'and create an multiplatform opsi Product'
+              Hint = 'Analyze a single existing Setupfile '#13#10'and create a multiplatform opsi Product'
               Top = 39
               Width = 528
               Align = alTop
@@ -1345,7 +1345,7 @@ object resultForm1: TresultForm1
             object BtCreateEmptyTemplateLin: TBitBtn
               Left = 5
               Height = 42
-              Hint = 'Create a empty '#10'opsi Product Directory Structure'
+              Hint = 'Create an empty '#13#10'opsi Product Directory Structure'
               Top = 101
               Width = 528
               Align = alTop
@@ -1609,7 +1609,7 @@ object resultForm1: TresultForm1
               Anchors = []
               BorderSpacing.Around = 4
               Caption = 'Analyze File and Create Opsi Package'
-              Font.Height = -14
+              Font.Height = -17
               Glyph.Data = {
                 F6390000424DF63900000000000036000000280000004D000000300000000100
                 200000000000C039000064000000640000000000000000000000000000000000
@@ -2816,7 +2816,7 @@ object resultForm1: TresultForm1
             object BtCreateEmptyTemplateWin: TBitBtn
               Left = 5
               Height = 53
-              Hint = 'Create a empty '#10'opsi Product Directory Structure'
+              Hint = 'Create an empty '#13#10'opsi Product Directory Structure'
               Top = 153
               Width = 528
               Align = alTop
@@ -2969,7 +2969,7 @@ object resultForm1: TresultForm1
               Align = alTop
               Anchors = []
               BorderSpacing.Around = 4
-              Caption = 'Only analyze single File '
+              Caption = 'Only analyze a single File '
               Font.Height = -17
               Glyph.Data = {
                 B60E0000424DB60E00000000000036000000280000001D000000200000000100
@@ -3105,7 +3105,7 @@ object resultForm1: TresultForm1
               Anchors = []
               BorderSpacing.Around = 4
               Caption = 'Analyze File and Create Package ''with user'''
-              Font.Height = -14
+              Font.Height = -17
               Glyph.Data = {
                 F6390000424DF63900000000000036000000280000004D000000300000000100
                 200000000000C039000064000000640000000000000000000000000000000000
@@ -3650,7 +3650,7 @@ object resultForm1: TresultForm1
             object BtSingleAnalyzeAndCreateMac: TBitBtn
               Left = 5
               Height = 58
-              Hint = 'Analyze some existing Setupfile '#10'and create an multiplatform opsi Product'
+              Hint = 'Analyze a single existing Setupfile '#13#10'and create an opsi Product'
               Top = 38
               Width = 528
               Align = alTop
@@ -4132,7 +4132,7 @@ object resultForm1: TresultForm1
             object BtCreateEmptyTemplateMac: TBitBtn
               Left = 5
               Height = 53
-              Hint = 'Create a empty '#10'opsi Product Directory Structure'
+              Hint = 'Create an empty '#13#10'opsi Product Directory Structure'
               Top = 100
               Width = 528
               Align = alTop
@@ -4463,7 +4463,7 @@ object resultForm1: TresultForm1
             object BtSingleAnalyzeAndCreateMulti: TBitBtn
               Left = 5
               Height = 53
-              Hint = 'Analyze some existing Setupfile '#10'and create an multiplatform opsi Product'
+              Hint = 'Analyze existing Setupfiles '#13#10'and create a multiplatform opsi Product'
               Top = 38
               Width = 528
               Align = alTop
@@ -4944,7 +4944,7 @@ object resultForm1: TresultForm1
             object BtCreateEmptyTemplateMulti: TBitBtn
               Left = 5
               Height = 53
-              Hint = 'Create a empty '#10'opsi Product Directory Structure'
+              Hint = 'Create an empty '#13#10'opsi Product Directory Structure'
               Top = 95
               Width = 528
               Align = alTop
@@ -9522,7 +9522,7 @@ object resultForm1: TresultForm1
                 object Label75: TLabel
                   Left = 14
                   Height = 174
-                  Hint = 'Dependecies for Installation only.'#10'There are no dependecies for unistall.'
+                  Hint = 'Dependecies for installation only.'#13#10'There are no dependencies for the uninstallation.'
                   Top = 5
                   Width = 140
                   Align = alClient
@@ -10674,7 +10674,7 @@ object resultForm1: TresultForm1
                 Width = 482
                 Align = alTop
                 Anchors = [akTop]
-                Caption = 'create opsi product files and start interactive PackageBuilder'
+                Caption = 'create opsi product files and start the interactive PackageBuilder'
                 OnChange = RadioButtonBuildModeChange
                 ParentFont = False
                 TabOrder = 1
@@ -10813,7 +10813,7 @@ object resultForm1: TresultForm1
           object BtCreateProduct: TBitBtn
             Left = 826
             Height = 86
-            Hint = 'Create a opsi Product'
+            Hint = 'Create an opsi Product'
             Top = 10
             Width = 263
             Anchors = []

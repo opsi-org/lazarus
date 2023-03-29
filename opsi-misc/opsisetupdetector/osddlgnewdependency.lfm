@@ -70,7 +70,7 @@ object FNewDepDlg: TFNewDepDlg
       Align = alClient
       Alignment = taCenter
       BorderSpacing.Around = 7
-      Caption = 'Please edit the dependency.'#10'Please note:'#10'You may may neither give a requested installation state or a requested action. A combination is not allowed.'
+      Caption = 'Please edit the dependency.'#13#10'Please note:'#13#10'You may may either provide a requested installation state, or a requested action. A combination is not allowed.'
       ParentColor = False
       ParentFont = False
       WordWrap = True

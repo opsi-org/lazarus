@@ -532,12 +532,11 @@ resourcestring
 
   // new for 4.1.0.2 ******************************************************************
   rsworkbench_Path = 'Path to the opsi_workbench';
-  //rsPreInstallLines = 'opsi-script code, that will be included before the start of the installation.';
   rsworkbench_mounted =
     'Automatically detected. Is the opsi workbench reachable at workbench_Path.';
   rsconfig_filled = 'Automatically detected. Do we have all needed configurations';
   rsregisterInFilemanager =
-    'Should this program be registred to the Filemanger (Explorer) context menu ?';
+    'Should this program be registered to the Filemanger (Explorer) context menu ?';
   rsemail_address = 'Your email address, used for the changelog entry';
   rsfullName = 'Your full name, used for the changelog entry';
   rsimport_libraries = 'List of opsi-script libraries that have to be imported.' +
@@ -548,7 +547,7 @@ resourcestring
     + LineEnding + 'One per line. May be empty. Example: ' + LineEnding +
     'comment "Start the installation ..."';
   rspostInstallLines =
-    'List of opsi-script code lines that should be included after the installation finished.'
+    'List of opsi-script code lines that should be included after the installation is finished.'
     + LineEnding + 'One per line. May be empty. Example:' + LineEnding +
     'comment "Installation finished..."';
   rspreUninstallLines =
@@ -556,7 +555,7 @@ resourcestring
     + LineEnding + 'One per line. May be empty. Example:' + LineEnding +
     'comment "Start the uninstallation ..."';
   rspostUninstallLines =
-    'List of opsi-script code lines that should be included after the uninstallation finished.'
+    'List of opsi-script code lines that should be included after the uninstallation is finished.'
     + LineEnding + 'One per line. May be empty. Example:' + LineEnding +
     'comment "Uninstall finished..."';
   rspathToOpsiPackageBuilder =
@@ -566,13 +565,12 @@ resourcestring
   rsCnfdTitle = 'Edit your configuration here.' + LineEnding +
     'Click on a line to get help ' + LineEnding +
     'in the yellow field at the bottom.';
-  rsService_URL = 'The URL of the opsi webservice (like: https://<opsi-server>:4447)';
+  rsService_URL = 'The URL of the opsi webservice (Format: https://<opsi-server>:4447)';
   rsService_user = 'The user name used to connect to the opsi webservice';
   rsService_pass = 'The password of the given user used to connect to the opsi webservice'
-    + LineEnding + 'ATTENTION SECURITY RISK: Even it is stored encrypted,' +
-    LineEnding + 'it is easy to decrypt be analyzing the source code.' +
-    LineEnding + 'If empty you will be asked if the connection is started.';
-  //rsUseService = 'Should this program try to connect to the opsi web service';
+    + LineEnding + 'ATTENTION SECURITY RISK: Even though it is stored encrypted,' +
+    LineEnding + 'it is easy to decrypt by analyzing the source code.' +
+    LineEnding + 'If empty you will be asked when the connection is started.';
   rsConfigVersion = 'Do not change. Version of the config structure.';
   rsReadme_txt_templ = 'Path to the text file that is used as Read-me template';
   rsInternalSet = 'Do not change here - Internally set by a dialog.';
@@ -580,19 +578,13 @@ resourcestring
     'Should we create a "DesktopIcon" property and add code to handle desktop icons ?';
   rsPropDesktopiconDescription = 'Should there be a desktop icon ?';
   rsUsePropLicenseOrPool =
-    'Should we create a "LicenseOrPool" property and add code handle license keys ?';
+    'Should we create a "LicenseOrPool" property and add code to handle license keys ?';
   rsPropLicenseOrPoolDescription = 'License key or opsi license pool';
   rsPropInstallFromLocalDescription =
     'Determines if the installation files will be copied locally';
-  rsPropInstallArchDescription = 'Which architecture (32 / 64 Bit) has to be installed?';
+  rsPropInstallArchDescription = 'Which architecture (32 / 64 Bit) should be installed?';
   rsPreferSilent =
     'Should really silent installs (with no output) be preferred ? Default is false = unattended is preferred.';
-
-    (*
-  rscreateQuiet = 'Selects the Build mode Checkbox quiet.';
-  rscreateBuild = 'Selects the Build mode Checkbox build.';
-  rscreateInstall = 'Selects the Build mode Checkbox install.';
-  *)
 
 
 implementation
