@@ -16,7 +16,6 @@ uses
   ExtCtrls,
   Buttons,
   StdCtrls,
-  EditBtn,
   osdbasedata;
 
 type

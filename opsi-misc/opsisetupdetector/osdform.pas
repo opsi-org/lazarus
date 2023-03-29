@@ -1111,7 +1111,8 @@ begin
   if not DirectoryExists(mylocaledir) then
     mylocaledir := '';
   {$ENDIF LINUX}
-  mylang := GetDefaultLang;
+  //mylang := GetDefaultLang;  // depricated
+  mylang := SetDefaultLang('');
   SetDefaultLang(mylang, mylocaledir);
 
     {$IFDEF WINDOWS}
@@ -1187,14 +1188,15 @@ begin
   end
   else
   begin
-    mylang := GetDefaultLang;
+    //mylang := GetDefaultLang;  // depricated
+    mylang := SetDefaultLang('');
     {$IFDEF WINDOWS}
     if Mylang = '' then
       mylang := LowerCase(copy(GetSystemDefaultLocale(LOCALE_SABBREVLANGNAME), 1, 2));
     {$ENDIF WINDOWS}
     SetDefaultLang(mylang, mylocaledir);
     LogDatei.log('Detected default lang: ' + mylang, LLInfo);
-    LogDatei.log('Detected default lang: ' + GetDefaultLang, LLInfo);
+    LogDatei.log('Detected default lang: ' + SetDefaultLang(''), LLInfo);
   end;
 
 
@@ -1688,7 +1690,6 @@ end;
 
 procedure TResultform1.BtSingleAnalyzeAndCreateWinClick(Sender: TObject);
 var
-  i: integer;
   localTOSset: TTargetOSset;
 begin
   openDialog1.FilterIndex := 1;   // setup
@@ -1944,7 +1945,6 @@ end;
 
 procedure TResultform1.BtSingleAnalyzeAndCreateWithUserClick(Sender: TObject);
 var
-  i: integer;
   localTOSset: TTargetOSset;
 begin
   openDialog1.FilterIndex := 1;   // setup
@@ -2043,9 +2043,6 @@ end;
 
 procedure TResultform1.BtATwonalyzeAndCreateClick(Sender: TObject);
 var
-  myprop: TStringList;
-  index: integer;
-  i: integer;
   localTOSset: TTargetOSset;
 begin
   MessageDlg(rsTwonalyzeAndCreateMsgHead, rsTwonalyzeAndCreateMsgFirstSetup,
@@ -2194,7 +2191,6 @@ end;
 procedure TResultform1.BitBtnAddDepClick(Sender: TObject);
 var
   mydep: TPDependency;
-  index: integer;
 begin
   startOpsiServiceConnection;
   FNewDepDlg.ComboBoxActState.Text := '';
@@ -2274,10 +2270,8 @@ procedure TResultform1.BitBtnAddPropClick(Sender: TObject);
 // add property
 var
   myprop: TPProperty;
-  index: integer;
   i: integer;
   tmpstrlist: TStringList;
-  tmpstr: string;
   exists: boolean;
 begin
   FNewPropDlg.initFields;
@@ -2412,7 +2406,6 @@ end;
 procedure TResultform1.BitBtnDelPropClick(Sender: TObject);
 var
   index, Count: integer;
-  propname: string;
 begin
   // delete property
   if TIGridProp.SelectedRangeCount > 0 then
@@ -2538,10 +2531,7 @@ procedure TResultform1.BitBtnEditPropClick(Sender: TObject);
 // edit property
 var
   i, k: integer;
-  tmpliststr: string;
   tmpstr: string;
-  errorstr: string;
-  remaining: string;
   y: integer;
   myprop: TPProperty;
   tmpstrlist: TStringList;
@@ -3198,7 +3188,6 @@ var
   checkok, isapp, goon: boolean;
   filename: string;
   localTOSset: TTargetOSset;
-  installerselected: boolean = False;
 begin
   checkok := True;
   if ((aktProduct.SetupFiles[1].installDirectory = '') or
@@ -3385,7 +3374,6 @@ end;
 
 procedure TResultform1.BtSingleAnalyzeAndCreateLinClick(Sender: TObject);
 var
-  i: integer;
   filename: string = '';
   goon: boolean;
   isapp: boolean;
@@ -3433,7 +3421,6 @@ end;
 
 procedure TResultform1.BtSingleAnalyzeAndCreateMacClick(Sender: TObject);
 var
-  i: integer;
   filename: string;
   goon: boolean;
   isapp: boolean;
@@ -3488,7 +3475,6 @@ end;
 
 procedure TResultform1.BtSingleAnalyzeAndCreateMultiClick(Sender: TObject);
 var
-  i: integer;
   localTOSset: TTargetOSset;
   installerselected: boolean = False;
 begin
@@ -3531,10 +3517,7 @@ begin
 end;
 
 procedure TResultform1.BtAnalyzeOnlyClick(Sender: TObject);
-var
-  i: integer;
 begin
-
   OpenDialog1.FilterIndex := 1;   // setup
   if OpenDialog1.Execute then
   begin
@@ -3884,7 +3867,7 @@ end;
 
 procedure TResultform1.TICheckBoxS1SilentChange(Sender: TObject);
 var
-  setupindex: integer;
+  setupindex: integer = 0;
   cmdstr, fromstr, tostr: string;
 begin
   if (Sender as TTICheckBox).Name = 'TICheckBoxS1Silent' then setupindex := 0
