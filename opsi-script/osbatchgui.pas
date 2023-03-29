@@ -374,25 +374,25 @@ begin
 end;
 
 
-procedure SetLabelFontsFromSkinIni(skinIni: TIniFile; LabelName: TLabel;
+procedure SetLabelFontsFromSkinIni(skinIni: TIniFile; LabelControl: TLabel;
   NameInSkinIni: string; FontSize: integer);
 begin
-  LabelName.Font.Name :=
+  LabelControl.Font.Name :=
     skinIni.ReadString(NameInSkinIni, 'FontName', 'Arial');
-  LabelName.Font.Size := skinIni.ReadInteger(NameInSkinIni, 'FontSize', FontSize);
-  LabelName.Font.Color :=
+  LabelControl.Font.Size := skinIni.ReadInteger(NameInSkinIni, 'FontSize', FontSize);
+  LabelControl.Font.Color :=
     myStringToTColor(skinIni.ReadString(NameInSkinIni, 'FontColor', 'clBlack'));
-  LabelName.Font.Style := [];
+  LabelControl.Font.Style := [];
   if ('true' = skinIni.ReadString(NameInSkinIni, 'FontBold', 'false')) then
-    LabelName.Font.Style := LabelName.Font.Style + [fsBold];
+    LabelControl.Font.Style := LabelControl.Font.Style + [fsBold];
   if ('true' = skinIni.ReadString(NameInSkinIni, 'FontItalic', 'false')) then
-    LabelName.Font.Style := LabelName.Font.Style + [fsItalic];
+    LabelControl.Font.Style := LabelControl.Font.Style + [fsItalic];
   if ('true' = skinIni.ReadString(NameInSkinIni, 'FontUnderline', 'false')) then
-    LabelName.Font.Style := LabelName.Font.Style + [fsUnderline];
+    LabelControl.Font.Style := LabelControl.Font.Style + [fsUnderline];
 end;
 
 procedure LoadImageFromSkinIni(skinDir: string; skinIni: TIniFile;
-  NameInSkinIni: string; Image: TImage; ImageName: string);
+  Image: TImage; NameInSkinIni: string; ImageName: string);
 var
   ImageFilePath: string;
 begin
@@ -503,37 +503,37 @@ begin
         ImageBackground.Height := skinIni.ReadInteger('ImageBackground', 'Height', 430);
         Panel.Height := skinIni.ReadInteger('ImageBackground', 'Height', 430);
          *)
-        LoadImageFromSkinIni(skinDir, skinIni, 'ImageBackground', ImageBackground, 'bg.png');
+        LoadImageFromSkinIni(skinDir, skinIni, ImageBackground, 'ImageBackground', 'bg.png');
       except
       end;
 
       try
         SetBoundsFromSkinIni(ImageProduct, 'ImageProduct', SkinIni, 224, 44, 144, 144);
-        LoadImageFromSkinIni(skinDir, skinIni, 'ImageProduct', ImageProduct, 'product.png');
+        LoadImageFromSkinIni(skinDir, skinIni, ImageProduct, 'ImageProduct', 'product.png');
       except
       end;
 
       try
         SetBoundsFromSkinIni(ImageLogo1, 'ImageLogo1', SkinIni, 60, 80, 160, 160);
-        LoadImageFromSkinIni(skinDir, skinIni, 'ImageLogo1', ImageLogo1, 'logo1.png');
+        LoadImageFromSkinIni(skinDir, skinIni, ImageLogo1, 'ImageLogo1', 'logo1.png');
       except
       end;
 
       try
         SetBoundsFromSkinIni(ImageLogo2, 'ImageLogo2', SkinIni, 450, 80, 531, 91);
-        LoadImageFromSkinIni(skinDir, skinIni, 'ImageLogo2', ImageLogo2, 'logo2.png');
+        LoadImageFromSkinIni(skinDir, skinIni, ImageLogo2, 'ImageLogo2', 'logo2.png');
       except
       end;
 
       try
         SetBoundsFromSkinIni(Image1Over, 'Image1Over', SkinIni, 216, 36, 160, 160);
-        LoadImageFromSkinIni(skinDir, skinIni, 'Image1Over', Image1Over, 'over1.png');
+        LoadImageFromSkinIni(skinDir, skinIni, Image1Over, 'Image1Over', 'over1.png');
       except
       end;
 
       try
         SetBoundsFromSkinIni(Image2Over, 'Image2Over', SkinIni, 26, 267, 531, 91);
-        LoadImageFromSkinIni(skinDir, skinIni, 'Image2Over', Image2Over, 'over2.png');
+        LoadImageFromSkinIni(skinDir, skinIni, Image2Over, 'Image2Over', 'over2.png');
       except
       end;
 
