@@ -9578,6 +9578,7 @@ begin
   LogDatei.log_prog(FeatureNameForLogging + ': ' + Result, LLDebug);
 end;
 
+
 procedure linkActionsMain(const Sektion: TWorkSection; const UibInstScript: TuibInstScript; const testSyntax: boolean);
   var
     i: integer = 0;
@@ -18950,9 +18951,7 @@ begin
 
           if not errorOccured then
           begin
-            omc := TOpsiMethodCall.Create('getAndAssignSoftwareLicenseKey', parameters);
-
-            testresult := local_opsidata.CheckAndRetrieveString(omc, errorOccured);
+            testresult := local_opsidata.demandLicenseKey(parameters, errorOccured);
           end;
         end;
 
