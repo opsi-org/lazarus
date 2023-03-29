@@ -374,14 +374,24 @@ begin
 end;
 
 
+procedure LoadImageFromSkinIni(skinDir: string; skinIni: TIniFile;
+  NameInSkinIni: string; Image: TImage; ImageName: string);
+var
+  ImageFilePath: string;
+begin
+  ImageFilePath := skinDir + PathDelim + skinIni.ReadString(
+    NameInSkinIni, 'File', ImageName);
+  ImageFilePath := ExpandFileName(ImageFilePath);
+  if FileExists(ImageFilePath) and not IsDirectory(ImageFilePath) then
+    Image.picture.loadFromFile(ImageFilePath);
+end;
+
 procedure TFBatchOberflaeche.LoadSkin(const SkinDirectory: string;
   setLabelInfo: boolean = True);
 var
   skindir: string = '';
   skinFile: string = '';
   skinIni: TIniFile;
-  filename: string = '';
-  paramstr0enc: string;
 
   procedure setAlignment(var theLabel: TLabel; const newAligment: string);
   begin
@@ -440,7 +450,6 @@ begin
         if ('true' = skinIni.ReadString('LabelVersion', 'FontUnderline', 'false'))
         then
           LabelVersion.Font.Style := LabelVersion.Font.Style + [fsUnderline];
-
       except
       end;
 
@@ -557,61 +566,37 @@ begin
         ImageBackground.Height := skinIni.ReadInteger('ImageBackground', 'Height', 430);
         Panel.Height := skinIni.ReadInteger('ImageBackground', 'Height', 430);
          *)
-        filename := skinDir + PathDelim + skinIni.ReadString('ImageBackground',
-          'File', 'bg.png');
-        if FileExists(filename) and not IsDirectory(filename) then
-          ImageBackground.picture.loadFromFile(filename);
+        LoadImageFromSkinIni(skinDir, skinIni, 'ImageBackground', ImageBackground, 'bg.png');
       except
       end;
 
-
       try
         SetBoundsFromSkinIni(ImageProduct, 'ImageProduct', SkinIni, 224, 44, 144, 144);
-        filename := skinDir + PathDelim + skinIni.ReadString(
-          'ImageProduct', 'File', 'product.png');
-        FileName := ExpandFileName(FileName);
-        if FileExists(filename) and not IsDirectory(filename) then
-          ImageProduct.picture.loadFromFile(filename);
+        LoadImageFromSkinIni(skinDir, skinIni, 'ImageProduct', ImageProduct, 'product.png');
       except
       end;
 
       try
         SetBoundsFromSkinIni(ImageLogo1, 'ImageLogo1', SkinIni, 60, 80, 160, 160);
-        filename := skinDir + PathDelim + skinIni.ReadString(
-          'ImageLogo1', 'File', 'logo1.png');
-        FileName := ExpandFileName(FileName);
-        if FileExists(filename) and not IsDirectory(filename) then
-          ImageLogo1.picture.loadFromFile(filename);
+        LoadImageFromSkinIni(skinDir, skinIni, 'ImageLogo1', ImageLogo1, 'logo1.png');
       except
       end;
 
       try
         SetBoundsFromSkinIni(ImageLogo2, 'ImageLogo2', SkinIni, 450, 80, 531, 91);
-        filename := skinDir + PathDelim + skinIni.ReadString(
-          'ImageLogo2', 'File', 'logo2.png');
-        FileName := ExpandFileName(FileName);
-        if FileExists(filename) and not IsDirectory(filename) then
-          ImageLogo2.picture.loadFromFile(filename);
+        LoadImageFromSkinIni(skinDir, skinIni, 'ImageLogo2', ImageLogo2, 'logo2.png');
       except
       end;
 
       try
         SetBoundsFromSkinIni(Image1Over, 'Image1Over', SkinIni, 216, 36, 160, 160);
-        filename := skinDir + PathDelim + skinIni.ReadString(
-          'Image1Over', 'File', 'over1.png');
-        FileName := ExpandFileName(FileName);
-        if FileExists(filename) and not IsDirectory(filename) then
-          Image1Over.picture.loadFromFile(filename);
+        LoadImageFromSkinIni(skinDir, skinIni, 'Image1Over', Image1Over, 'over1.png');
       except
       end;
 
       try
         SetBoundsFromSkinIni(Image2Over, 'Image2Over', SkinIni, 26, 267, 531, 91);
-        filename := skinDir + PathDelim + skinIni.ReadString(
-          'Image2Over', 'File', 'over2.png');
-        FileName := ExpandFileName(FileName);
-        if FileExists(filename) and not IsDirectory(filename) then
-          Image2Over.picture.loadFromFile(filename);
+        LoadImageFromSkinIni(skinDir, skinIni, 'Image2Over', Image2Over, 'over2.png');
       except
       end;
 
