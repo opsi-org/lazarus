@@ -374,6 +374,23 @@ begin
 end;
 
 
+procedure SetLabelFontsFromSkinIni(skinIni: TIniFile; LabelName: TLabel;
+  NameInSkinIni: string; FontSize: integer);
+begin
+  LabelName.Font.Name :=
+    skinIni.ReadString(NameInSkinIni, 'FontName', 'Arial');
+  LabelName.Font.Size := skinIni.ReadInteger(NameInSkinIni, 'FontSize', FontSize);
+  LabelName.Font.Color :=
+    myStringToTColor(skinIni.ReadString(NameInSkinIni, 'FontColor', 'clBlack'));
+  LabelName.Font.Style := [];
+  if ('true' = skinIni.ReadString(NameInSkinIni, 'FontBold', 'false')) then
+    LabelName.Font.Style := LabelName.Font.Style + [fsBold];
+  if ('true' = skinIni.ReadString(NameInSkinIni, 'FontItalic', 'false')) then
+    LabelName.Font.Style := LabelName.Font.Style + [fsItalic];
+  if ('true' = skinIni.ReadString(NameInSkinIni, 'FontUnderline', 'false')) then
+    LabelName.Font.Style := LabelName.Font.Style + [fsUnderline];
+end;
+
 procedure LoadImageFromSkinIni(skinDir: string; skinIni: TIniFile;
   NameInSkinIni: string; Image: TImage; ImageName: string);
 var
@@ -429,47 +446,20 @@ begin
 
       try
         Panel.Color := myStringToTColor(skinIni.ReadString('Form', 'Color', 'clBlack'));
-
       except
       end;
 
       try
         setAlignment(LabelVersion, skinIni.ReadString('LabelVersion', 'Alignment', ''));
         SetBoundsFromSkinIni(LabelVersion, 'LabelVersion', SkinIni, 76, 16, 85, 16);
-        LabelVersion.Font.Name :=
-          skinIni.ReadString('LabelVersion', 'FontName', 'Arial');
-        LabelVersion.Font.Size := skinIni.ReadInteger('LabelVersion', 'FontSize', 8);
-        LabelVersion.Font.Color :=
-          myStringToTColor(skinIni.ReadString('LabelVersion', 'FontColor', 'clBlack'));
-        LabelVersion.Font.Style := [];
-        if ('true' = skinIni.ReadString('LabelVersion', 'FontBold', 'false')) then
-          LabelVersion.Font.Style := LabelVersion.Font.Style + [fsBold];
-        if ('true' = skinIni.ReadString('LabelVersion', 'FontItalic', 'false'))
-        then
-          LabelVersion.Font.Style := LabelVersion.Font.Style + [fsItalic];
-        if ('true' = skinIni.ReadString('LabelVersion', 'FontUnderline', 'false'))
-        then
-          LabelVersion.Font.Style := LabelVersion.Font.Style + [fsUnderline];
+        SetLabelFontsFromSkinIni(SkinIni, LabelVersion, 'LabelVersion', 8);
       except
       end;
 
       try
         setAlignment(LabelProduct, skinIni.ReadString('LabelProduct','Alignment',''));
         SetBoundsFromSkinIni(LabelProduct, 'LabelProduct', SkinIni, 144, 207, 313, 41);
-        LabelProduct.Font.Name :=
-          skinIni.ReadString('LabelProduct', 'FontName', 'Arial');
-        LabelProduct.Font.Size := skinIni.ReadInteger('LabelProduct', 'FontSize', 32);
-        LabelProduct.Font.Color :=
-          myStringToTColor(skinIni.ReadString('LabelProduct', 'FontColor', 'clBlack'));
-        LabelProduct.Font.Style := [];
-        if ('true' = skinIni.ReadString('LabelProduct', 'FontBold', 'false')) then
-          LabelProduct.Font.Style := LabelProduct.Font.Style + [fsBold];
-        if ('true' = skinIni.ReadString('LabelProduct', 'FontItalic', 'false'))
-        then
-          LabelProduct.Font.Style := LabelProduct.Font.Style + [fsItalic];
-        if ('true' = skinIni.ReadString('LabelProduct', 'FontUnderline', 'false'))
-        then
-          LabelProduct.Font.Style := LabelProduct.Font.Style + [fsUnderline];
+        SetLabelFontsFromSkinIni(SkinIni, LabelProduct, 'LabelProduct', 32);
         LabelProduct.OptimalFill := True;
       except
       end;
@@ -477,81 +467,28 @@ begin
       try
         setAlignment(LabelCommand, skinIni.ReadString('LabelCommand', 'Alignment', ''));
         SetBoundsFromSkinIni(LabelCommand, 'LabelCommand', SkinIni, 29, 316, 524, 15);
-        LabelCommand.Font.Name :=
-          skinIni.ReadString('LabelCommand', 'FontName', 'Arial');
-        LabelCommand.Font.Size := skinIni.ReadInteger('LabelCommand', 'FontSize', 8);
-        LabelCommand.Font.Color :=
-          myStringToTColor(skinIni.ReadString('LabelCommand', 'FontColor', 'clBlack'));
-        LabelCommand.Font.Style := [];
-        if ('true' = skinIni.ReadString('LabelCommand', 'FontBold', 'false')) then
-          LabelCommand.Font.Style := LabelCommand.Font.Style + [fsBold];
-        if ('true' = skinIni.ReadString('LabelCommand', 'FontItalic', 'false'))
-        then
-          LabelCommand.Font.Style := LabelCommand.Font.Style + [fsItalic];
-        if ('true' = skinIni.ReadString('LabelCommand', 'FontUnderline', 'false'))
-        then
-          LabelCommand.Font.Style := LabelCommand.Font.Style + [fsUnderline];
+        SetLabelFontsFromSkinIni(SkinIni, LabelCommand, 'LabelCommand', 8);
       except
       end;
 
       try
         setAlignment(LabelInfo, skinIni.ReadString('LabelInfo', 'Alignment', ''));
         SetBoundsFromSkinIni(LabelInfo, 'LabelInfo', SkinIni, 29, 272, 524, 20);
-        LabelInfo.Font.Name := skinIni.ReadString('LabelInfo', 'FontName', 'Arial');
-        LableInfoDefaultFontSize := skinIni.ReadInteger('LabelInfo', 'FontSize', 11);
-        LabelInfo.Font.Size := LableInfoDefaultFontSize;
-        LabelInfo.Font.Color :=
-          myStringToTColor(skinIni.ReadString('LabelInfo', 'FontColor', 'clBlack'));
-        LabelInfo.Font.Style := [];
-        if ('true' = skinIni.ReadString('LabelInfo', 'FontBold', 'false')) then
-          LabelInfo.Font.Style := LabelInfo.Font.Style + [fsBold];
-        if ('true' = skinIni.ReadString('LabelInfo', 'FontItalic', 'false')) then
-          LabelInfo.Font.Style := LabelInfo.Font.Style + [fsItalic];
-        if ('true' = skinIni.ReadString('LabelInfo', 'FontUnderline', 'false'))
-        then
-          LabelInfo.Font.Style := LabelInfo.Font.Style + [fsUnderline];
+        SetLabelFontsFromSkinIni(SkinIni, LabelInfo, 'LabelInfo', 11);
       except
       end;
 
       try
         setAlignment(LabelDetail, skinIni.ReadString('LabelDetail', 'Alignment', ''));
         SetBoundsFromSkinIni(LabelDetail, 'LabelDetail', SkinIni, 29, 292, 524, 20);
-        LabelDetail.Font.Name :=
-          skinIni.ReadString('LabelDetail', 'FontName', 'Arial');
-        LabelDetail.Font.Size := skinIni.ReadInteger('LabelDetail', 'FontSize', 8);
-        LabelDetail.Font.Color :=
-          myStringToTColor(skinIni.ReadString('LabelDetail', 'FontColor', 'clBlack'));
-        LabelDetail.Font.Style := [];
-        if ('true' = skinIni.ReadString('LabelDetail', 'FontBold', 'false')) then
-          LabelDetail.Font.Style := LabelDetail.Font.Style + [fsBold];
-        if ('true' = skinIni.ReadString('LabelDetail', 'FontItalic', 'false'))
-        then
-          LabelDetail.Font.Style := LabelDetail.Font.Style + [fsItalic];
-        if ('true' = skinIni.ReadString('LabelInfo', 'FontUnderline', 'false'))
-        then
-          LabelDetail.Font.Style := LabelDetail.Font.Style + [fsUnderline];
+        SetLabelFontsFromSkinIni(SkinIni, LabelDetail, 'LabelDetail', 8);
       except
       end;
 
       try
         setAlignment(LabelProgress, skinIni.ReadString('LabelProgress', 'Alignment', ''));
         SetBoundsFromSkinIni(LabelProgress, 'LabelProgress', SkinIni, 29, 331, 524, 15);
-        LabelProgress.Font.Name :=
-          skinIni.ReadString('LabelProgress', 'FontName', 'Arial');
-        LabelProgress.Font.Size :=
-          (*2; *) skinIni.ReadInteger('LabelProgress', 'FontSize', 8);
-        LabelProgress.Font.Color :=
-          myStringToTColor(skinIni.ReadString('LabelProgress', 'FontColor', 'clBlack'));
-        LabelProgress.Font.Style := [];
-        if ('true' = skinIni.ReadString('LabelProgress', 'FontBold', 'false'))
-        then
-          LabelProgress.Font.Style := LabelProgress.Font.Style + [fsBold];
-        if ('true' = skinIni.ReadString('LabelProgress', 'FontItalic', 'false'))
-        then
-          LabelProgress.Font.Style := LabelProgress.Font.Style + [fsItalic];
-        if ('true' = skinIni.ReadString('LabelProgress', 'FontUnderline', 'false'))
-        then
-          LabelProgress.Font.Style := LabelProgress.Font.Style + [fsUnderline];
+        SetLabelFontsFromSkinIni(SkinIni, LabelProgress, 'LabelProgress', 8); // 2
       except
       end;
 
