@@ -12,6 +12,7 @@ object FBatchOberflaeche: TFBatchOberflaeche
   Font.Pitch = fpVariable
   OnActivate = FormActivate
   OnClose = FormClose
+  OnCreate = FormShow
   OnMouseDown = FormMouseDown
   OnMouseMove = FormMouseMove
   OnMouseUp = FormMouseUp
