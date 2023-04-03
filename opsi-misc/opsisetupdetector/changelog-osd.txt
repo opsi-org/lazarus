@@ -89,6 +89,10 @@ opsi-setup-detector (4.2.2.0-1) stable; urgency=low
    * remove old unused code
    * rmove old unused resource strings
    * fix corrected english resource strings (thanks to m.knauer)
+   * fix pattern installshieldMSI:
+        pattern 'issetup.dll' seems not to be there always : infopattern
+   * new osdbasedata: TinstallerData : notpatterns
+     patterns that indicate 'this is not this installer type'
 
    todo:
    remove all mywrite

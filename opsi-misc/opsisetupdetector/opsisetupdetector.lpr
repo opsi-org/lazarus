@@ -35,10 +35,10 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
 
 
 begin
-  Application.Scaled := True;
+  Application.Scaled:=True;
   RequireDerivedFormResource := True;
   Application.Initialize;
-  Application.Title := 'opsi-setup-detector';
+  Application.Title:='opsi-setup-detector';
   Application.CreateForm(TresultForm1, resultForm1);
   Application.CreateForm(TFNewDepDlg, FNewDepDlg);
   Application.CreateForm(TFNewPropDlg, FNewPropDlg);

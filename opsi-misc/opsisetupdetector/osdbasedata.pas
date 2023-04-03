@@ -77,6 +77,7 @@ type
     description: string;
     patterns: TStringList;
     infopatterns: TStringList;
+    notpatterns: TStringList;
     silentsetup: string;
     unattendedsetup: string;
     silentuninstall: string;
@@ -604,6 +605,7 @@ constructor TInstallerData.Create;
 begin
   patterns := TStringList.Create;
   infopatterns := TStringList.Create;
+  notpatterns := TStringList.Create;
   installErrorHandlingLines := TStringList.Create;
   inherited;
 end;
@@ -612,6 +614,7 @@ destructor TInstallerData.Destroy;
 begin
   FreeAndNil(patterns);
   FreeAndNil(infopatterns);
+  FreeAndNil(notpatterns);
   FreeAndNil(installErrorHandlingLines);
   inherited;
 end;
@@ -1634,6 +1637,7 @@ function detectedbypatternwithor(parent: TClass; markerlist: TStringList): boole
 var
   patternindex: integer;
   pattern: string;
+  numberOfNotpatternDetected: integer = 0;
 begin
   Result := False;
   for patternindex := 0 to TInstallerData(parent).patterns.Count - 1 do
@@ -1642,13 +1646,21 @@ begin
     if markerlist.IndexOf(LowerCase(pattern)) >= 0 then
       Result := True;
   end;
+  for patternindex := 0 to TInstallerData(parent).notpatterns.Count - 1 do
+  begin
+    pattern := TInstallerData(parent).notpatterns[patternindex];
+    if markerlist.IndexOf(LowerCase(pattern)) >= 0 then
+      Inc(numberOfNotpatternDetected);
+  end;
+  if numberOfNotpatternDetected > 0 then Result := False;
 end;
 
 function detectedbypatternwithAnd(parent: TClass; markerlist: TStringList): boolean;
 var
   patternindex: integer;
   pattern: string;
-  numberOfPatterndetected: integer = 0;
+  numberOfPatternDetected: integer = 0;
+  numberOfNotpatternDetected: integer = 0;
 begin
   Result := False;
   for patternindex := 0 to TInstallerData(parent).patterns.Count - 1 do
@@ -1657,8 +1669,17 @@ begin
     if markerlist.IndexOf(LowerCase(pattern)) >= 0 then
       Inc(numberOfPatterndetected);
   end;
+  for patternindex := 0 to TInstallerData(parent).notpatterns.Count - 1 do
+  begin
+    pattern := TInstallerData(parent).notpatterns[patternindex];
+    if markerlist.IndexOf(LowerCase(pattern)) >= 0 then
+      Inc(numberOfNotpatternDetected);
+  end;
   if numberOfPatterndetected = TInstallerData(parent).patterns.Count then
+  begin
     Result := True;
+    if numberOfNotpatternDetected > 0 then Result := False;
+  end;
 end;
 
 procedure initaktproduct;
@@ -1895,8 +1916,13 @@ begin
     uninstall_waitforprocess := '';
     uninstallProg := '$installdir$\uninstall.exe';
     patterns.Add('InstallShield');
-    patterns.Add(
-      '<description>InstallShield.Setup</description>');
+    // Not always there:
+    infopatterns.Add('<description>InstallShield.Setup</description>');
+    // have to be there
+    patterns.Add('InstallShield Wizard');
+    patterns.Add('Setup Launcher');
+    // only installshieldMSI:
+    notpatterns.Add('transforms');
     link :=
       'https://docs.revenera.com/installshield21helplib/helplibrary/IHelpSetup_EXECmdLine.htm';
     // 'https://www.ibm.com/docs/en/personal-communications/12.0?topic=guide-installshield-command-line-parameters'
@@ -1922,7 +1948,8 @@ begin
     uninstall_waitforprocess := '';
     uninstallProg := '$installdir$\uninstall.exe';
     patterns.Add('nstallshield');
-    patterns.Add('issetup.dll');
+    // pattern 'issetup.dll' seems not to be there always
+    infopatterns.Add('issetup.dll');
     patterns.Add('transforms');
     patterns.Add('msiexec.exe');
     link :=
