@@ -114,6 +114,8 @@ begin
   myconfigurationhints.Add('Service_URL=' + rsService_URL);
   myconfigurationhints.Add('Service_user=' + rsService_user);
   myconfigurationhints.Add('Service_pass=' + rsService_pass);
+  myconfigurationhints.Add('preferSilent=' + rsPreferSilent);
+
   //myconfigurationhints.Add('UseService=' + rsUseService);
   (*
   myconfigurationhints.Add('CreateQuiet='+rsCreateQuiet);
