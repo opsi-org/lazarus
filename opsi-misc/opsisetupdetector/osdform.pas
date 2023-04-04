@@ -713,6 +713,9 @@ begin
     helplist.Append(' --m <mode> -> Define tho run mode <mode> (default=singleAnalyzeCreate)');
     helplist.Append(
       '     possible modes are: singleAnalyzeCreate, createTemplate');
+    helplist.Append(' --template-channel=<channel> -> Create product from template channel <channel>');
+    helplist.Append(' --c <channel> -> Create product from template channel <channel>');
+    helplist.Append('     possible channels are: training, default, structured, custom');
     ShowMessage(helplist.Text);
     FreeAndNil(helplist);
   end
@@ -738,6 +741,9 @@ begin
     writeln(' --mode=<mode> -> Define tho run mode <mode> (default=singleAnalyzeCreate)');
     writeln(' --m <mode> -> Define tho run mode <mode> (default=singleAnalyzeCreate)');
     writeln('     possible modes are: singleAnalyzeCreate, createTemplate');
+    writeln(' --template-channel=<channel> -> Create product from template channel <channel>');
+    writeln(' --c <channel> -> Create product from template channel <channel>');
+    writeln('     possible channels are: training, default, structured, custom');
   end;
 
   Application.Terminate;
@@ -1146,9 +1152,10 @@ begin
   optionlist.Append('targetOS::');
   optionlist.Append('productId::');
   optionlist.Append('mode::');
+  optionlist.Append('template-channel::');
 
   // quick check parameters
-  ErrorMsg := Application.CheckOptions('hfnltpm', optionlist);
+  ErrorMsg := Application.CheckOptions('hfnltpmc', optionlist);
   if ErrorMsg <> '' then
   begin
     LogDatei.log('Exception while handling parameters.', LLcritical);
@@ -1276,6 +1283,7 @@ begin
     end;
   end;
 
+
   initaktproduct;
   resultform1.updateGUI;
 
@@ -1285,6 +1293,26 @@ begin
     LogDatei.log('Will use as productId: ' + forceProductId, LLInfo);
     forceProductId := cleanOpsiId(forceProductId);
     LogDatei.log('Will use as productId: ' + forceProductId, LLInfo);
+  end;
+
+  if Application.HasOption('c', 'template-channel') then
+  begin
+    tmpstr := trim(Application.GetOptionValue('c', 'template-channel'));
+    try
+      aktProduct.productdata.channelDir := templChannelStrings[TTemplateChannels(GetEnumValue(TypeInfo(TTemplateChannels), tmpstr))];
+      LogDatei.log('Will use as mode: ' + aktProduct.productdata.channelDir, LLInfo);
+    except
+      myerror := 'Error: Given mode: ' + tmpstr +
+        ' is not valid. Should be on of: training, default, structured, custom';
+      {$IFNDEF WINDOWS}
+      writeln(myerror);
+      {$ENDIF WINDOWS}
+      LogDatei.log(myerror, LLCritical);
+      system.ExitCode := 1;
+      WriteHelp;
+      Application.Terminate;
+      Exit;
+    end;
   end;
 
   if Application.HasOption('f', 'filename') then

@@ -508,7 +508,7 @@ function cleanOpsiId(opsiid: string): string; // clean up productId
 const
   CONFVERSION = '4.2.0.9';
   templChannelStrings: array [TTemplateChannels] of string =
-    ('training', 'default', 'structured', 'high_structured');
+    ('training', 'default', 'structured', 'custom');
 
 var
   aktProduct: TopsiProduct;

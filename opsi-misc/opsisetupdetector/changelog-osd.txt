@@ -73,6 +73,11 @@ stWixToolset,
   * see also: https://www.nuget.org/
   * see also: https://de.wikipedia.org/wiki/NuGet
 
+* SAP front-end installer self-extractor tool
+  * beispiel sap-analysis-for-office
+  * marker: "SAP front-end installer self-extractor tool"
+  * info https://help.sap.com/doc/2e5792a2569b403da415080f35f8bbf6/770.00/en-US/sap_frontend_inst_guide.pdf
+
 Uebersicht:
 http://www.fredshack.com/docs/packagers.html
 https://silent-install.net/installer/start
@@ -93,6 +98,7 @@ opsi-setup-detector (4.2.2.0-1) stable; urgency=low
         pattern 'issetup.dll' seems not to be there always : infopattern
    * new osdbasedata: TinstallerData : notpatterns
      patterns that indicate 'this is not this installer type'
+   * new cli parameter: -c / --template-channel
 
    todo:
    remove all mywrite

@@ -10,6 +10,8 @@ uses
   ShlObj,
   Registry,
   verinfo,
+  jwatlhelp32,
+  jwawindows,
   {$ENDIF WINDOWS}
   Dialogs,
   LCLType,
@@ -57,6 +59,31 @@ implementation
 uses
   osdform,
   ChooseInstallerDlg;
+
+procedure KillProcess(name: String);
+var h:tHandle;
+    pe:tProcessEntry32;
+    sPrcName:string;
+begin
+  h:=CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+  try
+    pe.dwSize:=SizeOf(pe);
+    if Process32First(h,pe) then begin
+      while Process32Next(h,pe) do
+      begin
+        sPrcName:=pe.szExeFile;
+        if pos(LowerCase(name),LowerCase(sPrcName))>0 then
+        begin
+          TerminateProcess(OpenProcess(Process_Terminate, False, pe.th32ProcessID), 0);
+        end;
+      end;
+    end
+    else RaiseLastOSError;
+  finally
+  end;
+end;
+
+
 
 function getProductInfoFromResource(infokey: string; filename: string): string;
 { Allowed keys:
@@ -428,7 +455,7 @@ var
   myCommand: string;
   installScriptISS: string;
   issLine: string = '';
-  fISS: Text;
+  fISS: TextFile;
   // components from install_script.iss[setup]
   AppName: string = '';
   AppVersion: string = '';
@@ -672,6 +699,7 @@ begin
   end
   else
   begin
+    logdatei.log_list(myoutlines,LLdebug);
     //stopped := KillProcessbyname(ExtractFileName(myfilename), found);
     smask := opsitmp + '*.msi';
     LogDatei.log('Looking for: ' + smask, LLInfo);
@@ -701,6 +729,8 @@ begin
     finally
       mymsilist.Free;
     end;
+    FreeAndNil(myoutlines);
+    KillProcess(ExtractFileName(myfilename));
   end;
   {$ENDIF WINDOWS}
   mywrite('get_InstallShield_info finished');

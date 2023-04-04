@@ -9569,10 +9569,10 @@ object resultForm1: TresultForm1
                 TIOptions = [tgoStartIndexAtOne, tgoShowOnlyProperties]
                 ColWidths = (
                   64
-                  144
-                  144
-                  144
-                  144
+                  139
+                  139
+                  139
+                  142
                 )
               end
               object PanelDepBtns: TPanel
@@ -9995,10 +9995,10 @@ object resultForm1: TresultForm1
                 TIOptions = [tgoStartIndexAtOne, tgoShowOnlyProperties]
                 ColWidths = (
                   64
-                  257
-                  257
-                  257
-                  258
+                  253
+                  253
+                  253
+                  253
                 )
               end
             end
