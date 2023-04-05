@@ -11,8 +11,8 @@ opsi-script (4.12.9.0) unreleased; urgency=medium
 
 opsi-script (4.12.8.1) unreleased; urgency=medium
 
-  * [fix]  osbatchgui.lfm, osbatchgui.pas: remove creation of TQProgressbar from method FormShow,
-           move creation of TQProgressbar into the new method FormCreate.
+  * [fix] osbatchgui.lfm, osbatchgui.pas: remove creation of TQProgressbar from method FormShow,
+          move creation of TQProgressbar into the new method FormCreate.
   * [fix] osfunc.pas: FileGetWriteAccess now set rigths only for the current file and directory 
           but not for any subdirectories and files within.
 
