@@ -369,7 +369,7 @@ type
     //procedure productOnClient_getobject_actualclient;
     function getInstallableProducts: TStringList;
     function getOpsiModules: TStringList;
-    function licenseOnClient_getOrCreateObject(const parameters: array of string;
+    function getLicenseOnClientObject(const parameters: array of string;
       var errorOccured: boolean): string;
   protected
     FServiceLastErrorInfo: TStringList;
@@ -3889,7 +3889,7 @@ begin
   omc.Free;
 end;
 
-function TOpsi4Data.licenseOnClient_getOrCreateObject(const parameters: array of string; var errorOccured: boolean):string;
+function TOpsi4Data.getLicenseOnClientObject(const parameters: array of string; var errorOccured: boolean):string;
 var
   omc: TOpsiMethodCall;
 begin
@@ -5347,7 +5347,7 @@ function TOpsi4Data.demandLicenseKey(const parameters: array of string;
 var
   JSONString: string;
 begin
-  JSONString := licenseOnClient_getOrCreateObject(parameters, errorOccured);
+  JSONString := getLicenseOnClientObject(parameters, errorOccured);
   jsonAsObjectGetValueByKey(JSONString, 'licenseKey', Result);
 end;
 
