@@ -26258,7 +26258,6 @@ begin
                 if CheckDirectVariableInitialization(Remaining) then
                   SetVariableWithErrors(Sektion, Remaining, Expressionstr + Remaining,
                     linecounter, InfoSyntaxError, NestLevel);
-                ;
               end;
 
               tsDefineFunction:
