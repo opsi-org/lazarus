@@ -375,11 +375,11 @@ end;
 
 
 procedure SetLabelFontsFromSkinIni(skinIni: TIniFile; LabelControl: TLabel;
-  NameInSkinIni: string; FontSize: integer);
+  NameInSkinIni: string; DefaultFontSize: integer);
 begin
   LabelControl.Font.Name :=
     skinIni.ReadString(NameInSkinIni, 'FontName', 'Arial');
-  LabelControl.Font.Size := skinIni.ReadInteger(NameInSkinIni, 'FontSize', FontSize);
+  LabelControl.Font.Size := skinIni.ReadInteger(NameInSkinIni, 'FontSize', DefaultFontSize);
   LabelControl.Font.Color :=
     myStringToTColor(skinIni.ReadString(NameInSkinIni, 'FontColor', 'clBlack'));
   LabelControl.Font.Style := [];
