@@ -369,6 +369,8 @@ type
     //procedure productOnClient_getobject_actualclient;
     function getInstallableProducts: TStringList;
     function getOpsiModules: TStringList;
+    function getLicenseOnClientObject(const parameters: array of string;
+      var errorOccured: boolean): string;
   protected
     FServiceLastErrorInfo: TStringList;
     //FactualClient: string;
@@ -465,6 +467,7 @@ type
     function getProductIds: TStringList;
     function getLocalbootProductIds: TStringList;
     function getNetbootProductIds: TStringList;
+    function demandLicenseKey(const parameters: array of string; var errorOccured: boolean):string;
     {$IFNDEF SYNAPSE}
     function decreaseSslProtocol: boolean;
     {$ENDIF SYNAPSE}
@@ -3886,6 +3889,18 @@ begin
   omc.Free;
 end;
 
+function TOpsi4Data.getLicenseOnClientObject(const parameters: array of string; var errorOccured: boolean):string;
+var
+  omc: TOpsiMethodCall;
+begin
+  omc := TOpsiMethodCall.Create('licenseOnClient_getOrCreateObject', parameters);
+  try
+    Result := CheckAndRetrieveString(omc, errorOccured);
+  finally
+    FreeAndNil(omc);
+  end;
+end;
+
 
 function TOpsi4Data.withLicenceManagement: boolean;
 var
@@ -5325,6 +5340,15 @@ begin
     testresult := SO('"' + testresult + '"').AsJSon(False, False);
     Result.add(testresult);
   end;
+end;
+
+function TOpsi4Data.demandLicenseKey(const parameters: array of string;
+  var errorOccured: boolean): string;
+var
+  JSONString: string;
+begin
+  JSONString := getLicenseOnClientObject(parameters, errorOccured);
+  jsonAsObjectGetValueByKey(JSONString, 'licenseKey', Result);
 end;
 
 
