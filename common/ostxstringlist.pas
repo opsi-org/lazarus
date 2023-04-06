@@ -406,12 +406,9 @@ begin
   //encfilename := reencode(ExpandFileName(FileName),'utf8', usedenc, 'system');
   encfilename := ExpandFileName(FileName);
   LogDatei.log('Load from file with encoding: ' + encodingtype, LLDebug);
-  try
-    tempStringList := osencoding.loadTextFileWithEncoding(encfilename, encodingtype);
-    self.AddStrings(tempStringList);
-  finally
-    tempStringList.Free;
-  end;
+  tempStringList := osencoding.loadTextFileWithEncoding(encfilename, encodingtype);
+  self.AddStrings(tempStringList);
+  tempStringList.Free;
 end;
 
 procedure TXStringlist.loadFromUnicodeFile(const FileName: string;
@@ -421,13 +418,10 @@ var
 begin
   self.Clear;
   LogDatei.log('Load from Unicode file ', LLDebug);
-  try
-    tempStringList := osencoding.loadUnicodeTextFile(ExpandFileName(Filename),
+  tempStringList := osencoding.loadUnicodeTextFile(ExpandFileName(Filename),
       hasBOM, foundEncoding);
-    self.AddStrings(tempStringList);
-  finally
-    tempStringList.Free;
-  end;
+  self.AddStrings(tempStringList);
+  tempStringList.Free;
 end;
 
 (*
