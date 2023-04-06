@@ -1,7 +1,7 @@
 object resultForm1: TresultForm1
-  Left = 559
+  Left = 558
   Height = 740
-  Top = 222
+  Top = 96
   Width = 1115
   Caption = 'opsi Setup Detector'
   ClientHeight = 720
@@ -14,7 +14,7 @@ object resultForm1: TresultForm1
   OnMouseLeave = FormMouseLeave
   OnShow = FormShow
   Position = poScreenCenter
-  LCLVersion = '2.2.4.0'
+  LCLVersion = '2.2.6.0'
   object Panel1: TPanel
     Left = 0
     Height = 40

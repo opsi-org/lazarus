@@ -1300,7 +1300,7 @@ begin
     tmpstr := trim(Application.GetOptionValue('c', 'template-channel'));
     try
       aktProduct.productdata.channelDir := templChannelStrings[TTemplateChannels(GetEnumValue(TypeInfo(TTemplateChannels), tmpstr))];
-      LogDatei.log('Will use as mode: ' + aktProduct.productdata.channelDir, LLInfo);
+      LogDatei.log('Will use as channelDir: ' + aktProduct.productdata.channelDir, LLInfo);
     except
       myerror := 'Error: Given mode: ' + tmpstr +
         ' is not valid. Should be on of: training, default, structured, custom';
@@ -1372,7 +1372,8 @@ begin
         singleAnalyzeCreate, analyzeCreateWithUser:
         begin
           LogDatei.log('Start Analyze + Create in NOGUI mode: ', LLnotice);
-          initaktproduct;
+          // was done before and should not be overwritten here
+          //initaktproduct;
           aktProduct.SetupFiles[0].copyCompleteDir := False;
           makeProperties;
           resultform1.updateGUI;
