@@ -359,14 +359,11 @@ end;
 
 
 function myStringToTColor(str: string): TColor;
-var
-  message: string;
 begin
   try
     Result := rgbStringToColor(str);
   except
     try
-
       Result := StringToColor(str);
     except
     end;
