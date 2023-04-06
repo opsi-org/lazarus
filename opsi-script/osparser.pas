@@ -2099,32 +2099,14 @@ begin
 end;
 
 destructor TuibInstScript.Destroy;
-var
-  counter, i: integer;
 begin
-  FVarList.Free;
-  VarList := nil;
-  FValuesList.Free;
-  ValuesList := nil;
-  FlistOfStringLists.Free;
-  listOfStringLists := nil;
-  FContentOfStringLists.Free;
-  ContentOfStringLists := nil;
-  FLinesOriginList.Free;
-  FLinesOriginList := nil;
-  FLibList.Free;
-  FLibList := nil;
-  FsectionNameList.Free;
-  FsectionNameList := nil;
-  (*
-  counter := length(FSectionInfoArray);
-  if counter > 0 then
-    for i := 0 to counter - 1 do
-    begin
-      FSectionInfoArray[i] := nil;
-      FSectionInfoArray[i].Free;
-    end;
-    *)
+  FreeAndNil(FVarList);
+  FreeAndNil(FValuesList);
+  FreeAndNil(FListOfStringLists);
+  FreeAndNil(FContentOfStringLists);
+  FreeAndNil(FLinesOriginList);
+  FreeAndNil(FLibList);
+  FreeAndNil(FsectionNameList);
   SetLength(FSectionInfoArray, 0);
 end;
 
