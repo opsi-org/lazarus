@@ -12205,11 +12205,11 @@ begin
           if Skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxCheck := True;
-            list.Text := '';
             if not testSyntax then
               try
                 //LogDatei.log ('Executing0 ' + s1, LLInfo);
-                list.Text := execShellCall(s1, 'sysnative', 1, True).Text;
+                FreeAndNil(list); //free list before assign new TXStringlist object to variable
+                list := execShellCall(s1, 'sysnative', 1, True) as TXStringList;
               except
                 on e: Exception do
                 begin
@@ -12226,13 +12226,13 @@ begin
     else if LowerCase(s) = LowerCase('powershellcall') then
     begin
       parsePowershellCall(s1, s2, s3, s4, r, syntaxCheck, InfoSyntaxError, tmpbool);
-      list.Text := '';
       if syntaxCheck then
         {$IFDEF WINDOWS}
         if not testSyntax then
         begin
           try
-            list.Text := execPowershellCall(s1, s2, 1, True, False, tmpbool1, s4).Text;
+            FreeAndNil(list); //free list before assign new TXStringlist object to variable
+            list := execPowershellCall(s1, s2, 1, True, False, tmpbool1, s4) as TXStringList;
           except
             on e: Exception do
             begin
