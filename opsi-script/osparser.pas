@@ -26224,6 +26224,7 @@ begin
 
                 if not IsVariableNameReserved(Expressionstr, SectionSpecifier,
                   call, Sektion, linecounter) then
+                begin
                   // in local function ?
                   if inDefinedFuncNestCounter > 0 then
                   begin
@@ -26255,6 +26256,7 @@ begin
                     LogDatei.log('defined global string list ' +
                       Expressionstr, LLDebug);
                   end;
+                end;
                 if CheckDirectVariableInitialization(Remaining) then
                   SetVariableWithErrors(Sektion, Remaining, Expressionstr + Remaining,
                     linecounter, InfoSyntaxError, NestLevel);
