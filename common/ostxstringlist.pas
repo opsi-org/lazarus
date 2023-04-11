@@ -408,7 +408,7 @@ begin
   LogDatei.log('Load from file with encoding: ' + encodingtype, LLDebug);
   tempStringList := osencoding.loadTextFileWithEncoding(encfilename, encodingtype);
   self.AddStrings(tempStringList);
-  tempStringList.Free;
+  FreeAndNil(tempStringList);
 end;
 
 procedure TXStringlist.loadFromUnicodeFile(const FileName: string;
@@ -421,7 +421,7 @@ begin
   tempStringList := osencoding.loadUnicodeTextFile(ExpandFileName(Filename),
       hasBOM, foundEncoding);
   self.AddStrings(tempStringList);
-  tempStringList.Free;
+  FreeAndNil(tempStringList);
 end;
 
 (*
