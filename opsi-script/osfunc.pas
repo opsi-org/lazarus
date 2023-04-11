@@ -5021,7 +5021,7 @@ begin
       runninguser, LLDebug);
   if AddAccessRightsToACL(ExtractFileDir(Filename), runninguser,
     JwaWindows.GENERIC_ALL, JwaWindows.SET_ACCESS,
-    JwaWindows.SUB_CONTAINERS_AND_OBJECTS_INHERIT) = True then
+    JwaWindows.NO_INHERITANCE) = True then
     LogDatei.log('Access Rights (dir) modified and granted to :' + runninguser, LLDebug);
 
   // does the file path points to a user profile ?

@@ -1095,7 +1095,6 @@ var
   scopeindex, VarIndex: integer;
   varname: string;
 begin
-  Result := TStringList.Create;
   Name := lowercase(Name);
   arrayindex := localVarIndex(Name);
   if arrayindex >= 0 then

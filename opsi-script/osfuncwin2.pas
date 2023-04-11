@@ -381,7 +381,9 @@ begin
     GetUserNameW(buffer, bufferSize);
     Result := UTF16ToUTF8(unicodestring(buffer));
   finally
-    FreeMem(buffer, bufferSize);
+    // bufferSize may be changed by GetUserNameW
+    // so we free 256
+    FreeMem(buffer, 256);
   end;
 end; { DSiGetUserName }
 
@@ -2164,7 +2166,9 @@ begin
     // let us exclude profiles that normaly not should be patched
     if (0 = pos('localservice', LowerCase(mypath))) and
       (0 = pos('networkservice', LowerCase(mypath))) and
-      (0 = pos('systemprofile', LowerCase(mypath))) then
+      (0 = pos('systemprofile', LowerCase(mypath))) and
+      // avoid empty path
+      (mypath <> '') then
       Result.Add(mypath);
   end;
   Result.Add(GetDefaultUsersProfilesPath);

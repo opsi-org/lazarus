@@ -84,6 +84,7 @@ type
     {$ENDIF WINDOWS}
     procedure FormActivate(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
+    procedure FormCreate(Sender: TObject);
     procedure FormWindowStateChange(Sender: TObject);
     procedure ProgressBarActive(YesNo: boolean);
     procedure ShowProgress(Prozente: integer);
@@ -214,47 +215,6 @@ var
   //Alpha: boolean;
 
 begin
-  {$IFDEF CPUINTEL}
-  Progressbar := TQProgressBar.Create(nil);
-  Progressbar.Position := 0;
-  ProgressBar.Visible := False;
-  with Progressbar do
-  begin
-    Parent := Panel;
-    Left := 275;
-    Top := 160;
-    Width := 280;
-    Height := 20;
-    orientation := boHorizontal;
-    barKind := bkCylinder;
-    barLook := blGlass;
-    roundCorner := True;
-    backgroundColor := clWhite;
-    barColor := 15198183;
-    startColor := 15198183;
-    finalColor := 15198183;
-    showInactivePos := False;
-    invertInactPos := False;
-    inactivePosColor := clGray;
-    shaped := True;
-    shapeColor := 15198183;
-    blockSize := 10;
-    spaceSize := 3;
-    showFullBlock := False;
-    maximum := 100;
-    position := 50;
-    captionAlign := taLeftJustify;
-    //        font.Charset := DEFAULT_CHARSET;
-    font.Color := clWindowText;
-    font.Height := -11;
-    font.Name := 'MS Sans Serif';
-    font.Style := [];
-    AutoCaption := False;
-    AutoHint := False;
-    ShowPosAsPct := False;
-  end;
-  {$ENDIF CPUINTEL}
-
   BorderIcons := [];
   useCommandLabel := True;
   useDetailLabel := True;
@@ -735,6 +695,50 @@ procedure TFBatchOberflaeche.FormClose(Sender: TObject; var CloseAction: TCloseA
 begin
   //prevents closing batchmode via ALT-F4
   CloseAction := caNone;
+end;
+
+procedure TFBatchOberflaeche.FormCreate(Sender: TObject);
+begin
+{$IFDEF CPUINTEL}
+  Progressbar := TQProgressBar.Create(nil);
+  Progressbar.Position := 0;
+  ProgressBar.Visible := False;
+  with Progressbar do
+  begin
+    Parent := Panel;
+    Left := 275;
+    Top := 160;
+    Width := 280;
+    Height := 20;
+    orientation := boHorizontal;
+    barKind := bkCylinder;
+    barLook := blGlass;
+    roundCorner := True;
+    backgroundColor := clWhite;
+    barColor := 15198183;
+    startColor := 15198183;
+    finalColor := 15198183;
+    showInactivePos := False;
+    invertInactPos := False;
+    inactivePosColor := clGray;
+    shaped := True;
+    shapeColor := 15198183;
+    blockSize := 10;
+    spaceSize := 3;
+    showFullBlock := False;
+    maximum := 100;
+    position := 50;
+    captionAlign := taLeftJustify;
+    //        font.Charset := DEFAULT_CHARSET;
+    font.Color := clWindowText;
+    font.Height := -11;
+    font.Name := 'MS Sans Serif';
+    font.Style := [];
+    AutoCaption := False;
+    AutoHint := False;
+    ShowPosAsPct := False;
+  end;
+{$ENDIF CPUINTEL}
 end;
 
 procedure TFBatchOberflaeche.FormWindowStateChange(Sender: TObject);
