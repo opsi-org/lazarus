@@ -381,7 +381,9 @@ begin
     GetUserNameW(buffer, bufferSize);
     Result := UTF16ToUTF8(unicodestring(buffer));
   finally
-    FreeMem(buffer, bufferSize);
+    // bufferSize may be changed by GetUserNameW
+    // so we free 256
+    FreeMem(buffer, 256);
   end;
 end; { DSiGetUserName }
 
