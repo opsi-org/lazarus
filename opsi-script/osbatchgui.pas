@@ -42,10 +42,6 @@ uses
   // it is a Intel x86 architecture
   {$define CPUINTEL}
 {$ENDIF}
-{$IFDEF CPUINTEL}
-  // QProgBar contains Intel x86 Assembler code and so it cannot be used with other cpu architecture
-  QProgBar,
-{$ENDIF CPUINTEL}
   osGUIControl;
 
 type
@@ -174,10 +170,7 @@ var
   timeDetailLabel: boolean;
   timeActivityLabel: boolean;
 
-  {$IFDEF CPUINTEL}
-  Progressbar: TQProgressBar;
-  {$ENDIF CPUINTEL}
-  //ActivityBar: TQProgressBar;
+  Progressbar: TProgressBar;
 
   panelWidth: integer;
   panelHeight: integer;
@@ -215,6 +208,25 @@ var
   //Alpha: boolean;
 
 begin
+  with Progressbar do
+  begin
+    Visible := False;
+    Parent := Panel;
+    Left := 275;
+    Top := 160;
+    Width := 280;
+    Height := 20;
+    Orientation := pbHorizontal;
+    Smooth := False;
+    Step := 10;
+    Position := 0;
+    Min := 0;
+    Max := 100;
+    font.Color := clWindowText;
+    font.Height := -11;
+    font.Name := 'MS Sans Serif';
+    font.Style := [];
+  end;
   BorderIcons := [];
   useCommandLabel := True;
   useDetailLabel := True;
@@ -319,14 +331,11 @@ end;
 
 
 function myStringToTColor(str: string): TColor;
-var
-  message: string;
 begin
   try
     Result := rgbStringToColor(str);
   except
     try
-
       Result := StringToColor(str);
     except
     end;
@@ -334,14 +343,41 @@ begin
 end;
 
 
+procedure SetLabelFontsFromSkinIni(skinIni: TIniFile; LabelControl: TLabel;
+  NameInSkinIni: string; DefaultFontSize: integer);
+begin
+  LabelControl.Font.Name :=
+    skinIni.ReadString(NameInSkinIni, 'FontName', 'Arial');
+  LabelControl.Font.Size := skinIni.ReadInteger(NameInSkinIni, 'FontSize', DefaultFontSize);
+  LabelControl.Font.Color :=
+    myStringToTColor(skinIni.ReadString(NameInSkinIni, 'FontColor', 'clBlack'));
+  LabelControl.Font.Style := [];
+  if ('true' = skinIni.ReadString(NameInSkinIni, 'FontBold', 'false')) then
+    LabelControl.Font.Style := LabelControl.Font.Style + [fsBold];
+  if ('true' = skinIni.ReadString(NameInSkinIni, 'FontItalic', 'false')) then
+    LabelControl.Font.Style := LabelControl.Font.Style + [fsItalic];
+  if ('true' = skinIni.ReadString(NameInSkinIni, 'FontUnderline', 'false')) then
+    LabelControl.Font.Style := LabelControl.Font.Style + [fsUnderline];
+end;
+
+procedure LoadImageFromSkinIni(skinDir: string; skinIni: TIniFile;
+  Image: TImage; NameInSkinIni: string; ImageName: string);
+var
+  ImageFilePath: string;
+begin
+  ImageFilePath := skinDir + PathDelim + skinIni.ReadString(
+    NameInSkinIni, 'File', ImageName);
+  ImageFilePath := ExpandFileName(ImageFilePath);
+  if FileExists(ImageFilePath) and not IsDirectory(ImageFilePath) then
+    Image.picture.loadFromFile(ImageFilePath);
+end;
+
 procedure TFBatchOberflaeche.LoadSkin(const SkinDirectory: string;
   setLabelInfo: boolean = True);
 var
   skindir: string = '';
   skinFile: string = '';
   skinIni: TIniFile;
-  filename: string = '';
-  paramstr0enc: string;
 
   procedure setAlignment(var theLabel: TLabel; const newAligment: string);
   begin
@@ -379,48 +415,20 @@ begin
 
       try
         Panel.Color := myStringToTColor(skinIni.ReadString('Form', 'Color', 'clBlack'));
-
       except
       end;
 
       try
         setAlignment(LabelVersion, skinIni.ReadString('LabelVersion', 'Alignment', ''));
         SetBoundsFromSkinIni(LabelVersion, 'LabelVersion', SkinIni, 76, 16, 85, 16);
-        LabelVersion.Font.Name :=
-          skinIni.ReadString('LabelVersion', 'FontName', 'Arial');
-        LabelVersion.Font.Size := skinIni.ReadInteger('LabelVersion', 'FontSize', 8);
-        LabelVersion.Font.Color :=
-          myStringToTColor(skinIni.ReadString('LabelVersion', 'FontColor', 'clBlack'));
-        LabelVersion.Font.Style := [];
-        if ('true' = skinIni.ReadString('LabelVersion', 'FontBold', 'false')) then
-          LabelVersion.Font.Style := LabelVersion.Font.Style + [fsBold];
-        if ('true' = skinIni.ReadString('LabelVersion', 'FontItalic', 'false'))
-        then
-          LabelVersion.Font.Style := LabelVersion.Font.Style + [fsItalic];
-        if ('true' = skinIni.ReadString('LabelVersion', 'FontUnderline', 'false'))
-        then
-          LabelVersion.Font.Style := LabelVersion.Font.Style + [fsUnderline];
-
+        SetLabelFontsFromSkinIni(SkinIni, LabelVersion, 'LabelVersion', 8);
       except
       end;
 
       try
         setAlignment(LabelProduct, skinIni.ReadString('LabelProduct','Alignment',''));
         SetBoundsFromSkinIni(LabelProduct, 'LabelProduct', SkinIni, 144, 207, 313, 41);
-        LabelProduct.Font.Name :=
-          skinIni.ReadString('LabelProduct', 'FontName', 'Arial');
-        LabelProduct.Font.Size := skinIni.ReadInteger('LabelProduct', 'FontSize', 32);
-        LabelProduct.Font.Color :=
-          myStringToTColor(skinIni.ReadString('LabelProduct', 'FontColor', 'clBlack'));
-        LabelProduct.Font.Style := [];
-        if ('true' = skinIni.ReadString('LabelProduct', 'FontBold', 'false')) then
-          LabelProduct.Font.Style := LabelProduct.Font.Style + [fsBold];
-        if ('true' = skinIni.ReadString('LabelProduct', 'FontItalic', 'false'))
-        then
-          LabelProduct.Font.Style := LabelProduct.Font.Style + [fsItalic];
-        if ('true' = skinIni.ReadString('LabelProduct', 'FontUnderline', 'false'))
-        then
-          LabelProduct.Font.Style := LabelProduct.Font.Style + [fsUnderline];
+        SetLabelFontsFromSkinIni(SkinIni, LabelProduct, 'LabelProduct', 32);
         LabelProduct.OptimalFill := True;
       except
       end;
@@ -428,81 +436,28 @@ begin
       try
         setAlignment(LabelCommand, skinIni.ReadString('LabelCommand', 'Alignment', ''));
         SetBoundsFromSkinIni(LabelCommand, 'LabelCommand', SkinIni, 29, 316, 524, 15);
-        LabelCommand.Font.Name :=
-          skinIni.ReadString('LabelCommand', 'FontName', 'Arial');
-        LabelCommand.Font.Size := skinIni.ReadInteger('LabelCommand', 'FontSize', 8);
-        LabelCommand.Font.Color :=
-          myStringToTColor(skinIni.ReadString('LabelCommand', 'FontColor', 'clBlack'));
-        LabelCommand.Font.Style := [];
-        if ('true' = skinIni.ReadString('LabelCommand', 'FontBold', 'false')) then
-          LabelCommand.Font.Style := LabelCommand.Font.Style + [fsBold];
-        if ('true' = skinIni.ReadString('LabelCommand', 'FontItalic', 'false'))
-        then
-          LabelCommand.Font.Style := LabelCommand.Font.Style + [fsItalic];
-        if ('true' = skinIni.ReadString('LabelCommand', 'FontUnderline', 'false'))
-        then
-          LabelCommand.Font.Style := LabelCommand.Font.Style + [fsUnderline];
+        SetLabelFontsFromSkinIni(SkinIni, LabelCommand, 'LabelCommand', 8);
       except
       end;
 
       try
         setAlignment(LabelInfo, skinIni.ReadString('LabelInfo', 'Alignment', ''));
         SetBoundsFromSkinIni(LabelInfo, 'LabelInfo', SkinIni, 29, 272, 524, 20);
-        LabelInfo.Font.Name := skinIni.ReadString('LabelInfo', 'FontName', 'Arial');
-        LableInfoDefaultFontSize := skinIni.ReadInteger('LabelInfo', 'FontSize', 11);
-        LabelInfo.Font.Size := LableInfoDefaultFontSize;
-        LabelInfo.Font.Color :=
-          myStringToTColor(skinIni.ReadString('LabelInfo', 'FontColor', 'clBlack'));
-        LabelInfo.Font.Style := [];
-        if ('true' = skinIni.ReadString('LabelInfo', 'FontBold', 'false')) then
-          LabelInfo.Font.Style := LabelInfo.Font.Style + [fsBold];
-        if ('true' = skinIni.ReadString('LabelInfo', 'FontItalic', 'false')) then
-          LabelInfo.Font.Style := LabelInfo.Font.Style + [fsItalic];
-        if ('true' = skinIni.ReadString('LabelInfo', 'FontUnderline', 'false'))
-        then
-          LabelInfo.Font.Style := LabelInfo.Font.Style + [fsUnderline];
+        SetLabelFontsFromSkinIni(SkinIni, LabelInfo, 'LabelInfo', 11);
       except
       end;
 
       try
         setAlignment(LabelDetail, skinIni.ReadString('LabelDetail', 'Alignment', ''));
         SetBoundsFromSkinIni(LabelDetail, 'LabelDetail', SkinIni, 29, 292, 524, 20);
-        LabelDetail.Font.Name :=
-          skinIni.ReadString('LabelDetail', 'FontName', 'Arial');
-        LabelDetail.Font.Size := skinIni.ReadInteger('LabelDetail', 'FontSize', 8);
-        LabelDetail.Font.Color :=
-          myStringToTColor(skinIni.ReadString('LabelDetail', 'FontColor', 'clBlack'));
-        LabelDetail.Font.Style := [];
-        if ('true' = skinIni.ReadString('LabelDetail', 'FontBold', 'false')) then
-          LabelDetail.Font.Style := LabelDetail.Font.Style + [fsBold];
-        if ('true' = skinIni.ReadString('LabelDetail', 'FontItalic', 'false'))
-        then
-          LabelDetail.Font.Style := LabelDetail.Font.Style + [fsItalic];
-        if ('true' = skinIni.ReadString('LabelInfo', 'FontUnderline', 'false'))
-        then
-          LabelDetail.Font.Style := LabelDetail.Font.Style + [fsUnderline];
+        SetLabelFontsFromSkinIni(SkinIni, LabelDetail, 'LabelDetail', 8);
       except
       end;
 
       try
         setAlignment(LabelProgress, skinIni.ReadString('LabelProgress', 'Alignment', ''));
         SetBoundsFromSkinIni(LabelProgress, 'LabelProgress', SkinIni, 29, 331, 524, 15);
-        LabelProgress.Font.Name :=
-          skinIni.ReadString('LabelProgress', 'FontName', 'Arial');
-        LabelProgress.Font.Size :=
-          (*2; *) skinIni.ReadInteger('LabelProgress', 'FontSize', 8);
-        LabelProgress.Font.Color :=
-          myStringToTColor(skinIni.ReadString('LabelProgress', 'FontColor', 'clBlack'));
-        LabelProgress.Font.Style := [];
-        if ('true' = skinIni.ReadString('LabelProgress', 'FontBold', 'false'))
-        then
-          LabelProgress.Font.Style := LabelProgress.Font.Style + [fsBold];
-        if ('true' = skinIni.ReadString('LabelProgress', 'FontItalic', 'false'))
-        then
-          LabelProgress.Font.Style := LabelProgress.Font.Style + [fsItalic];
-        if ('true' = skinIni.ReadString('LabelProgress', 'FontUnderline', 'false'))
-        then
-          LabelProgress.Font.Style := LabelProgress.Font.Style + [fsUnderline];
+        SetLabelFontsFromSkinIni(SkinIni, LabelProgress, 'LabelProgress', 8); // 2
       except
       end;
 
@@ -517,103 +472,44 @@ begin
         ImageBackground.Height := skinIni.ReadInteger('ImageBackground', 'Height', 430);
         Panel.Height := skinIni.ReadInteger('ImageBackground', 'Height', 430);
          *)
-        filename := skinDir + PathDelim + skinIni.ReadString('ImageBackground',
-          'File', 'bg.png');
-        if FileExists(filename) and not IsDirectory(filename) then
-          ImageBackground.picture.loadFromFile(filename);
+        LoadImageFromSkinIni(skinDir, skinIni, ImageBackground, 'ImageBackground', 'bg.png');
       except
       end;
 
-
       try
         SetBoundsFromSkinIni(ImageProduct, 'ImageProduct', SkinIni, 224, 44, 144, 144);
-        filename := skinDir + PathDelim + skinIni.ReadString(
-          'ImageProduct', 'File', 'product.png');
-        FileName := ExpandFileName(FileName);
-        if FileExists(filename) and not IsDirectory(filename) then
-          ImageProduct.picture.loadFromFile(filename);
+        LoadImageFromSkinIni(skinDir, skinIni, ImageProduct, 'ImageProduct', 'product.png');
       except
       end;
 
       try
         SetBoundsFromSkinIni(ImageLogo1, 'ImageLogo1', SkinIni, 60, 80, 160, 160);
-        filename := skinDir + PathDelim + skinIni.ReadString(
-          'ImageLogo1', 'File', 'logo1.png');
-        FileName := ExpandFileName(FileName);
-        if FileExists(filename) and not IsDirectory(filename) then
-          ImageLogo1.picture.loadFromFile(filename);
+        LoadImageFromSkinIni(skinDir, skinIni, ImageLogo1, 'ImageLogo1', 'logo1.png');
       except
       end;
 
       try
         SetBoundsFromSkinIni(ImageLogo2, 'ImageLogo2', SkinIni, 450, 80, 531, 91);
-        filename := skinDir + PathDelim + skinIni.ReadString(
-          'ImageLogo2', 'File', 'logo2.png');
-        FileName := ExpandFileName(FileName);
-        if FileExists(filename) and not IsDirectory(filename) then
-          ImageLogo2.picture.loadFromFile(filename);
+        LoadImageFromSkinIni(skinDir, skinIni, ImageLogo2, 'ImageLogo2', 'logo2.png');
       except
       end;
 
       try
         SetBoundsFromSkinIni(Image1Over, 'Image1Over', SkinIni, 216, 36, 160, 160);
-        filename := skinDir + PathDelim + skinIni.ReadString(
-          'Image1Over', 'File', 'over1.png');
-        FileName := ExpandFileName(FileName);
-        if FileExists(filename) and not IsDirectory(filename) then
-          Image1Over.picture.loadFromFile(filename);
+        LoadImageFromSkinIni(skinDir, skinIni, Image1Over, 'Image1Over', 'over1.png');
       except
       end;
 
       try
         SetBoundsFromSkinIni(Image2Over, 'Image2Over', SkinIni, 26, 267, 531, 91);
-        filename := skinDir + PathDelim + skinIni.ReadString(
-          'Image2Over', 'File', 'over2.png');
-        FileName := ExpandFileName(FileName);
-        if FileExists(filename) and not IsDirectory(filename) then
-          Image2Over.picture.loadFromFile(filename);
+        LoadImageFromSkinIni(skinDir, skinIni, Image2Over, 'Image2Over', 'over2.png');
       except
       end;
 
-      {$IFDEF CPUINTEL}
       try
         SetBoundsFromSkinIni(Progressbar, 'ProgressBar', SkinIni, 96, 235, 401, 17);
-        ProgressBar.BarColor :=
-          myStringToTColor(skinIni.ReadString('ProgressBar', 'BarColor', 'clBlack'));
-        ProgressBar.StartColor :=
-          myStringToTColor(skinIni.ReadString('ProgressBar', 'StartColor', 'clBlack'));
-        ProgressBar.FinalColor :=
-          myStringToTColor(skinIni.ReadString('ProgressBar', 'FinalColor', 'clBlack'));
-        ProgressBar.ShapeColor :=
-          myStringToTColor(skinIni.ReadString('ProgressBar', 'ShapeColor', 'clBlack'));
-        ProgressBar.backgroundColor :=
-          myStringToTColor(skinIni.ReadString('ProgressBar',
-          'BackgroundColor', 'clWhite'));
-        if ('true' = skinIni.ReadString('ProgressBar', 'Shaped', 'false')) then
-          ProgressBar.Shaped := True
-        else
-          ProgressBar.Shaped := False;
-        ProgressBar.BlockSize := ScaleDesignToForm(skinIni.ReadInteger('ProgressBar', 'BlockSize', 6));
-        ProgressBar.SpaceSize := ScaleDesignToForm(skinIni.ReadInteger('ProgressBar', 'SpaceSize', 1));
-        if ('true' = skinIni.ReadString('ProgressBar', 'Cylinder', 'false')) then
-          ProgressBar.BarKind := bkCylinder
-        else
-          ProgressBar.BarKind := bkFlat;
-        if ('true' = skinIni.ReadString('ProgressBar', 'Glass', 'false')) then
-          ProgressBar.BarLook := blGlass
-        else
-          ProgressBar.BarLook := blMetal;
-        if ('true' = skinIni.ReadString('ProgressBar', 'ShowFullBlock', 'false')) then
-          ProgressBar.ShowFullBlock := True
-        else
-          ProgressBar.ShowFullBlock := False;
-        if ('true' = skinIni.ReadString('ProgressBar', 'RoundCorner', 'false')) then
-          ProgressBar.RoundCorner := True
-        else
-          ProgressBar.RoundCorner := False;
       except
       end;
-      {$ENDIF CPUINTEL}
 
       try
         SetBoundsFromSkinIni(ActivityBar, 'ActivityBar', SkinIni, 60, 350, 320, 10);
@@ -754,7 +650,6 @@ end;
 
 procedure TFBatchOberflaeche.ProgressBarActive(YesNo: boolean);
 begin
-  {$IFDEF CPUINTEL}
   if YesNo then
   begin
     Progressbar.Visible := True;
@@ -766,7 +661,6 @@ begin
     Progressbar.Visible := False;
     Progressbar.Enabled := False;
   end;
-  {$ENDIF CPUINTEL}
 end;
 
 procedure TFBatchOberflaeche.FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -777,46 +671,7 @@ end;
 
 procedure TFBatchOberflaeche.FormCreate(Sender: TObject);
 begin
-{$IFDEF CPUINTEL}
-  Progressbar := TQProgressBar.Create(nil);
-  Progressbar.Position := 0;
-  ProgressBar.Visible := False;
-  with Progressbar do
-  begin
-    Parent := Panel;
-    Left := 275;
-    Top := 160;
-    Width := 280;
-    Height := 20;
-    orientation := boHorizontal;
-    barKind := bkCylinder;
-    barLook := blGlass;
-    roundCorner := True;
-    backgroundColor := clWhite;
-    barColor := 15198183;
-    startColor := 15198183;
-    finalColor := 15198183;
-    showInactivePos := False;
-    invertInactPos := False;
-    inactivePosColor := clGray;
-    shaped := True;
-    shapeColor := 15198183;
-    blockSize := 10;
-    spaceSize := 3;
-    showFullBlock := False;
-    maximum := 100;
-    position := 50;
-    captionAlign := taLeftJustify;
-    //        font.Charset := DEFAULT_CHARSET;
-    font.Color := clWindowText;
-    font.Height := -11;
-    font.Name := 'MS Sans Serif';
-    font.Style := [];
-    AutoCaption := False;
-    AutoHint := False;
-    ShowPosAsPct := False;
-  end;
-{$ENDIF CPUINTEL}
+  Progressbar := TProgressBar.Create(nil);
 end;
 
 procedure TFBatchOberflaeche.FormWindowStateChange(Sender: TObject);
@@ -829,9 +684,7 @@ end;
 
 procedure TFBatchOberflaeche.ShowProgress(Prozente: integer);
 begin
-  {$IFDEF CPUINTEL}
   Progressbar.Position := Prozente;
-  {$ENDIF CPUINTEL}
 end;
 
 procedure TFBatchOberflaeche.showActivityBar(Show: boolean);

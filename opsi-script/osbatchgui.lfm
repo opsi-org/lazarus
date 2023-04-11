@@ -20,7 +20,7 @@ object FBatchOberflaeche: TFBatchOberflaeche
   OnShow = FormShow
   OnWindowStateChange = FormWindowStateChange
   Position = poScreenCenter
-  LCLVersion = '2.2.4.0'
+  LCLVersion = '2.2.6.0'
   object PanelFillScreen: TPanel
     Left = 0
     Height = 520
@@ -125,6 +125,7 @@ object FBatchOberflaeche: TFBatchOberflaeche
         Alignment = taCenter
         AutoSize = False
         Caption = 'LabelProduct'
+        Constraints.MaxHeight = 42
         Font.Color = clBlack
         Font.Height = 42
         Font.Name = 'Arial'
