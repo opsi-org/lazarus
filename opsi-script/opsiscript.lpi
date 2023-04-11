@@ -553,6 +553,9 @@
             </Optimizations>
           </CodeGeneration>
           <Linking>
+            <Debugging>
+              <UseHeaptrc Value="True"/>
+            </Debugging>
             <LinkSmart Value="True"/>
             <Options>
               <LinkerOptions Value="-sectcreate __TEXT __info_plist Info-os.plist"/>
