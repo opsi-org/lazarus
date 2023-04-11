@@ -28,8 +28,14 @@ function CompareDotSeparatedNumbers(s1, s2, s3: string): boolean;
 
 implementation
 
+{$IFDEF OSDGUI}
 uses
-  osdform;
+  osdform,
+  osdmain;
+{$ELSE OSDGUI}
+uses
+  osdmain;
+{$ENDIF OSDGUI}
 
 {$IFDEF WINDOWS}
 procedure registerForWinExplorer(doregister: boolean);
@@ -194,7 +200,7 @@ begin
     except
       on e: Exception do
       begin
-        Mywrite('Exception in RunCommandAndCaptureOut: ' + e.message);
+        write_log_and_memo('Exception in RunCommandAndCaptureOut: ' + e.message);
         Result := False;
       end;
     end;

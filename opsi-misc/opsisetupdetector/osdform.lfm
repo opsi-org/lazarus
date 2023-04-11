@@ -1,7 +1,7 @@
 object resultForm1: TresultForm1
-  Left = 558
+  Left = 551
   Height = 740
-  Top = 96
+  Top = 133
   Width = 1115
   Caption = 'opsi Setup Detector'
   ClientHeight = 720
@@ -97,11 +97,11 @@ object resultForm1: TresultForm1
       Height = 655
       Top = 1
       Width = 1107
-      ActivePage = TabSheetStart
+      ActivePage = TabSheetCreate
       Align = alClient
       Images = ImageList1
       ParentFont = False
-      TabIndex = 0
+      TabIndex = 8
       TabOrder = 0
       OnChange = PageControl1Change
       object TabSheetStart: TTabSheet
@@ -10625,21 +10625,33 @@ object resultForm1: TresultForm1
             Left = 1
             Height = 126
             Top = 1
-            Width = 767
+            Width = 1007
             Anchors = []
             ClientHeight = 106
-            ClientWidth = 763
+            ClientWidth = 1003
             ParentFont = False
             TabOrder = 0
-            object RadioGroup1: TRadioGroup
-              Left = 0
-              Height = 99
+            object TIRadioGroupBuildMode: TTIRadioGroup
+              Left = 576
+              Height = 72
               Top = 0
-              Width = 498
-              Align = alLeft
-              AutoFill = True
-              BorderSpacing.Bottom = 7
-              BorderSpacing.InnerBorder = 9
+              Width = 185
+              Caption = 'Build Mode'
+              ChildSizing.LeftRightSpacing = 6
+              ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
+              ChildSizing.EnlargeVertical = crsHomogenousChildResize
+              ChildSizing.ShrinkHorizontal = crsScaleChilds
+              ChildSizing.ShrinkVertical = crsScaleChilds
+              ChildSizing.Layout = cclLeftToRightThenTopToBottom
+              ChildSizing.ControlsPerLine = 1
+              ItemIndex = 0
+              OnClick = TIRadioGroupBuildModeClick
+            end
+            object TIRadioGroupCreateMode: TTIRadioGroup
+              Left = 16
+              Height = 105
+              Top = -8
+              Width = 497
               Caption = 'Create Mode'
               ChildSizing.LeftRightSpacing = 6
               ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
@@ -10648,101 +10660,6 @@ object resultForm1: TresultForm1
               ChildSizing.ShrinkVertical = crsScaleChilds
               ChildSizing.Layout = cclLeftToRightThenTopToBottom
               ChildSizing.ControlsPerLine = 1
-              ClientHeight = 79
-              ClientWidth = 494
-              ParentFont = False
-              TabOrder = 0
-              object RadioButtonCreateOnly: TRadioButton
-                Left = 6
-                Height = 19
-                Top = 0
-                Width = 482
-                Align = alTop
-                Anchors = [akLeft]
-                BorderSpacing.Left = 6
-                Caption = 'create opsi product files'
-                Checked = True
-                OnChange = RadioButtonBuildModeChange
-                ParentFont = False
-                TabOrder = 0
-                TabStop = True
-              end
-              object RadioButtonPackageBuilder: TRadioButton
-                Left = 6
-                Height = 19
-                Top = 38
-                Width = 482
-                Align = alTop
-                Anchors = [akTop]
-                Caption = 'create opsi product files and start the interactive PackageBuilder'
-                OnChange = RadioButtonBuildModeChange
-                ParentFont = False
-                TabOrder = 1
-              end
-              object RadioButtonBuildPackage: TRadioButton
-                Left = 6
-                Height = 19
-                Top = 19
-                Width = 482
-                Align = alTop
-                Anchors = []
-                Caption = 'create opsi product files and  build package'
-                OnChange = RadioButtonBuildModeChange
-                ParentFont = False
-                TabOrder = 2
-              end
-            end
-            object CheckGroupBuildMode: TCheckGroup
-              Left = 513
-              Height = 94
-              Top = 6
-              Width = 232
-              Align = alLeft
-              AutoFill = True
-              BorderSpacing.Left = 9
-              BorderSpacing.Around = 6
-              BorderSpacing.InnerBorder = 7
-              Caption = 'Build Mode'
-              ChildSizing.LeftRightSpacing = 6
-              ChildSizing.TopBottomSpacing = 6
-              ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
-              ChildSizing.EnlargeVertical = crsHomogenousChildResize
-              ChildSizing.ShrinkHorizontal = crsScaleChilds
-              ChildSizing.ShrinkVertical = crsScaleChilds
-              ChildSizing.Layout = cclLeftToRightThenTopToBottom
-              ChildSizing.ControlsPerLine = 1
-              ClientHeight = 74
-              ClientWidth = 228
-              ParentFont = False
-              TabOrder = 1
-              object radioBuildModebuildOnly: TRadioButton
-                Left = 7
-                Height = 25
-                Top = 6
-                Width = 215
-                Align = alTop
-                Anchors = [akLeft]
-                BorderSpacing.Left = 7
-                BorderSpacing.InnerBorder = 3
-                Caption = 'build'
-                Checked = True
-                ParentFont = False
-                TabOrder = 0
-                TabStop = True
-              end
-              object radioBuildModebuildInstall: TRadioButton
-                Left = 7
-                Height = 25
-                Top = 31
-                Width = 215
-                Align = alTop
-                Anchors = [akLeft]
-                BorderSpacing.Left = 7
-                BorderSpacing.InnerBorder = 3
-                Caption = 'build and install'
-                ParentFont = False
-                TabOrder = 1
-              end
             end
           end
           object PanelProcess: TPanel
@@ -11341,6 +11258,119 @@ object resultForm1: TresultForm1
             OnClick = BtCreateProductClick
             ParentFont = False
             TabOrder = 0
+          end
+        end
+        object CheckGroupBuildMode: TCheckGroup
+          Left = 15
+          Height = 177
+          Top = 444
+          Width = 232
+          Align = alLeft
+          AutoFill = True
+          BorderSpacing.Left = 9
+          BorderSpacing.Around = 6
+          BorderSpacing.InnerBorder = 7
+          Caption = 'Build Mode'
+          ChildSizing.LeftRightSpacing = 6
+          ChildSizing.TopBottomSpacing = 6
+          ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
+          ChildSizing.EnlargeVertical = crsHomogenousChildResize
+          ChildSizing.ShrinkHorizontal = crsScaleChilds
+          ChildSizing.ShrinkVertical = crsScaleChilds
+          ChildSizing.Layout = cclLeftToRightThenTopToBottom
+          ChildSizing.ControlsPerLine = 1
+          ClientHeight = 157
+          ClientWidth = 228
+          ParentFont = False
+          TabOrder = 4
+          object radioBuildModebuildOnly: TRadioButton
+            Left = 7
+            Height = 25
+            Top = 6
+            Width = 215
+            Align = alTop
+            Anchors = [akLeft]
+            BorderSpacing.Left = 7
+            BorderSpacing.InnerBorder = 3
+            Caption = 'build'
+            Checked = True
+            ParentFont = False
+            TabOrder = 0
+            TabStop = True
+          end
+          object radioBuildModebuildInstall: TRadioButton
+            Left = 7
+            Height = 25
+            Top = 31
+            Width = 215
+            Align = alTop
+            Anchors = [akLeft]
+            BorderSpacing.Left = 7
+            BorderSpacing.InnerBorder = 3
+            Caption = 'build and install'
+            ParentFont = False
+            TabOrder = 1
+          end
+        end
+        object RadioGroup1: TRadioGroup
+          Left = 253
+          Height = 182
+          Top = 438
+          Width = 498
+          Align = alLeft
+          AutoFill = True
+          BorderSpacing.Bottom = 7
+          BorderSpacing.InnerBorder = 9
+          Caption = 'Create Mode'
+          ChildSizing.LeftRightSpacing = 6
+          ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
+          ChildSizing.EnlargeVertical = crsHomogenousChildResize
+          ChildSizing.ShrinkHorizontal = crsScaleChilds
+          ChildSizing.ShrinkVertical = crsScaleChilds
+          ChildSizing.Layout = cclLeftToRightThenTopToBottom
+          ChildSizing.ControlsPerLine = 1
+          ClientHeight = 162
+          ClientWidth = 494
+          ParentFont = False
+          TabOrder = 5
+          object RadioButtonCreateOnly: TRadioButton
+            Left = 6
+            Height = 19
+            Top = 0
+            Width = 482
+            Align = alTop
+            Anchors = [akLeft]
+            BorderSpacing.Left = 6
+            Caption = 'create opsi product files'
+            Checked = True
+            OnChange = RadioButtonBuildModeChange
+            ParentFont = False
+            TabOrder = 0
+            TabStop = True
+          end
+          object RadioButtonPackageBuilder: TRadioButton
+            Left = 6
+            Height = 19
+            Top = 38
+            Width = 482
+            Align = alTop
+            Anchors = [akTop]
+            Caption = 'create opsi product files and start the interactive PackageBuilder'
+            OnChange = RadioButtonBuildModeChange
+            ParentFont = False
+            TabOrder = 1
+          end
+          object RadioButtonBuildPackage: TRadioButton
+            Left = 6
+            Height = 19
+            Top = 19
+            Width = 482
+            Align = alTop
+            Anchors = []
+            Caption = 'create opsi product files and  build package'
+            OnChange = RadioButtonBuildModeChange
+            ParentFont = False
+            TabOrder = 2
           end
         end
       end

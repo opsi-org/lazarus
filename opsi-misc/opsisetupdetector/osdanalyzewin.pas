@@ -56,9 +56,16 @@ resourcestring
 
 implementation
 
+{$IFDEF OSDGUI}
 uses
   osdform,
+  osdmain,
   ChooseInstallerDlg;
+{$ELSE OSDGUI}
+uses
+  osdmain;
+{$ENDIF OSDGUI}
+
 
 procedure KillProcess(name: String);
 var h:tHandle;
@@ -165,7 +172,7 @@ var
 
 begin
   installerstr := installerToInstallerstr(installerId);
-  Mywrite('Analyzing ' + installerstr + ' Setup: ' + myfilename);
+  write_log_and_memo('Analyzing ' + installerstr + ' Setup: ' + myfilename);
 
   mysetup.installerId := installerId;
   mysetup.link := installerArray[integer(mysetup.installerId)].Link;
@@ -211,9 +218,9 @@ begin
   sFileSize := FormatFloat('##0.0', fsizemb) + ' MB';
   sReqSize := FormatFloat('###0', rsizemb) + ' MB';
 
-  mywrite('Setup file size is: ' + sFileSize);
-  mywrite('Estimated required space is: ' + sReqSize);
-  mywrite('........');
+  write_log_and_memo('Setup file size is: ' + sFileSize);
+  write_log_and_memo('Estimated required space is: ' + sReqSize);
+  write_log_and_memo('........');
 
   if fsizemb < 1 then
     fsizemb := 1;
@@ -294,16 +301,16 @@ var
   iPos: integer;
 
 begin
-  Mywrite('Analyzing MSI: ' + myfilename);
+  write_log_and_memo('Analyzing MSI: ' + myfilename);
   {$IFDEF WINDOWS}
   mycommand := 'cmd.exe /C cscript.exe "' + ExtractFilePath(ParamStr(0)) +
     'utils\msiinfo.js" "' + myfilename + '"';
-  mywrite(mycommand);
+  write_log_and_memo(mycommand);
   myoutlines := TStringList.Create;
   if not RunCommandAndCaptureOut(mycommand, True, myoutlines, myreport,
     SW_SHOWMINIMIZED, myexitcode) then
   begin
-    mywrite('Failed to analyze: ' + myreport);
+    write_log_and_memo('Failed to analyze: ' + myreport);
     mysetup.analyze_progess := 0;
   end
   else
@@ -314,10 +321,10 @@ begin
       mysetup.installerId := stMsi;
       mysetup.setupFullFileName := myfilename;
     end;
-    mywrite('........');
+    write_log_and_memo('........');
     for i := 0 to myoutlines.Count - 1 do
     begin
-      mywrite(myoutlines.Strings[i]);
+      write_log_and_memo(myoutlines.Strings[i]);
       mysetup.analyze_progess := mysetup.analyze_progess + 1;
       sSearch := 'ProductName: ';
       iPos := Pos(sSearch, myoutlines.Strings[i]);
@@ -350,12 +357,12 @@ begin
   {$ENDIF WINDOWS}
   {$IFDEF LINUX}
   mycommand := 'bash -c ''msiinfo export "' + myfilename + '" Property''';
-  mywrite(mycommand);
+  write_log_and_memo(mycommand);
   myoutlines := TStringList.Create;
   if not RunCommandAndCaptureOut(mycommand, True, myoutlines, myreport,
     SW_SHOWMINIMIZED, myexitcode) then
   begin
-    mywrite('Failed to analyze: ' + myreport);
+    write_log_and_memo('Failed to analyze: ' + myreport);
     mysetup.analyze_progess := 0;
   end
   else
@@ -504,7 +511,7 @@ var
   end;
 
 begin
-  Mywrite('Analyzing Inno-Setup:');
+  write_log_and_memo('Analyzing Inno-Setup:');
   AppName := '';
   AppVersion := '';
   AppVerName := '';
@@ -638,9 +645,9 @@ begin
     end;
   end;
  {$ENDIF WINDOWS}
-  mywrite('get_inno_info finished');
-  mywrite('Inno Setup detected');
-  Mywrite('Finished analyzing Inno-Setup');
+  write_log_and_memo('get_inno_info finished');
+  write_log_and_memo('Inno Setup detected');
+  write_log_and_memo('Finished analyzing Inno-Setup');
 end;
 
 
@@ -649,9 +656,9 @@ var
   product: string;
 
 begin
-  Mywrite('Analyzing InstallShield-Setup:');
-  mywrite('get_InstallShield_info finished');
-  mywrite('InstallShield Setup detected');
+  write_log_and_memo('Analyzing InstallShield-Setup:');
+  write_log_and_memo('get_InstallShield_info finished');
+  write_log_and_memo('InstallShield Setup detected');
 end;
 
 
@@ -667,7 +674,7 @@ var
   mymsifilename: string;
 
 begin
-  Mywrite('Analyzing InstallShield+MSI Setup: ' + myfilename);
+  write_log_and_memo('Analyzing InstallShield+MSI Setup: ' + myfilename);
   mysetup.installerId := stInstallShieldMSI;
   mysetup.setupFullFileName := myfilename;
 
@@ -680,17 +687,17 @@ begin
   {$IFDEF WINDOWS}
   // extract and analyze MSI from setup
 
-  Mywrite('Analyzing MSI from InstallShield Setup ' + myfilename);
+  write_log_and_memo('Analyzing MSI from InstallShield Setup ' + myfilename);
 
   myoutlines := TStringList.Create;
   // myBatch := 'cmd.exe /C '+ExtractFilePath(paramstr(0))+'extractMSI.cmd "'+myfilename+'"'; // (does not work with spaces in EXE path)
   myBatch := '"' + ExtractFilePath(ParamStr(0)) + 'utils' + PathDelim +
     'extractMSI.cmd" "' + myfilename + '"';
   // dropped cmd.exe
-  Mywrite(myBatch);
-  Mywrite('!! PLEASE WAIT !!');
-  Mywrite('!! PLEASE WAIT !! Extracting and analyzing MSI ...');
-  Mywrite('!! PLEASE WAIT !!');
+  write_log_and_memo(myBatch);
+  write_log_and_memo('!! PLEASE WAIT !!');
+  write_log_and_memo('!! PLEASE WAIT !! Extracting and analyzing MSI ...');
+  write_log_and_memo('!! PLEASE WAIT !!');
 
   if not RunCommandAndCaptureOut(myBatch, True, myoutlines, myreport,
     SW_SHOWMINIMIZED, myexitcode) then
@@ -710,7 +717,7 @@ begin
         if mymsilist.Count > 1 then
         begin
           LogDatei.log('Found multiple msi files: ' + mymsilist.Text, LLWarning);
-          if showgui then
+          if osdsettings.showgui then
             ShowMessage(sWarnMultipleMsi + opsitmp);
           mymsifilename := mymsilist.Strings[0];
           LogDatei.log('Analyzing msi file: ' + mymsifilename, LLInfo);
@@ -733,8 +740,8 @@ begin
     KillProcess(ExtractFileName(myfilename));
   end;
   {$ENDIF WINDOWS}
-  mywrite('get_InstallShield_info finished');
-  mywrite('InstallShield+MSI Setup detected');
+  write_log_and_memo('get_InstallShield_info finished');
+  write_log_and_memo('InstallShield+MSI Setup detected');
 end;
 
 
@@ -752,28 +759,28 @@ var
   mymsifilename: string;
 
 begin
-  Mywrite('Analyzing AdvancedMSI Setup: ' + myfilename);
+  write_log_and_memo('Analyzing AdvancedMSI Setup: ' + myfilename);
   mysetup.installerId := stAdvancedMSI;
   mysetup.setupFileName := ExtractFileName(myfilename);
 
   {$IFDEF WINDOWS}
   // extract and analyze MSI from setup
 
-  Mywrite('Analyzing MSI from Setup ' + myfilename);
+  write_log_and_memo('Analyzing MSI from Setup ' + myfilename);
 
   myoutlines := TStringList.Create;
   myBatch := 'cmd.exe /C "' + myfilename + '" /extract:' + opsitmp;
-  Mywrite(myBatch);
-  Mywrite('!! PLEASE WAIT !!');
-  Mywrite('!! PLEASE WAIT !! Extracting and analyzing MSI ...');
-  Mywrite('!! PLEASE WAIT !!');
+  write_log_and_memo(myBatch);
+  write_log_and_memo('!! PLEASE WAIT !!');
+  write_log_and_memo('!! PLEASE WAIT !! Extracting and analyzing MSI ...');
+  write_log_and_memo('!! PLEASE WAIT !!');
 
   if DirectoryExists(opsitmp) then
     DeleteDirectory(opsitmp, True);
   if not DirectoryExists(opsitmp) then
     ForceDirectories(opsitmp);
   if not DirectoryExists(opsitmp) then
-    mywrite('Error: could not create directory: ' + opsitmp);
+    write_log_and_memo('Error: could not create directory: ' + opsitmp);
 
   if not RunCommandAndCaptureOut(myBatch, True, myoutlines, myreport,
     SW_SHOWMINIMIZED, myexitcode) then
@@ -791,7 +798,7 @@ begin
         if mymsilist.Count > 1 then
         begin
           LogDatei.log('Found multiple msi files: ' + mymsilist.Text, LLWarning);
-          if showgui then
+          if osdsettings.showgui then
             ShowMessage(sWarnMultipleMsi + opsitmp);
           mymsifilename := mymsilist.Strings[0];
           LogDatei.log('Analyzing msi file: ' + mymsifilename, LLInfo);
@@ -813,25 +820,25 @@ begin
   end;
   {$ENDIF WINDOWS}
 
-  mywrite('get_AdvancedMSI_info finished');
-  mywrite('Advancd Installer Setup (with embedded MSI) detected');
+  write_log_and_memo('get_AdvancedMSI_info finished');
+  write_log_and_memo('Advancd Installer Setup (with embedded MSI) detected');
 end;
 
 
 procedure get_nsis_info(myfilename: string; var mysetup: TSetupFile);
 
 begin
-  Mywrite('Analyzing NSIS-Setup:');
-  mywrite('get_nsis_info finished');
-  mywrite('NSIS (Nullsoft Install System) detected');
+  write_log_and_memo('Analyzing NSIS-Setup:');
+  write_log_and_memo('get_nsis_info finished');
+  write_log_and_memo('NSIS (Nullsoft Install System) detected');
 end;
 
 procedure get_7zip_info(myfilename: string);
 var
   product: string;
 begin
-  Mywrite('Analyzing 7zip-Setup:');
-  mywrite('get_7zip_info finished');
+  write_log_and_memo('Analyzing 7zip-Setup:');
+  write_log_and_memo('get_7zip_info finished');
 end;
 
 procedure get_installaware_info(myfilename: string; var mysetup: TSetupFile);
@@ -839,7 +846,7 @@ var
   str1, str2: string;
   pos1, pos2, i: integer;
 begin
-  Mywrite('Analyzing InstallAware-Setup:');
+  write_log_and_memo('Analyzing InstallAware-Setup:');
   for i := 0 to mysetup.infolist.Count - 1 do
   begin
     str1 := mysetup.infolist[i];
@@ -862,7 +869,7 @@ begin
           installerArray[integer(mysetup.installerId)].unattendeduninstall;
     end;
   end;
-  mywrite('get_installaware_info finished');
+  write_log_and_memo('get_installaware_info finished');
 end;
 
 procedure get_genmsinstaller_info(myfilename: string; var mysetup: TSetupFile);
@@ -870,10 +877,10 @@ var
   str1, str2: string;
   pos1, pos2, i: integer;
 begin
-  Mywrite('Analyzing generic MS Installer-Setup:');
+  write_log_and_memo('Analyzing generic MS Installer-Setup:');
   mysetup.uninstallProg := 'C:\ProgramData\{<UNKNOWN GUID>}\' +
     ExtractFileName(myfilename);
-  mywrite('get_genmsinstaller_info finished');
+  write_log_and_memo('get_genmsinstaller_info finished');
 end;
 
 procedure get_wixtoolset_info(myfilename: string; var mysetup: TSetupFile);
@@ -884,15 +891,16 @@ var
   destDir: string;
   myCommand: string;
   myreport: string;
+  myexitcode : Integer;
   smask: string;
   mymsilist: TStringList;
   mymsifilename: string;
 begin
-  Mywrite('Analyzing generic wixtoolset-Setup:');
+  write_log_and_memo('Analyzing generic wixtoolset-Setup:');
   mysetup.uninstallProg := 'C:\ProgramData\{<UNKNOWN GUID>}\' +
     ExtractFileName(myfilename);
 
-  Mywrite('Analyzing Wix Bundle:');
+  write_log_and_memo('Analyzing Wix Bundle:');
   {$IFDEF WINDOWS}
 
   myoutlines := TStringList.Create;
@@ -904,17 +912,19 @@ begin
   LogDatei.log('extract files from ' + myfilename + ' to' + destDir, LLInfo);
   myCommand := '"' + ExtractFilePath(ParamStr(0)) + 'utils' + PathDelim +
     'wixbin' + PathDelim + 'dark.exe" -x "' + destDir + '" ' + myfilename;
-  Mywrite(myCommand);
+  write_log_and_memo(myCommand);
 
   if not RunCommandAndCaptureOut(myCommand, True, myoutlines, myreport,
     SW_SHOWMINIMIZED, myexitcode) then
   begin
     LogDatei.log('Failed to extract files from wix bundle: ' + myreport, LLerror);
+    osdsettings.myexitcode:= myexitcode;
   end
   else
   begin
+    osdsettings.myexitcode:= myexitcode;
     for i := 0 to myoutlines.Count - 1 do
-      mywrite(myoutlines.Strings[i]);
+      write_log_and_memo(myoutlines.Strings[i]);
     myoutlines.Free;
 
     // read the extracted files
@@ -937,7 +947,7 @@ begin
         if mymsilist.Count > 1 then
         begin
           LogDatei.log('Found multiple msi files: ' + mymsilist.Text, LLWarning);
-          if showgui then
+          if osdsettings.showgui then
             ShowMessage(sWarnMultipleMsi + opsitmp);
           mymsifilename := mymsilist.Strings[0];
           LogDatei.log('Analyzing msi file: ' + mymsifilename, LLInfo);
@@ -959,7 +969,7 @@ begin
 
   end;
     {$ENDIF WINDOWS}
-  mywrite('get_wixtoolset_info finished');
+  write_log_and_memo('get_wixtoolset_info finished');
 end;
 
 procedure get_boxstub_info(myfilename: string; var mysetup: TSetupFile);
@@ -967,10 +977,10 @@ var
   str1, str2: string;
   pos1, pos2, i: integer;
 begin
-  Mywrite('Analyzing generic boxstub-Setup:');
+  write_log_and_memo('Analyzing generic boxstub-Setup:');
   mysetup.uninstallProg := 'C:\ProgramData\{<UNKNOWN GUID>}\' +
     ExtractFileName(myfilename);
-  mywrite('get_boxstub_info finished');
+  write_log_and_memo('get_boxstub_info finished');
 end;
 
 procedure get_sfxcab_info(myfilename: string; var mysetup: TSetupFile);
@@ -978,10 +988,10 @@ var
   str1, str2: string;
   pos1, pos2, i: integer;
 begin
-  Mywrite('Analyzing sfxcabr-Setup:');
+  write_log_and_memo('Analyzing sfxcabr-Setup:');
   mysetup.uninstallProg := 'C:\ProgramData\{<UNKNOWN GUID>}\' +
     ExtractFileName(myfilename);
-  mywrite('get_sfxcab_info finished');
+  write_log_and_memo('get_sfxcab_info finished');
 end;
 
 procedure get_bitrock_info(myfilename: string; var mysetup: TSetupFile);
@@ -989,8 +999,8 @@ var
   str1, str2: string;
   pos1, pos2, i: integer;
 begin
-  Mywrite('Analyzing Windows Bitrock Installer:');
-  mywrite('get_bitrock_info finished');
+  write_log_and_memo('Analyzing Windows Bitrock Installer:');
+  write_log_and_memo('get_bitrock_info finished');
 end;
 
 procedure get_selfextrackting_info(myfilename: string; var mysetup: TSetupFile);
@@ -998,8 +1008,8 @@ var
   str1, str2: string;
   pos1, pos2, i: integer;
 begin
-  Mywrite('Analyzing selfextrackting Installer:');
-  mywrite('get_selfextrackting_info finished');
+  write_log_and_memo('Analyzing selfextrackting Installer:');
+  write_log_and_memo('get_selfextrackting_info finished');
 end;
 
 
@@ -1021,7 +1031,7 @@ begin
     setupType := stMsi;
     get_aktProduct_general_info_win(stMsi, Filename, mysetup);
     get_msi_info(FileName, mysetup);
-    Mywrite('Found installer= ' + installerToInstallerstr(setupType));
+    write_log_and_memo('Found installer= ' + installerToInstallerstr(setupType));
   end
   else
   begin
@@ -1078,24 +1088,24 @@ begin
     // marker for add installers
     tmpstr := installerToInstallerstr(setupType);
     case setupType of
-      stInno: Mywrite('Found installer= ' + tmpstr);
-      stNsis: Mywrite('Found installer= ' + tmpstr);
-      stInstallShield: Mywrite('Found installer= ' + tmpstr);
-      stInstallShieldMSI: Mywrite('Found installer= ' + tmpstr);
-      stAdvancedMSI: Mywrite('Found installer= ' + tmpstr);
-      st7zip: Mywrite('Found installer= ' + tmpstr);
+      stInno: write_log_and_memo('Found installer= ' + tmpstr);
+      stNsis: write_log_and_memo('Found installer= ' + tmpstr);
+      stInstallShield: write_log_and_memo('Found installer= ' + tmpstr);
+      stInstallShieldMSI: write_log_and_memo('Found installer= ' + tmpstr);
+      stAdvancedMSI: write_log_and_memo('Found installer= ' + tmpstr);
+      st7zip: write_log_and_memo('Found installer= ' + tmpstr);
       stMsi: ;// nothing to do here - see above;
-      st7zipsfx: Mywrite('Found installer= ' + tmpstr);
-      stInstallAware: Mywrite('Found installer= ' + tmpstr);
-      stMSGenericInstaller: Mywrite('Found installer= ' + tmpstr);
-      stWixToolset: Mywrite('Found installer= ' + tmpstr);
-      stBoxStub: Mywrite('Found installer= ' + tmpstr);
-      stSFXcab: Mywrite('Found installer= ' + tmpstr);
-      stBitrock: Mywrite('Found installer= ' + tmpstr);
-      stSelfExtractingInstaller: Mywrite('Found installer= ' + tmpstr);
-      stUnknown: Mywrite('Found installer= ' + tmpstr);
+      st7zipsfx: write_log_and_memo('Found installer= ' + tmpstr);
+      stInstallAware: write_log_and_memo('Found installer= ' + tmpstr);
+      stMSGenericInstaller: write_log_and_memo('Found installer= ' + tmpstr);
+      stWixToolset: write_log_and_memo('Found installer= ' + tmpstr);
+      stBoxStub: write_log_and_memo('Found installer= ' + tmpstr);
+      stSFXcab: write_log_and_memo('Found installer= ' + tmpstr);
+      stBitrock: write_log_and_memo('Found installer= ' + tmpstr);
+      stSelfExtractingInstaller: write_log_and_memo('Found installer= ' + tmpstr);
+      stUnknown: write_log_and_memo('Found installer= ' + tmpstr);
       else
-        Mywrite('Found installer= ' + tmpstr);
+        write_log_and_memo('Found installer= ' + tmpstr);
     end;
     { avoid hyphen char "-" and replace with dot "." in version }
     aktproduct.productdata.productversion :=
@@ -1113,7 +1123,9 @@ begin
   end
   else
   begin
+    {$IFDEF OSDGUI}
     resultform1.BtAnalyzeNextStepClick(nil);
+    {$ENDIF OSDGUI}
   end;
 end;
 

@@ -5,9 +5,19 @@ program opsisetupdetector;
 uses {$IFDEF UNIX} {$IFDEF UseCThreads}
   cthreads, {$ENDIF} {$ENDIF}
   Interfaces,
+  {$IFDEF OSDGUI}
   Forms,
   osdform,
   Printers,
+    osdconfigdlg,
+  osddlgnewdependency,
+  osddlgnewproperty,
+    osmessagedialog,
+  osdanalyzegeneral,
+  ChooseInstallerDlg,
+  {$ELSE OSDGUI}
+  custapp,
+  {$ENDIF OSDGUI}
   fileinfo,
   winpeimagereader,
   lcltranslator,
@@ -15,26 +25,31 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
   osdanalyzewin,
   osdhelper,
   osdbasedata,
-  osdconfigdlg,
   osdcreate,
-  osddlgnewdependency,
   oscheckbinarybitness,
   osencoding,
-  osddlgnewproperty,
   osddatamod,
   osjson,
   oswebservice,
   oscrypt,
-  osmessagedialog,
-  osdanalyzegeneral,
-  ChooseInstallerDlg;
+osdmain;
+
+
+(*
+{$IFDEF WINDOWS}
+{$R manifest.rc}
+{$ENDIF WINDOWS}
+*)
 
 
 {$R *.res}
 //{$R manifest.rc}
 
 
+
+
 begin
+  {$IFDEF OSDGUI}
   Application.Scaled:=True;
   RequireDerivedFormResource := True;
   Application.Initialize;
@@ -46,4 +61,13 @@ begin
   Application.CreateForm(TFChooseInstallerDlg, FChooseInstallerDlg);
   Application.CreateForm(TMyMessageDlg, MyMessageDlg);
   Application.Run;
+  {$ELSE OSDGUI}
+  //Application.Scaled:=True;
+Application := TOSD.Create(nil);
+  Application.Title:='opsi-setup-detector';
+Application.Initialize;
+Application.DoRun;
+Application.Free;
+{$ENDIF OSDGUI}
+
 end.

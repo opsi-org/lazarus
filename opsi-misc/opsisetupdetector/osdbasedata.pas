@@ -24,7 +24,8 @@ uses
   osregex,
   lcltranslator,
   oscrypt,
-  osparserhelper;
+  osparserhelper,
+  oswebservice;
 
 type
 
@@ -43,12 +44,50 @@ type
   TOSDSettings = class(TPersistent)
   private
     FrunMode: TRunMode;
+    Fshowgui: boolean;
+    Fstartupfinished: boolean;
+    Fmylocaledir: string;
+    //Fmyfilename: string;
+    Fmyexitcode : integer;
+    FCreateModeCreateOnly: boolean;
+    FCreateModeBuildPackage: boolean;
+    FCreateModePackageBuilder: boolean;
+    FBuildModebuildOnly: boolean;
+    FBuildModebuildInstall: boolean;
+    FBuildMode : TStrings;
+    FBuildModeIndex :integer;
+    FBuildModeValue : string;
+    FCreateMode  : TStrings;
+    FCreateModeIndex :integer;
+    FCreateModeValue : string;
+    procedure SetBuildMode(const AValue: TStrings);
+    procedure SetBuildModeValue(const AValue: string);
+    procedure SetBuildModeIndex(const AValue: integer);
+    procedure SetCreateMode(const AValue: TStrings);
+    procedure SetCreateModeValue(const AValue: string);
+    procedure SetCreateModeIndex(const AValue: integer);
   published
     property runmode: TRunMode read FrunMode write FrunMode;
+    property showgui: boolean read Fshowgui write Fshowgui;
+    property startupfinished: boolean read Fstartupfinished write Fstartupfinished;
+    property mylocaledir: string read Fmylocaledir write Fmylocaledir;
+    //property opsitmp: string read Fopsitmp write Fopsitmp;
+    property myexitcode: integer read Fmyexitcode write Fmyexitcode;
+    property CreateModeCreateOnly: boolean read FCreateModeCreateOnly write FCreateModeCreateOnly;
+    property CreateModeBuildPackage: boolean read FCreateModeBuildPackage write FCreateModeBuildPackage;
+    property CreateModePackageBuilder: boolean read FCreateModePackageBuilder write FCreateModePackageBuilder;
+    property BuildModebuildOnly: boolean read FBuildModebuildOnly write FBuildModebuildOnly;
+    property BuildModebuildInstall: boolean read FBuildModebuildInstall write FBuildModebuildInstall;
+    property BuildMode: TStrings read FBuildMode write SetBuildMode;
+    property BuildModeIndex: integer read FBuildModeIndex write SetBuildModeIndex;
+    property BuildModeValue: string read FBuildModeValue write SetBuildModeValue;
+    property CreateMode: TStrings read FCreateMode write SetCreateMode;
+    property CreateModeIndex: integer read FCreateModeIndex write SetCreateModeIndex;
+    property CreateModeValue: string read FCreateModeValue write SetCreateModeValue;
   public
     { public declarations }
-    //constructor Create;
-    //destructor Destroy;
+    constructor Create;
+    destructor Destroy;
   end;
 
   TTargetOS = (osLin, osWin, osMac, osMulti, osUnknown);
@@ -528,6 +567,10 @@ var
   forceTargetOS: TTargetOS = osWin; // by cli parameter
   globimportMode: boolean = False;
   defaultIconFullFileName: string;
+  opsitmp : string;
+  localservicedata: TOpsi4Data = nil;
+  passwordToUse: string;
+  opsiserviceversion: string;
 
 resourcestring
 
@@ -561,8 +604,14 @@ resourcestring
     'comment "Uninstall finished..."';
   rspathToOpsiPackageBuilder =
     'Path to the OpsiPackageBuilder. OpsiPackageBuilder is used to build the opsi packages via ssh. see: https://forum.opsi.org/viewtopic.php?f=22&t=7573';
-  rscreateRadioIndex = 'selects the Create mode Radiobutton.';
+  rsCreateRadioIndex = 'selects the Create mode Radiobutton.';
+  rsCreateRadioFiles               = 'create opsi product files';
+  rsCreateRadioFilesBuild          = 'create opsi product files and  build package';
+  rsCreateRadioFilesPackageBuilder = 'create opsi product files and start the interactive PackageBuilder';
+
   rsBuildRadioIndex = 'selects the Build mode Radiobutton.';
+  rsBuildRadioBuild = 'build';
+  rsBuildRadioBuildInstall = 'build and install';
   rsCnfdTitle = 'Edit your configuration here.' + LineEnding +
     'Click on a line to get help ' + LineEnding +
     'in the yellow field at the bottom.';
@@ -593,11 +642,69 @@ implementation
 {$IFDEF OSDGUI}
 uses
   osdform;
-
 {$ENDIF OSDGUI}
 
 var
   FileVerInfo: TFileVersionInfo;
+
+  // TOSDSettings ************************************
+  constructor TOSDSettings.Create;
+  begin
+    startupfinished:=false;
+    myexitcode := 0;
+    opsitmp := '';
+    FBuildMode := TStringList.Create;
+    FBuildMode.Add(rsBuildRadioBuild);
+    FBuildMode.Add(rsBuildRadioBuildInstall);
+    FCreateMode := TStringList.Create;
+    FCreateMode.Add(rsCreateRadioFiles);
+    FCreateMode.Add(rsCreateRadioFilesBuild);
+    FCreateMode.Add(rsCreateRadioFilesPackageBuilder);
+    FCreateModeIndex:= 1;
+    FBuildModeIndex:= 1;
+    FCreateModeValue := CreateMode.Strings[FCreateModeIndex];
+    FBuildModeValue:= BuildMode.Strings[FBuildModeIndex];
+  end;
+
+  destructor TOSDSettings.Destroy;
+  begin
+    FreeAndNil(FBuildMode);
+    FreeAndNil(FCreateMode);
+  end;
+
+  procedure TOSDSettings.SetBuildMode(const AValue: TStrings);
+  begin
+    FBuildMode.Assign(AValue);
+  end;
+
+  procedure TOSDSettings.SetCreateMode(const AValue: TStrings);
+  begin
+    FCreateMode.Assign(AValue);
+  end;
+
+  procedure TOSDSettings.SetBuildModeValue (const AValue: String);
+  begin
+    FBuildModeValue := AValue;
+    FBuildModeIndex:= BuildMode.IndexOf(AValue);
+  end;
+
+  procedure TOSDSettings.SetCreateModeValue (const AValue: String);
+  begin
+    FCreateModeValue := AValue;
+    FCreateModeIndex:= CreateMode.IndexOf(AValue);
+  end;
+
+  procedure TOSDSettings.SetBuildModeIndex (const AValue: integer);
+  begin
+    FCreateModeIndex := AValue;
+    FBuildModeValue:= BuildMode.Strings[AValue];
+  end;
+
+  procedure TOSDSettings.SetCreateModeIndex (const AValue: integer);
+  begin
+    FCreateModeIndex:= AValue;
+    FCreateModeValue := CreateMode.Strings[AValue];
+  end;
 
 // TInstallerData ************************************
 
@@ -2278,6 +2385,8 @@ begin
   architectureModeList.Add('selectable');
 
   myconfiguration := TConfiguration.Create;
+
+  osdsettings := TOSDSettings.Create;
 
 
   //aktSetupFile := TSetupFile.Create;

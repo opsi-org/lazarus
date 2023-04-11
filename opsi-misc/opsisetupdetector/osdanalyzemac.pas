@@ -44,8 +44,14 @@ function getPacketIDShort(str: string): string;
 
 implementation
 
+{$IFDEF OSDGUI}
 uses
-  osdform;
+  osdform,
+  osdmain;
+{$ELSE OSDGUI}
+uses
+  osdmain;
+{$ENDIF OSDGUI}
 
 function getPacketIDfromFilename(str: string): string;
 var
@@ -166,7 +172,7 @@ var
 
 begin
   installerstr := installerToInstallerstr(installerId);
-  Mywrite('Analyzing ' + installerstr + ' Setup: ' + myfilename);
+  write_log_and_memo('Analyzing ' + installerstr + ' Setup: ' + myfilename);
 
   mysetup.installerId := installerId;
   mysetup.link := installerArray[integer(mysetup.installerId)].Link;
@@ -207,9 +213,9 @@ begin
   sFileSize := FormatFloat('##0.0', fsizemb) + ' MB';
   sReqSize := FormatFloat('###0', rsizemb) + ' MB';
 
-  mywrite('Setup file size is: ' + sFileSize);
-  mywrite('Estimated required space is: ' + sReqSize);
-  mywrite('........');
+  write_log_and_memo('Setup file size is: ' + sFileSize);
+  write_log_and_memo('Estimated required space is: ' + sReqSize);
+  write_log_and_memo('........');
 
   if fsizemb < 1 then
     fsizemb := 1;
@@ -245,7 +251,7 @@ begin
   begin
     // no well known mac install file found;
     LogDatei.log('no well known mac install file found inside zip', LLerror);
-    mywrite('no well known mac install file found inside zip');
+    write_log_and_memo('no well known mac install file found inside zip');
     mysetup.installerId := stUnknown;
   end
   else
@@ -322,13 +328,13 @@ begin
   // marker for add installers
   // stMacZip, stMacDmg, stMacPKG, stMacApp
   case setupType of
-    stMacZip: Mywrite('Found installer= ' + installerToInstallerstr(setupType));
-    stMacDmg: Mywrite('Found installer= ' + installerToInstallerstr(setupType));
-    stMacPKG: Mywrite('Found installer= ' + installerToInstallerstr(setupType));
-    stMacApp: Mywrite('Found installer= ' + installerToInstallerstr(setupType));
-    stUnknown: Mywrite('Found installer= ' + installerToInstallerstr(setupType));
+    stMacZip: write_log_and_memo('Found installer= ' + installerToInstallerstr(setupType));
+    stMacDmg: write_log_and_memo('Found installer= ' + installerToInstallerstr(setupType));
+    stMacPKG: write_log_and_memo('Found installer= ' + installerToInstallerstr(setupType));
+    stMacApp: write_log_and_memo('Found installer= ' + installerToInstallerstr(setupType));
+    stUnknown: write_log_and_memo('Found installer= ' + installerToInstallerstr(setupType));
     else
-      Mywrite('Found installer= ' + installerToInstallerstr(setupType));
+      write_log_and_memo('Found installer= ' + installerToInstallerstr(setupType));
   end;
   { avoid hyphen char "-" and replace with dot "." in version }
   aktproduct.productdata.productversion :=
@@ -337,12 +343,12 @@ begin
   {$IFDEF OSDGUI}
   resultForm1.ProgressBarAnalyze.Position := 100;
   procmess;
-  {$ENDIF OSDGUI}
   if not (setupType = stUnknown) then
   begin
     sleep(2000);
     resultform1.BtAnalyzeNextStepClick(nil);
   end;
+  {$ENDIF OSDGUI}
 end;
 
 end.

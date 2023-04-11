@@ -39,8 +39,14 @@ procedure AnalyzeLin(FileName: string; var mysetup: TSetupFile; verbose: boolean
 
 implementation
 
+{$IFDEF OSDGUI}
 uses
-  osdform;
+  osdform,
+  osdmain;
+{$ELSE OSDGUI}
+uses
+  osdmain;
+{$ENDIF OSDGUI}
 
 procedure get_aktProduct_general_info_lin(installerId: TKnownInstaller;
   myfilename: string; var mysetup: TSetupFile);
@@ -64,7 +70,7 @@ var
 
 begin
   installerstr := installerToInstallerstr(installerId);
-  Mywrite('Analyzing ' + installerstr + ' Setup: ' + myfilename);
+  write_log_and_memo('Analyzing ' + installerstr + ' Setup: ' + myfilename);
 
   mysetup.installerId := installerId;
   mysetup.link := installerArray[integer(mysetup.installerId)].Link;
@@ -108,9 +114,9 @@ begin
   sFileSize := FormatFloat('##0.0', fsizemb) + ' MB';
   sReqSize := FormatFloat('###0', rsizemb) + ' MB';
 
-  mywrite('Setup file size is: ' + sFileSize);
-  mywrite('Estimated required space is: ' + sReqSize);
-  mywrite('........');
+  write_log_and_memo('Setup file size is: ' + sFileSize);
+  write_log_and_memo('Estimated required space is: ' + sReqSize);
+  write_log_and_memo('........');
 
   if fsizemb < 1 then
     fsizemb := 1;
@@ -216,8 +222,10 @@ begin
     'set $exitcode$ = linuxRemoveOnePackage("' + packageId + '")';
   {$ELSE LINUX}
   LogDatei.log('Detailed anlyze of rpm files can only be done at linux', LLWarning);
+  {$IFDEF OSDGUI}
   MessageDlg(rsRpmAnalyze, rsRPMAnalyzeNotLinux,
     mtInformation, [mbOK], '');
+  {$ENDIF OSDGUI}
   {$ENDIF LINUX}
   LogDatei.log('Finished with get_rpm_info', LLinfo);
 end;
@@ -293,8 +301,10 @@ begin
     'set $exitcode$ = linuxRemoveOnePackage("' + packageId + '")';
   {$ELSE LINUX}
   LogDatei.log('Detailed anlyze of deb files can only be done at linux', LLWarning);
+  {$IFDEF OSDGUI}
   MessageDlg(rsDebAnalyze, rsDebAnalyzeNotLinux,
     mtInformation, [mbOK], '');
+  {$ENDIF OSDGUI}
   {$ENDIF LINUX}
   LogDatei.log('Finished with get_deb_info', LLinfo);
 end;
@@ -305,7 +315,7 @@ var
   str1, str2: string;
   pos1, pos2, i: integer;
 begin
-  Mywrite('Analyzing Linux Bitrock Installer:');
+  write_log_and_memo('Analyzing Linux Bitrock Installer:');
   mysetup.installDirectory := '/opt/<product>/';
   if installerArray[integer(mysetup.installerId)].uninstallProg <> '' then
   begin
@@ -330,7 +340,7 @@ begin
     // no known uninstall program
     mysetup.uninstallCheck.Add('set $oldProgFound$ = "false"');
   end;
-  mywrite('get_bitrock_info finished');
+  write_log_and_memo('get_bitrock_info finished');
 end;
 
 procedure get_linux_generic_info(myfilename: string; var mysetup: TSetupFile);
@@ -388,12 +398,12 @@ begin
   // stLinRPM, stLinDeb
   tmpstr := installerToInstallerstr(setupType);
   case setupType of
-    stLinRPM: Mywrite('Found installer= ' + tmpstr);
-    stLinDeb: Mywrite('Found installer= ' + tmpstr);
-    stBitrock: Mywrite('Found installer= ' + tmpstr);
-    stUnknown: Mywrite('Found installer= ' + tmpstr);
+    stLinRPM: write_log_and_memo('Found installer= ' + tmpstr);
+    stLinDeb: write_log_and_memo('Found installer= ' + tmpstr);
+    stBitrock: write_log_and_memo('Found installer= ' + tmpstr);
+    stUnknown: write_log_and_memo('Found installer= ' + tmpstr);
     else
-      Mywrite('Found installer= ' + tmpstr);
+      write_log_and_memo('Found installer= ' + tmpstr);
   end;
   { avoid hyphen char "-" and replace with dot "." in version }
   aktproduct.productdata.productversion :=
@@ -402,12 +412,13 @@ begin
   {$IFDEF OSDGUI}
   resultForm1.ProgressBarAnalyze.Position := 100;
   procmess;
-  {$ENDIF OSDGUI}
+
   if not (setupType = stUnknown) then
   begin
     sleep(2000);
     resultform1.BtAnalyzeNextStepClick(nil);
   end;
+  {$ENDIF OSDGUI}
 end;
 
 

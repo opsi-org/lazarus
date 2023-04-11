@@ -31,7 +31,8 @@ uses
   lcltranslator,
   EditBtn,
   Grids,
-  PairSplitter, ColorBox,
+  PairSplitter,
+  ColorBox,
   oslog,
   osdbasedata, osdconfigdlg, osdcreate, fpjsonrtti, osddlgnewdependency,
   osddlgnewproperty, osparserhelper,
@@ -39,7 +40,8 @@ uses
   osdcheckentriesdlg,
   Contnrs,
   osmessagedialog,
-  oswebservice;
+  oswebservice,
+  osdmain;
 
 type
   TIconDisplay = class(TPersistent)
@@ -49,6 +51,8 @@ type
     FileName: string;
   public
   end;
+
+
 
   { TResultform1 }
 
@@ -243,6 +247,12 @@ type
     Panel11: TPanel;
     Panel12: TPanel;
     Panel13: TPanel;
+    radioBuildModebuildInstall: TRadioButton;
+    radioBuildModebuildOnly: TRadioButton;
+    RadioButtonBuildPackage: TRadioButton;
+    RadioButtonCreateOnly: TRadioButton;
+    RadioButtonPackageBuilder: TRadioButton;
+    RadioGroup1: TRadioGroup;
     TaskPanelMulti: TPanel;
     TaskPanelMac: TPanel;
     PanelDepBtns: TPanel;
@@ -263,12 +273,6 @@ type
     processStatement: TLabel;
     ProgressBar1: TProgressBar;
     ProgressBarAnalyze: TProgressBar;
-    radioBuildModebuildOnly: TRadioButton;
-    radioBuildModebuildInstall: TRadioButton;
-    RadioButtonBuildPackage: TRadioButton;
-    RadioButtonCreateOnly: TRadioButton;
-    RadioButtonPackageBuilder: TRadioButton;
-    RadioGroup1: TRadioGroup;
     SaveDialogProj: TSaveDialog;
     SBtnExit: TSpeedButton;
     ScrollBox1: TScrollBox;
@@ -356,6 +360,8 @@ type
     TIMemoAdvice: TTIMemo;
     TIMemoDesc: TTIMemo;
     TimerFirstconfig: TTimer;
+    TIRadioGroupCreateMode: TTIRadioGroup;
+    TIRadioGroupBuildMode: TTIRadioGroup;
     TIS1Url: TTILabel;
     TILabelInstaller1: TTILabel;
     TIS2Url: TTILabel;
@@ -469,6 +475,7 @@ type
     procedure TIEditSetup3UnProgramEditingDone(Sender: TObject);
     procedure TIGridDepPropertiesCreated(Sender: TObject);
     procedure TimerFirstconfigTimer(Sender: TObject);
+    procedure TIRadioGroupBuildModeClick(Sender: TObject);
     procedure TIS1UrlClick(Sender: TObject);
     procedure TIS1UrlMouseEnter(Sender: TObject);
     procedure TIS1UrlMouseLeave(Sender: TObject);
@@ -507,23 +514,25 @@ type
   end;
 
 
-procedure main;
-procedure mywrite(line: string); overload;
-procedure mywrite(line: string; loglevel: integer); overload;
+//procedure main;
+//procedure write_log_and_memo(line: string); overload;
+//procedure write_log_and_memo(line: string; loglevel: integer); overload;
 procedure checkWorkbench;
-procedure procmess;
-function startOpsiServiceConnection: boolean;
+//procedure procmess;
+//procedure AppTerminate;
+//function startOpsiServiceConnection: boolean;
+procedure initGUI;
 
 
 var
   resultForm1: TresultForm1;
-  optionlist: TStringList;
+  //optionlist: TStringList;
   myexitcode: integer;
   Result: integer;
-  myExeDir: string;
-  myfilename, myerror: string;
+  //myExeDir: string;
+  //myfilename, myerror: string;
   MSIfilename, MSTfilename, SetupFilename: string;
-  showgui: boolean;
+  //showgui: boolean;
   configDir: string;
   configFileName: string;
   packetBaseDir: string;
@@ -546,12 +555,12 @@ var
   showAdvancedMSI: boolean = True;
   //*****************************************
   firstshowconfigdone: boolean = False;
-  startupfinished: boolean = False;
-  mylocaledir: string;
-  localservicedata: TOpsi4Data = nil;
+  //startupfinished: boolean = False;
+  //mylocaledir: string;
+  //localservicedata: TOpsi4Data = nil;
   productIds: TStringList;
-  passwordToUse: string;
-  opsiserviceversion: string;
+  //passwordToUse: string;
+  //opsiserviceversion: string;
 
 
 resourcestring
@@ -659,28 +668,33 @@ implementation
 
 {$R *.lfm}
 
-
+(*
 procedure procmess;
 begin
   Application.ProcessMessages;
 end;
 
-procedure mywrite(line: string);
+procedure AppTerminate;
 begin
-  mywrite(line, LLNotice);
+  Application.Terminate;
 end;
 
-procedure mywrite(line: string; loglevel: integer);
+procedure write_log_and_memo(line: string);
 begin
-  if showgui then
+  write_log_and_memo(line, LLNotice);
+end;
+
+procedure write_log_and_memo(line: string; loglevel: integer);
+begin
+  if osdsettings.showgui then
   begin
     resultform1.memoadd(line);
   end;
   LogDatei.log(line, loglevel);
 end;
+*)
 
-
-
+(*
 procedure WriteHelp;
 var
   progname: string;
@@ -750,7 +764,7 @@ begin
   halt(-1);
   Exit;
 end;
-
+*)
 
 procedure initGUI;
 
@@ -838,6 +852,12 @@ begin
       TIComboBoxChannel.Link.SetObjectAndProperty(productdata, 'channelDir');
       // initialize drop down
       TIComboBoxChannel.Items.Text := templateChannelList.Text;
+
+      TIRadioGroupCreateMode.Items.Text:= osdsettings.CreateMode.Text;
+      TIRadioGroupCreateMode.Link.SetObjectAndProperty(osdsettings, 'CreateModeValue');
+
+      TIRadioGroupBuildMode.Items.Text:= osdsettings.BuildMode.Text;
+      TIRadioGroupBuildMode.Link.SetObjectAndProperty(osdsettings, 'BuildModeValue');
 
       // the hints ...
       TIComboBoxChannel.Hint := rsTemlateChannelHint;
@@ -927,6 +947,7 @@ begin
   LogDatei.log('Finished initGUI ... ', LLInfo);
 end;
 
+(*
 function startOpsiServiceConnection: boolean;
 var
   i: integer;
@@ -1000,6 +1021,7 @@ begin
     end;
   end;
 end;
+*)
 
 procedure TResultform1.updateGUI;
 begin
@@ -1043,7 +1065,7 @@ begin
   TICheckBoxS2Mst.Link.TIObject := nil;
 end;
 
-
+(*
 function checkAktProduct: boolean;
 begin
   Result := True;
@@ -1071,8 +1093,9 @@ begin
     Application.Terminate;
   end;
 end;
+*)
 
-
+(*
 {$IFDEF WINDOWS}
 function GetSystemDefaultLocale(const typeOfValue: DWord): string;
   // possible values: cf. "Locale Types" in windows.pas
@@ -1091,8 +1114,9 @@ begin
 end;
 
 {$ENDIF WINDOWS}
+*)
 
-
+(*
 procedure main;
 var
   ErrorMsg: string;
@@ -1482,7 +1506,7 @@ begin
   end;
   LogDatei.log('Finished main ', LLInfo);
 end;
-
+*)
 
 
 { TResultform1 }
@@ -1575,7 +1599,7 @@ end;
 
 procedure TResultform1.FormShow(Sender: TObject);
 begin
-  if not startupfinished then
+  if not osdsettings.startupfinished then
     main;
 end;
 
@@ -1616,22 +1640,22 @@ end;
 
 procedure TResultform1.MenuItemLangDeClick(Sender: TObject);
 begin
-  SetDefaultLang('de', mylocaledir);
+  SetDefaultLang('de', osdsettings.mylocaledir);
 end;
 
 procedure TResultform1.MenuItemLangEnClick(Sender: TObject);
 begin
-  SetDefaultLang('en', mylocaledir);
+  SetDefaultLang('en', osdsettings.mylocaledir);
 end;
 
 procedure TResultform1.MenuItemLangEsClick(Sender: TObject);
 begin
-  SetDefaultLang('es', mylocaledir);
+  SetDefaultLang('es', osdsettings.mylocaledir);
 end;
 
 procedure TResultform1.MenuItemLangFrClick(Sender: TObject);
 begin
-  SetDefaultLang('fr', mylocaledir);
+  SetDefaultLang('fr', osdsettings.mylocaledir);
 end;
 
 procedure TResultform1.MenuItemStartClick(Sender: TObject);
@@ -4060,6 +4084,11 @@ begin
     MenuItemConfigClick(Sender);
     logdatei.log('Missing configs found- config dialog forced', LLinfo);
   end;
+end;
+
+procedure TResultform1.TIRadioGroupBuildModeClick(Sender: TObject);
+begin
+
 end;
 
 procedure TResultform1.TIS1UrlClick(Sender: TObject);

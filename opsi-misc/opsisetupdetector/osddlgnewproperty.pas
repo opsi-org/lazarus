@@ -83,8 +83,10 @@ resourcestring
 implementation
 
 {$R *.lfm}
+{$IFDEF OSDGUI}
 uses
   osdform;
+{$ENDIF OSDGUI}
 
 { TFNewPropDlg }
 

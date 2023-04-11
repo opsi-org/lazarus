@@ -40,8 +40,14 @@ function analyze_binary(myfilename: string; verbose, skipzero: boolean;
 
 implementation
 
+{$IFDEF OSDGUI}
 uses
-  osdform;
+  osdform,
+  osdmain;
+{$ELSE OSDGUI}
+uses
+  osdmain;
+{$ENDIF OSDGUI}
 
 function getPacketIDfromFilename(str: string): string;
 var
@@ -165,7 +171,7 @@ procedure grepmsi(instring: string);
 begin
   if (0 < pos('product_build_number{', lowercase(instring))) or
     (0 < pos('productcode{', lowercase(instring))) then
-    mywrite(instring);
+    write_log_and_memo(instring);
 end;
 
 function grepinstr(instring: string; searchstr: string): string;
@@ -305,8 +311,8 @@ begin
   setupType := stUnknown;
   Result := stUnknown;
 
-  mywrite('------------------------------------');
-  Mywrite('Analyzing: ' + myfilename);
+  write_log_and_memo('------------------------------------');
+  write_log_and_memo('Analyzing: ' + myfilename);
   msg := 'stringsgrep started (verbose:';
   if verbose = True then
     msg := msg + 'true'
@@ -318,7 +324,7 @@ begin
   else
     msg := msg + 'false';
   msg := msg + ')';
-  mywrite(msg);
+  write_log_and_memo(msg);
   FileStream := TFileStream.Create(myfilename, fmOpenRead);
   try
     {$IFDEF OSDGUI}
@@ -407,8 +413,8 @@ begin
     else
       msg := msg + 'false';
     msg := msg + ')';
-    mywrite(msg);
-    mywrite('------------------------------------');
+    write_log_and_memo(msg);
+    write_log_and_memo('------------------------------------');
   finally
     FileStream.Free;
   end;
