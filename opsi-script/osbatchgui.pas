@@ -42,10 +42,6 @@ uses
   // it is a Intel x86 architecture
   {$define CPUINTEL}
 {$ENDIF}
-{$IFDEF CPUINTEL}
-  // QProgBar contains Intel x86 Assembler code and so it cannot be used with other cpu architecture
-  QProgBar,
-{$ENDIF CPUINTEL}
   osGUIControl;
 
 type
@@ -174,10 +170,7 @@ var
   timeDetailLabel: boolean;
   timeActivityLabel: boolean;
 
-  {$IFDEF CPUINTEL}
-  Progressbar: TQProgressBar;
-  {$ENDIF CPUINTEL}
-  //ActivityBar: TQProgressBar;
+  Progressbar: TProgressBar;
 
   panelWidth: integer;
   panelHeight: integer;
@@ -215,6 +208,25 @@ var
   //Alpha: boolean;
 
 begin
+  with Progressbar do
+  begin
+    Visible := False;
+    Parent := Panel;
+    Left := 275;
+    Top := 160;
+    Width := 280;
+    Height := 20;
+    Orientation := pbHorizontal;
+    Smooth := False;
+    Step := 10;
+    Position := 0;
+    Min := 0;
+    Max := 100;
+    font.Color := clWindowText;
+    font.Height := -11;
+    font.Name := 'MS Sans Serif';
+    font.Style := [];
+  end;
   BorderIcons := [];
   useCommandLabel := True;
   useDetailLabel := True;
@@ -494,48 +506,10 @@ begin
       except
       end;
 
-      {$IFDEF CPUINTEL}
       try
         SetBoundsFromSkinIni(Progressbar, 'ProgressBar', SkinIni, 96, 235, 401, 17);
-        ProgressBar.BarColor :=
-          myStringToTColor(skinIni.ReadString('ProgressBar', 'BarColor', 'clBlack'));
-        ProgressBar.StartColor :=
-          myStringToTColor(skinIni.ReadString('ProgressBar', 'StartColor', 'clBlack'));
-        ProgressBar.FinalColor :=
-          myStringToTColor(skinIni.ReadString('ProgressBar', 'FinalColor', 'clBlack'));
-        if ProgressBar.StartColor <> ProgressBar.FinalColor then
-          startupmessages.Append('Warning: StartColor and FinalColor for ProgressBar in skin.ini must have the same value.' +
-            ' Therefore we set FinalColor internally to the value of StartColor.');
-        ProgressBar.ShapeColor :=
-          myStringToTColor(skinIni.ReadString('ProgressBar', 'ShapeColor', 'clBlack'));
-        ProgressBar.backgroundColor :=
-          myStringToTColor(skinIni.ReadString('ProgressBar',
-          'BackgroundColor', 'clWhite'));
-        if ('true' = skinIni.ReadString('ProgressBar', 'Shaped', 'false')) then
-          ProgressBar.Shaped := True
-        else
-          ProgressBar.Shaped := False;
-        ProgressBar.BlockSize := ScaleDesignToForm(skinIni.ReadInteger('ProgressBar', 'BlockSize', 6));
-        ProgressBar.SpaceSize := ScaleDesignToForm(skinIni.ReadInteger('ProgressBar', 'SpaceSize', 1));
-        if ('true' = skinIni.ReadString('ProgressBar', 'Cylinder', 'false')) then
-          ProgressBar.BarKind := bkCylinder
-        else
-          ProgressBar.BarKind := bkFlat;
-        if ('true' = skinIni.ReadString('ProgressBar', 'Glass', 'false')) then
-          ProgressBar.BarLook := blGlass
-        else
-          ProgressBar.BarLook := blMetal;
-        if ('true' = skinIni.ReadString('ProgressBar', 'ShowFullBlock', 'false')) then
-          ProgressBar.ShowFullBlock := True
-        else
-          ProgressBar.ShowFullBlock := False;
-        if ('true' = skinIni.ReadString('ProgressBar', 'RoundCorner', 'false')) then
-          ProgressBar.RoundCorner := True
-        else
-          ProgressBar.RoundCorner := False;
       except
       end;
-      {$ENDIF CPUINTEL}
 
       try
         SetBoundsFromSkinIni(ActivityBar, 'ActivityBar', SkinIni, 60, 350, 320, 10);
@@ -676,7 +650,6 @@ end;
 
 procedure TFBatchOberflaeche.ProgressBarActive(YesNo: boolean);
 begin
-  {$IFDEF CPUINTEL}
   if YesNo then
   begin
     Progressbar.Visible := True;
@@ -688,7 +661,6 @@ begin
     Progressbar.Visible := False;
     Progressbar.Enabled := False;
   end;
-  {$ENDIF CPUINTEL}
 end;
 
 procedure TFBatchOberflaeche.FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -699,46 +671,7 @@ end;
 
 procedure TFBatchOberflaeche.FormCreate(Sender: TObject);
 begin
-{$IFDEF CPUINTEL}
-  Progressbar := TQProgressBar.Create(nil);
-  Progressbar.Position := 0;
-  ProgressBar.Visible := False;
-  with Progressbar do
-  begin
-    Parent := Panel;
-    Left := 275;
-    Top := 160;
-    Width := 280;
-    Height := 20;
-    orientation := boHorizontal;
-    barKind := bkCylinder;
-    barLook := blGlass;
-    roundCorner := True;
-    backgroundColor := clWhite;
-    barColor := 15198183;
-    startColor := 15198183;
-    finalColor := 15198183;
-    showInactivePos := False;
-    invertInactPos := False;
-    inactivePosColor := clGray;
-    shaped := True;
-    shapeColor := 15198183;
-    blockSize := 10;
-    spaceSize := 3;
-    showFullBlock := False;
-    maximum := 100;
-    position := 50;
-    captionAlign := taLeftJustify;
-    //        font.Charset := DEFAULT_CHARSET;
-    font.Color := clWindowText;
-    font.Height := -11;
-    font.Name := 'MS Sans Serif';
-    font.Style := [];
-    AutoCaption := False;
-    AutoHint := False;
-    ShowPosAsPct := False;
-  end;
-{$ENDIF CPUINTEL}
+  Progressbar := TProgressBar.Create(nil);
 end;
 
 procedure TFBatchOberflaeche.FormWindowStateChange(Sender: TObject);
@@ -751,9 +684,7 @@ end;
 
 procedure TFBatchOberflaeche.ShowProgress(Prozente: integer);
 begin
-  {$IFDEF CPUINTEL}
   Progressbar.Position := Prozente;
-  {$ENDIF CPUINTEL}
 end;
 
 procedure TFBatchOberflaeche.showActivityBar(Show: boolean);
