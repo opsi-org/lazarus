@@ -512,12 +512,12 @@ var
 begin
   Result := '';
   LogDatei.log('Try getting FQDN with WMI:', LLInfo);
+  WMIProperties := TStringList.Create;
+  WMIResults := TStringList.Create;
   try
-    WMIProperties := TStringList.Create;
     WMIProperties.Add('DNSHostName');
     WMIProperties.Add('Name');
     WMIProperties.Add('Domain');
-    WMIResults := TStringList.Create;
     ErrorMsg := '';
     if osGetWMI('root\cimv2', 'Win32_ComputerSystem', WMIProperties,
       '', WMIResults, ErrorMsg) then
@@ -535,8 +535,8 @@ begin
     else
       LogDatei.log('Searching FQDN with WMI failed', LLNotice);
   finally
-    WMIProperties.Free;
-    WMIResults.Free;
+    FreeAndNil(WMIProperties);
+    FreeAndNil(WMIResults);
   end;
 end;
 
