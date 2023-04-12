@@ -660,8 +660,8 @@ var
     FCreateMode.Add(rsCreateRadioFiles);
     FCreateMode.Add(rsCreateRadioFilesBuild);
     FCreateMode.Add(rsCreateRadioFilesPackageBuilder);
-    FCreateModeIndex:= 1;
-    FBuildModeIndex:= 1;
+    FCreateModeIndex:= 0;
+    FBuildModeIndex:= 0;
     FCreateModeValue := CreateMode.Strings[FCreateModeIndex];
     FBuildModeValue:= BuildMode.Strings[FBuildModeIndex];
   end;

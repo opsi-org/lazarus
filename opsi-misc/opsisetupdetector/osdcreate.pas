@@ -1501,32 +1501,31 @@ begin
     ParamStr := ParamStr + DirectorySeparator;
   ParamStr := ParamStr + aktProduct.productdata.productId;
   paramlist.Add(ParamStr);
-  if resultForm1.RadioButtonPackageBuilder.Checked = True then
+  // call packagebuilder interactive
+  if osdsettings.CreateModeIndex = 2 then
   begin
     OpsiBuilderProcess.ShowWindow := swoShowNormal;
   end
   else  // build
-  if resultForm1.RadioButtonBuildPackage.Checked = True then
+  // call packagebuilder silent in commandline build mode
+  if osdsettings.CreateModeIndex = 1 then
   begin
-    //ParamStr := ParamStr + ' --quiet';
     paramlist.Add('--quiet');
-    if resultForm1.radioBuildModebuildOnly.Checked = True then
+    // build mode : build only
+    if osdsettings.BuildModeIndex = 0 then
     begin
       paramlist.Add('--build=rebuild');
-      //ParamStr := ParamStr + ' ' + ' --build=rebuild';
     end;
-    if resultForm1.radioBuildModebuildInstall.Checked = True then
+    // build mode : build + install
+    if osdsettings.BuildModeIndex = 1 then
     begin
       paramlist.Add('--build=rebuild');
       paramlist.Add('--install');
-      //ParamStr := ParamStr + ' --build=rebuild --install';
     end;
     OpsiBuilderProcess.ShowWindow := swoMinimize;
   end;
-  //buildCallparams.Add(ParamStr);
 
   LogDatei.log('Try to call opsi packagebuilder', LLnotice);
-  //OpsiBuilderProcess.CommandLine := buildCallbinary + ParamStr;
   OpsiBuilderProcess.Executable := buildCallbinary;
   OpsiBuilderProcess.Parameters.Assign(paramlist);
   OpsiBuilderProcess.Options := OpsiBuilderProcess.Options + [poWaitOnExit];
@@ -1536,7 +1535,8 @@ begin
   // execute opsiPacketBuilder
   try
     OpsiBuilderProcess.Execute;
-    if resultForm1.RadioButtonBuildPackage.Checked = True then
+    // call packagebuilder silent in commandline build mode
+    if osdsettings.CreateModeIndex = 1 then
     begin
       resultForm1.PanelProcess.Visible := True;
       resultForm1.processStatement.Caption := 'invoke opsi package builder ...';

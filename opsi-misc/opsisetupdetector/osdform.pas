@@ -102,7 +102,6 @@ type
     BtSingleAnalyzeAndCreateWithUser: TBitBtn;
     CheckBoxDefaultIcon: TCheckBox;
     CheckBoxNoIcon: TCheckBox;
-    CheckGroupBuildMode: TCheckGroup;
     EditLogInfo: TEdit;
     FlowPanel1: TFlowPanel;
     FlowPanel10: TFlowPanel;
@@ -247,12 +246,6 @@ type
     Panel11: TPanel;
     Panel12: TPanel;
     Panel13: TPanel;
-    radioBuildModebuildInstall: TRadioButton;
-    radioBuildModebuildOnly: TRadioButton;
-    RadioButtonBuildPackage: TRadioButton;
-    RadioButtonCreateOnly: TRadioButton;
-    RadioButtonPackageBuilder: TRadioButton;
-    RadioGroup1: TRadioGroup;
     TaskPanelMulti: TPanel;
     TaskPanelMac: TPanel;
     PanelDepBtns: TPanel;
@@ -451,7 +444,7 @@ type
     procedure Panel1Click(Sender: TObject);
     procedure ProductIDChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
-    procedure RadioButtonBuildModeChange(Sender: TObject);
+    //procedure RadioButtonBuildModeChange(Sender: TObject);
 
     procedure SBtnExitClick(Sender: TObject);
     procedure TabSheetCreateShow(Sender: TObject);
@@ -895,6 +888,7 @@ begin
 
     end;
     TIEditworkbenchpath.Link.SetObjectAndProperty(myconfiguration, 'workbench_path');
+    (*
     case myconfiguration.CreateRadioIndex of
       0: RadioButtonCreateOnly.Checked := True;
       1: RadioButtonBuildPackage.Checked := True;
@@ -904,6 +898,12 @@ begin
       0: radioBuildModebuildOnly.Checked := True;
       1: radioBuildModebuildInstall.Checked := True;
     end;
+    *)
+    // copy create and build radio button settings from configuration to
+    // osdseetings and so also to GUI
+    osdsettings.CreateModeIndex := myconfiguration.CreateRadioIndex;
+    osdsettings.BuildModeIndex := myconfiguration.BuildRadioIndex;
+
     Visible := True;
     TabSheetStart.ImageIndex := 0;
     TabSheetAnalyze.ImageIndex := 1;
@@ -918,23 +918,30 @@ begin
     // check if we may call package builder
     if fileexists(myconfiguration.PathToOpsiPackageBuilder) then
     begin
-      RadioButtonPackageBuilder.Enabled := True;
+      //RadioButtonPackageBuilder.Enabled := True;
+      // is not pössible via rtti
     end
     else
     begin
-      RadioButtonPackageBuilder.Enabled := False;
+      //RadioButtonPackageBuilder.Enabled := False;
+      // is not pössible via rtti
     end;
     // check if we may build and install
     if fileexists(myconfiguration.PathToOpsiPackageBuilder) or
       ((myconfiguration.Service_URL <> '') and (myconfiguration.Service_user <> '')) then
     begin
-      RadioButtonBuildPackage.Enabled := True;
-      CheckGroupBuildMode.Enabled := True;
+      //RadioButtonBuildPackage.Enabled := True;
+      // is not pössible via rtti
+      //CheckGroupBuildMode.Enabled := True;
+      TIRadioGroupBuildMode.Enabled := True;
     end
     else
     begin
-      RadioButtonBuildPackage.Enabled := False;
-      CheckGroupBuildMode.Enabled := True;
+      TIRadioGroupCreateMode.ItemIndex := 0;
+      TIRadioGroupCreateMode.Enabled := False;
+      TIRadioGroupBuildMode.Enabled := False;
+      //RadioButtonBuildPackage.Enabled := False;
+      //CheckGroupBuildMode.Enabled := True;
     end;
     {$IFDEF LINUX}
     //BtSingleAnalyzeAndCreateWin.Glyph.LoadFromFile('/usr/share/opsi-setup-detector-experimental/analyze4.xpm');
@@ -1683,16 +1690,22 @@ begin
   if fileexists(myconfiguration.PathToOpsiPackageBuilder) then
   begin
     logdatei.log('After configdialog: packagebuilder exists', LLDebug2);
-    RadioButtonBuildPackage.Enabled := True;
-    RadioButtonPackageBuilder.Enabled := True;
-    CheckGroupBuildMode.Enabled := True;
+    //RadioButtonBuildPackage.Enabled := True;
+    // is not pössible via rtti
+    //RadioButtonPackageBuilder.Enabled := True;
+    // is not pössible via rtti
+    //CheckGroupBuildMode.Enabled := True;
+    TIRadioGroupBuildMode.Enabled := True;
   end
   else
   begin
     logdatei.log('After configdialog: packagebuilder not found', LLDebug2);
-    RadioButtonBuildPackage.Enabled := False;
-    RadioButtonPackageBuilder.Enabled := False;
-    CheckGroupBuildMode.Enabled := False;
+    //RadioButtonBuildPackage.Enabled := False;
+    // is not pössible via rtti
+    //RadioButtonPackageBuilder.Enabled := False;
+    // is not pössible via rtti
+    //CheckGroupBuildMode.Enabled := False;
+    TIRadioGroupBuildMode.Enabled := False;
   end;
   logdatei.log('Finished MenuItemConfigClick', LLDebug2);
 end;
@@ -2984,12 +2997,19 @@ begin
     procmess;
     done := createProductStructure;
     procmess;
+    case TIRadioGroupCreateMode.ItemIndex of
+      0: ; // do nothing else
+      1: callServiceOrPackageBuilder;
+      2: callOpsiPackageBuilder;
+    end;
+    (*
     if RadioButtonCreateOnly.Checked then
     ; // do nothing else
     if RadioButtonBuildPackage.Checked then
       callServiceOrPackageBuilder;
     if RadioButtonPackageBuilder.Checked then
       callOpsiPackageBuilder;
+    *)
     procmess;
     PanelProcess.Visible := False;
     if done and (system.ExitCode = 0) then
@@ -3002,6 +3022,10 @@ begin
     PanelProcess.Visible := False;
     procmess;
   end;
+  // we do not want to sav the actual readio button selection in the configuration
+  //myconfiguration.CreateRadioIndex := TIRadioGroupCreateMode.ItemIndex;
+  //myconfiguration.BuildRadioIndex := TIRadioGroupBuildMode.ItemIndex;
+  (*
   if RadioButtonCreateOnly.Checked then
     radioindex := 0;
   if RadioButtonBuildPackage.Checked then
@@ -3014,6 +3038,7 @@ begin
   if radioBuildModebuildInstall.Checked then
     radioindex := 1;
   myconfiguration.BuildRadioIndex := radioindex;
+  *)
   logdatei.log('Finished BtCreateProductClick', LLDebug2);
 end;
 
@@ -3833,7 +3858,7 @@ end;
 
 
 
-
+(*
 procedure TResultform1.RadioButtonBuildModeChange(Sender: TObject);
 var
   RadioButtonName: string;
@@ -3849,7 +3874,7 @@ begin
   begin
   end;
 end;
-
+*)
 
 procedure TResultform1.SBtnExitClick(Sender: TObject);
 begin
