@@ -3487,10 +3487,9 @@ end;
 function TJsonThroughHTTPS.getSubListResult(const omc: TOpsiMethodCall;
   subkey: string): TStringList;
 var
-  jO, jO1, jO2: ISuperObject;
+  jO, jO1: ISuperObject;
   jA, jA1: TSuperArray;
   i: integer;
-  testresult: string;
 begin
   try
     Result := TStringList.Create;
@@ -3509,46 +3508,51 @@ begin
       jA := jO.A['result'];
       if jA.Length > 0 then
       begin
-        testresult := jA.S[0];
         // get this single object
         jO1 := jA.O[0];
         // get from this object the value for the key: subkey as array
         jA1 := jO1.A[subkey];
-    (*
-    if jA1.Length > 0 then
-    begin
-      testresult := jA1.S[0];
-      LogDatei.log('ja1 as json: '+testresult, LLDebug2);
-    end;
-     *)
-        if jA1 <> nil then
+        if (jA1 <> nil) then
         begin
-          //testresult := jA.
-          for i := 0 to jA1.Length - 1 do
+          if jA1.Length > 0 then
           begin
-            testresult := jA1.S[i];
-            Result.append(jA1.S[i]);
+            for i := 0 to jA1.Length - 1 do
+            begin
+              Result.append(jA1.S[i]);
+            end;
+          end
+          else
+          begin
+            LogDatei.log('getSubListResult: received object: ' + jO.AsString, LLDebug2);
+            LogDatei.log('getSubListResult: Key: "'+ subkey + '"' + ' has empty value.', LLDebug2);
+            Result.Text := 'Empty value';
           end;
+        end
+        else
+        begin
+          LogDatei.log('Error in getSubListResult: received object: ' + jO.AsString, LLError);
+          LogDatei.log('Result has no key "' + subkey + '"', LLError);
+          Result.Text := 'Error';
         end;
       end
       else
       begin
-        Logdatei.log('getSubListResult: received object: ' +
-          jO.AsString + ' has empty "result"', LLInfo);
+        LogDatei.log('getSubListResult: received object: ' + jO.AsString, LLDebug2);
+        LogDatei.log('JSON-Object has empty "result"', LLDebug2);
         Result.Text := 'Empty result';
       end;
     end
     else
     begin
-      Logdatei.log('Error in getSubListResult: received object: ' +
-        jO.AsString + ' has no key "result"', LLError);
+      LogDatei.log('Error in getSubListResult: received object: ' + jO.AsString, LLError);
+      LogDatei.log('JSON-Object has no key "result"', LLError);
       Result.Text := 'Error';
     end;
   except
     on E: Exception do
     begin
-      Logdatei.log_prog('Exception in getSubListResult, system message: "' +
-        E.Message + ' with received object: ' + jO.AsString + '"', LLError);
+      LogDatei.log_prog('Exception in getSubListResult, system message: "' + E.Message, LLError);
+      LogDatei.log('received object: ' + jO.AsString + '"', LLError);
       Result.Text := 'Error';
     end
   end;
@@ -4989,8 +4993,9 @@ begin
       end;
 
 
-      if (Result.Text = '') then
+      if (Result[0] = 'Empty value') then
       begin
+        Result.Text := '';
         LogDatei.log('Got empty property value from service', LLWarning);
       end
       else
