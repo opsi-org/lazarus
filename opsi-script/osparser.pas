@@ -12210,7 +12210,7 @@ begin
               try
                 //LogDatei.log ('Executing0 ' + s1, LLInfo);
                 FreeAndNil(list); //free list before assign new TXStringlist object to variable
-                list := execShellCall(s1, 'sysnative', 1, True) as TXStringList;
+                list := TXStringList(execShellCall(s1, 'sysnative', 1, True));
               except
                 on e: Exception do
                 begin
@@ -12233,7 +12233,7 @@ begin
         begin
           try
             FreeAndNil(list); //free list before assign new TXStringlist object to variable
-            list := execPowershellCall(s1, s2, 1, True, False, tmpbool1, s4) as TXStringList;
+            list := TXStringList(execPowershellCall(s1, s2, 1, True, False, tmpbool1, s4));
           except
             on e: Exception do
             begin

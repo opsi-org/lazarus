@@ -2,14 +2,25 @@ todo:
 isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-package-requires-a-reboot-of-my-system
 mac getIpByName liefert name von IPnum
 
-opsi-script (4.12.9.0) unreleased; urgency=medium
+opsi-script (4.12.9.1) unreleased; urgency=medium
+
+  * [fix] oswebservice.pas: getSubListResult, getProductPropertyList:
+          Empty (property) values are now handelt correct and without raising an exception.(j.werner)
+
+-- j.werner <j.werner@uib.de> 11 April 2023
+
+opsi-script (4.12.9.0) experimental; urgency=medium
 
   * [change] oswebservice.pas: remove backend_setOptions (!129, j.werner)
+  * [change] oswebservice.pas: replace deprecated API method getAndAssignSoftwareLicenseKey (!134, j.werner)
+  * [fix] remove possible memory leaks (!132, d.oertel, a.schmitz, j. werner)
+  * [fix] osbatchgui.pas: remove TQProgressBar to fix memory leaks (!133, a.schmitz, j.werner)
+  * [fix] osfuncwin2: fix in getProfilesDirListWin, avoid empty string in the profilelist  (!136, d.oertel)
 
--- j.werner <j.werner@uib.de> 4 April 2023
+-- j.werner <j.werner@uib.de> 11 April 2023
 
 
-opsi-script (4.12.8.1) unreleased; urgency=medium
+opsi-script (4.12.8.1) testing; urgency=medium
 
   * [fix] osbatchgui.lfm, osbatchgui.pas: remove creation of TQProgressbar from method FormShow,
           move creation of TQProgressbar into the new method FormCreate.
