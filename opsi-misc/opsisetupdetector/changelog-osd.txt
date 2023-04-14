@@ -78,6 +78,16 @@ stWixToolset,
   * marker: "SAP front-end installer self-extractor tool"
   * info https://help.sap.com/doc/2e5792a2569b403da415080f35f8bbf6/770.00/en-US/sap_frontend_inst_guide.pdf
 
+* portableapps.com
+  * komprimierte, portabe applikationen, kein (!) installer, keine Silent Parameter
+  * oft mit NSIS Mitteln gepackt und deshalb als NSIS erkannt
+  * lzma komprimiertes self-extracting executable
+  * lässt sich mit 7zip entpacken
+  * https://www.birtles.org.uk/programming/LZMA.442b.7z LZMA für Pascal)
+  * marker: portableApps.com
+  * marker: paf.exe
+  * info: https://portableapps.com/
+
 Uebersicht:
 http://www.fredshack.com/docs/packagers.html
 https://silent-install.net/installer/start
