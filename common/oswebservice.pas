@@ -3497,7 +3497,7 @@ begin
     if jO = nil then
     begin
       LogDatei.log_prog('Got no JSON object from web service', LLWarning);
-      Result.text :=  'Error';
+      Result.Text := 'Error';
       exit;
     end;
     // we have something like
@@ -3523,36 +3523,37 @@ begin
           end
           else
           begin
-            LogDatei.log('getSubListResult: received object: ' + jO.AsString, LLDebug2);
-            LogDatei.log('getSubListResult: Key: "'+ subkey + '"' + ' has empty value.', LLDebug2);
+            LogDatei.log('getSubListResult: Key: "' + subkey + '"' +
+              ' has empty value. Received object: ' + jO.AsString, LLDebug2);
             Result.Text := 'Empty value';
           end;
         end
         else
         begin
-          LogDatei.log('Error in getSubListResult: received object: ' + jO.AsString, LLError);
-          LogDatei.log('Result has no key "' + subkey + '"', LLError);
+          LogDatei.log('Error in getSubListResult: Result has no key "' +
+            subkey + '". Received object: ' + jO.AsString, LLError);
           Result.Text := 'Error';
         end;
       end
       else
       begin
-        LogDatei.log('getSubListResult: received object: ' + jO.AsString, LLDebug2);
-        LogDatei.log('JSON-Object has empty "result"', LLDebug2);
+        LogDatei.log('getSubListResult: JSON-Object has empty "result". Received object: '
+          + jO.AsString, LLDebug2);
         Result.Text := 'Empty result';
       end;
     end
     else
     begin
-      LogDatei.log('Error in getSubListResult: received object: ' + jO.AsString, LLError);
-      LogDatei.log('JSON-Object has no key "result"', LLError);
+      LogDatei.log(
+        'Error in getSubListResult: JSON-Object has no key "result". Received object: ' +
+        jO.AsString, LLError);
       Result.Text := 'Error';
     end;
   except
     on E: Exception do
     begin
-      LogDatei.log_prog('Exception in getSubListResult, system message: "' + E.Message, LLError);
-      LogDatei.log('received object: ' + jO.AsString + '"', LLError);
+      LogDatei.log_prog('Exception in getSubListResult, system message: "' +
+        E.Message + '" Received object: ' + jO.AsString, LLError);
       Result.Text := 'Error';
     end
   end;
