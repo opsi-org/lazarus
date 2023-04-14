@@ -10597,7 +10597,9 @@ begin
   else
   begin
     Result := True;
-    Filename := MyFolderPath + PathDelim + description + '.lnk';
+    Filename := MyFolderPath + PathDelim + description;
+    if Copy(Filename, Length(Filename)-3) <> '.url' then
+      Filename := Filename + '.lnk';
     if not SysUtils.FileExists(Filename) then
     begin
       LogS := 'Info: Link ' + Linkname + ' does not exist';
