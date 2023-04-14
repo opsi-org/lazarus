@@ -9854,13 +9854,17 @@ begin
 
             else if LowerCase(Expressionstr) = 'window_state' then
             begin
+              // https://learn.microsoft.com/en-us/windows/win32/api/shobjidl_core/nf-shobjidl_core-ishelllinkw-setshowcmd
+              // https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-showwindow
               if not getString(Remaining, s, Remaining, errorinfo, False)
               then
+              begin
                 s := Remaining;
                 {$IFDEF UNIX}
-              logdatei.log('Option window_state is ignored at Linux', LLWarning);
+                logdatei.log('Option window_state is ignored at Linux', LLWarning);
                 {$ENDIF UNIX}
                 {$IFDEF WIN32}
+              end;
               if s = '' then
                 link_showwindow := 0
               else
@@ -9874,7 +9878,7 @@ begin
                   link_showwindow := 3
                 else
                   UibInstScript.reportError(Sektion, i, Sektion.Strings[i - 1],
-                    '"' + s + '" could not converted to a window_state key.');
+                    '"' + s + '" could not be converted to a window_state key.');
                 LogDatei.log_prog('link_showwindow: ' + s, LLDebug);
               end;
                 {$ENDIF WIN32}
