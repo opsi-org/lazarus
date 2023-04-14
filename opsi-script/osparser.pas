@@ -8403,7 +8403,6 @@ var
   remaining: string = '';
 
   findresultcode: integer = 0;
-  //searchresult : TSearchRec;
   ch: char;
   oldDisableWow64FsRedirectionStatus: pointer = nil;
   Wow64FsRedirectionDisabled: boolean;
@@ -8420,7 +8419,6 @@ var
     j: integer = 0;
     dummyint: integer = 0;
     workingSection: TXStringList;
-    ///info : string;
     remaining_with_leading_blanks: string = '';
     search4file: boolean;
     mode, strmode, rwxPart: string;  // used on linux
@@ -8462,7 +8460,6 @@ var
       logdatei.log(Remaining, LLDebug2);
     end;
 
-
     for i := 1 to Sektion.Count do
     begin
       Remaining := cutLeftBlanks(workingSection.strings[i - 1]);
@@ -8470,7 +8467,7 @@ var
       SyntaxCheck := True;
 
       if (Remaining = '') or (Remaining[1] = LineIsCommentChar) then
-      // continue
+        // continue
       else
       begin
         GetWord(Remaining, Expressionstr, Remaining, WordDelimiterSet0);
@@ -9208,7 +9205,6 @@ var
           end;
         end
 
-
         else if (UpperCase(Expressionstr) = 'SYMLINK') then
         begin
           go_on := True;
@@ -9451,11 +9447,8 @@ var
         else
           reportError(Sektion, i, Expressionstr, 'is not a valid command');
       end;
-
     end;
-
     workingSection.Free;
-
   end;
 
 begin
@@ -9526,20 +9519,15 @@ begin
     {$ENDIF WIN32}
   end;
 
-
-  Install.Free;
-  Install := nil;
+  FreeAndNil(Install);
 
   finishSection(Sektion, OldNumberOfErrors, OldNumberOfWarnings,
     DiffNumberOfErrors, DiffNumberOfWarnings);
 
-
   if ExitOnError and (DiffNumberOfErrors > 0) then
     Result := tsrExitProcess;
 
-
   LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
-
 end;
 
 
