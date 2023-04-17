@@ -35,17 +35,17 @@ procedure get_msi_info(myfilename: string; var mysetup: TSetupFile); overload;
 procedure get_msi_info(myfilename: string; var mysetup: TSetupFile;
   uninstall_only: boolean); overload;
 procedure get_inno_info(myfilename: string; var mysetup: TSetupFile);
-procedure get_installshield_info(myfilename: string; var mysetup: TSetupFile);
+//procedure get_installshield_info(myfilename: string; var mysetup: TSetupFile);
 procedure get_installshieldmsi_info(myfilename: string; var mysetup: TSetupFile);
 procedure get_advancedmsi_info(myfilename: string; var mysetup: TSetupFile);
-procedure get_nsis_info(myfilename: string; var mysetup: TSetupFile);
+procedure get_null_info(myfilename: string; var mysetup: TSetupFile);
 procedure get_installaware_info(myfilename: string; var mysetup: TSetupFile);
 procedure get_genmsinstaller_info(myfilename: string; var mysetup: TSetupFile);
 procedure get_wixtoolset_info(myfilename: string; var mysetup: TSetupFile);
 procedure get_boxstub_info(myfilename: string; var mysetup: TSetupFile);
 procedure get_sfxcab_info(myfilename: string; var mysetup: TSetupFile);
-procedure get_bitrock_info(myfilename: string; var mysetup: TSetupFile);
-procedure get_selfextrackting_info(myfilename: string; var mysetup: TSetupFile);
+//procedure get_bitrock_info(myfilename: string; var mysetup: TSetupFile);
+//procedure get_selfextrackting_info(myfilename: string; var mysetup: TSetupFile);
 // marker for add installers
 procedure Analyze(FileName: string; var mysetup: TSetupFile; verbose: boolean);
 function getProductInfoFromResource(infokey: string; filename: string): string;
@@ -282,6 +282,12 @@ begin
         installerArray[integer(mysetup.installerId)].installErrorHandlingLines[i]);
   end;
 end; //get_aktProduct_general_info_win
+
+procedure get_null_info(myfilename: string; var mysetup: TSetupFile);
+begin
+  // This is a dummy procedure
+  write_log_and_memo('No special analyze for: '+ installerToInstallerstr(mysetup.installerId));
+end;
 
 procedure get_msi_info(myfilename: string; var mysetup: TSetupFile);
 begin
@@ -650,7 +656,7 @@ begin
   write_log_and_memo('Finished analyzing Inno-Setup');
 end;
 
-
+(*
 procedure get_installshield_info(myfilename: string; var mysetup: TSetupFile);
 var
   product: string;
@@ -660,7 +666,7 @@ begin
   write_log_and_memo('get_InstallShield_info finished');
   write_log_and_memo('InstallShield Setup detected');
 end;
-
+ *)
 
 procedure get_installshieldmsi_info(myfilename: string; var mysetup: TSetupFile);
 var
@@ -824,15 +830,7 @@ begin
   write_log_and_memo('Advancd Installer Setup (with embedded MSI) detected');
 end;
 
-
-procedure get_nsis_info(myfilename: string; var mysetup: TSetupFile);
-
-begin
-  write_log_and_memo('Analyzing NSIS-Setup:');
-  write_log_and_memo('get_nsis_info finished');
-  write_log_and_memo('NSIS (Nullsoft Install System) detected');
-end;
-
+(*
 procedure get_7zip_info(myfilename: string);
 var
   product: string;
@@ -840,6 +838,7 @@ begin
   write_log_and_memo('Analyzing 7zip-Setup:');
   write_log_and_memo('get_7zip_info finished');
 end;
+*)
 
 procedure get_installaware_info(myfilename: string; var mysetup: TSetupFile);
 var
@@ -994,6 +993,7 @@ begin
   write_log_and_memo('get_sfxcab_info finished');
 end;
 
+(*
 procedure get_bitrock_info(myfilename: string; var mysetup: TSetupFile);
 var
   str1, str2: string;
@@ -1011,6 +1011,7 @@ begin
   write_log_and_memo('Analyzing selfextrackting Installer:');
   write_log_and_memo('get_selfextrackting_info finished');
 end;
+*)
 
 
 procedure Analyze(FileName: string; var mysetup: TSetupFile; verbose: boolean);
@@ -1061,40 +1062,38 @@ begin
 
     // marker for add installers
     case setupType of
+      // get additional infos for some installers:
       stInno: get_inno_info(FileName, mysetup);
-      stNsis: get_nsis_info(FileName, mysetup);
-      stInstallShield: get_installshield_info(FileName, mysetup);
       stInstallShieldMSI: get_installshieldmsi_info(FileName, mysetup);
       stAdvancedMSI: get_advancedmsi_info(FileName, mysetup);
-      st7zip: get_7zip_info(FileName);
       stMsi: ;// nothing to do here - see above;
-      st7zipsfx: logdatei.log('no getinfo implemented for: ' +
-          installerToInstallerstr(setupType), LLWarning);
       stInstallAware: get_installaware_info(FileName, mysetup);
       stMSGenericInstaller: get_genmsinstaller_info(FileName, mysetup);
       stWixToolset: get_wixtoolset_info(FileName, mysetup);
       stBoxStub: get_boxstub_info(FileName, mysetup);
       stSFXcab: get_sfxcab_info(FileName, mysetup);
-      stBitrock: get_bitrock_info(FileName, mysetup);
-      stSelfExtractingInstaller: get_selfextrackting_info(FileName, mysetup);
       stUnknown: LogDatei.log(
           'Unknown Installer after Analyze.', LLcritical);
       else
-        LogDatei.log('Unknown Setuptype in Analyze: ' + IntToStr(
-          instIdToint(setupType)), LLcritical);
+        get_null_info(FileName, mysetup);
+        {nothing special right now for stBitrock, stSelfExtractingInstaller,
+         stPortableApps, stInstall4J, st7zip, stNsis, stInstallShield,
+         st7zipsfx}
     end;
 
 
     // marker for add installers
     tmpstr := installerToInstallerstr(setupType);
     case setupType of
+      stMsi: ;// nothing to do here - see above;
+(*
       stInno: write_log_and_memo('Found installer= ' + tmpstr);
       stNsis: write_log_and_memo('Found installer= ' + tmpstr);
       stInstallShield: write_log_and_memo('Found installer= ' + tmpstr);
       stInstallShieldMSI: write_log_and_memo('Found installer= ' + tmpstr);
       stAdvancedMSI: write_log_and_memo('Found installer= ' + tmpstr);
       st7zip: write_log_and_memo('Found installer= ' + tmpstr);
-      stMsi: ;// nothing to do here - see above;
+
       st7zipsfx: write_log_and_memo('Found installer= ' + tmpstr);
       stInstallAware: write_log_and_memo('Found installer= ' + tmpstr);
       stMSGenericInstaller: write_log_and_memo('Found installer= ' + tmpstr);
@@ -1104,6 +1103,7 @@ begin
       stBitrock: write_log_and_memo('Found installer= ' + tmpstr);
       stSelfExtractingInstaller: write_log_and_memo('Found installer= ' + tmpstr);
       stUnknown: write_log_and_memo('Found installer= ' + tmpstr);
+      *)
       else
         write_log_and_memo('Found installer= ' + tmpstr);
     end;

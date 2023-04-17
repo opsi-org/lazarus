@@ -8,6 +8,7 @@ uses
   Classes, SysUtils, FileUtil, RTTIGrids, Forms, Controls, Graphics, Dialogs,
   ExtCtrls, StdCtrls, Buttons, osdbasedata, PropEdits,
   osddatamod,
+  LclIntf,
   lcltranslator;
 
 type
@@ -20,10 +21,12 @@ type
     LabelCfgDlgHead: TLabel;
     MemoConfigHint: TMemo;
     Panel1: TPanel;
+    SpeedButtonHelpConfig: TSpeedButton;
     TIPropertyGrid1: TTIPropertyGrid;
     procedure FormActivate(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure SpeedButtonHelpConfigClick(Sender: TObject);
     procedure TIPropertyGrid1Click(Sender: TObject);
     procedure TIPropertyGrid1Exit(Sender: TObject);
     procedure TIPropertyGrid1KeyDown(Sender: TObject; var Key: word;
@@ -95,6 +98,17 @@ end;
 procedure TFOSDConfigdlg.FormDestroy(Sender: TObject);
 begin
   FreeAndNil(myconfigurationhints);
+end;
+
+procedure TFOSDConfigdlg.SpeedButtonHelpConfigClick(Sender: TObject);
+var
+  myUrl : string;
+begin
+  if SetDefaultLang('') = 'de' then
+    myUrl := 'https://docs.opsi.org/opsi-docs-de/4.2/windows-client-manual/softwareintegration.html#opsi-setup-detector-use-start'
+  else
+    myUrl := 'https://docs.opsi.org/opsi-docs-en/4.2/windows-client-manual/softwareintegration.html#opsi-setup-detector-use-start';
+  OpenURL(myUrl);
 end;
 
 procedure TFOSDConfigdlg.TIPropertyGrid1Click(Sender: TObject);

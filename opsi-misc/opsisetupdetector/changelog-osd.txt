@@ -19,9 +19,14 @@ WinRAR Installer,
 WinZip Installer,
 Wise Installer
 stWixToolset,
+
 * install4j (install4j, ej-technologies : perpustakaan-light)
   * https://www.ej-technologies.com/resources/install4j/help/doc/help.pdf
   * https://www.ej-technologies.com/products/install4j/overview.html
+  * beispiel ElsterAuthenticator_windows_55_0_0_x64.exe
+  * marker: install4j
+
+
 * QT Installer Framework (Avidemux 4.7.3, msys2)
   * https://chocolatey.org/packages/msys2-installer
   * https://doc.qt.io/qtinstallerframework/
@@ -88,6 +93,11 @@ stWixToolset,
   * marker: paf.exe
   * info: https://portableapps.com/
 
+* sumatraPdf
+  * info: https://www.sumatrapdfreader.org/docs/Installer-cmd-line-arguments
+  * marker: Install SumatraPDF
+  * marker: SumatraPDF has been installed
+
 Uebersicht:
 http://www.fredshack.com/docs/packagers.html
 https://silent-install.net/installer/start
@@ -109,6 +119,11 @@ opsi-setup-detector (4.2.2.0-1) stable; urgency=low
    * new osdbasedata: TinstallerData : notpatterns
      patterns that indicate 'this is not this installer type'
    * new cli parameter: -c / --template-channel
+   * new Help menu: 'Open help' via default bowser
+   * new Help menu: 'Open log file' via opsi-logviewer (if installed)
+   * new Help Icons (questionmarks) on every tab with context sensitive help
+   * new detection: PortableApps.com
+   * new detection: install4j
 
    todo:
    remove all mywrite

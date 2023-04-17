@@ -228,6 +228,8 @@ type
     LabelWorkbenchOK: TLabel;
     LabelWorkbenchNotOK: TLabel;
     MemoDefault: TMemo;
+    MenuHelpOpen: TMenuItem;
+    MenuHelpLog: TMenuItem;
     MenuItemOpenProj: TMenuItem;
     MenuItemSaveProj: TMenuItem;
     MenuItemLangFr: TMenuItem;
@@ -246,6 +248,20 @@ type
     Panel11: TPanel;
     Panel12: TPanel;
     Panel13: TPanel;
+    SpeedButtonHelpMain: TSpeedButton;
+    SpeedButtonHelpAnalyze: TSpeedButton;
+    SpeedButtonHelpSetup: TSpeedButton;
+    SpeedButtonHelpProd1: TSpeedButton;
+    SpeedButtonHelpProd2: TSpeedButton;
+    SpeedButtonHelpIcon: TSpeedButton;
+    SpeedButtonHelpCreate: TSpeedButton;
+    SpeedButtonHelpSetup1: TSpeedButton;
+    SpeedButtonHelpSetup2: TSpeedButton;
+    SpeedButtonHelpSartOSIndep: TSpeedButton;
+    SpeedButtonHelpStartWin: TSpeedButton;
+    SpeedButtonHelpStartLin: TSpeedButton;
+    SpeedButtonHelpStartMac: TSpeedButton;
+    SpeedButtonHelpStartMulti: TSpeedButton;
     TaskPanelMulti: TPanel;
     TaskPanelMac: TPanel;
     PanelDepBtns: TPanel;
@@ -415,6 +431,7 @@ type
     procedure FormDeactivate(Sender: TObject);
     procedure FormMouseLeave(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure MenuHelpLogClick(Sender: TObject);
     procedure MenuItemOpenProjClick(Sender: TObject);
     procedure MenuItemSaveProjClick(Sender: TObject);
     procedure MenuItemLangClick(Sender: TObject);
@@ -447,6 +464,18 @@ type
     //procedure RadioButtonBuildModeChange(Sender: TObject);
 
     procedure SBtnExitClick(Sender: TObject);
+    procedure SpeedButtonHelpAnalyzeClick(Sender: TObject);
+    procedure SpeedButtonHelpCreateClick(Sender: TObject);
+    procedure SpeedButtonHelpIconClick(Sender: TObject);
+    procedure SpeedButtonHelpMainClick(Sender: TObject);
+    procedure SpeedButtonHelpProd1Click(Sender: TObject);
+    procedure SpeedButtonHelpProd2Click(Sender: TObject);
+    procedure SpeedButtonHelpSartOSIndepClick(Sender: TObject);
+    procedure SpeedButtonHelpSetupClick(Sender: TObject);
+    procedure SpeedButtonHelpStartLinClick(Sender: TObject);
+    procedure SpeedButtonHelpStartMacClick(Sender: TObject);
+    procedure SpeedButtonHelpStartMultiClick(Sender: TObject);
+    procedure SpeedButtonHelpStartWinClick(Sender: TObject);
     procedure TabSheetCreateShow(Sender: TObject);
     procedure TabSheetIconsShow(Sender: TObject);
     procedure TabSheetStartExit(Sender: TObject);
@@ -629,6 +658,11 @@ resourcestring
     'If mouse and keyboard are accidentally blocked after the installation is finished,'
     +
     LineEnding + 'use action request "update" to enable mouse and keyboard again.';
+  rsErrorLoadingLogViewer = 'An error occured while loading opsi-logviewer';
+  rsErrorFindingLogViewer =
+      'Please install the opsi-logviewer product. opsi-logviewer is not installed in ';
+
+
   // Hints
   rsTemlateChannelHint =
     'Choose what kind of templates should be used. If the templates are not found, default is the fallback.';
@@ -1610,6 +1644,40 @@ begin
     main;
 end;
 
+procedure TResultform1.MenuHelpLogClick(Sender: TObject);
+var
+  ErrorMessage: string;
+  PathOpsiLogViewer: string;
+begin
+  {$IFDEF WINDOWS}
+  PathOpsiLogViewer :=
+    'C:\Program Files (x86)\opsi.org\opsi-logviewer\opsi-logviewer.exe';
+  {$ENDIF WINDOWS}
+  {$IFDEF LINUX}
+  PathOpsiLogViewer := '/usr/share/opsi-logviewer/logviewer'; // '/usr/bin/logviewer'
+  {$ENDIF LINUX}
+  {$IFDEF DARWIN}
+  //PathOpsiLogViewer := '/Applications/opsi-logviewer.app/Contents/MacOS/opsi-logviewer';
+  ShowMessage('Logview is temporary not working. Please use the opsi-logviewer product.');
+  {$ELSE}
+  if FileExists(PathOpsiLogViewer) then
+  begin
+    if ExecuteProcess(PathOpsiLogViewer, LogDatei.FileName) <> 0 then
+    begin
+      ErrorMessage := rsErrorLoadingLogViewer;
+      LogDatei.log(ErrorMessage, LLInfo);
+      ShowMessage(ErrorMessage);
+    end;
+  end
+  else
+  begin
+    ErrorMessage := rsErrorFindingLogViewer + PathOpsiLogViewer;
+    LogDatei.log(ErrorMessage, LLInfo);
+    ShowMessage(ErrorMessage);
+  end;
+  {$ENDIF DARWIN}
+end;
+
 procedure TResultform1.MenuItemOpenProjClick(Sender: TObject);
 begin
   OpenDialog1.FilterIndex := 8;   // project file
@@ -1647,21 +1715,25 @@ end;
 
 procedure TResultform1.MenuItemLangDeClick(Sender: TObject);
 begin
+  osdsettings.mylang:='de';
   SetDefaultLang('de', osdsettings.mylocaledir);
 end;
 
 procedure TResultform1.MenuItemLangEnClick(Sender: TObject);
 begin
+  osdsettings.mylang:='en';
   SetDefaultLang('en', osdsettings.mylocaledir);
 end;
 
 procedure TResultform1.MenuItemLangEsClick(Sender: TObject);
 begin
+  osdsettings.mylang:='en';
   SetDefaultLang('es', osdsettings.mylocaledir);
 end;
 
 procedure TResultform1.MenuItemLangFrClick(Sender: TObject);
 begin
+  osdsettings.mylang:='fr';
   SetDefaultLang('fr', osdsettings.mylocaledir);
 end;
 
@@ -3615,8 +3687,14 @@ end;
 
 
 procedure TResultform1.FileHelpClick(Sender: TObject);
+var
+  myUrl : string;
 begin
-  ShowMessage(rsNotImplemented);
+  if osdsettings.mylang = 'de' then
+    myUrl := 'https://docs.opsi.org/opsi-docs-de/4.2/manual/modules/setup-detector.html'
+  else
+    myUrl := 'https://docs.opsi.org/opsi-docs-en/4.2/manual/modules/setup-detector.html';
+  OpenURL(myUrl);
 end;
 
 
@@ -3883,6 +3961,139 @@ begin
   resultForm1.Destroy;
   freebasedata;
   Application.Terminate;
+end;
+
+procedure TResultform1.SpeedButtonHelpAnalyzeClick(Sender: TObject);
+var
+  myUrl : string;
+begin
+  if osdsettings.mylang = 'de' then
+    myUrl := 'https://docs.opsi.org/opsi-docs-de/4.2/windows-client-manual/softwareintegration.html#opsi-setup-detector-use-single-analyze'
+  else
+    myUrl := 'https://docs.opsi.org/opsi-docs-en/4.2/windows-client-manual/softwareintegration.html#opsi-setup-detector-use-single-analyze';
+  OpenURL(myUrl);
+end;
+
+procedure TResultform1.SpeedButtonHelpCreateClick(Sender: TObject);
+  var
+  myUrl : string;
+begin
+  if osdsettings.mylang = 'de' then
+    myUrl := 'https://docs.opsi.org/opsi-docs-de/4.2/windows-client-manual/softwareintegration.html#opsi-setup-detector-product-create'
+  else
+    myUrl := 'https://docs.opsi.org/opsi-docs-en/4.2/windows-client-manual/softwareintegration.html#opsi-setup-detector-product-create';
+  OpenURL(myUrl);
+  //ShowMessage(rsNotImplemented);
+end;
+
+procedure TResultform1.SpeedButtonHelpIconClick(Sender: TObject);
+  var
+    myUrl : string;
+  begin
+    if osdsettings.mylang = 'de' then
+      myUrl := 'https://docs.opsi.org/opsi-docs-de/4.2/windows-client-manual/softwareintegration.html#opsi-setup-detector-product-configuration-icon'
+    else
+      myUrl := 'https://docs.opsi.org/opsi-docs-en/4.2/windows-client-manual/softwareintegration.html#opsi-setup-detector-product-configuration-icon';
+    OpenURL(myUrl);
+  end;
+
+procedure TResultform1.SpeedButtonHelpMainClick(Sender: TObject);
+var
+  myUrl : string;
+begin
+  if osdsettings.mylang = 'de' then
+    myUrl := 'https://docs.opsi.org/opsi-docs-de/4.2/manual/modules/setup-detector.html'
+  else
+    myUrl := 'https://docs.opsi.org/opsi-docs-en/4.2/manual/modules/setup-detector.html';
+  OpenURL(myUrl);
+end;
+
+procedure TResultform1.SpeedButtonHelpProd1Click(Sender: TObject);
+var
+  myUrl : string;
+begin
+  if osdsettings.mylang = 'de' then
+    myUrl := 'https://docs.opsi.org/opsi-docs-de/4.2/windows-client-manual/softwareintegration.html#opsi-setup-detector-product-configuration1'
+  else
+    myUrl := 'https://docs.opsi.org/opsi-docs-en/4.2/windows-client-manual/softwareintegration.html#opsi-setup-detector-product-configuration1';
+  OpenURL(myUrl);
+end;
+
+procedure TResultform1.SpeedButtonHelpProd2Click(Sender: TObject);
+var
+  myUrl : string;
+begin
+  if osdsettings.mylang = 'de' then
+    myUrl := 'https://docs.opsi.org/opsi-docs-de/4.2/windows-client-manual/softwareintegration.html#opsi-setup-detector-product-configuration-priority_dependecy'
+  else
+    myUrl := 'https://docs.opsi.org/opsi-docs-en/4.2/windows-client-manual/softwareintegration.html#opsi-setup-detector-product-configuration-priority_dependency';
+  OpenURL(myUrl);
+end;
+
+procedure TResultform1.SpeedButtonHelpSartOSIndepClick(Sender: TObject);
+var
+  myUrl : string;
+begin
+  if osdsettings.mylang = 'de' then
+    myUrl := 'https://docs.opsi.org/opsi-docs-de/4.2/manual/modules/setup-detector.html'
+  else
+    myUrl := 'https://docs.opsi.org/opsi-docs-en/4.2/manual/modules/setup-detector.html';
+  OpenURL(myUrl);
+end;
+
+procedure TResultform1.SpeedButtonHelpSetupClick(Sender: TObject);
+var
+  myUrl : string;
+begin
+  if osdsettings.mylang = 'de' then
+    myUrl := 'https://docs.opsi.org/opsi-docs-de/4.2/manual/modules/setup-detector.html'
+  else
+    myUrl := 'https://docs.opsi.org/opsi-docs-en/4.2/manual/modules/setup-detector.html';
+  OpenURL(myUrl);
+end;
+
+procedure TResultform1.SpeedButtonHelpStartLinClick(Sender: TObject);
+var
+  myUrl : string;
+begin
+  if osdsettings.mylang = 'de' then
+    myUrl := 'https://docs.opsi.org/opsi-docs-de/4.2/manual/modules/setup-detector.html'
+  else
+    myUrl := 'https://docs.opsi.org/opsi-docs-en/4.2/manual/modules/setup-detector.html';
+  OpenURL(myUrl);
+end;
+
+procedure TResultform1.SpeedButtonHelpStartMacClick(Sender: TObject);
+var
+  myUrl : string;
+begin
+  if osdsettings.mylang = 'de' then
+    myUrl := 'https://docs.opsi.org/opsi-docs-de/4.2/manual/modules/setup-detector.html'
+  else
+    myUrl := 'https://docs.opsi.org/opsi-docs-en/4.2/manual/modules/setup-detector.html';
+  OpenURL(myUrl);
+end;
+
+procedure TResultform1.SpeedButtonHelpStartMultiClick(Sender: TObject);
+var
+  myUrl : string;
+begin
+  if osdsettings.mylang = 'de' then
+    myUrl := 'https://docs.opsi.org/opsi-docs-de/4.2/manual/modules/setup-detector.html'
+  else
+    myUrl := 'https://docs.opsi.org/opsi-docs-en/4.2/manual/modules/setup-detector.html';
+  OpenURL(myUrl);
+end;
+
+procedure TResultform1.SpeedButtonHelpStartWinClick(Sender: TObject);
+var
+  myUrl : string;
+begin
+  if osdsettings.mylang = 'de' then
+    myUrl := 'https://docs.opsi.org/opsi-docs-de/4.2/manual/modules/setup-detector.html'
+  else
+    myUrl := 'https://docs.opsi.org/opsi-docs-en/4.2/manual/modules/setup-detector.html';
+  OpenURL(myUrl);
 end;
 
 procedure checkWorkbench;

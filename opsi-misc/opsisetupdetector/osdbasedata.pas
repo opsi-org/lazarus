@@ -47,6 +47,7 @@ type
     Fshowgui: boolean;
     Fstartupfinished: boolean;
     Fmylocaledir: string;
+    Fmylang: string;
     //Fmyfilename: string;
     Fmyexitcode : integer;
     FCreateModeCreateOnly: boolean;
@@ -71,13 +72,16 @@ type
     property showgui: boolean read Fshowgui write Fshowgui;
     property startupfinished: boolean read Fstartupfinished write Fstartupfinished;
     property mylocaledir: string read Fmylocaledir write Fmylocaledir;
+    property mylang: string read Fmylang write Fmylang;
     //property opsitmp: string read Fopsitmp write Fopsitmp;
     property myexitcode: integer read Fmyexitcode write Fmyexitcode;
+    (*
     property CreateModeCreateOnly: boolean read FCreateModeCreateOnly write FCreateModeCreateOnly;
     property CreateModeBuildPackage: boolean read FCreateModeBuildPackage write FCreateModeBuildPackage;
     property CreateModePackageBuilder: boolean read FCreateModePackageBuilder write FCreateModePackageBuilder;
     property BuildModebuildOnly: boolean read FBuildModebuildOnly write FBuildModebuildOnly;
     property BuildModebuildInstall: boolean read FBuildModebuildInstall write FBuildModebuildInstall;
+    *)
     property BuildMode: TStrings read FBuildMode write SetBuildMode;
     property BuildModeIndex: integer read FBuildModeIndex write SetBuildModeIndex;
     property BuildModeValue: string read FBuildModeValue write SetBuildModeValue;
@@ -97,11 +101,12 @@ type
     amSelectable);
 
   // marker for add installers
-  TKnownInstaller = (stLinRPM, stLinDeb, stMacZip, stMacDmg, stMacPKG, stMacApp,
+  TKnownInstaller = (stInstall4J, stPortableApps, stLinRPM, stLinDeb, stMacZip, stMacDmg, stMacPKG, stMacApp,
     stSFXcab, stBoxStub, stAdvancedMSI, stInstallShield,
     stInstallShieldMSI,
     stMsi, stNsis, st7zip, st7zipsfx, stInstallAware, stMSGenericInstaller,
     stWixToolset, stBitrock, stSelfExtractingInstaller, stInno,
+    // stUnknown should be always the last position
     stUnknown);
 
 
@@ -1917,6 +1922,8 @@ begin
 
   // marker for add installers
   knownInstallerList := TStringList.Create;
+  knownInstallerList.Add('install4j');
+  knownInstallerList.Add('PortableApps');
   knownInstallerList.Add('LinRPM');
   knownInstallerList.Add('LinDeb');
   knownInstallerList.Add('MacZip');
@@ -2004,6 +2011,8 @@ begin
     patterns.Add('http://nsis.sf.net/');
     patterns.Add('NSISu_.exe');
     patterns.Add('NSIS Error');
+    notpatterns.Add('portableApps.com');
+    notpatterns.Add('paf.exe');
     link :=
       'http://nsis.sourceforge.net/Docs/Chapter3.html#installerusage';
     comment := '';
@@ -2372,6 +2381,39 @@ begin
     patterns.Add('');
     link := '';
     comment := 'Unknown Vendor';
+    uib_exitcode_function := 'isGenericExitcodeFatal';
+    detected := @detectedbypatternwithand;
+  end;
+  with installerArray[integer(stPortableApps)] do
+  begin
+    description := 'PortableApps';
+    silentsetup := '';
+    unattendedsetup := '';
+    silentuninstall := '';
+    unattendeduninstall := '';
+    uninstall_waitforprocess := '';
+    install_waitforprocess := '';
+    uninstallProg := '<none>';
+    patterns.Add('portableApps.com');
+    patterns.Add('paf.exe');
+    link := 'https://portableapps.com/';
+    comment := 'selfextracting Executable. Uncompress with 7zip.';
+    uib_exitcode_function := 'isGenericExitcodeFatal';
+    detected := @detectedbypatternwithand;
+  end;
+  with installerArray[integer(stInstall4J)] do
+  begin
+    description := 'install4j';
+    silentsetup := '-q -overwrite';
+    unattendedsetup := '-q -overwrite';
+    silentuninstall := '-q';
+    unattendeduninstall := '-q';
+    uninstall_waitforprocess := '';
+    install_waitforprocess := '';
+    uninstallProg := 'uninstall.exe';
+    patterns.Add('install4j');
+    link := 'https://www.ej-technologies.com/resources/install4j/help/doc/help.pdf';
+    comment := 'Installs Java based software';
     uib_exitcode_function := 'isGenericExitcodeFatal';
     detected := @detectedbypatternwithand;
   end;
