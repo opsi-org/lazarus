@@ -9542,19 +9542,13 @@ var
   FileMask: string = '';
   DeleteDeeperDir, DeleteStartDir: boolean;
   {$IFDEF WINDOWS}
-  exist, new: PWchar;
-  {$ELSE WINDOWS}
-  exist, new: PChar;
-  {$ENDIF WINDOWS}
-  moveflags: DWORD;
-
-  {$IFDEF WINDOWS}
+  exist: PWchar;
   exitbool: winbool;
   errorNo: integer;
-
-{$ENDIF WINDOWS}
-
-
+  {$ELSE WINDOWS}
+  exist: PChar;
+  {$ENDIF WINDOWS}
+  moveflags: DWORD;
 
   procedure ExecDelete
     (const CompleteName: string; DeleteDir: boolean);
@@ -9791,6 +9785,7 @@ begin
   testname := IncludeTrailingPathDelimiter(lowercase(Filename));
   if (testname = 'c:\') or (testname = 'c:\windows\') or
     (testname = 'c:\windows\system32\') or (testname = '/Applications/') or
+    (testname = 'c:\program files\') or (testname = 'c:\program files (x86)\') or
     (Filename = PathDelim) or (Filename = '\\') or (1 = pos('\', Filename)) then
   begin
     LogDatei.log('By policy we will not delete: ' + Filename, LLError);
@@ -9812,7 +9807,6 @@ begin
     LogS := 'Delete';
   LogS := LogS + ' "' + CompleteName + '"';
   LogDatei.log_prog(LogS, LLDebug);
-
 
   Filemask := ExtractFileName(CompleteName);
 
