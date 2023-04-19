@@ -126,12 +126,13 @@ begin
     end;
   end
   else
+  // We have only one version to test:
   begin
     if FOneInstallationFailed then
     begin
-      // if there is a downloaded version but the latest version failed to install,
-      // switch between FDefaultVersionName and FDownloadedVersionName to get the directory of
-      // the older version
+      (* If there are two version (downloaded and default) but the latest version failed to install,
+         switch between FDefaultVersionName and FDownloadedVersionName to get the directory of
+         the older version. *)
       if FDownloadedVersion > FDefaultVersion then
         FCurrentVersionName := FDefaultVersionName
       else
@@ -139,8 +140,8 @@ begin
     end
     else
     begin
-      // otherwise, in the case that downloading the latest version failed,
-      // use the default one
+      (* In the case that downloading the latest version failed,
+         use the default one. *)
       if FindFirst('../' + FProductID + '_*', faAnyFile and faDirectory,
         DefaultVersionSearch) = 0 then
       begin
