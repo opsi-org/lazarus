@@ -168,6 +168,7 @@ begin
     'https://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.2:/testing/xUbuntu_22.04/'
     + ' -nd', Output);
   FInstallRunCommand.Run('rm robots.*', Output);
+  FInstallRunCommand.Run(FPackageManagementShellCommand + 'install tar', Output);
   FInstallRunCommand.Run('tar -xvf opsi-script_*.tar.gz', Output);
   FInstallRunCommand.Run('rm opsi-script_*.tar.gz', Output);
 end;
