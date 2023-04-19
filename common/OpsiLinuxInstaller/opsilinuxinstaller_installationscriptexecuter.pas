@@ -92,6 +92,10 @@ begin
   Delete(FClientDataDir, Length(FClientDataDir), 1);
   FClientDataDir := ExtractFilePath(FClientDataDir);
 
+  if FTwoVersionsToTest then
+    FMessageDisplayer.DisplayMessage(rsDownloadLatest + FProductID +
+      '... ' + LongMessageSeperator + rsSomeMin, True);
+
   // try downloading latest configed and set FClientDataDir for the latest version
   if FTwoVersionsToTest and DownloadOpsiPackage(FProductID, FDownloadPath,
     FInstallRunCommand, FPackageManagementShellCommand) then
@@ -133,7 +137,7 @@ begin
       FCurrentVersionName := FDownloadedVersionName;
   end
   else
-  // otherwise, in the case that downloading the latest configed failed,
+  // otherwise, in the case that downloading the latest version failed,
   // use the default one
   if FindFirst('../' + FProductID + '_*', faAnyFile and faDirectory,
     DefaultVersionSearch) = 0 then
@@ -151,8 +155,6 @@ end;
 
 procedure TInstallationScriptExecuter.WritePropertiesToFile;
 begin
-  FMessageDisplayer.DisplayMessage(rsDownloadLatest + FProductID +
-    '... ' + LongMessageSeperator + rsSomeMin, True);
   DefineDirClientData;
   // TODO: Use FFileText to write the property values from the query to the file properties.conf in FClientDataDir
 end;
