@@ -1381,7 +1381,7 @@ begin
     IdHTTP.Request.Username := Fusername;
     IdHTTP.Request.Password := Fpassword;
     IdHTTP.Request.UserAgent := agent;
-    //LogDatei.DependentAdd('createSocket--->6', LLdebug2);
+    //Logdatei.Log('createSocket--->6', LLdebug2);
     try
       if ip <> '' then
       begin
@@ -1686,7 +1686,7 @@ begin
         if FSessionId <> '' then
           // not the first call and we log
           if logging then
-            //LogDatei.DependentAdd (DateTimeToStr(now) + ' JSON service request ' + Furl , LLnotice);
+            //Logdatei.Log (DateTimeToStr(now) + ' JSON service request ' + Furl , LLnotice);
             LogDatei.log_prog('JSON service request ' + Furl + ' ' +
               omc.FOpsiMethodName, LLinfo);
         if omc.Timeout > 0 then
@@ -2037,7 +2037,7 @@ begin
             FSessionId := copy(cookieVal, 1, posColon - 1)
           else
             FSessionId := '';
-          //LogDatei.DependentAdd('JSON retrieveJSONObject: after cookie', LLDebug2);
+          //Logdatei.Log('JSON retrieveJSONObject: after cookie', LLDebug2);
         end;
       except
         on E: Exception do

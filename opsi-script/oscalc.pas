@@ -153,13 +153,13 @@ begin
     if strresult = '+Inf' then
     begin
       strresult := '';
-      LogDatei.DependentAdd('Error in calculate (division by zero): ' +
+      LogDatei.log('Error in calculate (division by zero): ' +
         expr + ' to :' + strresult, LLDebug2);
       Result := False;
     end
     else
     begin
-      LogDatei.DependentAdd('calculate: ' + expr + ' to :' + strresult, LLDebug2);
+      LogDatei.log('calculate: ' + expr + ' to :' + strresult, LLDebug2);
       Result := True;
     end;
   except

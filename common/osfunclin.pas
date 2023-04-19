@@ -289,7 +289,7 @@ begin
     except
       on E: Exception do
       begin
-        LogDatei.DependentAdd('Exception in getLinProcessList, system message: "' +
+        Logdatei.Log('Exception in getLinProcessList, system message: "' +
           E.Message + '"',
           LLError);
       end
@@ -355,7 +355,7 @@ begin
     except
       on E: Exception do
       begin
-        LogDatei.DependentAdd('Exception in getLinProcessList, system message: "' +
+        Logdatei.Log('Exception in getLinProcessList, system message: "' +
           E.Message + '"',
           LLError);
       end
@@ -689,7 +689,7 @@ begin
         HostEntry.Addr.s_bytes[1]]);
     end
     else
-      Logdatei.DependentAddError('gethostbyname error ' +
+      Logdatei.Log('gethostbyname error ' +
         IntToStr(wsagetlasterror), LLError);
   except
     WSAErr := 'Error resolving Host';
@@ -1128,7 +1128,7 @@ begin
   if LogDatei <> nil then
   begin
     LogDatei.LogSIndentLevel := 0;
-    LogDatei.DependentAdd('============   ' + ExtractFileNameOnly(ParamStr(0)) +
+    Logdatei.Log('============   ' + ExtractFileNameOnly(ParamStr(0)) +
       ' shutdown regularly and direct. Time ' + FormatDateTime(
       'yyyy-mm-dd  hh:mm:ss ', now) + '.', LLessential);
 

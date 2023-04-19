@@ -125,7 +125,7 @@ begin
       cmd := '/bin/bash -c "/sbin/mount.cifs ' + myshare + ' ' +
         mymountpoint + ' -o ' + myoption + 'ro,noperm,user=' + myuser +
         ',dom=' + mydomain + ',pass=' + mypass + '"';
-    LogDatei.DependentAdd('calling: ' + cmd, LLNotice);
+    Logdatei.Log('calling: ' + cmd, LLNotice);
     if not RunCommandAndCaptureOut(cmd, True, outlines, report, SW_HIDE, ExitCode) then
     begin
       LogDatei.log('Error: ' + Report + 'Exitcode: ' + IntToStr(ExitCode), LLError);
@@ -287,36 +287,36 @@ begin
     resultstring := opsidata.checkAndRetrieve(omc, errorOccured);
     Result := resultstring;
   except
-    //LogDatei.DependentAdd('Exception calling method: '+method+'  - with param: '+param, LLerror);
-    LogDatei.DependentAdd('Exception calling method: ' + method +
+    //Logdatei.Log('Exception calling method: '+method+'  - with param: '+param, LLerror);
+    Logdatei.Log('Exception calling method: ' + method +
       ' - wait and retry', LLerror);
     sleep(2000);
     try
       resultstring := opsidata.checkAndRetrieve(omc, errorOccured);
       Result := resultstring;
     except
-      LogDatei.DependentAdd('Exception calling method: ' + method +
+      Logdatei.Log('Exception calling method: ' + method +
         ' - wait and retry', LLerror);
       sleep(2000);
       try
         resultstring := opsidata.checkAndRetrieve(omc, errorOccured);
         Result := resultstring;
       except
-        LogDatei.DependentAdd('Exception calling method: ' + method +
+        Logdatei.Log('Exception calling method: ' + method +
           ' - wait and retry', LLerror);
         sleep(2000);
         try
           resultstring := opsidata.checkAndRetrieve(omc, errorOccured);
           Result := resultstring;
         except
-          LogDatei.DependentAdd('Exception calling method: ' + method +
+          Logdatei.Log('Exception calling method: ' + method +
             ' - wait and retry', LLerror);
           sleep(2000);
           try
             resultstring := opsidata.checkAndRetrieve(omc, errorOccured);
             Result := resultstring;
           except
-            LogDatei.DependentAdd('Exception calling method: ' +
+            Logdatei.Log('Exception calling method: ' +
               method + ' - giving up', LLerror);
           end;
         end;

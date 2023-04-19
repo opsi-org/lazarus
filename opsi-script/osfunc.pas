@@ -935,7 +935,7 @@ end;
 procedure ChangeDirectory(newdir: string);
 begin
   if SetCurrentDir(newdir) then
-    Logdatei.DependentAdd('Changed current directory to ' + newdir, LLinfo)
+    Logdatei.Log('Changed current directory to ' + newdir, LLinfo)
   else
     Logdatei.log('Failed to change directory ', LLError);
 end;
@@ -1001,14 +1001,14 @@ begin
         RenameFile(SplitFileNameTail, filename)
       except
         on E: Exception do
-          LogDatei.DependentAdd(
+          Logdatei.Log(
             'Error in osfunc.ShrinkFileToMB renaming and deleting files: ' +
             E.Message, LLError);
       end;
     end;
   except
     on E: Exception do
-      LogDatei.DependentAdd('Error in osfunc.ShrinkFileToMB: ' + E.Message, LLError);
+      Logdatei.Log('Error in osfunc.ShrinkFileToMB: ' + E.Message, LLError);
   end;
 end;
 
@@ -1035,7 +1035,7 @@ begin
     end;
   except
     on E: Exception do
-      LogDatei.DependentAdd('Error in osfunc.ShrinkFileToMB: ' + E.Message, LLError);
+      Logdatei.Log('Error in osfunc.ShrinkFileToMB: ' + E.Message, LLError);
   end;
 end;
 *)
@@ -1276,12 +1276,12 @@ begin
         Result := gethostbyname(buffer)^;
       end
       else
-        Logdatei.DependentAddError('gethostname error ', LLError);
+        Logdatei.Log('gethostname error ', LLError);
     finally
       StrDispose(buffer);
     end
   except
-    Logdatei.DependentAddError('gethostname error ' +
+    Logdatei.Log('gethostname error ' +
       IntToStr(wsagetlasterror), LLError);
   end;
 end;
@@ -1451,7 +1451,7 @@ begin
       IDString := IntToStr(processID);
       if allChildrenIDs.indexOf(IDString) = -1 then
       begin
-        Logdatei.DependentAdd('yet a child process, ID ' +
+        Logdatei.Log('yet a child process, ID ' +
           IntToStr(processID) + ', found. ' + ' length of allChildrenIDs: ' +
           IntToStr(allChildrenIDs.Count),
           LLinfo);
@@ -1477,7 +1477,7 @@ var
   found: integer = 0;
   teststring: string = '';
 begin
-  //Logdatei.DependentAdd ('FindTask for ' + ExeFilename, LLinfo);
+  //Logdatei.Log ('FindTask for ' + ExeFilename, LLinfo);
   info := '';
   Result := False;
   found := 0;
@@ -1495,7 +1495,7 @@ begin
       Inc(found);
       processID := FProcessEntry32.th32ProcessID;
       parentProcessID := FProcessEntry32.th32ParentProcessID;
-      //LogDatei.DependentAdd (ExtractFileName(FProcessEntry32.szExeFile) + ', processId ' + #9 +
+      //Logdatei.Log (ExtractFileName(FProcessEntry32.szExeFile) + ', processId ' + #9 +
       //  IntToStr (FProcessEntry32.th32ProcessID) + #9 + 'parent process ' + #9 +
       //  IntToStr (FProcessEntry32.th32ParentProcessID), LLinfo);
     end;
@@ -2132,7 +2132,7 @@ begin
             begin
               if WaitForProcessEndingLogflag then
               begin
-                logdatei.DependentAdd('Waiting for start of "' +
+                Logdatei.Log('Waiting for start of "' +
                   ident + '"', LLinfo);
                 WaitForProcessEndingLogflag := False;
               end;
@@ -2149,7 +2149,7 @@ begin
                 if ((nowtime - starttime) < waitSecs / secsPerDay) then
                   running := True
                 else
-                  logdatei.DependentAdd('Waiting for "' + ident +
+                  Logdatei.Log('Waiting for "' + ident +
                     '" stopped - time out ' + IntToStr(waitSecs) + ' sec', LLinfo);
               end;
 
@@ -2165,14 +2165,14 @@ begin
 
               if not WaitForProcessEndingLogflag and running then
               begin
-                logdatei.DependentAdd('Waiting for process "' + ident +
+                Logdatei.Log('Waiting for process "' + ident +
                   '" ending', LLinfo);
                 WaitForProcessEndingLogflag := True;
               end;
 
               if not running then
               begin
-                logdatei.DependentAdd('Process "' + ident + '" ended', LLinfo);
+                Logdatei.Log('Process "' + ident + '" ended', LLinfo);
               end
               else
               begin
@@ -2216,13 +2216,13 @@ begin
                 ((nowtime - starttime) >= waitSecs / secsPerDay) then
               begin
                 running := False;
-                logdatei.DependentAdd('Waited for the end of started process"' +
+                Logdatei.Log('Waited for the end of started process"' +
                   ' - but time out reached after ' + IntToStr(waitSecs) +
                   ' sec.', LLInfo);
                 // try to close process
                 //if KillProcessbypid(mypid) then
-                //        logdatei.DependentAdd('Killed process with pid: '+ IntToStr(mypid), LLInfo)
-                //else logdatei.DependentAdd('Coud not kill process with pid: '+ IntToStr(mypid), LLWarning);
+                //        Logdatei.Log('Killed process with pid: '+ IntToStr(mypid), LLInfo)
+                //else Logdatei.Log('Coud not kill process with pid: '+ IntToStr(mypid), LLWarning);
               end
               else
               begin
@@ -2495,7 +2495,7 @@ begin
             begin
               if WaitForProcessEndingLogflag then
               begin
-                logdatei.DependentAdd('Waiting for start of "' +
+                Logdatei.Log('Waiting for start of "' +
                   ident + '"', LLinfo);
                 WaitForProcessEndingLogflag := False;
               end;
@@ -2513,7 +2513,7 @@ begin
                   running := True
                 else
                 begin
-                  logdatei.DependentAdd('Waiting for "' + ident +
+                  Logdatei.Log('Waiting for "' + ident +
                     '" stopped - time out ' + IntToStr(waitSecs) + ' sec', LLinfo);
                 end;
               end;
@@ -2530,14 +2530,14 @@ begin
 
               if not WaitForProcessEndingLogflag and running then
               begin
-                logdatei.DependentAdd('Waiting for process "' + ident +
+                Logdatei.Log('Waiting for process "' + ident +
                   '" ending', LLinfo);
                 WaitForProcessEndingLogflag := True;
               end;
 
               if not running then
               begin
-                logdatei.DependentAdd('Process "' + ident + '" ended', LLinfo);
+                Logdatei.Log('Process "' + ident + '" ended', LLinfo);
               end
               else
               begin
@@ -2582,13 +2582,13 @@ begin
                 ((nowtime - starttime) >= waitSecs / secsPerDay) then
               begin
                 running := False;
-                logdatei.DependentAdd('Waited for the end of started process"' +
+                Logdatei.Log('Waited for the end of started process"' +
                   ' - but time out reached after ' + IntToStr(waitSecs) +
                   ' sec.', LLInfo);
                 // try to close process
                 //if KillProcessbypid(mypid) then
-                //        logdatei.DependentAdd('Killed process with pid: '+ IntToStr(mypid), LLInfo)
-                //else logdatei.DependentAdd('Coud not kill process with pid: '+ IntToStr(mypid), LLWarning);
+                //        Logdatei.Log('Killed process with pid: '+ IntToStr(mypid), LLInfo)
+                //else Logdatei.Log('Coud not kill process with pid: '+ IntToStr(mypid), LLWarning);
               end
               else
               begin
@@ -2615,7 +2615,7 @@ begin
     except
       on e: Exception do
       begin
-        LogDatei.DependentAdd('Exception in StartProcess_se_as: ' +
+        Logdatei.Log('Exception in StartProcess_se_as: ' +
           e.message, LLDebug);
         Report := 'Could not execute process "' + CmdLinePasStr + '"';
         exitcode := -1;
@@ -2756,7 +2756,7 @@ begin
       filename := CmdLinePasStr;
     end;
   end;
-  //logdatei.DependentAdd('>->->'+filename+'='+getExecutableName(filename),LLEssential);
+  //Logdatei.Log('>->->'+filename+'='+getExecutableName(filename),LLEssential);
   try
     try
       FillChar(sa, SizeOf(sa), 0);
@@ -2774,20 +2774,20 @@ begin
       if (not Assigned(CreateEnvironmentBlock)) or
         (not Assigned(DestroyEnvironmentBlock)) then
         begin
-          LogDatei.DependentAdd('Could not assign CreateEnvironmentBlock', LLError);
+          Logdatei.Log('Could not assign CreateEnvironmentBlock', LLError);
           exit;
         end;
 
       if not CreateEnvironmentBlock(lpEnvironment,
         opsiSetupAdmin_logonHandle, False) then
       begin
-        LogDatei.DependentAdd('Could not CreateEnvironmentBlock', LLError);
+        Logdatei.Log('Could not CreateEnvironmentBlock', LLError);
         opsiSetupAdmin_lpEnvironment := nil;
       end
       else
         opsiSetupAdmin_lpEnvironment := lpEnvironment^;
  *)
-      LogDatei.DependentAdd(
+      Logdatei.Log(
         'we will work with the logged on user with profile', LLInfo);
       FillChar(lpProfileInfo, SizeOf(lpProfileInfo), 0);
       lpProfileInfo.dwSize := SizeOf(lpProfileInfo);
@@ -2796,13 +2796,13 @@ begin
       if not LoadUserProfileW(opsiSetupAdmin_logonHandle, lpProfileInfo) then
       begin
         //Result := False;
-        LogDatei.DependentAdd(
+        Logdatei.Log(
           'Load profile for loggedon user failed: ' + IntToStr(GetLastError) +
           ' (' + SysErrorMessage(GetLastError) + ')', LLError);
       end
       else
       begin
-        LogDatei.DependentAdd('Loaded profile for logged on user ',
+        Logdatei.Log('Loaded profile for logged on user ',
           LLDebug);
         opsiSetupAdmin_ProfileHandle := lpProfileInfo.hProfile;
         lpEnvironment := nil;
@@ -2846,7 +2846,7 @@ begin
         Result := False;
         Report := CmdLinePasStr + ' .... CreateProcessAsUser Error ' +
           IntToStr(GetLastError) + ' (' + SysErrorMessage(GetLastError) + ')';
-        LogDatei.DependentAdd(Report, LLError);
+        Logdatei.Log(Report, LLError);
         CloseHandle(processInfo.hProcess);
         CloseHandle(processInfo.hThread);
         CloseHandle(hReadPipe);
@@ -2858,7 +2858,7 @@ begin
         ProcessInfo) then
       begin
         Result := False;
-        logdatei.DependentAdd('Could not start process ', LLError);
+        Logdatei.Log('Could not start process ', LLError);
       end
 *)
       else
@@ -2935,7 +2935,7 @@ begin
               //waiting condition 3a : we wait that some other process will come into existence
               if WaitForProcessEndingLogflag then
               begin
-                logdatei.DependentAdd('Waiting for start of "' +
+                Logdatei.Log('Waiting for start of "' +
                   ident + '"', LLinfo);
                 WaitForProcessEndingLogflag := False;
               end;
@@ -2950,7 +2950,7 @@ begin
                 if ((nowtime - starttime) < waitSecs / secsPerDay) then
                   running := True
                 else
-                  logdatei.DependentAdd('Waiting for "' + ident +
+                  Logdatei.Log('Waiting for "' + ident +
                     '" stopped - time out ' + IntToStr(waitSecs) + ' sec', LLinfo);
               end;
 
@@ -2964,14 +2964,14 @@ begin
 
               if not WaitForProcessEndingLogflag and running then
               begin
-                logdatei.DependentAdd('Waiting for process "' +
+                Logdatei.Log('Waiting for process "' +
                   ident + '" ending', LLinfo);
                 WaitForProcessEndingLogflag := True;
               end;
 
               if not running then
               begin
-                logdatei.DependentAdd('Process "' + ident + '" ended', LLinfo);
+                Logdatei.Log('Process "' + ident + '" ended', LLinfo);
               end
               else
               begin
@@ -2981,7 +2981,7 @@ begin
                   ((nowtime - starttime) >= waitSecs / secsPerDay) then
                 begin
                   running := False;
-                  logdatei.DependentAdd('Waiting for ending of "' +
+                  Logdatei.Log('Waiting for ending of "' +
                     ident + '" stopped - waitSecs out ' + IntToStr(waitSecs) +
                     ' sec', LLinfo);
                 end;
@@ -2997,7 +2997,7 @@ begin
             begin
               // waiting condition 4 :  Process has finished;
               //   we still have to look if WindowToVanish did vanish if this is necessary
-              logdatei.DependentAdd(
+              Logdatei.Log(
                 'Process terminated at: ' + DateTimeToStr(now) +
                 ' exitcode is: ' + IntToStr(lpExitCode), LLDebug2);
  (*
@@ -3006,7 +3006,7 @@ begin
               (lpExitCode <> still_active)
             then
             begin
-              logdatei.DependentAdd('Process terminated at: ' +
+              Logdatei.Log('Process terminated at: ' +
                 DateTimeToStr(now) + ' exitcode is: ' + IntToStr(lpExitCode), LLDebug2);
 *)
               if WaitForWindowVanished then
@@ -3028,13 +3028,13 @@ begin
                 ((nowtime - starttime) >= waitSecs / secsPerDay) then
               begin
                 running := False;
-                logdatei.DependentAdd('Waited for the end of started process"' +
+                Logdatei.Log('Waited for the end of started process"' +
                   ' - but time out reached after ' + IntToStr(waitSecs) +
                   ' sec.', LLinfo);
                 // try to close process
                 //if KillProcessbypid(mypid) then
-                //    logdatei.DependentAdd('Killed process with pid: '+ IntToStr(mypid), LLInfo)
-                //else logdatei.DependentAdd('Coud not kill process with pid: '+ IntToStr(mypid), LLWarning);
+                //    Logdatei.Log('Killed process with pid: '+ IntToStr(mypid), LLInfo)
+                //else Logdatei.Log('Coud not kill process with pid: '+ IntToStr(mypid), LLWarning);
               end
               else
               begin
@@ -3048,7 +3048,7 @@ begin
               sleep(1000);
               GetExitCodeProcess(ProcessInfo.hProcess, lpExitCode);
               ProcessMess;
-              logdatei.DependentAdd('Waiting for ending at ' +
+              Logdatei.Log('Waiting for ending at ' +
                 DateTimeToStr(now) + ' exitcode is: ' + IntToStr(lpExitCode), LLDebug2);
               ProcessMess;
             end;
@@ -3082,7 +3082,7 @@ begin
     except
       on e: Exception do
       begin
-        LogDatei.DependentAdd('Exception in StartProcess_cp_lu: ' +
+        Logdatei.Log('Exception in StartProcess_cp_lu: ' +
           e.message, LLDebug);
         Report := 'Could not execute process "' + CmdLinePasStr + '"';
         exitcode := -1;
@@ -3097,13 +3097,13 @@ begin
     (*
     if not (opsiSetupAdmin_lpEnvironment = nil) then
       if not DestroyEnvironmentBlock(opsiSetupAdmin_lpEnvironment) then
-        logdatei.DependentAdd('Could not destroy Environment : ' +
+        Logdatei.Log('Could not destroy Environment : ' +
           IntToStr(GetLastError) + ' (' + SysErrorMessage(GetLastError) +
           ')', LLWarning);
     *)
     if not UnloadUserProfile(opsiSetupAdmin_logonHandle,
       opsiSetupAdmin_ProfileHandle) then
-      logdatei.DependentAdd('Could not unload userprofile : ' + IntToStr(
+      Logdatei.Log('Could not unload userprofile : ' + IntToStr(
         GetLastError) + ' (' + SysErrorMessage(GetLastError) + ')', LLNotice);
     CloseHandle(opsiSetupAdmin_logonHandle);
     ///S.Free;
@@ -3190,7 +3190,7 @@ begin
       filename := CmdLinePasStr;
     end;
   end;
-  //logdatei.DependentAdd('>->->'+filename+'='+getExecutableName(filename),LLEssential);
+  //Logdatei.Log('>->->'+filename+'='+getExecutableName(filename),LLEssential);
   try
     try
       FillChar(sa, SizeOf(sa), 0);
@@ -3480,8 +3480,8 @@ begin
                   ' sec.', LLDebug2);
                 // try to close process
                 //if KillProcessbypid(mypid) then
-                //    logdatei.DependentAdd('Killed process with pid: '+ IntToStr(mypid), LLInfo)
-                //else logdatei.DependentAdd('Coud not kill process with pid: '+ IntToStr(mypid), LLWarning);
+                //    Logdatei.Log('Killed process with pid: '+ IntToStr(mypid), LLInfo)
+                //else Logdatei.Log('Coud not kill process with pid: '+ IntToStr(mypid), LLWarning);
               end
               else
               begin
@@ -3641,7 +3641,7 @@ begin
       filename := CmdLinePasStr;
     end;
   end;
-  //logdatei.DependentAdd('>->->'+filename+'='+getExecutableName(filename),LLEssential);
+  //Logdatei.Log('>->->'+filename+'='+getExecutableName(filename),LLEssential);
   try
     try
       //mypass := opsiSetupAdmin_Password;
@@ -3654,12 +3654,12 @@ begin
            LOGON32_LOGON_INTERACTIVE, LOGON32_PROVIDER_DEFAULT, opsiSetupAdmin_logonHandle) then
       begin
         result := false;
-        LogDatei.DependentAdd('Logged in as temporary Admin opsiSetupAdmin failed: '
+        Logdatei.Log('Logged in as temporary Admin opsiSetupAdmin failed: '
               +  IntToStr(GetLastError) + ' (' + SysErrorMessage(GetLastError) + ')', LLError);
       end
       else
       begin
-        LogDatei.DependentAdd('Logged in as temporary Admin opsiSetupAdmin ', LLDebug);
+        Logdatei.Log('Logged in as temporary Admin opsiSetupAdmin ', LLDebug);
         FillChar(lpProfileInfo, SizeOf(lpProfileInfo), 0);
         lpProfileInfo.dwSize := SizeOf(lpProfileInfo);
         lpProfileInfo.lpUserName:=PChar('opsiSetupAdmin');
@@ -3672,34 +3672,34 @@ begin
         if not LoadUserProfile(opsiSetupAdmin_logonHandle,lpProfileInfo) then
         begin
           result := false;
-          LogDatei.DependentAdd('Load profile for temporary Admin opsiSetupAdmin failed: '
+          Logdatei.Log('Load profile for temporary Admin opsiSetupAdmin failed: '
            + IntToStr(GetLastError) + ' (' + SysErrorMessage(GetLastError) + ')', LLError);
         end
         else
         begin
-          LogDatei.DependentAdd('Loaded profile for temporary Admin opsiSetupAdmin ', LLDebug);
+          Logdatei.Log('Loaded profile for temporary Admin opsiSetupAdmin ', LLDebug);
           opsiSetupAdmin_ProfileHandle :=  lpProfileInfo.hProfile;
           //lpEnvironment := nil;
 
           if not CreateEnvironmentBlock(lpEnvironment,opsiSetupAdmin_logonHandle,true) then
           begin
             result := false;
-            LogDatei.DependentAdd('Create EnvironmentBlock for temporary Admin opsiSetupAdmin failed: '
+            Logdatei.Log('Create EnvironmentBlock for temporary Admin opsiSetupAdmin failed: '
              + IntToStr(GetLastError) + ' (' + SysErrorMessage(GetLastError) + ')', LLError);
           end
           else
 
           begin
-            LogDatei.DependentAdd('Created EnvironmentBlock for temporary Admin opsiSetupAdmin ', LLDebug);
+            Logdatei.Log('Created EnvironmentBlock for temporary Admin opsiSetupAdmin ', LLDebug);
             opsiSetupAdmin_lpEnvironment := lpEnvironment^;
             if not DSiEnablePrivilege('SE_TCB_NAME') then
             begin
-              LogDatei.DependentAdd('EnablePrivilege Error: '
+              Logdatei.Log('EnablePrivilege Error: '
                + IntToStr(GetLastError) + ' (' + SysErrorMessage(GetLastError) + ')', LLError);
             end;
             if not DSiEnablePrivilege('SE_PRIVILEGE_ENABLED') then
             begin
-               LogDatei.DependentAdd('EnablePrivilege Error: '
+               Logdatei.Log('EnablePrivilege Error: '
                + IntToStr(GetLastError) + ' (' + SysErrorMessage(GetLastError) + ')', LLError);
             end;
 
@@ -3712,7 +3712,7 @@ begin
              if not SetUserObjectFullAccess(hWindowStation) then
              begin
                result := false;
-               LogDatei.DependentAdd('SetUserObjectFullAccess(hWindowStation) failed: '
+               Logdatei.Log('SetUserObjectFullAccess(hWindowStation) failed: '
                  + IntToStr(GetLastError) + ' (' + SysErrorMessage(GetLastError) + ')', LLError);
              end;
 
@@ -3724,7 +3724,7 @@ begin
              if not SetUserObjectFullAccess(hDesktop) then
              begin
                result := false;
-               LogDatei.DependentAdd('SetUserObjectFullAccess(hDesktop) failed: '
+               Logdatei.Log('SetUserObjectFullAccess(hDesktop) failed: '
                  + IntToStr(GetLastError) + ' (' + SysErrorMessage(GetLastError) + ')', LLError);
              end;
 
@@ -3780,7 +3780,7 @@ begin
                 Result := False;
                 Report := CmdLinePasStr + ' .... CreateProcessAsUser Error ' +
                   IntToStr(GetLastError) + ' (' + SysErrorMessage(GetLastError) + ')';
-                LogDatei.DependentAdd(Report, LLError);
+                Logdatei.Log(Report, LLError);
                 CloseHandle(processInfoShell.hProcess);
                 CloseHandle(processInfoShell.hThread);
               end
@@ -3827,7 +3827,7 @@ begin
       if not CreateEnvironmentBlock(lpEnvironment,0,false) then
       begin
         lpEnvironment := nil;
-        LogDatei.DependentAdd('Create EnvironmentBlock for temporary Admin opsiSetupAdmin failed: '
+        Logdatei.Log('Create EnvironmentBlock for temporary Admin opsiSetupAdmin failed: '
          + IntToStr(GetLastError) + ' (' + SysErrorMessage(GetLastError) + ')', LLError);
       end;
       opsiSetupAdmin_lpEnvironment := lpEnvironment^;
@@ -3849,13 +3849,13 @@ begin
         Result := False;
         Report := CmdLinePasStr + ' .... CreateProcessAsUser Error ' +
           IntToStr(GetLastError) + ' (' + SysErrorMessage(GetLastError) + ')';
-        LogDatei.DependentAdd(Report, LLError);
+        Logdatei.Log(Report, LLError);
         CloseHandle(processInfo.hProcess);
         CloseHandle(processInfo.hThread);
       end
       else
       begin
-        LogDatei.DependentAdd(
+        Logdatei.Log(
           'Created process as temporary Admin opsiSetupAdmin ', LLDebug);
         Result := True;
 
@@ -3935,7 +3935,7 @@ begin
             begin
               if WaitForProcessEndingLogflag then
               begin
-                logdatei.DependentAdd('Waiting for start of "' +
+                Logdatei.Log('Waiting for start of "' +
                   ident + '"', LLinfo);
                 WaitForProcessEndingLogflag := False;
               end;
@@ -3952,7 +3952,7 @@ begin
                 if ((nowtime - starttime) < waitSecs / secsPerDay) then
                   running := True
                 else
-                  logdatei.DependentAdd('Waiting for "' +
+                  Logdatei.Log('Waiting for "' +
                     ident + '" stopped - time out ' +
                     IntToStr(waitSecs) + ' sec', LLinfo);
               end;
@@ -3970,14 +3970,14 @@ begin
 
               if not WaitForProcessEndingLogflag and running then
               begin
-                logdatei.DependentAdd('Waiting for process "' +
+                Logdatei.Log('Waiting for process "' +
                   ident + '" ending', LLinfo);
                 WaitForProcessEndingLogflag := True;
               end;
 
               if not running then
               begin
-                logdatei.DependentAdd('Process "' + ident +
+                Logdatei.Log('Process "' + ident +
                   '" ended', LLinfo);
               end
               else
@@ -4007,7 +4007,7 @@ begin
 
                          *) then
             begin
-              logdatei.DependentAdd(
+              Logdatei.Log(
                 'Process terminated at: ' + DateTimeToStr(now) +
                 ' exitcode is: ' + IntToStr(lpExitCode), LLDebug2);
               if WaitForWindowVanished then
@@ -4028,14 +4028,14 @@ begin
                 ((nowtime - starttime) >= waitSecs / secsPerDay) then
               begin
                 running := False;
-                logdatei.DependentAdd(
+                Logdatei.Log(
                   'Waited for the end of started process"' +
                   ' - but time out reached after ' +
                   IntToStr(waitSecs) + ' sec.', LLInfo);
                 // try to close process
                 //if KillProcessbypid(mypid) then
-                //    logdatei.DependentAdd('Killed process with pid: '+ IntToStr(mypid), LLInfo)
-                //else logdatei.DependentAdd('Coud not kill process with pid: '+ IntToStr(mypid), LLWarning);
+                //    Logdatei.Log('Killed process with pid: '+ IntToStr(mypid), LLInfo)
+                //else Logdatei.Log('Coud not kill process with pid: '+ IntToStr(mypid), LLWarning);
 
               end
               else
@@ -4085,7 +4085,7 @@ begin
     except
       on e: Exception do
       begin
-        LogDatei.DependentAdd('Exception in StartProcess_as: ' +
+        Logdatei.Log('Exception in StartProcess_as: ' +
           e.message, LLDebug);
         Report := 'Could not execute process "' + CmdLinePasStr + '"';
         exitcode := -1;
@@ -4302,7 +4302,7 @@ begin
   // we start as Invoker
   // we assume that this is a executable
   // we try it via createprocess (Tprocess)
-  LogDatei.DependentAdd(
+  Logdatei.Log(
     'Start process as invoker: ' + getCommandResult('/bin/bash -c whoami'), LLInfo);
   Result := StartProcess_cp(CmdLinePasStr, ShowWindowFlag, showoutput,
     WaitForReturn, WaitForWindowVanished, WaitForWindowAppearing,
@@ -4326,7 +4326,7 @@ begin
   begin
     // we assume that this is a call of a not executable file
     // this is deprecated so we warn and still try it via shellexecute
-    logdatei.DependentAdd('winbatch call of not executable file: ' +
+    Logdatei.Log('winbatch call of not executable file: ' +
       filename + ' is deprecated and output capturing not supported', LLWarning);
     Result := StartProcess_se(CmdLinePasStr, ShowWindowFlag,
       WaitForReturn, WaitForWindowVanished, WaitForWindowAppearing,
@@ -4340,7 +4340,7 @@ begin
       if not (('system' = LowerCase(DSiGetUserName)) or opsiSetupAdmin_created) then
       begin
         RunAs := traInvoker;
-        LogDatei.DependentAdd(
+        Logdatei.Log(
           'Could not create temporary admin because not running as SYSTEM.', LLWarning);
       end;
     if ('pcpatch' = LowerCase(DSiGetUserName)) or
@@ -4366,25 +4366,25 @@ begin
         @WTSQueryUserToken := GetProcAddress(LoadLibrary('wtsapi32.dll'), 'WTSQueryUserToken');
         if (not Assigned(WTSGetActiveConsoleSessionId)) or
           (not Assigned(WTSQueryUserToken)) then
-          LogDatei.DependentAdd(
+          Logdatei.Log(
             'Error: osfunc: StartProcess: Could not assign WTSGetActiveConsoleSessionId / WTSQueryUserToken',
             LLError);
         sessionId := WTSGetActiveConsoleSessionId;
         if not WTSQueryUserToken(sessionId, opsiSetupAdmin_logonHandle) then
-          LogDatei.DependentAdd(
+          Logdatei.Log(
             'Error: osfunc: StartProcess: Could not WTSQueryUserToken for sessionid: ' +
             IntToStr(sessionid), LLError);
          (*
          if not DuplicateTokenEx(mytoken, MAXIMUM_ALLOWED, 0,
                       jwawinnt.SecurityIdentification,
                       jwawinnt.TokenPrimary , myduptoken) then
-           LogDatei.DependentAdd('Error: wifunc: StartProcess: Could not DuplicateTokenEx handle for logged on user',LLError)
+           Logdatei.Log('Error: wifunc: StartProcess: Could not DuplicateTokenEx handle for logged on user',LLError)
          else
            opsiSetupAdmin_logonHandle := myduptoken;
          //DuplicateTokenEx(hToken,MAXIMUM_ALLOWED,NULL,SecurityIdentification,TokenPrimary, &hTokenDup) then
          *)
 
-        LogDatei.DependentAdd(
+        Logdatei.Log(
           'Start process as LoggedOnUser: ' + usercontextDomain +
           '\' + usercontextUser, LLInfo);
         Result := StartProcess_cp_lu(CmdLinePasStr, ShowWindowFlag,
@@ -4392,11 +4392,11 @@ begin
           WaitForWindowAppearing, WaitForProcessEnding, waitsecsAsTimeout,
           Ident, WaitSecs, Report, ExitCode, catchout, output);
         if not Result then
-          LogDatei.DependentAdd('Failed to start process as logged on user.', LLError);
+          Logdatei.Log('Failed to start process as logged on user.', LLError);
       except
         on e: Exception do
         begin
-          LogDatei.DependentAdd('Error in osfunc: StartProcess: ' +
+          Logdatei.Log('Error in osfunc: StartProcess: ' +
             e.message, LLError);
         end;
       end;
@@ -4425,18 +4425,18 @@ begin
           Ident, WaitSecs, Report, ExitCode, catchout, output);
         dwThreadId := GetCurrentThreadId;
         //if SetThreadToken(nil,opsiSetupAdmin_logonHandle) then
-        //  Logdatei.DependentAdd('SetThreadToken success', LLDebug2)
-        //else Logdatei.DependentAdd('SetThreadToken failed: ' +
+        //  Logdatei.Log('SetThreadToken success', LLDebug2)
+        //else Logdatei.Log('SetThreadToken failed: ' +
         //  IntToStr(GetLastError) + ' (' +
         //  SysErrorMessage(GetLastError) + ')', LLDebug2);
         // do not remove temporary admin, it has to be removed by script
         (*
         if opsiSetupAdmin_created then
             if not DeleteTemporaryLocalAdmin then
-              Logdatei.DependentAdd('Could not delete Temporary Admin ', LLWarning);
+              Logdatei.Log('Could not delete Temporary Admin ', LLWarning);
         *)
          (*
-          logdatei.DependentAdd('winbatch started using shellexecute with runas',LLDebug);
+          Logdatei.Log('winbatch started using shellexecute with runas',LLDebug);
           result := StartProcess_se_as(CmdLinePasStr,ShowWindowFlag,
                      WaitForReturn, WaitForWindowVanished,
                      WaitForWindowAppearing, WaitForProcessEnding,
@@ -4448,8 +4448,8 @@ begin
         try
           if not CreateTemporaryLocalAdmin(runas) then
           begin
-            Logdatei.DependentAdd('Could not create Temporary Admin ', LLError);
-            Logdatei.DependentAdd('Try to run without temporary Admin ', LLWarning);
+            Logdatei.Log('Could not create Temporary Admin ', LLError);
+            Logdatei.Log('Try to run without temporary Admin ', LLWarning);
             Result := StartProcess_cp(CmdLinePasStr, ShowWindowFlag,
               showoutput, WaitForReturn, WaitForWindowVanished,
               WaitForWindowAppearing, WaitForProcessEnding, waitsecsAsTimeout,
@@ -4464,7 +4464,7 @@ begin
 
 
           (*
-          logdatei.DependentAdd('winbatch started using shellexecute with runas',LLDebug);
+          Logdatei.Log('winbatch started using shellexecute with runas',LLDebug);
           result := StartProcess_se_as(CmdLinePasStr,ShowWindowFlag,
                      WaitForReturn, WaitForWindowVanished,
                      WaitForWindowAppearing, WaitForProcessEnding,
@@ -4475,7 +4475,7 @@ begin
         finally
           if opsiSetupAdmin_created then
             if not DeleteTemporaryLocalAdmin then
-              Logdatei.DependentAdd('Could not delete Temporary Admin ', LLWarning);
+              Logdatei.Log('Could not delete Temporary Admin ', LLWarning);
         end;
       end;
     end;
@@ -4606,7 +4606,7 @@ begin
       if LogDatei <> nil then
       begin
         LogDatei.LogSIndentLevel := 0;
-        LogDatei.DependentAdd('============  opsi-script ' +
+        Logdatei.Log('============  opsi-script ' +
           OpsiscriptVersionname + ' is regularly and direct rebooting. Time ' +
           FormatDateTime('yyyy-mm-dd  hh:mm:ss ', now) + '.', LLessential);
 
@@ -5230,7 +5230,7 @@ begin
       if not Result then
         exit;
 
-      //logdatei.DependentAdd('Before copy: '+SourceFilename, LLDebug);
+      //Logdatei.Log('Before copy: '+SourceFilename, LLDebug);
 
       (* I think we do not need this anymore (do 13.8.21)
       if AddAccessRightsToACL(pTargetFilename,'SYSTEM', JwaWindows.GENERIC_ALL,
@@ -5384,9 +5384,9 @@ begin
     except
       on E: Exception do
       begin
-        logdatei.DependentAdd('File copy Error: source: ' + SourceFilename +
+        Logdatei.Log('File copy Error: source: ' + SourceFilename +
           ' target: ' + TargetFilename + ' error: ' + e.message, LLError);
-        //logdatei.DependentAdd('Problem: '+problem, LLError);
+        //Logdatei.Log('Problem: '+problem, LLError);
         Result := False;
       end;
     end;
@@ -5528,7 +5528,7 @@ var
 begin
   while (not FileExists(FName)) and (retrycount < 10) do
   begin
-    LogDatei.DependentAdd('Warning: file not found :' + FName + ' -retrying', LLwarning);
+    Logdatei.Log('Warning: file not found :' + FName + ' -retrying', LLwarning);
     FileGetAttr(FName);
     ProcessMess;
     sleep(200);
@@ -5539,7 +5539,7 @@ begin
   end;
   if retrycount = 10 then
   begin
-    LogDatei.DependentAdd('Warning: file not found :' + FName +
+    Logdatei.Log('Warning: file not found :' + FName +
       ' - giving up', LLwarning);
     {$IFDEF UNIX}
     ErrorInfo := 'File Err. No. ' + IntToStr(fpgeterrno);
@@ -5990,7 +5990,7 @@ begin
     else
       ValueText := IntToStr(newValue);
 
-    LogDatei.DependentAdd('Item Pointer set to ' + Valuetext, LLinfo);
+    Logdatei.Log('Item Pointer set to ' + Valuetext, LLinfo);
   end;
 end;
 
@@ -5999,14 +5999,14 @@ var
   deleteS: string;
 begin
   if (StrNo <= -1) or (StrNo >= Count) then
-    LogDatei.DependentAdd('Item pointer shows not to valid item, nothing to delete',
+    Logdatei.Log('Item pointer shows not to valid item, nothing to delete',
       LLinfo)
   else
     try
       deleteS := Strings[StrNo];
       inherited Delete(StrNo);
       LogS := 'Deleted item no. ' + IntToStr(StrNo) + ': ' + deleteS;
-      LogDatei.DependentAdd(LogS, LLinfo);
+      Logdatei.Log(LogS, LLinfo);
     except
       LogS := 'Error: ' + 'Item ' + IntToStr(StrNo) + ' could not be deleted';
       LogDatei.log(LogS, LLError);
@@ -6018,7 +6018,7 @@ begin
   try
     inherited add(s);
     LogS := 'Added item ''' + s + '''';
-    LogDatei.DependentAdd(LogS, LLinfo);
+    Logdatei.Log(LogS, LLinfo);
   except
     LogS := 'Error: ' + 'Item  could not be added';
     LogDatei.log(LogS, LLError);
@@ -6030,7 +6030,7 @@ begin
   try
     inherited insert(i, s);
     LogS := 'Inserted item ''' + s + '''' + ' at position ' + IntToStr(i);
-    LogDatei.DependentAdd(LogS, LLinfo);
+    Logdatei.Log(LogS, LLinfo);
   except
     LogS := 'Error: ' + 'Item  could not be inserted';
     LogDatei.log(LogS, LLError);
@@ -6131,7 +6131,7 @@ begin
       Inc(i);
      {
      LogS := 'Debug: Item no. ' + IntToStr (i-1)  + ' is ''' + SearchItem + '''';
-     LogDatei.DependentAdd (LogS, LLdebug);
+     Logdatei.Log (LogS, LLdebug);
      }
     if (i / 1000) = 0 then
       LogDatei.log('Searching in Item no: ' + IntToStr(i), LLDebug2);
@@ -6141,12 +6141,12 @@ begin
   begin
     LogS := 'Item no. ' + IntToStr(Result) + ' is containing ''' +
       SearchUString + '''';
-    LogDatei.DependentAdd(LogS, LLinfo);
+    Logdatei.Log(LogS, LLinfo);
   end
   else
   begin
     LogS := 'No item found containing ''' + SearchUString + '''';
-    LogDatei.DependentAdd(LogS, LLinfo);
+    Logdatei.Log(LogS, LLinfo);
   end;
 end;
 
@@ -6190,12 +6190,12 @@ begin
   begin
     LogS := 'Item no. ' + IntToStr(Result) + ' is starting with ''' +
       SearchUString + '''';
-    LogDatei.DependentAdd(LogS, LLinfo);
+    Logdatei.Log(LogS, LLinfo);
   end
   else
   begin
     LogS := 'No item found starting with ''' + SearchUString + '''';
-    LogDatei.DependentAdd(LogS, LLinfo);
+    Logdatei.Log(LogS, LLinfo);
   end;
 end;
 
@@ -6587,7 +6587,7 @@ var
   s: string = '';
 begin
   LogSCommand := 'addSection ' + '[' + Sektion + ']';
-  Logged := LogDatei.DependentAdd(LogSCommand, LLinfo);
+  Logged := Logdatei.Log(LogSCommand, LLinfo);
 
   if FindSectionheaderIndex(Sektion) = -1 then
   begin
@@ -6602,15 +6602,15 @@ begin
     Add(s);
 
     LogS := '  done';
-    LogDatei.DependentAdd(LogS, LLinfo);
+    Logdatei.Log(LogS, LLinfo);
   end
   else
   begin
     if not Logged then
-      LogDatei.DependentAdd(LogSCommand, LLinfo);
+      Logdatei.Log(LogSCommand, LLinfo);
 
     LogS := 'Warning:  section ' + Sektion + ' existed already - nothing to do';
-    LogDatei.DependentAdd(LogS, LLwarning);
+    Logdatei.Log(LogS, LLwarning);
   end;
 
 end;
@@ -6628,7 +6628,7 @@ var
   i: integer = 0;
 begin
   LogSCommand := 'addEntry ' + '[' + Sektion + '] ' + Eintrag;
-  Logged := LogDatei.DependentAdd(LogSCommand, LLinfo);
+  Logged := Logdatei.Log(LogSCommand, LLinfo);
   LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
 
 
@@ -6644,7 +6644,7 @@ begin
     Insert(i + 1, Eintrag);
 
     LogS := '  done';
-    LogDatei.DependentAdd(LogS, LLinfo);
+    Logdatei.Log(LogS, LLinfo);
   end
   else
   begin
@@ -6652,15 +6652,15 @@ begin
     if upperCase(OldVal) = upperCase(Value) then
     begin
       LogS := 'Entry existed already';
-      LogDatei.DependentAdd(LogS, LLinfo);
+      Logdatei.Log(LogS, LLinfo);
     end
     else
     begin
       if not Logged then
-        Logged := LogDatei.DependentAdd(LogSCommand, LLinfo);
+        Logged := Logdatei.Log(LogSCommand, LLinfo);
       LogS := 'Warning:  ident  ' + Ident + '  existed already with value ' +
         OldVal + '   - nothing done ';
-      LogDatei.DependentAdd(LogS, LLwarning);
+      Logdatei.Log(LogS, LLwarning);
     end;
   end;
 
@@ -6683,16 +6683,16 @@ var
   i: integer = 0;
 begin
   LogSCommand := 'delEntry ' + '[' + Sektion + '] ' + Eintrag;
-  Logged := LogDatei.DependentAdd(LogSCommand, LLinfo);
+  Logged := Logdatei.Log(LogSCommand, LLinfo);
 
   IdentAbspalten(Eintrag, Ident, Value);
   if FindSectionheaderIndex(Sektion) = -1 then
   begin
     if not Logged then
-      Logged := LogDatei.DependentAdd(LogSCommand, LLinfo);
+      Logged := Logdatei.Log(LogSCommand, LLinfo);
 
     LogS := 'Warning:  section ' + Sektion + ' not found - nothing to do';
-    LogDatei.DependentAdd(LogS, LLwarning);
+    Logdatei.Log(LogS, LLwarning);
   end
   else
   begin
@@ -6702,7 +6702,7 @@ begin
       Delete(i);
 
       LogS := '  done';
-      LogDatei.DependentAdd(LogS, LLinfo);
+      Logdatei.Log(LogS, LLinfo);
     end
     else if Eintrag = Ident then
     begin
@@ -6713,21 +6713,21 @@ begin
         Delete(i);
 
         LogS := '  in section ' + Sektion + ' deleted  ' + LogS;
-        LogDatei.DependentAdd(LogS, LLinfo);
+        Logdatei.Log(LogS, LLinfo);
       end;
     end
     else
     begin
       if not Logged then
-        Logged := LogDatei.DependentAdd(LogS, LLinfo);
+        Logged := Logdatei.Log(LogS, LLinfo);
 
       LogS := 'Warning:  found neither entry ' + Eintrag + 'in section ' +
         Sektion + ' not found';
-      LogDatei.DependentAdd(LogS, LLinfo);
+      Logdatei.Log(LogS, LLinfo);
 
       LogS := '           nor  ident ' + Eintrag + 'in section ' +
         Sektion + ' not found';
-      LogDatei.DependentAdd(LogS, LLwarning);
+      Logdatei.Log(LogS, LLwarning);
     end;
   end;
 
@@ -6748,7 +6748,7 @@ var
   i: integer = 0;
 begin
   LogSCommand := 'setEntry ' + '[' + Sektion + '] ' + Eintrag;
-  Logged := LogDatei.DependentAdd(LogSCommand, LLinfo);
+  Logged := Logdatei.Log(LogSCommand, LLinfo);
 
   IdentAbspalten(Eintrag, Ident, Value);
   if FindSectionheaderIndex(Sektion) = -1 then
@@ -6766,7 +6766,7 @@ begin
     Insert(i + 1, Eintrag);
 
     LogS := '  in section ' + Sektion + ' appended entry ' + Eintrag;
-    LogDatei.DependentAdd(LogS, LLinfo);
+    Logdatei.Log(LogS, LLinfo);
   end
   else
   begin
@@ -6778,14 +6778,14 @@ begin
     if LogS = Eintrag then
     begin
       LogS := '  Entry not changed';
-      LogDatei.DependentAdd(LogS, LLinfo);
+      Logdatei.Log(LogS, LLinfo);
     end
     else
     begin
       LogS := '  Entry      ' + LogS;
-      LogDatei.DependentAdd(LogS, LLinfo);
+      Logdatei.Log(LogS, LLinfo);
       LogS := '  changed to ' + Eintrag;
-      LogDatei.DependentAdd(LogS, LLinfo);
+      Logdatei.Log(LogS, LLinfo);
     end;
   end;
 
@@ -6801,7 +6801,7 @@ var
   i: integer = 0;
 begin
   LogSCommand := 'addNewEntry ' + '[' + Sektion + '] ' + Eintrag;
-  Logged := LogDatei.DependentAdd(LogSCommand, LLinfo);
+  Logged := Logdatei.Log(LogSCommand, LLinfo);
 
   IdentAbspalten(Eintrag, Ident, Value);
 
@@ -6821,16 +6821,16 @@ begin
     Insert(i + 1, Eintrag);
 
     LogS := '  appended entry';
-    LogDatei.DependentAdd(LogS, LLinfo);
+    Logdatei.Log(LogS, LLinfo);
   end
   else
   begin
     if not Logged then
-      Logged := LogDatei.DependentAdd(LogSCommand, LLinfo);
+      Logged := Logdatei.Log(LogSCommand, LLinfo);
 
     LogS := 'Warning:  entry ' + Eintrag + ' existed already in ' +
       Sektion + ' - nothing to do';
-    LogDatei.DependentAdd(LogS, LLwarning);
+    Logdatei.Log(LogS, LLwarning);
   end;
 
 end;
@@ -6840,7 +6840,7 @@ var
   i, j, n: integer;
 begin
   LogSCommand := 'delSec' + '[' + Sektion + '] ';
-  Logged := LogDatei.DependentAdd(LogSCommand, LLinfo);
+  Logged := Logdatei.Log(LogSCommand, LLinfo);
 
   i := FindSectionheaderIndex(Sektion);
   if i >= 0 then
@@ -6852,7 +6852,7 @@ begin
       Delete(i);
 
       LogS := '  deleted ' + LogS;
-      LogDatei.DependentAdd(LogS, LLinfo);
+      Logdatei.Log(LogS, LLinfo);
     end;
 
     (* anschliessende Leerzeilen auch loeschen *)
@@ -6864,10 +6864,10 @@ begin
   else
   begin
     if not Logged then
-      Logged := LogDatei.DependentAdd(LogSCommand, LLinfo);
+      Logged := Logdatei.Log(LogSCommand, LLinfo);
 
     LogS := 'Warning:  section ' + Sektion + ' not found - nothing to do';
-    LogDatei.DependentAdd(LogS, LLwarning);
+    Logdatei.Log(LogS, LLwarning);
 
   end;
 end;
@@ -6880,7 +6880,7 @@ var
   i: integer = 0;
 begin
   LogSCommand := 'changeEntry ' + '[' + Sektion + '] ' + Eintrag;
-  Logged := LogDatei.DependentAdd(LogSCommand, LLinfo);
+  Logged := Logdatei.Log(LogSCommand, LLinfo);
 
   IdentAbspalten(Eintrag, Ident, Value);
   i := FindIdentIndex(Sektion, Ident);
@@ -6895,17 +6895,17 @@ begin
       insert(i, Eintrag);
 
       LogS := '  entry      ' + LogS;
-      LogDatei.DependentAdd(LogS, LLinfo);
+      Logdatei.Log(LogS, LLinfo);
       LogS := '  changed to ' + Eintrag;
-      LogDatei.DependentAdd(LogS, LLinfo);
+      Logdatei.Log(LogS, LLinfo);
     end
     else
     begin
       if not Logged then
-        Logged := LogDatei.DependentAdd(LogSCommand, LLinfo);
+        Logged := Logdatei.Log(LogSCommand, LLinfo);
 
       LogS := 'Warning:  entry ' + Eintrag + ' exists - nothing to do';
-      LogDatei.DependentAdd(LogS, LLwarning);
+      Logdatei.Log(LogS, LLwarning);
 
     end;
 
@@ -6913,11 +6913,11 @@ begin
   else
   begin
     if not Logged then
-      Logged := LogDatei.DependentAdd(LogSCommand, LLinfo);
+      Logged := Logdatei.Log(LogSCommand, LLinfo);
 
     LogS := 'Warning:  ident ' + Ident + ' in section ' + Sektion +
       ' not found - nothing to do';
-    LogDatei.DependentAdd(LogS, LLwarning);
+    Logdatei.Log(LogS, LLwarning);
   end;
 end;
 
@@ -6928,7 +6928,7 @@ var
   i: integer = 0;
 begin
   LogSCommand := 'replaceEntry' + AlterEintrag + ' ' + Eintrag;
-  Logged := LogDatei.DependentAdd(LogSCommand, LLinfo);
+  Logged := Logdatei.Log(LogSCommand, LLinfo);
 
   IdentAbspalten(AlterEintrag, Ident, Value);
   for i := 1 to Count do
@@ -6941,7 +6941,7 @@ begin
       insert(i - 1, Eintrag);
 
       LogS := '  replaced in line ' + IntToStr(i + 1);
-      LogDatei.DependentAdd(LogS, LLinfo);
+      Logdatei.Log(LogS, LLinfo);
     end;
   end;
 
@@ -6957,7 +6957,7 @@ begin
   section := 'Groups';
 
   LogSCommand := 'addProgManGroup' + '[' + section + '] ' + NeueGruppe;
-  Logged :=  LogDatei.DependentAdd (LogSCommand, LLinfo);
+  Logged :=  Logdatei.Log (LogSCommand, LLinfo);
 
   i := FindSectionheaderIndex (section);
   LetzteGruppeLine := FindEndOfSectionIndex (i);
@@ -6987,11 +6987,11 @@ begin
   then
   begin
     if not Logged then
-      Logged := LogDatei.DependentAdd (LogSCommand, LLinfo);
+      Logged := Logdatei.Log (LogSCommand, LLinfo);
 
     LogS :=
             'Warning:  groupfile ' + NeueGruppe + ' already contained as ' + 'group' + IntToStr (Gruppennr);
-    LogDatei.DependentAdd (LogS, LLinfo);
+    Logdatei.Log (LogS, LLinfo);
 
     LogDatei.NumberOfWarnings := LogDatei.NumberOfWarnings + 1;
   end
@@ -7009,7 +7009,7 @@ begin
     insert (i, s);
 
     LogS := '  done';
-    LogDatei.DependentAdd (LogS, LLinfo);
+    Logdatei.Log (LogS, LLinfo);
   end;
 end;
 
@@ -7028,7 +7028,7 @@ begin
   section := 'Groups';
 
   LogSCommand := 'delProgManGroup' + '[' + section + '] ' + AlteGruppe;
-  Logged :=  LogDatei.DependentAdd (LogSCommand, LLinfo);
+  Logged :=  Logdatei.Log (LogSCommand, LLinfo);
 
 
   i := FindSectionheaderIndex (section);
@@ -7059,10 +7059,10 @@ begin
   then
   begin
     if not Logged then
-      Logged := LogDatei.DependentAdd (LogSCommand, LLinfo);
+      Logged := Logdatei.Log (LogSCommand, LLinfo);
 
     LogS := 'Warning:  groupfile ' + AlteGruppe + ' not found';;
-    LogDatei.DependentAdd (LogS, LLinfo);
+    Logdatei.Log (LogS, LLinfo);
 
     LogDatei.NumberOfWarnings := LogDatei.NumberOfWarnings + 1;
   end
@@ -7122,7 +7122,7 @@ begin
 
 
     LogS := '  done';
-    LogDatei.DependentAdd (LogS, LLinfo);
+    Logdatei.Log (LogS, LLinfo);
   end;
 End;
 }
@@ -7250,7 +7250,7 @@ begin
   //then
   begin
     LogSCommand := 'ReadString ' + '[' + Section + '] ' + Ident;
-    Logged := LogDatei.DependentAdd(LogSCommand, LLinfo);
+    Logged := Logdatei.Log(LogSCommand, LLinfo);
   end;
 
   found := True;
@@ -7261,7 +7261,7 @@ begin
     //then
     begin
       LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
-      LogDatei.DependentAdd('Section not found', LLinfo);
+      Logdatei.Log('Section not found', LLinfo);
       LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
     end;
     found := False;
@@ -7275,7 +7275,7 @@ begin
       //then
       begin
         LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
-        LogDatei.DependentAdd('Variable ' + ident + ' not found', LLinfo);
+        Logdatei.Log('Variable ' + ident + ' not found', LLinfo);
         LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
       end;
       found := False;
@@ -7289,7 +7289,7 @@ begin
       //then
       begin
         LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
-        LogDatei.DependentAdd('resulting ' + Result, LLinfo);
+        Logdatei.Log('resulting ' + Result, LLinfo);
         LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
       end;
     end;
@@ -7301,7 +7301,7 @@ begin
     //then
     begin
       LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
-      LogDatei.DependentAdd('taking default ' + defaultvalue, LLinfo);
+      Logdatei.Log('taking default ' + defaultvalue, LLinfo);
       LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
     end;
     Result := DefaultValue;
@@ -7329,17 +7329,17 @@ begin
   if Handle <= 0 then
   begin
     errorOccured := True;
-    LogDatei.DependentAdd('IO-Error ---- ', LLinfo);
+    Logdatei.Log('IO-Error ---- ', LLinfo);
     errormessage := 'file  could not be opened for writing, error code ' +
       IntToStr(-handle) + ' ' + RemoveLineBreaks(SysErrorMessage(-handle));
-    LogDatei.DependentAdd('', LLinfo);
+    Logdatei.Log('', LLinfo);
     LogDatei.log
     (filename + ' could not be saved back ' + errormessage, LLError);
-    LogDatei.DependentAdd('-------------- ', LLinfo);
-    LogDatei.DependentAdd('', LLinfo);
+    Logdatei.Log('-------------- ', LLinfo);
+    Logdatei.Log('', LLinfo);
   end
   else
-    LogDatei.DependentAdd('File ' + filename +
+    Logdatei.Log('File ' + filename +
       ' can be opened for writing, save it back', LLinfo);
 
   fileclose(handle);
@@ -7506,7 +7506,7 @@ begin
   else
     LogS := 'Set ipAddress ' + ipAddress + ' Hostname "' + Hostname + '"';
 
-  LogDatei.DependentAdd(LogS, LLinfo);
+  Logdatei.Log(LogS, LLinfo);
 end;
 
 procedure TuibPatchHostsFile.SetName(const ipAddress, Hostname: string);
@@ -7530,7 +7530,7 @@ begin
   else
     LogS := LogS + 'Set Hostname "' + Hostname + '" for ipAddress ' + ipAddress;
 
-  LogDatei.DependentAdd(LogS, LLinfo);
+  Logdatei.Log(LogS, LLinfo);
 end;
 
 procedure TuibPatchHostsFile.SetAlias(const Ident, Alias: string);
@@ -7562,7 +7562,7 @@ begin
       (* Alias schon enthalten in ali *)
     begin
       LogS := 'Alias "' + Alias + '" for entry "' + Ident + '" exists already';
-      LogDatei.DependentAdd(LogS, LLinfo);
+      Logdatei.Log(LogS, LLinfo);
       exit;
     end
     else
@@ -7572,7 +7572,7 @@ begin
   MakeLine(i, addr + #9 + hn + #9 + ali + #9 + comment);
 
   LogS := 'Alias "' + Alias + '" set for entry "' + Ident + '"';
-  LogDatei.DependentAdd(LogS, LLinfo);
+  Logdatei.Log(LogS, LLinfo);
 end;
 
 procedure TuibPatchHostsFile.DelAlias(const Ident, Alias: string);
@@ -7592,7 +7592,7 @@ begin
   if i = -1 then
   begin
     LogS := 'Info: Host "' + Ident + '" does not exist';
-    LogDatei.DependentAdd(LogS, LLinfo);
+    Logdatei.Log(LogS, LLinfo);
   end
   else
   begin
@@ -7601,13 +7601,13 @@ begin
     if AliasIndex < 0 then
     begin
       LogS := 'Info: Alias "' + Alias + '" for host "' + Ident + '" does not exist';
-      LogDatei.DependentAdd(LogS, LLinfo);
+      Logdatei.Log(LogS, LLinfo);
     end
     else if AliasIndex < 2 then
     begin
       LogS := 'Warning: "' + Alias +
         '" is not an alias, but the hostname and will not be deleted';
-      LogDatei.DependentAdd(LogS, LLwarning);
+      Logdatei.Log(LogS, LLwarning);
     end
     else
     begin
@@ -7619,7 +7619,7 @@ begin
       MakeLine(i, addr + #9 + hn + #9 + ali + #9 + comment);
 
       LogS := 'Alias "' + Alias + '" for entry "' + Ident + '" deleted ';
-      LogDatei.DependentAdd(LogS, LLinfo);
+      Logdatei.Log(LogS, LLinfo);
     end;
   end;
 end;
@@ -7637,13 +7637,13 @@ begin
   if i = -1 then
   begin
     LogS := 'Info: Host "' + Ident + '" not found ';
-    LogDatei.DependentAdd(LogS, LLinfo);
+    Logdatei.Log(LogS, LLinfo);
     exit;
   end;
 
   Delete(i);
   LogS := 'Entry "' + Ident + '" deleted';
-  LogDatei.DependentAdd(LogS, LLinfo);
+  Logdatei.Log(LogS, LLinfo);
 end;
 
 procedure TuibPatchHostsFile.SetComment(const Ident, Comment: string);
@@ -7659,13 +7659,13 @@ begin
   if i = -1 then
   begin
     LogS := 'Info: Host "' + Ident + '" not found ';
-    LogDatei.DependentAdd(LogS, LLinfo);
+    Logdatei.Log(LogS, LLinfo);
     exit;
   end;
 
   MakeLine(i, addr + #9 + hn + #9 + CutRightBlanks(ali) + #9 + '# ' + Comment);
   LogS := 'SetComment of Host "' + Ident + '" to "' + Comment + '"';
-  LogDatei.DependentAdd(LogS, LLinfo);
+  Logdatei.Log(LogS, LLinfo);
 
 end;
 
@@ -7684,13 +7684,13 @@ begin
   begin
     Result := True;
     LogS := 'Found ipAddress ' + ipAddress + ' for Host "' + Ident + '"';
-    LogDatei.DependentAdd(LogS, LLinfo);
+    Logdatei.Log(LogS, LLinfo);
   end
   else
   begin
     Result := False;
     LogS := 'Warning: ipAddress for Host "' + Ident + '"  not found';
-    LogDatei.DependentAdd(LogS, LLwarning);
+    Logdatei.Log(LogS, LLwarning);
   end;
 end;
 
@@ -7710,13 +7710,13 @@ begin
   begin
     Result := True;
     LogS := 'Found Hostname "' + Hostname + '" for ipAddress ' + ipAddress;
-    LogDatei.DependentAdd(LogS, LLinfo);
+    Logdatei.Log(LogS, LLinfo);
   end
   else
   begin
     Result := False;
     LogS := 'Warning: Name for ipAddress ' + ipAddress + ' not found';
-    LogDatei.DependentAdd(LogS, LLwarning);
+    Logdatei.Log(LogS, LLwarning);
   end;
 
 end;
@@ -8180,7 +8180,7 @@ begin
       begin
         Result := False;
         LogS := 'Info: ' + ActionI;
-        LogDatei.DependentAdd(LogS, LLinfo);
+        Logdatei.Log(LogS, LLinfo);
         LogDatei.NumberOfHints := LogDatei.NumberOfHints + 1;
       end
       else
@@ -8499,7 +8499,7 @@ var
     begin
       Result := True;
       LogS := FName + ' has size 0';
-      LogDatei.DependentAdd(LogS, LLinfo);
+      Logdatei.Log(LogS, LLinfo);
     end;
   end;
 
@@ -8536,7 +8536,7 @@ var
         LogS :=
           'Warning: File not copied - existing ' + AlternativeF +
           ' seems to be newer than source ' + Sourcef;
-        LogDatei.DependentAdd(LogS, LLwarning);
+        Logdatei.Log(LogS, LLwarning);
 
         InstallOK := False;
       end
@@ -8545,30 +8545,30 @@ var
         LogS :=
           'Warning: Older or equally old Version of ' + SourceF +
           ' exists in ' + Directory;
-        LogDatei.DependentAdd(LogS, LLwarning);
+        Logdatei.Log(LogS, LLwarning);
       end;
 
       if delicate then
       begin
         LogS :=
           'Warning: Ordering of files is dubious: ';
-        LogDatei.DependentAdd(LogS, LLwarning);
+        Logdatei.Log(LogS, LLwarning);
       end;
 
       if warning then
       begin
         LogS := 'Warning: File cannot be read';
-        LogDatei.DependentAdd(LogS, LLwarning);
+        Logdatei.Log(LogS, LLwarning);
       end;
 
 
 
       LogS := LogDatei.LogSIndentPlus(1) + 'Source     ' + SourceF +
         '  ===  ' + File2Info;
-      LogDatei.DependentAdd(LogS, LLinfo);
+      Logdatei.Log(LogS, LLinfo);
       LogS := LogDatei.LogSIndentPlus(1) + 'Compare to ' + AlternativeF +
         '  ===  ' + File1Info;
-      LogDatei.DependentAdd(LogS, LLinfo);
+      Logdatei.Log(LogS, LLinfo);
     end;
   end;
 
@@ -8586,7 +8586,7 @@ begin
       LogS :=
         'Warning: Existing ' + TargetF + ' seems to be newer than Source ' +
         SourceF + ' - no overwrite ';
-      LogDatei.DependentAdd(LogS, LLwarning);
+      Logdatei.Log(LogS, LLwarning);
 
       InstallOK := False;
     end
@@ -8595,30 +8595,30 @@ begin
       LogS :=
         'Target ' + TargetF +
         ' exists, but seems to be older or equally old than source ' + SourceF;
-      LogDatei.DependentAdd(LogS, LLinfo);
+      Logdatei.Log(LogS, LLinfo);
     end;
 
     if delicate then
     begin
       LogS :=
         'Warning: Ordering of files is dubious: ';
-      LogDatei.DependentAdd(LogS, LLwarning);
+      Logdatei.Log(LogS, LLwarning);
     end;
 
     if warning then
     begin
       LogS :=
         'Warning: File cannot be read';
-      LogDatei.DependentAdd(LogS, LLwarning);
+      Logdatei.Log(LogS, LLwarning);
     end;
 
 
     LogS := LogDatei.LogSIndentPlus(1) + 'Source ' + SourceF +
       '  ===  ' + File2Info;
-    LogDatei.DependentAdd(LogS, LLinfo);
+    Logdatei.Log(LogS, LLinfo);
     LogS := LogDatei.LogSIndentPlus(1) + 'Target ' + TargetF +
       '  ===  ' + File1Info;
-    LogDatei.DependentAdd(LogS, LLinfo);
+    Logdatei.Log(LogS, LLinfo);
 
   end;
 
@@ -8788,7 +8788,7 @@ begin
       //(Source-Date1 > Target-Date2) or ((Date2 = Date1) and OverwriteIfEqual)
 
 
-      //LogDatei.DependentAdd (inttostr (diffresult), LLinfo);
+      //Logdatei.Log (inttostr (diffresult), LLinfo);
       if (diffresult = 1) or ((diffresult = 0) and OverwriteIfEqual) then
       begin
         Result := True;
@@ -9024,7 +9024,7 @@ var
       end;
 
 
-      LogDatei.DependentAdd(LogS, LLinfo);
+      Logdatei.Log(LogS, LLinfo);
 
       MakePath(ExtractTempDir);
       SaveLogLevel := LogDatei.LogLevel;
@@ -9051,7 +9051,7 @@ var
           then
           begin
             LogS := 'Warning: ' + problem;
-            LogDatei.DependentAdd(LogS, LLwarning);
+            Logdatei.Log(LogS, LLwarning);
           end;
 
           zipresult := True;
@@ -9107,7 +9107,7 @@ var
                 packfileinfo.Size, problem) then
               begin
                 LogS := 'Warning: ' + problem;
-                LogDatei.DependentAdd(LogS, LLwarning);
+                Logdatei.Log(LogS, LLwarning);
               end;
             end;
           end;
@@ -9126,7 +9126,7 @@ var
           FName := CutRightBlanks(CentralForm.zipfiles.items[FileI]);
 
           LogS := FName + ' extracted to ' + ExtractTempDir;
-          LogDatei.DependentAdd(LogS, LLinfo);
+          Logdatei.Log(LogS, LLinfo);
         end;
         LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
 
@@ -9195,13 +9195,13 @@ var
         LogS := 'Error:  ' + CompleteName +
           ' is no directory and cannot function as target';
         ;
-        LogDatei.DependentAdd(LogS, LLError);
+        Logdatei.Log(LogS, LLError);
         exit;
       end;
     end;
 
     // starting search
-    LogDatei.DependentAdd('Search: ' + SourcePath + SourceFilemask, LLDebug2);
+    Logdatei.Log('Search: ' + SourcePath + SourceFilemask, LLDebug2);
     //FindResultcode := SysUtils.FindFirst(SourcePath + SourceFilemask,
     //  faAnyfile - faDirectory - faVolumeId, SearchResult);
     {$IFDEF WINDOWS}
@@ -9226,7 +9226,7 @@ var
       begin
         LogS := 'No (non-directory) file with mask  ' + SourcePath +
           SourceFilemask + '  found';
-        LogDatei.DependentAdd(LogS, LLInfo);
+        Logdatei.Log(LogS, LLInfo);
       end;
     end;
 
@@ -9391,7 +9391,7 @@ var
           if ((cpSpecify and cpRecursive) = cpRecursive) and (DirectoryError = 0) then
           begin
             // Rekursion
-            LogDatei.DependentAdd('Recursion: ' + SourcePath +
+            Logdatei.Log('Recursion: ' + SourcePath +
               SearchResult.Name + PathDelim + SourceFileMask, LLDebug2);
             AllCopyRecursive
             (Recursion_Level, SourcePath + SearchResult.Name +
@@ -9502,7 +9502,7 @@ begin
     if not (copy(exdirName, length(exdirName) - 1, 2) = DriveDelim + PathDelim) then
     begin
       LogS := LogDatei.LogSIndent + 'path ' + exdirname + ' created';
-      LogDatei.DependentAdd(LogS, LLInfo);
+      Logdatei.Log(LogS, LLInfo);
     end;
 
   end;
@@ -10029,7 +10029,7 @@ var
       if SourceName = TargetName then
       begin
         LogS := 'Warning: ' + ' Target (' + TargetName + ') = Source ';
-        LogDatei.DependentAdd(LogS, LLwarning);
+        Logdatei.Log(LogS, LLwarning);
       end
       else
       begin
@@ -10038,7 +10038,7 @@ var
           tcmZip:
           begin
             LogS := 'compressing ' + Sourcename + ' -----> ' + Targetname;
-            LogDatei.DependentAdd(LogS, LLinfo);
+            Logdatei.Log(LogS, LLinfo);
 
 
             CmdLinePasStr := (* 'cmd.exe /C echo'; *)  ExtractFilePath(ParamStr(0)) +
@@ -10065,7 +10065,7 @@ var
               False, False, False, '', 0, LogS, ReturnCode) then
             begin
               LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
-              LogDatei.DependentAdd(LogS, LLinfo);
+              Logdatei.Log(LogS, LLinfo);
               LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
             end
             else
@@ -10172,7 +10172,7 @@ begin
   FileFound := False;
 
   LogS := 'Zipping  ' + SourceMask + ' -----> ' + TargetDir;
-  LogDatei.DependentAdd(LogS, LLinfo);
+  Logdatei.Log(LogS, LLinfo);
   LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
 
 
@@ -10389,14 +10389,14 @@ begin
     if DirectoryExists(MyFolderPath) then
     begin
       LogS := 'Opened "' + foldername + '" in ' + Tell_SystemFolder(SystemFolder);
-      LogDatei.DependentAdd(LogS, LLinfo);
+      Logdatei.Log(LogS, LLinfo);
     end
 
     else
       try
         ForceDirectories(MyFolderPath);
         LogS := 'Created "' + foldername + '" in ' + Tell_SystemFolder(SystemFolder);
-        LogDatei.DependentAdd(LogS, LLinfo);
+        Logdatei.Log(LogS, LLinfo);
       except
         Result := False;
         LogS := 'Error: "' + foldername + '"  could not be created in ' +
@@ -10539,13 +10539,13 @@ begin
     else
       LogS := ' created';
     LogS := 'ShellLink ' + Linkname + LogS;
-    LogDatei.DependentAdd(LogS, LLinfo);
+    Logdatei.Log(LogS, LLinfo);
   end
   else
   begin
     LogS := LogS + ' System message "' + RemoveLineBreaks(
       SysErrorMessage(winresult)) + '"';
-    LogDatei.DependentAdd(LogS, LLinfo);
+    Logdatei.Log(LogS, LLinfo);
     LogS := 'ShellLink ' + Linkname + ' could not be made';
     LogDatei.log(LogS, LLError);
   end;
@@ -10575,7 +10575,7 @@ begin
     else
     begin
       LogS := 'Show FolderWindow "' + MyFolderPath + '"';
-      LogDatei.DependentAdd(LogS, LLinfo);
+      Logdatei.Log(LogS, LLinfo);
       Result := True;
     end;
   end;
@@ -10601,7 +10601,7 @@ begin
     if not SysUtils.FileExists(Filename) then
     begin
       LogS := 'Info: Link ' + Linkname + ' does not exist';
-      LogDatei.DependentAdd(LogS, LLinfo);
+      Logdatei.Log(LogS, LLinfo);
       LogDatei.NumberOfHints := LogDatei.NumberOfHints + 1;
       Result := False;
     end;
@@ -10611,7 +10611,7 @@ begin
       if DeleteFile(Filename) then
       begin
         LogS := 'Link ' + Linkname + ' deleted';
-        LogDatei.DependentAdd(LogS, LLinfo);
+        Logdatei.Log(LogS, LLinfo);
       end
       else
       begin
@@ -10653,14 +10653,14 @@ begin
     begin
       LogS := 'Folder "' + foldername + '" in ' + Tell_SystemFolder(SystemFolder) +
         ' does not exist, nothing to delete';
-      LogDatei.DependentAdd(LogS, LLinfo);
+      Logdatei.Log(LogS, LLinfo);
       Result := True;
     end
     else
     begin
       LogS := 'Delete folder "' + foldername + '" in ' +
         Tell_SystemFolder(SystemFolder);
-      LogDatei.DependentAdd(LogS, LLinfo);
+      Logdatei.Log(LogS, LLinfo);
 
       LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
 

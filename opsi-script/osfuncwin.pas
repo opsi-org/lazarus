@@ -253,7 +253,7 @@ begin
       //ProcessMess;
       {$ENDIF GUI}
 
-      //LogDatei.DependentAdd(copy (cmd, 1, 5) + ' ... :' + output_line, LLinfo);
+      //Logdatei.Log(copy (cmd, 1, 5) + ' ... :' + output_line, LLinfo);
 
       // shift remainder of buffer down
 
@@ -305,7 +305,7 @@ begin
     end;
     GetExitCodeProcess(pi.hProcess, lpExitCode);
     exitCode := longint(lpExitCode);
-    //LogDatei.DependentAdd('ExitCode ' + IntToStr(exitCode), LLInfo);
+    //Logdatei.Log('ExitCode ' + IntToStr(exitCode), LLInfo);
   end;
   //lines.add('waiting 0');
      {

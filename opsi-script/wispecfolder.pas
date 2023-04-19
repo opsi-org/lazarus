@@ -628,7 +628,7 @@ begin
     end;
   //debugmessages.Add('getSpecialFolder: '+inttostr(csidlValue)+' -> ' + result);
   //if Assigned(LogDatei) then
-  //LogDatei.DependentAdd('getSpecialFolder: '+inttostr(csidlValue)+' -> ' + result, LLDebug2);
+  //Logdatei.Log('getSpecialFolder: '+inttostr(csidlValue)+' -> ' + result, LLDebug2);
 end;
 
 {$IFDEF WIN32}
@@ -639,7 +639,6 @@ begin
     try
       //debugmessages.Clear;
       retrieveFoldersFromWinApi;
-      //LogDatei.DependentAddStringList(debugmessages,LLEssential);
     finally
       RevertToSelf;
     end;
@@ -656,7 +655,6 @@ begin
     try
       //debugmessages.Clear;
       retrieveFoldersFromWinApi;
-      //LogDatei.DependentAddStringList(debugmessages,LLEssential);
     finally
       RevertToSelf;
     end;
@@ -863,7 +861,7 @@ begin
     strdispose(charbuf);
     if profiledir = '' then
     begin
-      LogDatei.DependentAdd('Api Call GetProfilesDirectory failed: '+removeLineBreaks(SysErrorMessage(GetLastError)),LLWarning);
+      Logdatei.Log('Api Call GetProfilesDirectory failed: '+removeLineBreaks(SysErrorMessage(GetLastError)),LLWarning);
       Reg := TRegistry.Create(KEY_READ);
       Reg.RootKey := HKEY_LOCAL_MACHINE;
       Reg.OpenKey('SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList', False);

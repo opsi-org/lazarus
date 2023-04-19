@@ -446,12 +446,12 @@ begin
 
   if fromRegistry then
   begin
-    LogDatei.DependentAdd('bootmode from registry: ' + bootmode, LLDebug);
+    Logdatei.Log('bootmode from registry: ' + bootmode, LLDebug);
   end
   else
   begin
     bootmode := ValueOfEnvVar('BOOTMODE');
-    LogDatei.DependentAdd('bootmode from environment: ' + bootmode, LLDebug);
+    Logdatei.Log('bootmode from environment: ' + bootmode, LLDebug);
   end;
 {$ENDIF}
 end;
@@ -521,7 +521,7 @@ begin
     if LogDatei <> nil then
     begin
       LogDatei.LogSIndentLevel := 0;
-      LogDatei.DependentAdd('============  opsi-script ' + winstversionname +
+      Logdatei.Log('============  opsi-script ' + winstversionname +
         ' is regularly exiting. Time ' + FormatDateTime(
         'yyyy-mm-dd  hh:mm:ss ', now) + '.', LLessential);
 
@@ -738,13 +738,13 @@ begin
   begin
     Logdatei.StandardPartLogPath := ExtractFileDir(Logdateiname);
     LogDatei.initiate(LogDateiName, False);
-    LogDatei.DependentAdd('', LLessential);
-    LogDatei.DependentAdd('', LLessential);
-    Logdatei.DependentAdd('opsi-script ' + OpsiscriptVersion +
+    LogDatei.log('', LLessential);
+    LogDatei.log('', LLessential);
+    Logdatei.Log('opsi-script ' + OpsiscriptVersion +
       ' started at ' + starttimestr,
       LLessential);
     Logdatei.log('opsi-script log file with encoding ' + DefaultEncoding, LLessential);
-    LogDatei.DependentAdd('======= APPEND   ' + DateTimeToStr(Now), LLessential);
+    Logdatei.Log('======= APPEND   ' + DateTimeToStr(Now), LLessential);
   end;
 
   NestingLevel := 0;
@@ -860,13 +860,13 @@ begin
   begin
     Logdatei.StandardPartLogPath := ExtractFileDir(Logdateiname);
     LogDatei.initiate(LogDateiName, False);
-    LogDatei.DependentAdd('', LLessential);
-    LogDatei.DependentAdd('', LLessential);
-    Logdatei.DependentAdd('opsi-script ' + OpsiscriptVersion +
+    Logdatei.Log('', LLessential);
+    Logdatei.Log('', LLessential);
+    Logdatei.Log('opsi-script ' + OpsiscriptVersion +
       ' started at ' + starttimestr,
       LLessential);
     Logdatei.log('opsi-script log file with encoding ' + DefaultEncoding, LLessential);
-    LogDatei.DependentAdd('======= APPEND   ' + DateTimeToStr(Now), LLessential);
+    Logdatei.Log('======= APPEND   ' + DateTimeToStr(Now), LLessential);
   end;
 
   NestingLevel := 0;
