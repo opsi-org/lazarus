@@ -89,14 +89,13 @@ begin
   {$IFDEF DARWIN}
   FClientDataDir := FClientDataDir + '../../../../CLIENT_DATA/';
   {$ELSE DARWIN}
-  Delete(FClientDataDir, Length(FClientDataDir), 1);
-  FClientDataDir := ExtractFilePath(FClientDataDir);
+  FClientDataDir := FClientDataDir + '../';
 
   if FTwoVersionsToTest then
     FMessageDisplayer.DisplayMessage(rsDownloadLatest + FProductID +
       '... ' + LongMessageSeperator + rsSomeMin, True);
 
-  // try downloading latest configed and set FClientDataDir for the latest version
+  // try downloading latest product version and set FClientDataDir for this version
   if FTwoVersionsToTest and DownloadOpsiPackage(FProductID, FDownloadPath,
     FInstallRunCommand, FPackageManagementShellCommand) then
   begin
