@@ -85,11 +85,10 @@ procedure TInstallationScriptExecuter.DefineDirClientData;
 var
   DefaultVersionSearch, DownloadedVersionSearch: TSearchRec;
 begin
-  FClientDataDir := ExtractFilePath(ParamStr(0));
+  FClientDataDir := ExtractFilePath(ParamStr(0)) + '../';
   {$IFDEF DARWIN}
-  FClientDataDir := FClientDataDir + '../../../../CLIENT_DATA/';
+  FClientDataDir := FClientDataDir + '../../../CLIENT_DATA/';
   {$ELSE DARWIN}
-  FClientDataDir := FClientDataDir + '../';
 
   if FTwoVersionsToTest then
     FMessageDisplayer.DisplayMessage(rsDownloadLatest + FProductID +
