@@ -160,17 +160,13 @@ end;
 procedure TInstallationScriptExecuter.GetOpsiScript;
 begin
   // Get opsi-script_*.tar.gz from download.opensuse.org and extract it
-  //FPackageManagementShellCommand :=
-  //  GetPackageManagementShellCommand(Data.DistrInfo.DistroName);
   FInstallRunCommand.Run(FPackageManagementShellCommand + 'update', Output);
-  FInstallRunCommand.Run(FPackageManagementShellCommand + 'install wget', Output);
+  FInstallRunCommand.Run(FPackageManagementShellCommand + 'install wget tar', Output);
   FInstallRunCommand.Run('wget -A opsi-script_*.tar.gz -r -l 1 ' +
     'https://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.2:/testing/xUbuntu_22.04/'
     + ' -nd', Output);
-  FInstallRunCommand.Run('rm robots.*', Output);
-  FInstallRunCommand.Run(FPackageManagementShellCommand + 'install tar', Output);
   FInstallRunCommand.Run('tar -xvf opsi-script_*.tar.gz', Output);
-  FInstallRunCommand.Run('rm opsi-script_*.tar.gz', Output);
+  FInstallRunCommand.Run('rm robots.* opsi-script_*.tar.gz', Output);
 end;
 
 procedure TInstallationScriptExecuter.ExecuteInstallationScript;
