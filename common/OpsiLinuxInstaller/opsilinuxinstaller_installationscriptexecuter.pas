@@ -85,14 +85,16 @@ procedure TInstallationScriptExecuter.DefineDirClientData;
 var
   DefaultVersionSearch, DownloadedVersionSearch: TSearchRec;
 begin
-  FClientDataDir := ExtractFilePath(ParamStr(0));
+  FClientDataDir := ExtractFilePath(ParamStr(0)) + '../';
   {$IFDEF DARWIN}
-  FClientDataDir := FClientDataDir + '../../../../CLIENT_DATA/';
+  FClientDataDir := FClientDataDir + '../../../CLIENT_DATA/';
   {$ELSE DARWIN}
-  Delete(FClientDataDir, Length(FClientDataDir), 1);
-  FClientDataDir := ExtractFilePath(FClientDataDir);
 
-  // try downloading latest configed and set FClientDataDir for the latest version
+  if FTwoVersionsToTest then
+    FMessageDisplayer.DisplayMessage(rsDownloadLatest + FProductID +
+      '... ' + LongMessageSeperator + rsSomeMin, True);
+
+  // try downloading latest product version and set FClientDataDir for this version
   if FTwoVersionsToTest and DownloadOpsiPackage(FProductID, FDownloadPath,
     FInstallRunCommand, FPackageManagementShellCommand) then
   begin
@@ -122,28 +124,33 @@ begin
     end;
   end
   else
-  if FOneInstallationFailed then
+  // We have only one version to test:
   begin
-    // if there is a downloaded version but the latest version failed to install,
-    // switch between FDefaultVersionName and FDownloadedVersionName to get the directory of
-    // the older version
-    if FDownloadedVersion > FDefaultVersion then
-      FCurrentVersionName := FDefaultVersionName
+    if FOneInstallationFailed then
+    begin
+      (* If there are two version (downloaded and default) but the latest version failed to install,
+         switch between FDefaultVersionName and FDownloadedVersionName to get the directory of
+         the older version. *)
+      if FDownloadedVersion > FDefaultVersion then
+        FCurrentVersionName := FDefaultVersionName
+      else
+        FCurrentVersionName := FDownloadedVersionName;
+    end
     else
-      FCurrentVersionName := FDownloadedVersionName;
-  end
-  else
-  // otherwise, in the case that downloading the latest configed failed,
-  // use the default one
-  if FindFirst('../' + FProductID + '_*', faAnyFile and faDirectory,
-    DefaultVersionSearch) = 0 then
-  begin
-    FDefaultVersionName := DefaultVersionSearch.Name;
-    // extract version numbers
-    FDefaultVersion := DefaultVersionSearch.Name;
-    Delete(FDefaultVersion, 1, Pos('_', FDefaultVersion));
-    FCurrentVersionName := FDefaultVersionName;
-    FTwoVersionsToTest := False;
+    begin
+      (* In the case that downloading the latest version failed,
+         use the default one. *)
+      if FindFirst('../' + FProductID + '_*', faAnyFile and faDirectory,
+        DefaultVersionSearch) = 0 then
+      begin
+        FDefaultVersionName := DefaultVersionSearch.Name;
+        // extract version numbers
+        FDefaultVersion := DefaultVersionSearch.Name;
+        Delete(FDefaultVersion, 1, Pos('_', FDefaultVersion));
+        FCurrentVersionName := FDefaultVersionName;
+        FTwoVersionsToTest := False;
+      end;
+    end;
   end;
   FClientDataDir += FCurrentVersionName + '/CLIENT_DATA/';
   {$ENDIF DARWIN}
@@ -151,8 +158,6 @@ end;
 
 procedure TInstallationScriptExecuter.WritePropertiesToFile;
 begin
-  FMessageDisplayer.DisplayMessage(rsDownloadLatest + FProductID +
-    '... ' + LongMessageSeperator + rsSomeMin, True);
   DefineDirClientData;
   // TODO: Use FFileText to write the property values from the query to the file properties.conf in FClientDataDir
 end;
