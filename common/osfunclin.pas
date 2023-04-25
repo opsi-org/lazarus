@@ -487,7 +487,10 @@ begin
       for i := 0 to OutLines.Count - 1 do
       begin
         LogDatei.log(OutLines.Strings[i], LLDebug2);
-        if (pos(':', OutLines.Strings[i]) > 0) then //if LSB module is not available on Debian "lsb_release --all" command still works but gives as first line "No LSB modules are available."
+        (* We are only interested in the key/value pairs (separated by ':').
+           If LSB module is not available on Debian "lsb_release --all", the command still works but gives as first line "No LSB modules are available.".
+           The last line of the RunCommand Output is usually empty. *)
+        if (pos(':', OutLines.Strings[i]) > 0) then
         begin
           LineParts.Clear;
           StringSplit(OutLines.Strings[i], ':', LineParts);
