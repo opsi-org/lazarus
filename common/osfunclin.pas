@@ -465,32 +465,25 @@ end;
 function getLinuxReleaseInfoFromLSBRelease(var ReleaseInfo: TStringList): boolean;
 var
   ResultString: string;
-  Cmd, Report: string;
-  {$IFDEF OPSISCRIPT}
-  OutLines: TXStringlist;
-  {$ELSE OPSISCRIPT}
+  Cmd, Output: string;
   OutLines: TStringList;
-  {$ENDIF OPSISCRIPT}
   LineParts: TStringList;
-  ExitCode: longint;
   i: integer;
 begin
-  {$IFDEF OPSISCRIPT}
-  OutLines := TXStringList.Create;
-  {$ELSE OPSISCRIPT}
   OutLines := TStringList.Create;
-  {$ENDIF OPSISCRIPT}
   LineParts := TStringList.Create;
   Result := False;
   Cmd := 'lsb_release --all';
   try
-    if RunCommandAndCaptureOut(Cmd, True, OutLines, Report, SW_HIDE, ExitCode) then
+    if RunCommand('/bin/sh', ['-c', Cmd], Output,
+      [poWaitOnExit, poUsePipes, poStderrToOutPut], swoShow) then
     begin
       Result := True;
       LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 6;
       LogDatei.log('', LLDebug2);
       LogDatei.log('output:', LLDebug2);
       LogDatei.log('--------------', LLDebug2);
+      StringSplit(Output, #10, OutLines);
       for i := 0 to OutLines.Count - 1 do
       begin
         LogDatei.log(OutLines.Strings[i], LLDebug2);
@@ -508,7 +501,7 @@ begin
     end
     else
     begin
-      LogDatei.log('Command "lsb_release" does not work: ' + Report + 'Exitcode: ' + IntToStr(ExitCode), LLInfo);
+      LogDatei.log('Command "lsb_release" does not work: ' + Output, LLInfo);
     end;
   finally
     FreeAndNil(LineParts);
