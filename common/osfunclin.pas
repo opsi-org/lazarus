@@ -503,6 +503,7 @@ begin
     end
     else
     begin
+      if Output = '' then Output := 'Probably lsb_release does not exist.';
       LogDatei.log('Command "lsb_release" does not work: ' + Output, LLInfo);
     end;
   finally
