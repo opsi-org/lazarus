@@ -465,7 +465,7 @@ end;
 function getLinuxReleaseInfoFromLSBRelease(var ReleaseInfo: TStringList): boolean;
 var
   ResultString: string;
-  Cmd, Output: string;
+  Output: string;
   OutLines: TStringList;
   LineParts: TStringList;
   i: integer;
@@ -473,9 +473,8 @@ begin
   OutLines := TStringList.Create;
   LineParts := TStringList.Create;
   Result := False;
-  Cmd := 'lsb_release --all';
   try
-    if RunCommand('/bin/sh', ['-c', Cmd], Output,
+    if RunCommand('lsb_release', ['--all'], Output,
       [poWaitOnExit, poUsePipes, poStderrToOutPut], swoShow) then
     begin
       Result := True;
