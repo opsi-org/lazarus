@@ -545,8 +545,8 @@ end;
 
 function getLinuxReleaseInfo:TStringList;
 var
-  SubRelease: TStringList;
   Mapping: TStringList;
+  Release: string;
 begin
   //todo : install lsb-release if not there
   Result := TStringList.Create;
@@ -565,14 +565,8 @@ begin
   //get SubRelease (only Suse);
   if (pos('suse', lowercase(Result.Values['ID'])) > 0) then
   begin
-    Mapping.Clear;
-    Mapping.Add('SubRelease=PATCHLEVEL');
-    SubRelease := TStringList.Create;
-    if getLinuxReleaseInfoFromFile('/etc/SuSE-release', Mapping, SubRelease) then
-    begin
-      Result.Add(SubRelease.Text);
-    end;
-    FreeAndNil(SubRelease);
+    Release := Result.Values['Release'];
+    Result.Add('SubRelease=' + Copy(Release, Pos('.', Release) + 1));
   end
   else
   begin
