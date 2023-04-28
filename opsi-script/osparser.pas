@@ -9851,8 +9851,8 @@ begin
                 {$IFDEF UNIX}
                 logdatei.log('Option window_state is ignored at Linux', LLWarning);
                 {$ENDIF UNIX}
-                {$IFDEF WIN32}
               end;
+              {$IFDEF WIN32}
               if s = '' then
                 link_showwindow := 0
               else
@@ -9869,7 +9869,7 @@ begin
                     '"' + s + '" could not be converted to a window_state key.');
                 LogDatei.log_prog('link_showwindow: ' + s, LLDebug);
               end;
-                {$ENDIF WIN32}
+              {$ENDIF WIN32}
             end
 
             else if LowerCase(Expressionstr) = 'link_categories' then
