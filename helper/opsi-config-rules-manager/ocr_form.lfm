@@ -1,0 +1,153 @@
+object Form1: TForm1
+  Left = 428
+  Height = 553
+  Top = 358
+  Width = 1062
+  Caption = 'opsi-config-rule manager'
+  ClientHeight = 553
+  ClientWidth = 1062
+  Menu = MainMenu1
+  OnCreate = FormCreate
+  LCLVersion = '2.2.6.0'
+  object StatusBar1: TStatusBar
+    Left = 0
+    Height = 23
+    Top = 530
+    Width = 1062
+    Panels = <>
+  end
+  object ToolBar1: TToolBar
+    Left = 0
+    Height = 50
+    Top = 0
+    Width = 1062
+    Caption = 'ToolBar1'
+    TabOrder = 1
+  end
+  object FlowPanel1: TFlowPanel
+    Left = 0
+    Height = 126
+    Top = 50
+    Width = 1062
+    Align = alTop
+    Caption = 'FlowPanel1'
+    ControlList = <    
+      item
+        Control = Label2
+        WrapAfter = waAuto
+        Index = 0
+      end    
+      item
+        Control = Edit1
+        WrapAfter = waAuto
+        Index = 1
+      end    
+      item
+        Control = Label1
+        WrapAfter = waAuto
+        Index = 2
+      end    
+      item
+        Control = CBoxRules
+        WrapAfter = waAuto
+        Index = 3
+      end    
+      item
+        Control = FlowPanel2
+        WrapAfter = waAuto
+        Index = 4
+      end>
+    FlowLayout = tlTop
+    FlowStyle = fsLeftRightTopBottom
+    TabOrder = 2
+    object Edit1: TEdit
+      Left = 74
+      Height = 23
+      Top = 1
+      Width = 168
+      Anchors = []
+      TabOrder = 0
+      Text = 'Edit1'
+    end
+    object Label1: TLabel
+      Left = 262
+      Height = 15
+      Top = 1
+      Width = 65
+      Anchors = []
+      BorderSpacing.Left = 20
+      BorderSpacing.Right = 5
+      Caption = 'Rule name : '
+      ParentColor = False
+    end
+    object Label2: TLabel
+      Left = 21
+      Height = 15
+      Top = 1
+      Width = 48
+      Anchors = []
+      BorderSpacing.Left = 20
+      BorderSpacing.Right = 5
+      Caption = 'clientId : '
+      ParentColor = False
+    end
+    object CBoxRules: TComboBox
+      Left = 332
+      Height = 23
+      Top = 1
+      Width = 724
+      Anchors = []
+      ItemHeight = 15
+      TabOrder = 1
+      Text = 'CBoxRules'
+    end
+    object FlowPanel2: TFlowPanel
+      Left = 1
+      Height = 50
+      Top = 24
+      Width = 592
+      Anchors = []
+      Caption = 'FlowPanel2'
+      ControlList = <      
+        item
+          Control = BitBtn1
+          WrapAfter = waAuto
+          Index = 0
+        end>
+      FlowLayout = tlTop
+      FlowStyle = fsRightLeftTopBottom
+      TabOrder = 2
+      object BitBtn1: TBitBtn
+        Left = 516
+        Height = 30
+        Top = 1
+        Width = 75
+        Anchors = []
+        Caption = 'BitBtn1'
+        TabOrder = 0
+      end
+    end
+  end
+  object Panel1: TPanel
+    Left = 0
+    Height = 354
+    Top = 176
+    Width = 296
+    Align = alLeft
+    Caption = 'Panel1'
+    ClientHeight = 354
+    ClientWidth = 296
+    TabOrder = 3
+    object TreeView1: TTreeView
+      Left = 1
+      Height = 352
+      Top = 1
+      Width = 294
+      Align = alClient
+      TabOrder = 0
+    end
+  end
+  object MainMenu1: TMainMenu
+    Left = 72
+  end
+end
