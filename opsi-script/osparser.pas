@@ -140,7 +140,7 @@ type
     tsIdapiConfig, tsLDAPsearch,
     tsFileActions, tsLinkFolder,
     tsWinBatch, tsDOSBatchFile, tsDOSInAnIcon,
-    tsShellBatchFile, tsShellInAnIcon, tsExecutePython,
+    tsShellBatchFile, tsShellInAnIcon, tsShellScript, tsExecutePython,
     tsExecuteWith, tsExecuteWith_escapingStrings,
     tsOpsiServiceCall,
     tsOpsiServiceHashList,
@@ -12551,7 +12551,7 @@ begin
 
                   if not (localKindOfStatement in
                     [tsDOSBatchFile, tsDOSInAnIcon, tsShellBatchFile,
-                    tsShellInAnIcon, tsExecutePython, tsExecuteWith,
+                    tsShellInAnIcon, tsShellScript, tsExecutePython, tsExecuteWith,
                     tsExecuteWith_escapingStrings, tsWinBatch]) then
                   begin
                     InfoSyntaxError := 'not implemented for this kind of section';
@@ -12590,7 +12590,7 @@ begin
                             True {catchout}, 1, list);
 
                         tsDOSBatchFile, tsDOSInAnIcon, tsShellBatchFile,
-                        tsShellInAnIcon:
+                        tsShellInAnIcon, tsShellScript:
                           execDOSBatch(localSection, r1,
                             SW_HIDE, True {catchout}, 1,
                             [ttpWaitOnTerminate], list);
@@ -24735,7 +24735,7 @@ begin
 
                     if not (localKindOfStatement in
                       [tsDOSBatchFile, tsDOSInAnIcon,
-                      tsShellBatchFile, tsShellInAnIcon,
+                      tsShellBatchFile, tsShellInAnIcon, tsShellScript,
                       tsExecutePython, tsExecuteWith, tsExecuteWith_escapingStrings,
                       tsWinBatch, tsRegistryHack, tsFileActions]) then
                     begin
@@ -24792,7 +24792,7 @@ begin
                                   True {catchout}, 1, tmplist);
 
                               tsDOSBatchFile, tsDOSInAnIcon, tsShellBatchFile,
-                              tsShellInAnIcon:
+                              tsShellInAnIcon, tsShellScript:
                                 execDOSBatch(localSection, tmpstr,
                                   SW_HIDE, True {catchout}, 0,
                                   [ttpWaitOnTerminate], tmplist);
@@ -26057,7 +26057,7 @@ begin
               end;
                {$ENDIF WIN32}
 
-              tsShellInAnIcon, tsShellBatchFile, tsDosInAnIcon, tsDosBatchFile:
+              tsShellInAnIcon, tsShellBatchFile, tsDosInAnIcon, tsDosBatchFile, tsShellScript:
               begin
                 logdatei.log('Execution of: ' + ArbeitsSektion.Name +
                   ' ' + Remaining, LLNotice);
@@ -27604,6 +27604,7 @@ begin
   PStatNames^ [tsDOSInAnIcon] := 'DOSInAnIcon';
   PStatNames^ [tsShellBatchFile] := 'ShellBatch';
   PStatNames^ [tsShellInAnIcon] := 'ShellInAnIcon';
+  PStatNames^ [tsShellScript] := 'ShellScript';
   PStatNames^ [tsExecutePython] := 'ExecPython';
   PStatNames^ [tsExecuteWith] := 'ExecWith';
   PStatNames^ [tsExecuteWith_escapingStrings] := 'ExecWith_escapingStrings';
