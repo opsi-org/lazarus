@@ -4,7 +4,7 @@ object Form1: TForm1
   Top = 358
   Width = 1062
   Caption = 'opsi-config-rule manager'
-  ClientHeight = 553
+  ClientHeight = 533
   ClientWidth = 1062
   Menu = MainMenu1
   OnCreate = FormCreate
@@ -12,9 +12,17 @@ object Form1: TForm1
   object StatusBar1: TStatusBar
     Left = 0
     Height = 23
-    Top = 530
+    Top = 510
     Width = 1062
-    Panels = <>
+    Panels = <    
+      item
+        Width = 50
+      end    
+      item
+        Text = 'Not Connected to opsi-server'
+        Width = 350
+      end>
+    SimplePanel = False
   end
   object ToolBar1: TToolBar
     Left = 0
@@ -98,6 +106,7 @@ object Form1: TForm1
       Width = 724
       Anchors = []
       ItemHeight = 15
+      OnChange = CBoxRulesChange
       TabOrder = 1
       Text = 'CBoxRules'
     end
@@ -105,42 +114,79 @@ object Form1: TForm1
       Left = 1
       Height = 50
       Top = 24
-      Width = 592
+      Width = 1048
       Anchors = []
       Caption = 'FlowPanel2'
       ControlList = <      
         item
-          Control = BitBtn1
+          Control = BtnSwitchOff
           WrapAfter = waAuto
           Index = 0
+        end      
+        item
+          Control = BtnSwitchOn
+          WrapAfter = waAuto
+          Index = 1
+        end      
+        item
+          Control = Memo1
+          WrapAfter = waAuto
+          Index = 2
         end>
       FlowLayout = tlTop
       FlowStyle = fsRightLeftTopBottom
       TabOrder = 2
-      object BitBtn1: TBitBtn
-        Left = 516
+      object BtnSwitchOn: TBitBtn
+        Left = 892
         Height = 30
-        Top = 1
+        Top = 11
         Width = 75
         Anchors = []
-        Caption = 'BitBtn1'
+        BorderSpacing.Left = 5
+        BorderSpacing.Top = 10
+        Caption = 'On'
+        OnClick = BtnSwitchOnClick
         TabOrder = 0
+      end
+      object Memo1: TMemo
+        Left = 252
+        Height = 39
+        Top = 6
+        Width = 635
+        Anchors = []
+        BorderSpacing.Top = 5
+        Lines.Strings = (
+          'Memo1'
+        )
+        TabOrder = 1
+      end
+      object BtnSwitchOff: TBitBtn
+        Left = 972
+        Height = 30
+        Top = 11
+        Width = 75
+        Anchors = []
+        BorderSpacing.Left = 5
+        BorderSpacing.Top = 10
+        Caption = 'Off'
+        OnClick = BtnSwitchOffClick
+        TabOrder = 2
       end
     end
   end
   object Panel1: TPanel
     Left = 0
-    Height = 354
+    Height = 334
     Top = 176
     Width = 296
     Align = alLeft
     Caption = 'Panel1'
-    ClientHeight = 354
+    ClientHeight = 334
     ClientWidth = 296
     TabOrder = 3
     object TreeView1: TTreeView
       Left = 1
-      Height = 352
+      Height = 332
       Top = 1
       Width = 294
       Align = alClient
@@ -149,5 +195,20 @@ object Form1: TForm1
   end
   object MainMenu1: TMainMenu
     Left = 72
+    object MFile: TMenuItem
+      Caption = 'File'
+      object MExit: TMenuItem
+        Caption = 'Exit'
+        OnClick = MExitClick
+      end
+    end
+    object MAbout: TMenuItem
+      Caption = 'About'
+      OnClick = MAboutClick
+    end
+    object MConfiguration: TMenuItem
+      Caption = 'Configuration'
+      OnClick = MConfigurationClick
+    end
   end
 end

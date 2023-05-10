@@ -26,6 +26,9 @@
     </RunParams>
     <RequiredPackages>
       <Item>
+        <PackageName Value="RunTimeTypeInfoControls"/>
+      </Item>
+      <Item>
         <PackageName Value="LCL"/>
       </Item>
     </RequiredPackages>
@@ -38,7 +41,33 @@
         <Filename Value="ocr_form.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="Form1"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+      </Unit>
+      <Unit>
+        <Filename Value="ocrbasedata.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="ocrconfigdlg.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="FOSDConfigdlg"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\..\common\osmessagedialog.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="MyMessageDlg"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\..\common\oswebservice.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\..\common\osjson.pas"/>
+        <IsPartOfProject Value="True"/>
       </Unit>
     </Units>
   </ProjectOptions>
@@ -50,6 +79,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
+      <OtherUnitFiles Value="..\..\common;..\..\external_libraries\synapse;..\..\external_libraries\misc;..\..\external_libraries\dcpcrypt\Ciphers;..\..\external_libraries\dcpcrypt\Hashes;..\..\external_libraries\dcpcrypt;..\..\external_libraries\HashLib4Pascal\HashLib\src\Base;..\..\external_libraries\HashLib4Pascal\HashLib\src\Checksum;..\..\external_libraries\HashLib4Pascal\HashLib\src\Crypto;..\..\external_libraries\HashLib4Pascal\HashLib\src\Crypto\Blake2BParams;..\..\external_libraries\HashLib4Pascal\HashLib\src\Crypto\Blake2SParams;..\..\external_libraries\HashLib4Pascal\HashLib\src\Hash32;..\..\external_libraries\HashLib4Pascal\HashLib\src\Hash64;..\..\external_libraries\HashLib4Pascal\HashLib\src\Hash128;..\..\external_libraries\HashLib4Pascal\HashLib\src\Include;..\..\external_libraries\HashLib4Pascal\HashLib\src\Interfaces;..\..\external_libraries\HashLib4Pascal\HashLib\src\Interfaces\IBlake2BParams;..\..\external_libraries\HashLib4Pascal\HashLib\src\Interfaces\IBlake2SParams;..\..\external_libraries\HashLib4Pascal\HashLib\src\KDF;..\..\external_libraries\HashLib4Pascal\HashLib\src\Utils;..\..\external_libraries\HashLib4Pascal\HashLib\src\Nullable;..\..\external_libraries\HashLib4Pascal\HashLib\src\NullDigest"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Linking>

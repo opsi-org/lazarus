@@ -10,7 +10,8 @@ uses
   athreads,
   {$ENDIF}
   Interfaces, // this includes the LCL widgetset
-  Forms, ocr_form
+  Forms, runtimetypeinfocontrols, ocr_form, ocrbasedata, ocrconfigdlg,
+  osmessagedialog, oswebservice, osjson
   { you can add units after this };
 
 {$R *.res}
@@ -20,6 +21,8 @@ begin
   Application.Scaled:=True;
   Application.Initialize;
   Application.CreateForm(TForm1, Form1);
+  Application.CreateForm(TFOSDConfigdlg, FOSDConfigdlg);
+  Application.CreateForm(TMyMessageDlg, MyMessageDlg);
   Application.Run;
 end.
 
