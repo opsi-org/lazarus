@@ -26077,17 +26077,8 @@ begin
                     True {catch out}, 0, [ttpWaitOnTerminate], output);
               end;
 
-              tsShellBatchFile:
-              begin
-                logdatei.log('Execution of: ' + ArbeitsSektion.Name +
-                  ' ' + Remaining, LLNotice);
-                if not testSyntax then
-                  ActionResult :=
-                    execDOSBatch(ArbeitsSektion, Remaining, SW_ShowNormal,
-                    False {dont catch out}, 0, [ttpWaitOnTerminate], output);
-              end;
 
-              tsShellInAnIcon:
+              tsShellInAnIcon, tsShellBatchFile:
               begin
                 logdatei.log('Execution of: ' + ArbeitsSektion.Name +
                   ' ' + Remaining, LLNotice);
