@@ -26057,28 +26057,7 @@ begin
               end;
                {$ENDIF WIN32}
 
-              tsDosBatchFile:
-              begin
-                logdatei.log('Execution of: ' + ArbeitsSektion.Name +
-                  ' ' + Remaining, LLNotice);
-                if not testSyntax then
-                  ActionResult :=
-                    execDOSBatch(ArbeitsSektion, Remaining, SW_ShowNormal,
-                    False {dont catch out}, 0, [ttpWaitOnTerminate], output);
-              end;
-
-              tsDosInAnIcon:
-              begin
-                logdatei.log('Execution of: ' + ArbeitsSektion.Name +
-                  ' ' + Remaining, LLNotice);
-                if not testSyntax then
-                  ActionResult :=
-                    execDOSBatch(ArbeitsSektion, Remaining, SW_HIDE,
-                    True {catch out}, 0, [ttpWaitOnTerminate], output);
-              end;
-
-
-              tsShellInAnIcon, tsShellBatchFile:
+              tsShellInAnIcon, tsShellBatchFile, tsDosInAnIcon, tsDosBatchFile:
               begin
                 logdatei.log('Execution of: ' + ArbeitsSektion.Name +
                   ' ' + Remaining, LLNotice);
