@@ -2429,25 +2429,18 @@ function TuibInstScript.doTextpatch(const Sektion: TWorkSection;
 
 var
   j: integer;
-  methodname: string = '';
   s: string = '';
   r: string = '';
   s0: string = '';
   s1: string = '';
   s2: string = '';
-  startofline: string = '';
   oldLine: string = '';
   old_s2: string = '';
   x: string = '';
   found: boolean;
-  lastfind: boolean;
-  PatchListe: TpatchList;
   ErrorInfo: string = '';
-  FileError: string = '';
-  syntaxCheck: boolean;
   indx: integer;
   d, sum: integer;
-  saveToOriginalFile: boolean;
   working: boolean;
   secondStringList: TStringList;
   ProfileList: TStringList;
@@ -2464,13 +2457,20 @@ var
   procedure doTextpatchMain(const Section: TXStringList; const presetDir: string;
     const PatchFilename: string);
   var
-    i: integer = 0;
+    saveToOriginalFile: boolean = True;
+    lastfind: boolean = False;
+    i: integer = 1;
+    PatchListe: TpatchList;
+    methodname: string = '';
     index: integer = 0;
     patchlistcounter: integer = 0;
     workingSection: TXStringList;
     NameValueSeparator: char;
     goon: boolean = True;
     insertLineIndx: integer = -1;
+    startofline: string = '';
+    FileError: string = '';
+    syntaxCheck: boolean = True;
 
   begin
     Logdatei.log('', LLInfo);
@@ -2491,11 +2491,6 @@ var
     if not testSyntax then
       PatchListe.loadFromFileWithEncoding(ExpandFileName(PatchFilename), flag_encoding);
 
-    saveToOriginalFile := True;
-    lastfind := False;
-
-    i := 1;
-    syntaxcheck := True;
     while (i <= workingSection.Count) and syntaxcheck do
     begin
       ErrorInfo := '';
