@@ -3390,13 +3390,6 @@ function TuibInstScript.doInifilePatches(const Sektion: TWorkSection;
   Filename: string): TSectionResult;
 var
   pc: integer = 0;
-  Befehlswort: string = '';
-  Rest: string = '';
-  Bereich: string = '';
-  Eintrag: string = '';
-  AlterEintrag: string = '';
-  Patchdatei: TuibPatchIniFile;
-  ErrorInfo: string = '';
   ProfileList: TStringList;
 
   procedure doInifilePatchesMain(Section: TXStringList; const presetDir: string;
@@ -3404,6 +3397,12 @@ var
   var
     i: integer = 0;
     workingSection: TXStringList;
+    Patchdatei: TuibPatchIniFile;
+    Befehlswort: string = '';
+    Rest: string = '';
+    Bereich: string = '';
+    Eintrag: string = '';
+    AlterEintrag: string = '';
 
   begin
     Logdatei.log('', LLInfo);
