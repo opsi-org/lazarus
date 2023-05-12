@@ -2407,6 +2407,16 @@ begin
     end;
 end;
 
+function GetWorkSectionForPatch(const Section: TXStringList; const presetDir: string): TXStringList;
+begin
+  // create working opbject, i.e. a copy of the section that can be modified
+  Result := TXStringList.Create;
+  Result.Assign(Section);
+  Result.GlobalReplace(1, '%userprofiledir%', presetDir, False);
+  Result.GlobalReplace(1, '%currentprofiledir%', presetDir, False);
+end;
+
+
 function TuibInstScript.doTextpatch(const Sektion: TWorkSection;
   Filename: string): TSectionResult;
 
@@ -2458,17 +2468,13 @@ var
     Logdatei.log('', LLInfo);
     Logdatei.log('Patching: ' + PatchFilename, LLInfo);
 
-    workingSection := TXStringList.Create;
-    workingSection.Assign(Section);
-    workingSection.GlobalReplace(1, '%userprofiledir%', presetDir, False);
-    workingSection.GlobalReplace(1, '%currentprofiledir%', presetDir, False);
-
     if not testSyntax then
       if not CreatePatchFileIfNotExistent(PatchFilename) then
         exit;
 
     ProcessMess;
     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+    workingSection := GetWorkSectionForPatch(Section, presetDir);
 
     { create the list we work on }
     PatchListe := TPatchList.Create;
@@ -3406,7 +3412,7 @@ var
   ErrorInfo: string = '';
   ProfileList: TStringList;
 
-  procedure doInifilePatchesMain(const presetDir: string);
+  procedure doInifilePatchesMain(Section: TXStringList; const presetDir: string);
   var
     i: integer = 0;
     workingSection: TXStringList;
@@ -3421,13 +3427,7 @@ var
 
     ProcessMess;
     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
-
-    // create working opbjects
-    // copy const sektion to var workingsection so it can be modified
-    workingSection := TXStringList.Create;
-    workingSection.Assign(Sektion);
-    workingSection.GlobalReplace(1, '%userprofiledir%', presetDir, False);
-    workingSection.GlobalReplace(1, '%currentprofiledir%', presetDir, False);
+    workingSection := GetWorkSectionForPatch(Section, presetDir);
 
     Patchdatei := TuibPatchIniFile.Create;
     Patchdatei.Clear;
@@ -3535,7 +3535,7 @@ begin
       PatchdateiName := SysUtils.StringReplace(PatchdateiName,
         '%currentprofiledir%', ProfileList.Strings[pc], [rfReplaceAll, rfIgnoreCase]);
       PatchdateiName := ExpandFileName(PatchdateiName);
-      doInifilePatchesMain(ProfileList.Strings[pc]);
+      doInifilePatchesMain(Sektion, ProfileList.Strings[pc]);
     end;
   end
   else
@@ -3550,7 +3550,7 @@ begin
     else
       PatchdateiName := Filename;
     PatchdateiName := ExpandFileName(PatchdateiName);
-    doInifilePatchesMain(GetUserProfilePath);
+    doInifilePatchesMain(Sektion, GetUserProfilePath);
   end;
 
   LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
