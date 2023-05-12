@@ -11,7 +11,7 @@ uses
   {$ENDIF}
   Interfaces, // this includes the LCL widgetset
   Forms, runtimetypeinfocontrols, ocr_form, ocrbasedata, ocrconfigdlg,
-  osmessagedialog, oswebservice, osjson
+  osmessagedialog, oswebservice, osjson, osparserhelper
   { you can add units after this };
 
 {$R *.res}

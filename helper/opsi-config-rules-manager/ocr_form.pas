@@ -11,18 +11,21 @@ uses
   fileutil,
   inifiles,
   lazfileutils,
+  strutils,
   ocrbasedata,
   ocrconfigdlg,
   oswebservice,
   osmessagedialog,
   oslog,
-  osjson;
+  osjson,
+  osparserhelper;
 
 type
 
   { TForm1 }
 
   TForm1 = class(TForm)
+    BitBtnConnect: TBitBtn;
     BtnSwitchOn: TBitBtn;
     BtnSwitchOff: TBitBtn;
     CBoxRules: TComboBox;
@@ -31,6 +34,9 @@ type
     FlowPanel2: TFlowPanel;
     Label1: TLabel;
     Label2: TLabel;
+    Label3: TLabel;
+    ListBoxClient: TListBox;
+    ListBoxServer: TListBox;
     MainMenu1: TMainMenu;
     Memo1: TMemo;
     MExit: TMenuItem;
@@ -38,16 +44,25 @@ type
     MAbout: TMenuItem;
     MConfiguration: TMenuItem;
     Panel1: TPanel;
+    Panel2: TPanel;
+    Panel3: TPanel;
     StatusBar1: TStatusBar;
+    Timer1: TTimer;
     ToolBar1: TToolBar;
     TreeView1: TTreeView;
+    procedure BitBtnConnectClick(Sender: TObject);
     procedure BtnSwitchOffClick(Sender: TObject);
     procedure BtnSwitchOnClick(Sender: TObject);
     procedure CBoxRulesChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure FormShow(Sender: TObject);
     procedure MAboutClick(Sender: TObject);
     procedure MConfigurationClick(Sender: TObject);
     procedure MExitClick(Sender: TObject);
+    procedure Timer1Timer(Sender: TObject);
+    procedure TreeView1Click(Sender: TObject);
+    procedure TreeView1DblClick(Sender: TObject);
+    procedure TreeView1SelectionChanged(Sender: TObject);
   private
 
   public
@@ -55,6 +70,10 @@ type
   end;
 
   function startOpsiServiceConnection: boolean;
+  procedure readserver;
+  procedure readgroups;
+  procedure readclients;
+
 
 var
   Form1: TForm1;
@@ -65,7 +84,10 @@ var
   configIdsList : TStringlist;
   configSwitchList : TStringlist;
   clientIdsList : TStringlist;
+  defaultCommandlist : TStringlist;
   myinifilename : string;
+  myConfigStateObectJsonStr, myConfigStateArrayJsonStr : string;
+  myConfigStateList, allClientIdsList : TStringlist;
 
 resourcestring
   rsServiceConnectionFailed =
@@ -89,15 +111,27 @@ begin
       ruleslist[i] := ExtractFileNameOnly(ruleslist[i]);
     CBoxRules.Items.AddStrings(ruleslist);
     CBoxRules.ItemIndex:=0;
-
+    CBoxRulesChange(Sender);
   finally
     FreeAndNil(ruleslist)
   end;
-  startOpsiServiceConnection;
+  BtnSwitchOff.Enabled:= false;
+  BtnSwitchOn.Enabled:= false;
+  allClientIdsList := TStringlist.Create;
+  Application.ProcessMessages;
+  //if myconfiguration.Service_pass <> '' then BitBtnConnectClick(nil);
   defaultConfiglist := Tstringlist.Create;
+  defaultCommandlist := Tstringlist.Create;
   configIdsList := TStringlist.Create;
   configSwitchList := TStringlist.Create;
   clientIdsList := TStringlist.Create;
+  myConfigStateList := TStringlist.Create;
+end;
+
+procedure TForm1.FormShow(Sender: TObject);
+begin
+  Application.ProcessMessages;
+  Timer1.Enabled:=true;
 end;
 
 procedure switchConfig(switchList : TStringlist; clientIdsList : Tstringlist);
@@ -116,40 +150,42 @@ begin
   params := ['', '{"id":"' + configId + '"}'];
   LogErrorMessage := 'Warning: Could not get config defaults from service (oswebservice: TOpsi4Data.getConfigObjectsFromService)';
   serviceresult := localservicedata.getJSONFromService(method, params, logErrorMessage);
+  LogDatei.log('Serviceresult from config_getObjects: '+ serviceresult,LLdebug);
   if jsonAsArrayCountElements(serviceresult) > 0 then result := true;
 end;
 
-procedure createConfig(configId : string; configVal : string; isBool : boolean);
+procedure createConfig(defaultCommand : string);
 var
   method: string;
   params: array of string;
   LogErrorMessage, serviceresult: string;
+  i : integer;
 begin
   // method config_createBool id *description *defaultValues
   // method config_createUnicode id *description *possibleValues *defaultValues *editable *multiValue
   serviceresult := '';
-  if isBool then
-  begin
-    method :=  'config_createBool';
-    params := ['', '{"id":"' + configId + '","defaultValues":['+configVal+']}'];
-  end
-  else
-  begin
-    method :=  'config_createUnicode';
-  end;
+  // get method from command
+  //method := copy(defaultCommand,0,pos(' ',defaultCommand));
+  method := Copy2SpaceDel(defaultCommand);
+  // get params from command
+  //params := copy(defaultCommand,pos(' ',defaultCommand),length(defaultCommand));
+  params := SplitString(defaultCommand,' ');
+  for i := 0 to length(params) -1 do
+    params[i] := opsiunquotestr2(params[i],'"');
+  // call method
   LogErrorMessage := 'Warning: Could not create config defaults with service method: '+method;
   serviceresult := localservicedata.getJSONFromService(method, params, logErrorMessage);
-  //if jsonAsArrayCountElements(serviceresult) > 0 then result := true;
+  LogDatei.log('Serviceresult from createConfig: '+ serviceresult,LLdebug);
 end;
 
-procedure checkConfig(configId : string; configVal : string; isBool : boolean; defaultValue : string);
+procedure checkConfig(configId : string; defaultCommand : string);
 var
   key, val : string;
 
 begin
   if not configExists(configId) then
   begin
-    createConfig(configId, configVal, isBool);
+    createConfig(defaultCommand);
   end
   else LogDatei.log('config: '+configId+' already exists.',LLdebug);
 end;
@@ -173,23 +209,30 @@ begin
     myIni := TIniFile.Create(myinifilename);
     myIni.ReadSectionValues('default',defaultConfiglist);
     myIni.ReadSection('default',configIdsList);
+    myIni.ReadSectionValues('default_commands',defaultCommandlist);
     //memo1.Text:= myIni.ReadString('general','description');
   end;
   myIni.Free;
   for i := 0 to configIdsList.Count -1 do
     begin
       id :=  configIdsList.strings[i];
-      val := trim(defaultConfiglist.Values[id]);
-      if  (LowerCase(val) = 'true') or (LowerCase(val) = 'false') then
-      isBool:= true
-      else isBool:= false;
-      checkConfig(id, val, isBool, val);
+      //val := trim(defaultConfiglist.Values[id]);
+      //if  (LowerCase(val) = 'true') or (LowerCase(val) = 'false') then
+      //isBool:= true
+      //else isBool:= false;
+      checkConfig(id, defaultCommandlist[i]);
     end;
 end;
 
 procedure addConfigState(configId, val, clientId : string);
 begin
-
+  myConfigStateObectJsonStr :=
+    '{"configId":"'+configId+'",'+
+    '"objectId":"'+clientId+'",'+
+    ' "values": ['+val+'],'+
+    '"type": "ConfigState"}';
+  myConfigStateList.Add(myConfigStateObectJsonStr);
+  LogDatei.log('Added configState: '+myConfigStateObectJsonStr,LLdebug);
 end;
 
 procedure readAndCheckSwitch(switchOn : boolean);
@@ -204,6 +247,7 @@ var
   isBool : boolean;
   sectionName : string;
 begin
+  LogDatei.log('readAndCheckSwitch',LLnotice);
   if switchOn then sectionName := 'switch_on'
   else sectionName := 'switch_off';
   //myinifilename := CBoxRules.SelText;
@@ -213,14 +257,19 @@ begin
   begin
     myIni := TIniFile.Create(myinifilename);
     myIni.ReadSectionValues(sectionName,configSwitchList);
-    //myIni.ReadSection(sectionName,configIdsList);
-    //memo1.Text:= myIni.ReadString('general','description');
   end;
   myIni.Free;
 end;
 
 procedure getClientIdsList;
+var
+  str : string;
 begin
+  LogDatei.log('getClientIdsList',LLnotice);
+  clientIdsList.Clear;
+  //clientIdsList.Add(form1.Edit1.Caption);
+  str := Form1.ListBoxClient.GetSelectedText;
+  clientIdsList.Text := str;
 
 end;
 
@@ -228,7 +277,11 @@ procedure updateConfigStates;
 var
   i, k : integer;
   id, val, clientid : string;
+  method: string;
+  params: array of string;
+  LogErrorMessage, serviceresult: string;
 begin
+  LogDatei.log('updateConfigStates',LLnotice);
   for i := 0 to configIdsList.Count -1 do
     for k := 0 to clientIdsList.Count -1 do
     begin
@@ -237,10 +290,24 @@ begin
       clientid :=  clientIdsList.Strings[k];
       addConfigState(id, val, clientid);
     end;
+  serviceresult := '';
+  method := 'configState_updateObjects';
+  // get params
+  if stringListToJsonArray(myConfigStateList,myConfigStateArrayJsonStr) then
+  begin
+    params := [myConfigStateArrayJsonStr];
+  end;
+  for i := 0 to length(params) -1 do
+    params[i] := opsiunquotestr2(params[i],'"');
+  // call method
+  LogErrorMessage := 'Warning: Could not create config defaults with service method: '+method;
+  serviceresult := localservicedata.getJSONFromService(method, params, logErrorMessage);
+  LogDatei.log('Serviceresult from createConfig: '+ serviceresult,LLdebug);
 end;
 
 procedure TForm1.BtnSwitchOnClick(Sender: TObject);
 begin
+  LogDatei.log('BtnSwitchOnClick',LLnotice);
   readAndCheckDefault;
   readAndCheckSwitch(true);
   getClientIdsList;
@@ -249,10 +316,28 @@ end;
 
 procedure TForm1.BtnSwitchOffClick(Sender: TObject);
 begin
+  LogDatei.log('BtnSwitchOffClick',LLnotice);
   readAndCheckDefault;
   readAndCheckSwitch(false);
   getClientIdsList;
   updateConfigStates;
+end;
+
+procedure TForm1.BitBtnConnectClick(Sender: TObject);
+begin
+  if startOpsiServiceConnection then
+  begin
+    try
+    Screen.Cursor:= crHourGlass;
+  readserver;
+  readgroups;
+  readclients;
+  BtnSwitchOff.Enabled:= true;
+  BtnSwitchOn.Enabled:= true;
+    finally
+      Screen.Cursor:= crDefault;
+    end;
+  end;
 end;
 
 procedure TForm1.CBoxRulesChange(Sender: TObject);
@@ -317,28 +402,43 @@ begin
   finally
     Streamer.Destroy;
   end;
-  (*
-  if fileexists(myconfiguration.PathToOpsiPackageBuilder) then
-  begin
-    logdatei.log('After configdialog: packagebuilder exists', LLDebug2);
-    RadioButtonBuildPackage.Enabled := True;
-    RadioButtonPackageBuilder.Enabled := True;
-    CheckGroupBuildMode.Enabled := True;
-  end
-  else
-  begin
-    logdatei.log('After configdialog: packagebuilder not found', LLDebug2);
-    RadioButtonBuildPackage.Enabled := False;
-    RadioButtonPackageBuilder.Enabled := False;
-    CheckGroupBuildMode.Enabled := False;
-  end;
-  *)
   logdatei.log('Finished MenuItemConfigClick', LLDebug2);
 end;
 
 procedure TForm1.MExitClick(Sender: TObject);
 begin
   Application.Terminate;
+end;
+
+procedure TForm1.Timer1Timer(Sender: TObject);
+begin
+  Timer1.Enabled:=false;
+  if localservicedata = nil then
+    if myconfiguration.Service_pass <> '' then BitBtnConnectClick(nil);
+end;
+
+procedure TForm1.TreeView1Click(Sender: TObject);
+begin
+
+end;
+
+procedure TForm1.TreeView1DblClick(Sender: TObject);
+var
+  myNode, myNewNode : TTreeNode;
+  str : string;
+  i : integer;
+begin
+  ListBoxClient.Items.Clear;
+  myNode := TTreeview(Sender).Items.GetSelections(0);
+  str := myNode.Text;
+  for i := 0 to myNode.Count - 1 do
+    ListBoxClient.Items.Add(mynode.Items[i].Text);
+  logdatei.log('myNode.Count: '+intToStr(myNode.Count), LLDebug2);
+end;
+
+procedure TForm1.TreeView1SelectionChanged(Sender: TObject);
+begin
+
 end;
 
 function startOpsiServiceConnection: boolean;
@@ -348,6 +448,7 @@ var
   strlist: TStringList;
   sessionid: string;
 begin
+  LogDatei.log('startOpsiServiceConnection',LLnotice);
   if localservicedata = nil then
   begin
     try
@@ -404,6 +505,150 @@ begin
       ;
     end;
   end;
+  Application.ProcessMessages;
+end;
+
+procedure readserver;
+var
+  method: string;
+  params: array of string;
+  LogErrorMessage, serviceresult: string;
+  jsonstr, tmpstr: string;
+  i : integer;
+begin
+  LogDatei.log('readserver',LLnotice);
+  serviceresult := '';
+  //result := false;
+  method :=  'host_getIdents';
+  params := ['', '{"type":"OpsiConfigServer"}'];
+  LogErrorMessage := 'Warning: Could not get config defaults from service (oswebservice: TOpsi4Data.getConfigObjectsFromService)';
+  serviceresult := localservicedata.getJSONFromService(method, params, logErrorMessage);
+  LogDatei.log('Serviceresult from config_getObjects: '+ serviceresult,LLdebug);
+  jsonAsObjectGetValueByKey(serviceresult,'result', jsonstr);
+  if jsonAsArrayCountElements(jsonstr) > 0 then
+  begin
+    for i := 0 to jsonAsArrayCountElements(jsonstr) -1 do
+    begin
+      jsonAsArrayGetElementByIndex(jsonstr,i, tmpstr);
+      form1.ListBoxServer.Items.Add(tmpstr);
+      LogDatei.log('Add Server: ' + tmpstr, LLDebug);
+    end;
+  end;
+  params := ['', '{"type":"OpsiDepotServer"}'];
+  serviceresult := localservicedata.getJSONFromService(method, params, logErrorMessage);
+  LogDatei.log('Serviceresult from config_getObjects: '+ serviceresult,LLdebug);
+  jsonAsObjectGetValueByKey(serviceresult,'result', jsonstr);
+  if jsonAsArrayCountElements(jsonstr) > 0 then
+  begin
+    for i := 0 to jsonAsArrayCountElements(jsonstr) -1 do
+    begin
+      jsonAsArrayGetElementByIndex(jsonstr,i, tmpstr);
+      form1.ListBoxServer.Items.Add(tmpstr);
+      LogDatei.log('Add Server: ' + tmpstr, LLDebug);
+    end;
+  end;
+  Application.ProcessMessages;
+end;
+
+procedure readgroups;
+var
+  method: string;
+  params: array of string;
+  LogErrorMessage, serviceresult: string;
+  jsonstr, tmpstr, parent, name: string;
+  i : integer;
+  myNode, myNewNode : TTreeNode;
+begin
+  LogDatei.log('readgroups',LLnotice);
+  myNode := Form1.TreeView1.Items.Add(nil,'Gruppen');
+  myNode.Text:= 'Gruppen';
+  myNode := Form1.TreeView1.Items.Add(nil,'clientdirectory');
+  myNode.Text:= 'clientdirectory';
+  serviceresult := '';
+  //result := false;
+  method :=  'group_getObjects';
+  params := ['', '{"type":"HostGroup"}'];
+  LogErrorMessage := 'Warning: Could not group_getObjects from service';
+  serviceresult := localservicedata.getJSONFromService(method, params, logErrorMessage);
+  LogDatei.log('Serviceresult from readgroups: '+ serviceresult,LLdebug);
+  jsonAsObjectGetValueByKey(serviceresult,'result', jsonstr);
+  if jsonAsArrayCountElements(jsonstr) > 0 then
+  begin
+    for i := 0 to jsonAsArrayCountElements(jsonstr) -1 do
+    begin
+      jsonAsArrayGetElementByIndex(jsonstr,i, tmpstr);
+      jsonAsObjectGetValueByKey(tmpstr,'parentGroupId',parent);
+      jsonAsObjectGetValueByKey(tmpstr,'id',name);
+      myNode.FreeAllNodeData;
+      myNode := nil;
+      myNode := form1.TreeView1.Items.FindTopLvlNode(parent);
+      if myNode = nil then
+        myNode := form1.TreeView1.Items.FindNodeWithText(parent);
+      if myNode = nil then
+        myNode := form1.TreeView1.Items.FindNodeWithText('Gruppen');
+      myNewNode := form1.TreeView1.Items.AddChild(myNode,name);
+      myNewNode.Text:= name;
+      //LogDatei.log('Add Group: ' + name + ' as child of: '+myNode.Text, LLDebug);
+      LogDatei.log('Add Group: ' + name , LLDebug);
+      if myNode <> nil then LogDatei.log(' as child of: '+myNode.Text, LLDebug);
+    end;
+  end;
+  Application.ProcessMessages;
+end;
+
+procedure readclients;
+var
+  method: string;
+  params: array of string;
+  LogErrorMessage, serviceresult: string;
+  jsonstr, tmpstr, parent, name, json2str, groupid, otgObj, clientid: string;
+  i, k : integer;
+  myNode, myNewNode : TTreeNode;
+begin
+  LogDatei.log('readclients',LLnotice);
+  serviceresult := '';
+  method :=  'host_getIdents';
+  params := ['', '{"type":"OpsiClient"}'];
+  LogErrorMessage := 'Warning: Could not host_getObjects from service';
+  serviceresult := localservicedata.getJSONFromService(method, params, logErrorMessage);
+  LogDatei.log('Serviceresult from readgroups: '+ serviceresult,LLdebug);
+  jsonAsObjectGetValueByKey(serviceresult,'result', jsonstr);
+  if jsonAsArrayCountElements(jsonstr) > 0 then
+  begin
+    for i := 0 to jsonAsArrayCountElements(jsonstr) -1 do
+    begin
+      jsonAsArrayGetElementByIndex(jsonstr,i, clientid);
+      allClientIdsList.Add(clientid);
+      serviceresult := '';
+      method :=  'objectToGroup_getObjects';
+      params := ['', '{"groupType":"HostGroup","objectId":"'+clientid+'"}'];
+      LogErrorMessage := 'Warning: Could not objectToGroup_getObjects from service';
+      serviceresult := localservicedata.getJSONFromService(method, params, logErrorMessage);
+      LogDatei.log('Serviceresult from readgroups: '+ serviceresult,LLdebug);
+      jsonAsObjectGetValueByKey(serviceresult,'result', json2str);
+      if jsonAsArrayCountElements(json2str) > 0 then
+      begin
+        for k := 0 to jsonAsArrayCountElements(json2str) -1 do
+        begin
+
+          jsonAsArrayGetElementByIndex(json2str,k, otgObj);
+          jsonAsObjectGetValueByKey(otgObj,'groupId',groupid);
+          myNode := form1.TreeView1.Items.FindTopLvlNode(groupid);
+          if myNode = nil then
+            myNode := form1.TreeView1.Items.FindNodeWithText(groupid);
+          if myNode = nil then
+            myNode := form1.TreeView1.Items.FindNodeWithText('Gruppen');
+          myNewNode := form1.TreeView1.Items.AddChild(myNode,clientid);
+          myNewNode.Text:= clientid;
+          //LogDatei.log('Add Group: ' + name + ' as child of: '+myNode.Text, LLDebug);
+          LogDatei.log('Add clientid: ' + clientid , LLDebug);
+          if myNode <> nil then LogDatei.log(' as child of: '+myNode.Text, LLDebug);
+        end;
+      end;
+    end;
+    form1.ListBoxClient.Items.AddStrings(allClientIdsList);
+  end;
+  Application.ProcessMessages;
 end;
 
 

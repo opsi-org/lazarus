@@ -1,18 +1,19 @@
 object Form1: TForm1
-  Left = 428
-  Height = 553
-  Top = 358
+  Left = 468
+  Height = 656
+  Top = 355
   Width = 1062
   Caption = 'opsi-config-rule manager'
-  ClientHeight = 533
+  ClientHeight = 636
   ClientWidth = 1062
   Menu = MainMenu1
   OnCreate = FormCreate
+  OnShow = FormShow
   LCLVersion = '2.2.6.0'
   object StatusBar1: TStatusBar
     Left = 0
     Height = 23
-    Top = 510
+    Top = 613
     Width = 1062
     Panels = <    
       item
@@ -31,6 +32,52 @@ object Form1: TForm1
     Width = 1062
     Caption = 'ToolBar1'
     TabOrder = 1
+    object BitBtnConnect: TBitBtn
+      Left = 1
+      Height = 22
+      Top = 2
+      Width = 207
+      BorderSpacing.Around = 10
+      Caption = 'Connect to opsi server'
+      Glyph.Data = {
+        36040000424D3604000000000000360000002800000010000000100000000100
+        2000000000000004000064000000640000000000000000000000000000000000
+        000000000000000000000696F2DC0696F2500000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        00000000000000000000069AF3A90694F2FF0697F18400000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        000000000000000000000595F1350697F3FB05A2F4F50699F29E0080FF040000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000000000000000000000000000069BF3D802DBFBFF04B1F6F5059AF3C40099
+        EE0F000000000000000000000000000000000000000000000000000000000000
+        00000000000000000000000000000595F26004B0F6F200FEFFFF03BFF8F70699
+        F2DE0991EE1E0000000000000000000000000000000000000000000000000000
+        0000000000000000000000000000008EFF090698F2F301F1FDFF00FFFFFF03CF
+        F9FC0598F2EE0593F034000000000000000000000000000000000594F2620694
+        F2FF0694F2FF0694F2FF0694F2FF0694F2FF0694F2FF02D4FAFF00FFFFFF00FF
+        FFFF02DEFBFE0599F2F40696F2500000000000000000000000000080FF06059A
+        F3C204BDF7F600FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FF
+        FFFF00FFFFFF01EBFDFF059DF4F50697F1840000000000000000000000000099
+        E60A069AF3D203C7F8F900FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FF
+        FFFF00FFFFFF00FFFFFF01F4FEFF05A5F5F40699F2A20099FF05000000000000
+        00000099F2140699F3E203CFF9FC00FFFFFF00FFFFFF00FFFFFF05A0F4FB0694
+        F2FF0694F2FF0694F2FF0694F2FF0694F2FF0694F2FF0594F262000000000000
+        0000000000000992F61C0598F3E902D7FAFD00FFFFFF00FFFFFF01E5FCFF0599
+        F2F40893F3420000000000000000000000000000000000000000000000000000
+        000000000000000000000791F1250599F2EF02E0FBFF00FFFFFF00FFFFFF01E5
+        FCFF0599F2F40893F34200000000000000000000000000000000000000000000
+        00000000000000000000000000000595F1350699F2F401E5FCFF00FFFFFF00FF
+        FFFF01E5FCFF0599F2F40893F342000000000000000000000000000000000000
+        0000000000000000000000000000000000000893F3420599F3F501EBFDFF00FF
+        FFFF00FFFFFF01E5FCFF0599F2F40893F3420000000000000000000000000000
+        000000000000000000000000000000000000000000000695F3570695F2FE0694
+        F2FF0694F2FF0694F2FF0694F2FF0695F2E50000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000
+      }
+      OnClick = BitBtnConnectClick
+      TabOrder = 0
+    end
   end
   object FlowPanel1: TFlowPanel
     Left = 0
@@ -75,7 +122,7 @@ object Form1: TForm1
       Width = 168
       Anchors = []
       TabOrder = 0
-      Text = 'Edit1'
+      Text = 'pctry4detlef.uib.local'
     end
     object Label1: TLabel
       Left = 262
@@ -176,25 +223,81 @@ object Form1: TForm1
   end
   object Panel1: TPanel
     Left = 0
-    Height = 334
+    Height = 437
     Top = 176
-    Width = 296
+    Width = 368
     Align = alLeft
     Caption = 'Panel1'
-    ClientHeight = 334
-    ClientWidth = 296
+    ClientHeight = 437
+    ClientWidth = 368
     TabOrder = 3
     object TreeView1: TTreeView
       Left = 1
-      Height = 332
-      Top = 1
-      Width = 294
+      Height = 316
+      Top = 120
+      Width = 366
       Align = alClient
+      ReadOnly = True
+      TabOrder = 0
+      OnClick = TreeView1Click
+      OnDblClick = TreeView1DblClick
+      OnSelectionChanged = TreeView1SelectionChanged
+      Options = [tvoAutoItemHeight, tvoHideSelection, tvoKeepCollapsedNodes, tvoReadOnly, tvoShowButtons, tvoShowLines, tvoShowRoot, tvoToolTips, tvoThemedDraw]
+    end
+    object ListBoxServer: TListBox
+      Left = 1
+      Height = 80
+      Top = 1
+      Width = 366
+      Align = alTop
+      ItemHeight = 0
+      TabOrder = 1
+    end
+    object Panel3: TPanel
+      Left = 1
+      Height = 39
+      Top = 81
+      Width = 366
+      Align = alTop
+      ClientHeight = 39
+      ClientWidth = 366
+      TabOrder = 2
+      object Label3: TLabel
+        Left = 6
+        Height = 27
+        Top = 6
+        Width = 354
+        Align = alClient
+        Alignment = taCenter
+        BorderSpacing.Around = 5
+        Caption = 'Tree'
+        ParentColor = False
+      end
+    end
+  end
+  object Panel2: TPanel
+    Left = 368
+    Height = 437
+    Top = 176
+    Width = 264
+    Align = alLeft
+    Caption = 'Panel2'
+    ClientHeight = 437
+    ClientWidth = 264
+    TabOrder = 4
+    object ListBoxClient: TListBox
+      Left = 1
+      Height = 435
+      Top = 1
+      Width = 262
+      Align = alClient
+      ItemHeight = 0
+      MultiSelect = True
       TabOrder = 0
     end
   end
   object MainMenu1: TMainMenu
-    Left = 72
+    Left = 976
     object MFile: TMenuItem
       Caption = 'File'
       object MExit: TMenuItem
@@ -210,5 +313,11 @@ object Form1: TForm1
       Caption = 'Configuration'
       OnClick = MConfigurationClick
     end
+  end
+  object Timer1: TTimer
+    Enabled = False
+    OnTimer = Timer1Timer
+    Left = 900
+    Top = 15
   end
 end

@@ -445,7 +445,7 @@ begin
   LogDatei.log('Log for: ' + Application.exename + ' opend at : ' +
     DateTimeToStr(now), LLEssential);
   LogDatei.log('opsi-config-rules-manager Version: ' + myVersion, LLEssential);
-  LogDatei.LogLevel := 8;
+  LogDatei.LogLevel := 9;
 
   myconfiguration.readconfig;
   LogDatei.log('Finished initialize basedata ', LLInfo);
