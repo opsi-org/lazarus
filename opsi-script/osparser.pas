@@ -2416,7 +2416,14 @@ begin
   Result.GlobalReplace(1, '%currentprofiledir%', presetDir, False);
 end;
 
-
+function GetPatchFileName(FileName: string; Profile: string): string;
+begin
+  Result := SysUtils.StringReplace(Filename, '%userprofiledir%',
+    Profile, [rfReplaceAll, rfIgnoreCase]);
+  Result := SysUtils.StringReplace(Result, '%currentprofiledir%',
+    Profile, [rfReplaceAll, rfIgnoreCase]);
+  Result := ExpandFileName(Result);
+end;
 function TuibInstScript.doTextpatch(const Sektion: TWorkSection;
   Filename: string): TSectionResult;
 
@@ -3184,26 +3191,17 @@ begin
     ProfileList := getProfilesDirList;
     for pc := 0 to ProfileList.Count - 1 do
     begin
-      PatchFilename := SysUtils.StringReplace(Filename, '%userprofiledir%',
-        ProfileList.Strings[pc], [rfReplaceAll, rfIgnoreCase]);
-      PatchFilename := SysUtils.StringReplace(PatchFilename,
-        '%currentprofiledir%', ProfileList.Strings[pc], [rfReplaceAll, rfIgnoreCase]);
-      PatchFilename := ExpandFileName(PatchFilename);
+      PatchFilename := GetPatchFileName(Filename, ProfileList.Strings[pc]);
       doTextpatchMain(Sektion, ProfileList.Strings[pc]);
     end;
   end
   else
   begin
     if runLoginScripts then
-    begin
-      PatchFilename := SysUtils.StringReplace(Filename, '%userprofiledir%',
-        GetUserProfilePath, [rfReplaceAll, rfIgnoreCase]);
-      PatchFilename := SysUtils.StringReplace(PatchFilename,
-        '%currentprofiledir%', GetUserProfilePath, [rfReplaceAll, rfIgnoreCase]);
-    end
+      PatchFilename := GetPatchFileName(Filename, GetUserProfilePath)
     else
-      PatchFilename := Filename;
-    PatchFilename := ExpandFileName(PatchFilename);
+      PatchFilename := ExpandFileName(Filename);
+
     doTextpatchMain(Sektion, GetUserProfilePath);
   end;
 
@@ -3530,26 +3528,17 @@ begin
     ProfileList := getProfilesDirList;
     for pc := 0 to ProfileList.Count - 1 do
     begin
-      PatchdateiName := SysUtils.StringReplace(Filename, '%userprofiledir%',
-        ProfileList.Strings[pc], [rfReplaceAll, rfIgnoreCase]);
-      PatchdateiName := SysUtils.StringReplace(PatchdateiName,
-        '%currentprofiledir%', ProfileList.Strings[pc], [rfReplaceAll, rfIgnoreCase]);
-      PatchdateiName := ExpandFileName(PatchdateiName);
+      PatchdateiName := GetPatchFileName(Filename, ProfileList.Strings[pc]);
       doInifilePatchesMain(Sektion, ProfileList.Strings[pc]);
     end;
   end
   else
   begin
     if runLoginScripts then
-    begin
-      PatchdateiName := SysUtils.StringReplace(Filename, '%userprofiledir%',
-        GetUserProfilePath, [rfReplaceAll, rfIgnoreCase]);
-      PatchdateiName := SysUtils.StringReplace(PatchdateiName,
-        '%currentprofiledir%', GetUserProfilePath, [rfReplaceAll, rfIgnoreCase]);
-    end
+      PatchdateiName := GetPatchFileName(Filename, GetUserProfilePath)
     else
-      PatchdateiName := Filename;
-    PatchdateiName := ExpandFileName(PatchdateiName);
+      PatchdateiName := ExpandFileName(Filename);
+
     doInifilePatchesMain(Sektion, GetUserProfilePath);
   end;
 
