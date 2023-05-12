@@ -2384,6 +2384,29 @@ begin
 end;
 
 
+function CreatePatchFileIfNotExistent(const FileName: string): boolean;
+var
+  ErrorInfo: string = '';
+begin
+    Result := True;
+    if not FileExists(FileName) then
+    begin
+      LogDatei.log(LogDatei.LogSIndentPlus(+3) + 'The file "' +
+        FileName + '" does not exist and will be created ', LLInfo);
+      LogDatei.NumberOfHints := Logdatei.NumberOfHints + 1;
+      if CreateTextfile(FileName, ErrorInfo) then
+      begin
+        if ErrorInfo <> '' then
+          LogDatei.log(LogDatei.LogSIndentPlus(+3) + ErrorInfo, LLWarning);
+      end
+      else
+      begin
+        LogDatei.log(LogDatei.LogSIndentPlus(+3) + ErrorInfo, LLError);
+        Result := False;
+      end;
+    end;
+end;
+
 function TuibInstScript.doTextpatch(const Sektion: TWorkSection;
   Filename: string): TSectionResult;
 
@@ -2441,37 +2464,8 @@ var
     workingSection.GlobalReplace(1, '%currentprofiledir%', presetDir, False);
 
     if not testSyntax then
-      if not FileExists(ExpandFileName(PatchFilename)) then
-      begin
-        try
-          ps := LogDatei.LogSIndentPlus(+3) +
-            'Info: This file does not exist and will be created ';
-          LogDatei.log(ps, LLInfo);
-          LogDatei.NumberOfHints := Logdatei.NumberOfHints + 1;
-
-          if CreateTextfile(ExpandFileName(PatchFilename), ErrorInfo) then
-          begin
-            if ErrorInfo <> '' then
-            begin
-              ps := LogDatei.LogSIndentPlus(+3) + 'Warning: ' + ErrorInfo;
-              LogDatei.log(ps, LLWarning);
-            end;
-          end
-          else
-          begin
-            ps := LogDatei.LogSIndentPlus(+3) + 'Error: ' + ErrorInfo;
-            LogDatei.log(ps, LLError);
-            exit; // ------------------------------  exit
-          end;
-        except
-          on E: Exception do
-          begin
-            LogDatei.log('Error in osparser..doTextpatchMain failed to create file: '
-              + ExpandFileName(PatchFilename) + ' Msg.: ' + E.Message, LLError);
-            exit;
-          end;
-        end;
-      end;
+      if not CreatePatchFileIfNotExistent(PatchFilename) then
+        exit;
 
     ProcessMess;
     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
@@ -3422,29 +3416,8 @@ var
     Logdatei.log('Patching: ' + PatchdateiName, LLInfo);
 
     if not testSyntax then
-      if not FileExists(PatchdateiName) then
-      begin
-        ps := LogDatei.LogSIndentPlus(+3) +
-          'Info: This file does not exist and will be created ';
-        LogDatei.log(ps, LLInfo);
-        LogDatei.NumberOfHints := Logdatei.NumberOfHints + 1;
-
-
-        if CreateTextfile(PatchdateiName, ErrorInfo) then
-        begin
-          if ErrorInfo <> '' then
-          begin
-            ps := LogDatei.LogSIndentPlus(+3) + 'Warning: ' + ErrorInfo;
-            LogDatei.log(ps, LLWarning);
-          end;
-        end
-        else
-        begin
-          ps := LogDatei.LogSIndentPlus(+3) + 'Error: ' + ErrorInfo;
-          LogDatei.log(ps, LLError);
-          exit; // ------------------------------  exit
-        end;
-      end;
+      if not CreatePatchFileIfNotExistent(PatchdateiName) then
+        exit;
 
     ProcessMess;
     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
