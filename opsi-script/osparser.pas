@@ -2409,7 +2409,7 @@ end;
 
 function GetWorkSectionForPatch(const Section: TXStringList; const presetDir: string): TXStringList;
 begin
-  // create working opbject, i.e. a copy of the section that can be modified
+  // create working object, i.e. a copy of the section that can be modified
   Result := TXStringList.Create;
   Result.Assign(Section);
   Result.GlobalReplace(1, '%userprofiledir%', presetDir, False);
@@ -2424,6 +2424,7 @@ begin
     Profile, [rfReplaceAll, rfIgnoreCase]);
   Result := ExpandFileName(Result);
 end;
+
 function TuibInstScript.doTextpatch(const Sektion: TWorkSection;
   Filename: string): TSectionResult;
 
