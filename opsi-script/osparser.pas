@@ -2429,31 +2429,8 @@ function TuibInstScript.doTextpatch(const Sektion: TWorkSection;
   Filename: string): TSectionResult;
 
 var
-  j: integer;
-  s: string = '';
-  r: string = '';
-  s0: string = '';
-  s1: string = '';
-  s2: string = '';
-  oldLine: string = '';
-  old_s2: string = '';
-  x: string = '';
-  found: boolean;
-  ErrorInfo: string = '';
-  indx: integer;
-  d, sum: integer;
-  working: boolean;
-  secondStringList: TStringList;
   ProfileList: TStringList;
   pc: integer = 0;
-
-  procedure CheckRemainder(var SyntaxCheck: boolean);
-  begin
-    if r <> '' then
-      errorinfo := ErrorRemaining
-    else
-      syntaxCheck := True;
-  end;
 
   procedure doTextpatchMain(const Section: TXStringList; const presetDir: string;
     const PatchFilename: string);
@@ -2472,6 +2449,29 @@ var
     startofline: string = '';
     FileError: string = '';
     syntaxCheck: boolean = True;
+    j: integer = 0;
+    s: string = '';
+    r: string = '';
+    s0: string = '';
+    s1: string = '';
+    s2: string = '';
+    oldLine: string = '';
+    old_s2: string = '';
+    x: string = '';
+    found: boolean;
+    ErrorInfo: string = '';
+    indx: integer;
+    d, sum: integer;
+    working: boolean;
+    secondStringList: TStringList;
+
+    procedure CheckRemainder(var SyntaxCheck: boolean);
+    begin
+      if r <> '' then
+        errorinfo := ErrorRemaining
+      else
+        syntaxCheck := True;
+    end;
 
   begin
     Logdatei.log('', LLInfo);
@@ -2888,7 +2888,6 @@ var
                   //secondStringList.Text := reencode(secondStringList.Text, 'system');
                   patchliste.SetItemPointer(0);
 
-                  j := 0;
                   goOn := True;
                   while (patchliste.Count > 0) and (j + 1 <= secondStringList.Count) and
                     goOn do
