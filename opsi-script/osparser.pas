@@ -2385,11 +2385,12 @@ begin
   {$ENDIF GUI}
 end;
 
+
 function TuibInstScript.doTextpatch(const Sektion: TWorkSection;
   Filename: string; PatchParameter: string): TSectionResult;
 
 var
-  i, j, insertLineIndx: integer;
+  j, insertLineIndx: integer;
   methodname: string = '';
   s: string = '';
   r: string = '';
@@ -2410,10 +2411,8 @@ var
   d, sum: integer;
   saveToOriginalFile: boolean;
   working: boolean;
-  goOn: boolean;
   secondStringList: TStringList;
   PatchFilename: string = '';
-  Patchdatei: TuibPatchIniFile;
   ProfileList: TStringList;
   pc: integer = 0;
 
@@ -2425,8 +2424,6 @@ var
       syntaxCheck := True;
   end;
 
-
-
   procedure doTextpatchMain(const Section: TXStringList; const presetDir: string);
   var
     i: integer = 0;
@@ -2437,12 +2434,8 @@ var
     goon: boolean = True;
 
   begin
-    //ps := LogDatei.LogSIndentPlus (+3) + 'FILE ' +  PatchdateiName;
-    //LogDatei.log (ps, LevelWarnings);
     Logdatei.log('', LLInfo);
     Logdatei.log('Patching: ' + PatchFilename, LLInfo);
-    ps := LogDatei.LogSIndentPlus(+3) + 'FILE ' + PatchFilename;
-    LogDatei.log(ps, LevelWarnings);
 
     workingSection := TXStringList.Create;
     workingSection.Assign(Section);
@@ -2482,7 +2475,6 @@ var
         end;
       end;
 
-
     ProcessMess;
     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
 
@@ -2492,8 +2484,7 @@ var
     PatchListe.ItemPointer := -1;
     if not testSyntax then
       PatchListe.loadFromFileWithEncoding(ExpandFileName(PatchFilename), flag_encoding);
-    //PatchListe.LoadFromFile(ExpandFileName(PatchFilename));
-    //PatchListe.Text := reencode(PatchListe.Text, 'system');
+
     saveToOriginalFile := True;
     lastfind := False;
 
@@ -3175,24 +3166,17 @@ var
         reportError(Sektion, i, Sektion.strings[i - 1], errorinfo);
     end;
 
-
     if not testSyntax then
       if saveToOriginalFile then
         PatchListe.SaveToFile(PatchFilename, flag_encoding);
-    //osencoding.saveTextFileWithEncoding(PatchListe, PatchFilename, flag_encoding);
-    //PatchListe.SaveToFile(PatchFilename);
-
-    PatchListe.Free;
-    PatchListe := nil;
 
     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
-    workingSection.Free;
-  end;   //doTextpatchMain
+    FreeAndNil(PatchListe);
+    FreeAndNil(workingSection);
+  end;
 
 begin
   Result := tsrPositive;
-  //Filename := ExpandFileName(Filename);
-
   if not initSection(Sektion, OldNumberOfErrors, OldNumberOfWarnings) then
     exit;
 
@@ -3232,10 +3216,7 @@ begin
 
   if ExitOnError and (DiffNumberOfErrors > 0) then
     Result := tsrExitProcess;
-
 end;
-
-
 
 function TuibInstScript.doTests(const Sektion: TWorkSection;
   TestParameter: string): TSectionResult;
@@ -3421,8 +3402,6 @@ begin
     Result := tsrExitProcess;
 end;
 
-
-
 function TuibInstScript.doInifilePatches(const Sektion: TWorkSection;
   Filename: string; PatchParameter: string): TSectionResult;
 var
@@ -3432,7 +3411,6 @@ var
   Bereich: string = '';
   Eintrag: string = '';
   AlterEintrag: string = '';
-  /// Value : String;
   Patchdateiname: string = '';
   Patchdatei: TuibPatchIniFile;
   ErrorInfo: string = '';
@@ -3441,15 +3419,11 @@ var
   procedure doInifilePatchesMain(const presetDir: string);
   var
     i: integer = 0;
-    dummy: string;
-    mytxtfile: TStringList;
     workingSection: TXStringList;
+
   begin
-    //ps := LogDatei.LogSIndentPlus (+3) + 'FILE ' +  PatchdateiName;
-    //LogDatei.log (ps, LevelWarnings);
     Logdatei.log('', LLInfo);
     Logdatei.log('Patching: ' + PatchdateiName, LLInfo);
-
 
     if not testSyntax then
       if not FileExists(PatchdateiName) then
@@ -3476,9 +3450,7 @@ var
         end;
       end;
 
-
     ProcessMess;
-
     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
 
     // create working opbjects
@@ -3489,21 +3461,13 @@ var
     workingSection.GlobalReplace(1, '%currentprofiledir%', presetDir, False);
 
     Patchdatei := TuibPatchIniFile.Create;
-    //mytxtfile := TStringlist.Create;
-
-
     Patchdatei.Clear;
     if not testSyntax then
     begin
       if FileExists(PatchdateiName) then
         Patchdatei.loadFromFileWithEncoding(ExpandFileName(PatchdateiName),
           flag_encoding);
-      // mytxtfile := loadTextFileWithEncoding(ExpandFileName(PatchdateiName),
-      //   flag_encoding);
-      //Patchdatei.LoadFromFile  (ExpandFileName(PatchdateiName));
-      //Patchdatei.Text := mytxtfile.Text;
-      //Patchdatei.text := reencode(Patchdatei.Text, flag_encoding,dummy,'system');
-      //Patchdatei.text := reencode(Patchdatei.Text, flag_encoding,dummy,system);
+
       for i := 0 to Patchdatei.Count - 1 do
         logdatei.log_prog('Loaded: ' + Patchdatei.Strings[i], LLDebug);
     end;
@@ -3573,29 +3537,21 @@ var
     Logdatei.log('--- ', LLInfo);
     if not testSyntax then
     begin
-      //Patchdatei.Text:= reencode(Patchdatei.Text, 'system',dummy,flag_encoding);
       if not ((flag_encoding = 'utf8') or (flag_encoding = 'UTF-8')) then
-      begin
-        //mytxtfile.Text := reencode(Patchdatei.Text, 'utf8',dummy,flag_encoding);
-        //mytxtfile.SaveToFile(PatchdateiName);
-        Patchdatei.SaveToFile(PatchdateiName, flag_encoding);
-      end
+        Patchdatei.SaveToFile(PatchdateiName, flag_encoding)
       else
-      begin
         Patchdatei.SaveToFile(PatchdateiName, 'utf8');
-      end;
+
       for i := 0 to Patchdatei.Count - 1 do
         logdatei.log_prog('Saved: ' + Patchdatei.Strings[i], LLDebug);
     end;
-    Patchdatei.Free;
-    Patchdatei := nil;
+
+    FreeAndNil(Patchdatei);
     FreeAndNil(workingSection);
   end;
 
 begin
   Result := tsrPositive;
-  //Filename := ExpandFileName(Filename);
-
   if not initSection(Sektion, OldNumberOfErrors, OldNumberOfWarnings) then
     exit;
 
@@ -3632,7 +3588,6 @@ begin
 
   finishSection(Sektion, OldNumberOfErrors, OldNumberOfWarnings,
     DiffNumberOfErrors, DiffNumberOfWarnings);
-
 
   if ExitOnError and (DiffNumberOfErrors > 0) then
     Result := tsrExitProcess;
