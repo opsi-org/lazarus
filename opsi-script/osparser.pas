@@ -517,14 +517,12 @@ type
       const CallingSektion: TWorkSection): TSectionResult;
 
     (* for other sections *)
-    function doTextpatch(const Sektion: TWorkSection; Filename: string;
-      PatchParameter: string): TSectionResult;
+    function doTextpatch(const Sektion: TWorkSection; Filename: string): TSectionResult;
 
     function doTests(const Sektion: TWorkSection;
       TestParameter: string): TSectionResult;
 
-    function doInifilePatches(const Sektion: TWorkSection; Filename: string;
-      PatchParameter: string): TSectionResult;
+    function doInifilePatches(const Sektion: TWorkSection; Filename: string): TSectionResult;
 
     function doHostsPatch(const Sektion: TWorkSection;
       HostsFilename: string): TSectionResult;
@@ -2387,7 +2385,7 @@ end;
 
 
 function TuibInstScript.doTextpatch(const Sektion: TWorkSection;
-  Filename: string; PatchParameter: string): TSectionResult;
+  Filename: string): TSectionResult;
 
 var
   j, insertLineIndx: integer;
@@ -3180,9 +3178,7 @@ begin
   if not initSection(Sektion, OldNumberOfErrors, OldNumberOfWarnings) then
     exit;
 
-  if (lowercase(PatchParameter) = lowercase(Parameter_AllNTUserProfiles)) or
-    (lowercase(PatchParameter) = lowercase(Parameter_AllUserProfiles)) or
-    flag_all_ntuser then
+  if flag_all_ntuser then
   begin
     flag_all_ntuser := False;
     ProfileList := getProfilesDirList;
@@ -3403,7 +3399,7 @@ begin
 end;
 
 function TuibInstScript.doInifilePatches(const Sektion: TWorkSection;
-  Filename: string; PatchParameter: string): TSectionResult;
+  Filename: string): TSectionResult;
 var
   pc: integer = 0;
   Befehlswort: string = '';
@@ -25675,7 +25671,7 @@ begin
                 end;
                 // if not testSyntax then
                 // testSyntax is done in doTextpatch
-                ActionResult := doTextpatch(ArbeitsSektion, Filename, '');
+                ActionResult := doTextpatch(ArbeitsSektion, Filename);
               end;
 
               tsTests:
@@ -25683,7 +25679,6 @@ begin
                 if not testSyntax then
                   ActionResult := doTests(ArbeitsSektion, Remaining);
               end;
-
 
               tsPatchIniFile:
               begin
@@ -25754,7 +25749,7 @@ begin
                 end;
                 //if not testSyntax then
                 // testSyntax is done in doInifilePatches
-                ActionResult := doInifilePatches(ArbeitsSektion, Filename, '');
+                ActionResult := doInifilePatches(ArbeitsSektion, Filename);
               end;
 
               tsHostsPatch:
