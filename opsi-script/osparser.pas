@@ -2450,7 +2450,6 @@ var
   saveToOriginalFile: boolean;
   working: boolean;
   secondStringList: TStringList;
-  PatchFilename: string = '';
   ProfileList: TStringList;
   pc: integer = 0;
 
@@ -2462,7 +2461,8 @@ var
       syntaxCheck := True;
   end;
 
-  procedure doTextpatchMain(const Section: TXStringList; const presetDir: string);
+  procedure doTextpatchMain(const Section: TXStringList; const presetDir: string;
+    const PatchFilename: string);
   var
     i: integer = 0;
     index: integer = 0;
@@ -3190,19 +3190,16 @@ begin
     flag_all_ntuser := False;
     ProfileList := getProfilesDirList;
     for pc := 0 to ProfileList.Count - 1 do
-    begin
-      PatchFilename := GetPatchFileName(Filename, ProfileList.Strings[pc]);
-      doTextpatchMain(Sektion, ProfileList.Strings[pc]);
-    end;
+      doTextpatchMain(Sektion, ProfileList.Strings[pc],
+        GetPatchFileName(Filename, ProfileList.Strings[pc]));
   end
   else
   begin
     if runLoginScripts then
-      PatchFilename := GetPatchFileName(Filename, GetUserProfilePath)
+      doTextpatchMain(Sektion, GetUserProfilePath,
+        GetPatchFileName(Filename, GetUserProfilePath))
     else
-      PatchFilename := ExpandFileName(Filename);
-
-    doTextpatchMain(Sektion, GetUserProfilePath);
+      doTextpatchMain(Sektion, GetUserProfilePath, ExpandFileName(Filename));
   end;
 
   finishSection(Sektion, OldNumberOfErrors, OldNumberOfWarnings,
@@ -3405,12 +3402,12 @@ var
   Bereich: string = '';
   Eintrag: string = '';
   AlterEintrag: string = '';
-  Patchdateiname: string = '';
   Patchdatei: TuibPatchIniFile;
   ErrorInfo: string = '';
   ProfileList: TStringList;
 
-  procedure doInifilePatchesMain(Section: TXStringList; const presetDir: string);
+  procedure doInifilePatchesMain(Section: TXStringList; const presetDir: string;
+    const PatchdateiName: string);
   var
     i: integer = 0;
     workingSection: TXStringList;
@@ -3527,19 +3524,16 @@ begin
     flag_all_ntuser := False;
     ProfileList := getProfilesDirList;
     for pc := 0 to ProfileList.Count - 1 do
-    begin
-      PatchdateiName := GetPatchFileName(Filename, ProfileList.Strings[pc]);
-      doInifilePatchesMain(Sektion, ProfileList.Strings[pc]);
-    end;
+      doInifilePatchesMain(Sektion, ProfileList.Strings[pc],
+        GetPatchFileName(Filename, ProfileList.Strings[pc]));
   end
   else
   begin
     if runLoginScripts then
-      PatchdateiName := GetPatchFileName(Filename, GetUserProfilePath)
+      doInifilePatchesMain(Sektion, GetUserProfilePath,
+        GetPatchFileName(Filename, GetUserProfilePath))
     else
-      PatchdateiName := ExpandFileName(Filename);
-
-    doInifilePatchesMain(Sektion, GetUserProfilePath);
+      doInifilePatchesMain(Sektion, GetUserProfilePath, ExpandFileName(Filename));
   end;
 
   LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
