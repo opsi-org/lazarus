@@ -2428,7 +2428,7 @@ function TuibInstScript.doTextpatch(const Sektion: TWorkSection;
   Filename: string): TSectionResult;
 
 var
-  j, insertLineIndx: integer;
+  j: integer;
   methodname: string = '';
   s: string = '';
   r: string = '';
@@ -2470,6 +2470,7 @@ var
     workingSection: TXStringList;
     NameValueSeparator: char;
     goon: boolean = True;
+    insertLineIndx: integer = -1;
 
   begin
     Logdatei.log('', LLInfo);
@@ -2502,7 +2503,7 @@ var
       r := cutLeftBlanks(workingSection.strings[i - 1]);
       if (r = '') or (r[1] = LineIsCommentChar) then
         syntaxCheck := True
-      // continue
+        // continue
       else
       begin
         logdatei.log('Patchtextfile: command: ' + r, LLDebug3);
@@ -2945,7 +2946,6 @@ var
             if not testSyntax then
               if syntaxCheck then
               begin
-                insertLineIndx := -1;
                 PatchListe.ItemPointer :=
                   PatchListe.FindFirstItemStartingWith(s0 + '("' + s1 + '"', True, -1);
                 while PatchListe.ItemPointer > -1 do
@@ -3008,7 +3008,6 @@ var
           if not testSyntax then
             if syntaxCheck then
             begin
-              insertLineIndx := -1;
               startofline := s0 + '("' + s1 + '"';
 
               PatchListe.ItemPointer :=
@@ -3078,7 +3077,6 @@ var
             end;
 
         end
-
 
         else if (LowerCase(methodname) = lowercase(
           'AddStringListElement_To_Netscape_User_Pref')) then
