@@ -517,14 +517,12 @@ type
       const CallingSektion: TWorkSection): TSectionResult;
 
     (* for other sections *)
-    function doTextpatch(const Sektion: TWorkSection; Filename: string;
-      PatchParameter: string): TSectionResult;
+    function doTextpatch(const Sektion: TWorkSection; Filename: string): TSectionResult;
 
     function doTests(const Sektion: TWorkSection;
       TestParameter: string): TSectionResult;
 
-    function doInifilePatches(const Sektion: TWorkSection; Filename: string;
-      PatchParameter: string): TSectionResult;
+    function doInifilePatches(const Sektion: TWorkSection; Filename: string): TSectionResult;
 
     function doHostsPatch(const Sektion: TWorkSection;
       HostsFilename: string): TSectionResult;
@@ -2385,106 +2383,107 @@ begin
   {$ENDIF GUI}
 end;
 
+
+function CreatePatchFileIfFileNotExists(const FileName: string): boolean;
+var
+  ErrorInfo: string = '';
+begin
+    Result := True;
+    if not FileExists(FileName) then
+    begin
+      LogDatei.log(LogDatei.LogSIndentPlus(+3) + 'The file "' +
+        FileName + '" does not exist and will be created ', LLInfo);
+      LogDatei.NumberOfHints := Logdatei.NumberOfHints + 1;
+      if CreateTextfile(FileName, ErrorInfo) then
+      begin
+        if ErrorInfo <> '' then
+          LogDatei.log(LogDatei.LogSIndentPlus(+3) + ErrorInfo, LLWarning);
+      end
+      else
+      begin
+        LogDatei.log(LogDatei.LogSIndentPlus(+3) + ErrorInfo, LLError);
+        Result := False;
+      end;
+    end;
+end;
+
+function GetWorkSection(const Section: TXStringList; const presetDir: string): TXStringList;
+begin
+  // create working object, i.e. a copy of the section that can be modified
+  Result := TXStringList.Create;
+  Result.Assign(Section);
+  Result.GlobalReplace(1, '%userprofiledir%', presetDir, False);
+  Result.GlobalReplace(1, '%currentprofiledir%', presetDir, False);
+end;
+
+function GetPatchFileName(FileName: string; Profile: string): string;
+begin
+  Result := SysUtils.StringReplace(Filename, '%userprofiledir%',
+    Profile, [rfReplaceAll, rfIgnoreCase]);
+  Result := SysUtils.StringReplace(Result, '%currentprofiledir%',
+    Profile, [rfReplaceAll, rfIgnoreCase]);
+  Result := ExpandFileName(Result);
+end;
+
 function TuibInstScript.doTextpatch(const Sektion: TWorkSection;
-  Filename: string; PatchParameter: string): TSectionResult;
+  Filename: string): TSectionResult;
 
 var
-  i, j, insertLineIndx: integer;
-  methodname: string = '';
-  s: string = '';
-  r: string = '';
-  s0: string = '';
-  s1: string = '';
-  s2: string = '';
-  startofline: string = '';
-  oldLine: string = '';
-  old_s2: string = '';
-  x: string = '';
-  found: boolean;
-  lastfind: boolean;
-  PatchListe: TpatchList;
-  ErrorInfo: string = '';
-  FileError: string = '';
-  syntaxCheck: boolean;
-  indx: integer;
-  d, sum: integer;
-  saveToOriginalFile: boolean;
-  working: boolean;
-  goOn: boolean;
-  secondStringList: TStringList;
-  PatchFilename: string = '';
-  Patchdatei: TuibPatchIniFile;
   ProfileList: TStringList;
   pc: integer = 0;
 
-  procedure CheckRemainder(var SyntaxCheck: boolean);
-  begin
-    if r <> '' then
-      errorinfo := ErrorRemaining
-    else
-      syntaxCheck := True;
-  end;
-
-
-
-  procedure doTextpatchMain(const Section: TXStringList; const presetDir: string);
+  procedure doTextpatchMain(const Section: TXStringList; const presetDir: string;
+    const PatchFilename: string);
   var
-    i: integer = 0;
+    saveToOriginalFile: boolean = True;
+    lastfind: boolean = False;
+    i: integer;
+    PatchListe: TpatchList;
+    methodname: string = '';
     index: integer = 0;
     patchlistcounter: integer = 0;
     workingSection: TXStringList;
     NameValueSeparator: char;
     goon: boolean = True;
+    insertLineIndx: integer = -1;
+    startofline: string = '';
+    FileError: string = '';
+    syntaxCheck: boolean = True;
+    j: integer = 0;
+    s: string = '';
+    r: string = '';
+    s0: string = '';
+    s1: string = '';
+    s2: string = '';
+    oldLine: string = '';
+    old_s2: string = '';
+    x: string = '';
+    found: boolean;
+    ErrorInfo: string = '';
+    indx: integer;
+    d, sum: integer;
+    working: boolean;
+    secondStringList: TStringList;
+
+    procedure CheckRemainder(var SyntaxCheck: boolean);
+    begin
+      if r <> '' then
+        errorinfo := ErrorRemaining
+      else
+        syntaxCheck := True;
+    end;
 
   begin
-    //ps := LogDatei.LogSIndentPlus (+3) + 'FILE ' +  PatchdateiName;
-    //LogDatei.log (ps, LevelWarnings);
     Logdatei.log('', LLInfo);
     Logdatei.log('Patching: ' + PatchFilename, LLInfo);
-    ps := LogDatei.LogSIndentPlus(+3) + 'FILE ' + PatchFilename;
-    LogDatei.log(ps, LevelWarnings);
-
-    workingSection := TXStringList.Create;
-    workingSection.Assign(Section);
-    workingSection.GlobalReplace(1, '%userprofiledir%', presetDir, False);
-    workingSection.GlobalReplace(1, '%currentprofiledir%', presetDir, False);
 
     if not testSyntax then
-      if not FileExists(ExpandFileName(PatchFilename)) then
-      begin
-        try
-          ps := LogDatei.LogSIndentPlus(+3) +
-            'Info: This file does not exist and will be created ';
-          LogDatei.log(ps, LLInfo);
-          LogDatei.NumberOfHints := Logdatei.NumberOfHints + 1;
-
-          if CreateTextfile(ExpandFileName(PatchFilename), ErrorInfo) then
-          begin
-            if ErrorInfo <> '' then
-            begin
-              ps := LogDatei.LogSIndentPlus(+3) + 'Warning: ' + ErrorInfo;
-              LogDatei.log(ps, LLWarning);
-            end;
-          end
-          else
-          begin
-            ps := LogDatei.LogSIndentPlus(+3) + 'Error: ' + ErrorInfo;
-            LogDatei.log(ps, LLError);
-            exit; // ------------------------------  exit
-          end;
-        except
-          on E: Exception do
-          begin
-            LogDatei.log('Error in osparser..doTextpatchMain failed to create file: '
-              + ExpandFileName(PatchFilename) + ' Msg.: ' + E.Message, LLError);
-            exit;
-          end;
-        end;
-      end;
-
+      if not CreatePatchFileIfFileNotExists(PatchFilename) then
+        exit;
 
     ProcessMess;
     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+    workingSection := GetWorkSection(Section, presetDir);
 
     { create the list we work on }
     PatchListe := TPatchList.Create;
@@ -2492,13 +2491,8 @@ var
     PatchListe.ItemPointer := -1;
     if not testSyntax then
       PatchListe.loadFromFileWithEncoding(ExpandFileName(PatchFilename), flag_encoding);
-    //PatchListe.LoadFromFile(ExpandFileName(PatchFilename));
-    //PatchListe.Text := reencode(PatchListe.Text, 'system');
-    saveToOriginalFile := True;
-    lastfind := False;
 
     i := 1;
-    syntaxcheck := True;
     while (i <= workingSection.Count) and syntaxcheck do
     begin
       ErrorInfo := '';
@@ -2506,7 +2500,7 @@ var
       r := cutLeftBlanks(workingSection.strings[i - 1]);
       if (r = '') or (r[1] = LineIsCommentChar) then
         syntaxCheck := True
-      // continue
+        // continue
       else
       begin
         logdatei.log('Patchtextfile: command: ' + r, LLDebug3);
@@ -2895,7 +2889,6 @@ var
                   //secondStringList.Text := reencode(secondStringList.Text, 'system');
                   patchliste.SetItemPointer(0);
 
-                  j := 0;
                   goOn := True;
                   while (patchliste.Count > 0) and (j + 1 <= secondStringList.Count) and
                     goOn do
@@ -2949,7 +2942,6 @@ var
             if not testSyntax then
               if syntaxCheck then
               begin
-                insertLineIndx := -1;
                 PatchListe.ItemPointer :=
                   PatchListe.FindFirstItemStartingWith(s0 + '("' + s1 + '"', True, -1);
                 while PatchListe.ItemPointer > -1 do
@@ -3012,7 +3004,6 @@ var
           if not testSyntax then
             if syntaxCheck then
             begin
-              insertLineIndx := -1;
               startofline := s0 + '("' + s1 + '"';
 
               PatchListe.ItemPointer :=
@@ -3082,7 +3073,6 @@ var
             end;
 
         end
-
 
         else if (LowerCase(methodname) = lowercase(
           'AddStringListElement_To_Netscape_User_Pref')) then
@@ -3175,56 +3165,35 @@ var
         reportError(Sektion, i, Sektion.strings[i - 1], errorinfo);
     end;
 
-
     if not testSyntax then
       if saveToOriginalFile then
         PatchListe.SaveToFile(PatchFilename, flag_encoding);
-    //osencoding.saveTextFileWithEncoding(PatchListe, PatchFilename, flag_encoding);
-    //PatchListe.SaveToFile(PatchFilename);
-
-    PatchListe.Free;
-    PatchListe := nil;
 
     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
-    workingSection.Free;
-  end;   //doTextpatchMain
+    FreeAndNil(PatchListe);
+    FreeAndNil(workingSection);
+  end;
 
 begin
   Result := tsrPositive;
-  //Filename := ExpandFileName(Filename);
-
   if not initSection(Sektion, OldNumberOfErrors, OldNumberOfWarnings) then
     exit;
 
-  if (lowercase(PatchParameter) = lowercase(Parameter_AllNTUserProfiles)) or
-    (lowercase(PatchParameter) = lowercase(Parameter_AllUserProfiles)) or
-    flag_all_ntuser then
+  if flag_all_ntuser then
   begin
     flag_all_ntuser := False;
     ProfileList := getProfilesDirList;
     for pc := 0 to ProfileList.Count - 1 do
-    begin
-      PatchFilename := SysUtils.StringReplace(Filename, '%userprofiledir%',
-        ProfileList.Strings[pc], [rfReplaceAll, rfIgnoreCase]);
-      PatchFilename := SysUtils.StringReplace(PatchFilename,
-        '%currentprofiledir%', ProfileList.Strings[pc], [rfReplaceAll, rfIgnoreCase]);
-      PatchFilename := ExpandFileName(PatchFilename);
-      doTextpatchMain(Sektion, ProfileList.Strings[pc]);
-    end;
+      doTextpatchMain(Sektion, ProfileList.Strings[pc],
+        GetPatchFileName(Filename, ProfileList.Strings[pc]));
   end
   else
   begin
     if runLoginScripts then
-    begin
-      PatchFilename := SysUtils.StringReplace(Filename, '%userprofiledir%',
-        GetUserProfilePath, [rfReplaceAll, rfIgnoreCase]);
-      PatchFilename := SysUtils.StringReplace(PatchFilename,
-        '%currentprofiledir%', GetUserProfilePath, [rfReplaceAll, rfIgnoreCase]);
-    end
+      doTextpatchMain(Sektion, GetUserProfilePath,
+        GetPatchFileName(Filename, GetUserProfilePath))
     else
-      PatchFilename := Filename;
-    PatchFilename := ExpandFileName(PatchFilename);
-    doTextpatchMain(Sektion, GetUserProfilePath);
+      doTextpatchMain(Sektion, GetUserProfilePath, ExpandFileName(Filename));
   end;
 
   finishSection(Sektion, OldNumberOfErrors, OldNumberOfWarnings,
@@ -3232,10 +3201,7 @@ begin
 
   if ExitOnError and (DiffNumberOfErrors > 0) then
     Result := tsrExitProcess;
-
 end;
-
-
 
 function TuibInstScript.doTests(const Sektion: TWorkSection;
   TestParameter: string): TSectionResult;
@@ -3421,89 +3387,44 @@ begin
     Result := tsrExitProcess;
 end;
 
-
-
 function TuibInstScript.doInifilePatches(const Sektion: TWorkSection;
-  Filename: string; PatchParameter: string): TSectionResult;
+  Filename: string): TSectionResult;
 var
   pc: integer = 0;
-  Befehlswort: string = '';
-  Rest: string = '';
-  Bereich: string = '';
-  Eintrag: string = '';
-  AlterEintrag: string = '';
-  /// Value : String;
-  Patchdateiname: string = '';
-  Patchdatei: TuibPatchIniFile;
-  ErrorInfo: string = '';
   ProfileList: TStringList;
 
-  procedure doInifilePatchesMain(const presetDir: string);
+  procedure doInifilePatchesMain(Section: TXStringList; const presetDir: string;
+    const PatchdateiName: string);
   var
     i: integer = 0;
-    dummy: string;
-    mytxtfile: TStringList;
     workingSection: TXStringList;
+    Patchdatei: TuibPatchIniFile;
+    Befehlswort: string = '';
+    Rest: string = '';
+    Bereich: string = '';
+    Eintrag: string = '';
+    AlterEintrag: string = '';
+
   begin
-    //ps := LogDatei.LogSIndentPlus (+3) + 'FILE ' +  PatchdateiName;
-    //LogDatei.log (ps, LevelWarnings);
     Logdatei.log('', LLInfo);
     Logdatei.log('Patching: ' + PatchdateiName, LLInfo);
 
-
     if not testSyntax then
-      if not FileExists(PatchdateiName) then
-      begin
-        ps := LogDatei.LogSIndentPlus(+3) +
-          'Info: This file does not exist and will be created ';
-        LogDatei.log(ps, LLInfo);
-        LogDatei.NumberOfHints := Logdatei.NumberOfHints + 1;
-
-
-        if CreateTextfile(PatchdateiName, ErrorInfo) then
-        begin
-          if ErrorInfo <> '' then
-          begin
-            ps := LogDatei.LogSIndentPlus(+3) + 'Warning: ' + ErrorInfo;
-            LogDatei.log(ps, LLWarning);
-          end;
-        end
-        else
-        begin
-          ps := LogDatei.LogSIndentPlus(+3) + 'Error: ' + ErrorInfo;
-          LogDatei.log(ps, LLError);
-          exit; // ------------------------------  exit
-        end;
-      end;
-
+      if not CreatePatchFileIfFileNotExists(PatchdateiName) then
+        exit;
 
     ProcessMess;
-
     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
-
-    // create working opbjects
-    // copy const sektion to var workingsection so it can be modified
-    workingSection := TXStringList.Create;
-    workingSection.Assign(Sektion);
-    workingSection.GlobalReplace(1, '%userprofiledir%', presetDir, False);
-    workingSection.GlobalReplace(1, '%currentprofiledir%', presetDir, False);
+    workingSection := GetWorkSection(Section, presetDir);
 
     Patchdatei := TuibPatchIniFile.Create;
-    //mytxtfile := TStringlist.Create;
-
-
     Patchdatei.Clear;
     if not testSyntax then
     begin
       if FileExists(PatchdateiName) then
         Patchdatei.loadFromFileWithEncoding(ExpandFileName(PatchdateiName),
           flag_encoding);
-      // mytxtfile := loadTextFileWithEncoding(ExpandFileName(PatchdateiName),
-      //   flag_encoding);
-      //Patchdatei.LoadFromFile  (ExpandFileName(PatchdateiName));
-      //Patchdatei.Text := mytxtfile.Text;
-      //Patchdatei.text := reencode(Patchdatei.Text, flag_encoding,dummy,'system');
-      //Patchdatei.text := reencode(Patchdatei.Text, flag_encoding,dummy,system);
+
       for i := 0 to Patchdatei.Count - 1 do
         logdatei.log_prog('Loaded: ' + Patchdatei.Strings[i], LLDebug);
     end;
@@ -3573,29 +3494,21 @@ var
     Logdatei.log('--- ', LLInfo);
     if not testSyntax then
     begin
-      //Patchdatei.Text:= reencode(Patchdatei.Text, 'system',dummy,flag_encoding);
       if not ((flag_encoding = 'utf8') or (flag_encoding = 'UTF-8')) then
-      begin
-        //mytxtfile.Text := reencode(Patchdatei.Text, 'utf8',dummy,flag_encoding);
-        //mytxtfile.SaveToFile(PatchdateiName);
-        Patchdatei.SaveToFile(PatchdateiName, flag_encoding);
-      end
+        Patchdatei.SaveToFile(PatchdateiName, flag_encoding)
       else
-      begin
         Patchdatei.SaveToFile(PatchdateiName, 'utf8');
-      end;
+
       for i := 0 to Patchdatei.Count - 1 do
         logdatei.log_prog('Saved: ' + Patchdatei.Strings[i], LLDebug);
     end;
-    Patchdatei.Free;
-    Patchdatei := nil;
+
+    FreeAndNil(Patchdatei);
     FreeAndNil(workingSection);
   end;
 
 begin
   Result := tsrPositive;
-  //Filename := ExpandFileName(Filename);
-
   if not initSection(Sektion, OldNumberOfErrors, OldNumberOfWarnings) then
     exit;
 
@@ -3604,35 +3517,22 @@ begin
     flag_all_ntuser := False;
     ProfileList := getProfilesDirList;
     for pc := 0 to ProfileList.Count - 1 do
-    begin
-      PatchdateiName := SysUtils.StringReplace(Filename, '%userprofiledir%',
-        ProfileList.Strings[pc], [rfReplaceAll, rfIgnoreCase]);
-      PatchdateiName := SysUtils.StringReplace(PatchdateiName,
-        '%currentprofiledir%', ProfileList.Strings[pc], [rfReplaceAll, rfIgnoreCase]);
-      PatchdateiName := ExpandFileName(PatchdateiName);
-      doInifilePatchesMain(ProfileList.Strings[pc]);
-    end;
+      doInifilePatchesMain(Sektion, ProfileList.Strings[pc],
+        GetPatchFileName(Filename, ProfileList.Strings[pc]));
   end
   else
   begin
     if runLoginScripts then
-    begin
-      PatchdateiName := SysUtils.StringReplace(Filename, '%userprofiledir%',
-        GetUserProfilePath, [rfReplaceAll, rfIgnoreCase]);
-      PatchdateiName := SysUtils.StringReplace(PatchdateiName,
-        '%currentprofiledir%', GetUserProfilePath, [rfReplaceAll, rfIgnoreCase]);
-    end
+      doInifilePatchesMain(Sektion, GetUserProfilePath,
+        GetPatchFileName(Filename, GetUserProfilePath))
     else
-      PatchdateiName := Filename;
-    PatchdateiName := ExpandFileName(PatchdateiName);
-    doInifilePatchesMain(GetUserProfilePath);
+      doInifilePatchesMain(Sektion, GetUserProfilePath, ExpandFileName(Filename));
   end;
 
   LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
 
   finishSection(Sektion, OldNumberOfErrors, OldNumberOfWarnings,
     DiffNumberOfErrors, DiffNumberOfWarnings);
-
 
   if ExitOnError and (DiffNumberOfErrors > 0) then
     Result := tsrExitProcess;
@@ -25720,7 +25620,7 @@ begin
                 end;
                 // if not testSyntax then
                 // testSyntax is done in doTextpatch
-                ActionResult := doTextpatch(ArbeitsSektion, Filename, '');
+                ActionResult := doTextpatch(ArbeitsSektion, Filename);
               end;
 
               tsTests:
@@ -25728,7 +25628,6 @@ begin
                 if not testSyntax then
                   ActionResult := doTests(ArbeitsSektion, Remaining);
               end;
-
 
               tsPatchIniFile:
               begin
@@ -25799,7 +25698,7 @@ begin
                 end;
                 //if not testSyntax then
                 // testSyntax is done in doInifilePatches
-                ActionResult := doInifilePatches(ArbeitsSektion, Filename, '');
+                ActionResult := doInifilePatches(ArbeitsSektion, Filename);
               end;
 
               tsHostsPatch:
