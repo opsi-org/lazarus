@@ -29,11 +29,9 @@ type
     BtnSwitchOn: TBitBtn;
     BtnSwitchOff: TBitBtn;
     CBoxRules: TComboBox;
-    Edit1: TEdit;
     FlowPanel1: TFlowPanel;
     FlowPanel2: TFlowPanel;
     Label1: TLabel;
-    Label2: TLabel;
     Label3: TLabel;
     ListBoxClient: TListBox;
     ListBoxServer: TListBox;

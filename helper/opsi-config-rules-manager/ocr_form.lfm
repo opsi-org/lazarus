@@ -1,11 +1,11 @@
 object Form1: TForm1
-  Left = 468
+  Left = 474
   Height = 656
-  Top = 355
-  Width = 1062
+  Top = 197
+  Width = 908
   Caption = 'opsi-config-rule manager'
   ClientHeight = 636
-  ClientWidth = 1062
+  ClientWidth = 908
   Menu = MainMenu1
   OnCreate = FormCreate
   OnShow = FormShow
@@ -14,7 +14,7 @@ object Form1: TForm1
     Left = 0
     Height = 23
     Top = 613
-    Width = 1062
+    Width = 908
     Panels = <    
       item
         Width = 50
@@ -29,7 +29,7 @@ object Form1: TForm1
     Left = 0
     Height = 50
     Top = 0
-    Width = 1062
+    Width = 908
     Caption = 'ToolBar1'
     TabOrder = 1
     object BitBtnConnect: TBitBtn
@@ -81,51 +81,32 @@ object Form1: TForm1
   end
   object FlowPanel1: TFlowPanel
     Left = 0
-    Height = 126
+    Height = 86
     Top = 50
-    Width = 1062
+    Width = 908
     Align = alTop
     Caption = 'FlowPanel1'
     ControlList = <    
       item
-        Control = Label2
+        Control = Label1
         WrapAfter = waAuto
         Index = 0
       end    
       item
-        Control = Edit1
+        Control = CBoxRules
         WrapAfter = waAuto
         Index = 1
       end    
       item
-        Control = Label1
-        WrapAfter = waAuto
-        Index = 2
-      end    
-      item
-        Control = CBoxRules
-        WrapAfter = waAuto
-        Index = 3
-      end    
-      item
         Control = FlowPanel2
         WrapAfter = waAuto
-        Index = 4
+        Index = 2
       end>
     FlowLayout = tlTop
     FlowStyle = fsLeftRightTopBottom
     TabOrder = 2
-    object Edit1: TEdit
-      Left = 74
-      Height = 23
-      Top = 1
-      Width = 168
-      Anchors = []
-      TabOrder = 0
-      Text = 'pctry4detlef.uib.local'
-    end
     object Label1: TLabel
-      Left = 262
+      Left = 21
       Height = 15
       Top = 1
       Width = 65
@@ -135,33 +116,22 @@ object Form1: TForm1
       Caption = 'Rule name : '
       ParentColor = False
     end
-    object Label2: TLabel
-      Left = 21
-      Height = 15
-      Top = 1
-      Width = 48
-      Anchors = []
-      BorderSpacing.Left = 20
-      BorderSpacing.Right = 5
-      Caption = 'clientId : '
-      ParentColor = False
-    end
     object CBoxRules: TComboBox
-      Left = 332
+      Left = 91
       Height = 23
       Top = 1
-      Width = 724
+      Width = 796
       Anchors = []
       ItemHeight = 15
       OnChange = CBoxRulesChange
-      TabOrder = 1
+      TabOrder = 0
       Text = 'CBoxRules'
     end
     object FlowPanel2: TFlowPanel
       Left = 1
       Height = 50
       Top = 24
-      Width = 1048
+      Width = 887
       Anchors = []
       Caption = 'FlowPanel2'
       ControlList = <      
@@ -182,9 +152,9 @@ object Form1: TForm1
         end>
       FlowLayout = tlTop
       FlowStyle = fsRightLeftTopBottom
-      TabOrder = 2
+      TabOrder = 1
       object BtnSwitchOn: TBitBtn
-        Left = 892
+        Left = 731
         Height = 30
         Top = 11
         Width = 75
@@ -196,7 +166,7 @@ object Form1: TForm1
         TabOrder = 0
       end
       object Memo1: TMemo
-        Left = 252
+        Left = 91
         Height = 39
         Top = 6
         Width = 635
@@ -208,7 +178,7 @@ object Form1: TForm1
         TabOrder = 1
       end
       object BtnSwitchOff: TBitBtn
-        Left = 972
+        Left = 811
         Height = 30
         Top = 11
         Width = 75
@@ -223,17 +193,17 @@ object Form1: TForm1
   end
   object Panel1: TPanel
     Left = 0
-    Height = 437
-    Top = 176
+    Height = 477
+    Top = 136
     Width = 368
     Align = alLeft
     Caption = 'Panel1'
-    ClientHeight = 437
+    ClientHeight = 477
     ClientWidth = 368
     TabOrder = 3
     object TreeView1: TTreeView
       Left = 1
-      Height = 316
+      Height = 356
       Top = 120
       Width = 366
       Align = alClient
@@ -277,17 +247,17 @@ object Form1: TForm1
   end
   object Panel2: TPanel
     Left = 368
-    Height = 437
-    Top = 176
+    Height = 477
+    Top = 136
     Width = 264
     Align = alLeft
     Caption = 'Panel2'
-    ClientHeight = 437
+    ClientHeight = 477
     ClientWidth = 264
     TabOrder = 4
     object ListBoxClient: TListBox
       Left = 1
-      Height = 435
+      Height = 475
       Top = 1
       Width = 262
       Align = alClient
@@ -297,7 +267,7 @@ object Form1: TForm1
     end
   end
   object MainMenu1: TMainMenu
-    Left = 976
+    Left = 776
     object MFile: TMenuItem
       Caption = 'File'
       object MExit: TMenuItem
@@ -317,7 +287,7 @@ object Form1: TForm1
   object Timer1: TTimer
     Enabled = False
     OnTimer = Timer1Timer
-    Left = 900
-    Top = 15
+    Left = 496
+    Top = 8
   end
 end
