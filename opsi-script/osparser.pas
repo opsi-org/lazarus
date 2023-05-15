@@ -2384,7 +2384,7 @@ begin
 end;
 
 
-function CreatePatchFileIfNotExistent(const FileName: string): boolean;
+function CreatePatchFileIfFileNotExists(const FileName: string): boolean;
 var
   ErrorInfo: string = '';
 begin
@@ -2478,7 +2478,7 @@ var
     Logdatei.log('Patching: ' + PatchFilename, LLInfo);
 
     if not testSyntax then
-      if not CreatePatchFileIfNotExistent(PatchFilename) then
+      if not CreatePatchFileIfFileNotExists(PatchFilename) then
         exit;
 
     ProcessMess;
@@ -3410,7 +3410,7 @@ var
     Logdatei.log('Patching: ' + PatchdateiName, LLInfo);
 
     if not testSyntax then
-      if not CreatePatchFileIfNotExistent(PatchdateiName) then
+      if not CreatePatchFileIfFileNotExists(PatchdateiName) then
         exit;
 
     ProcessMess;
