@@ -2437,7 +2437,7 @@ var
   var
     saveToOriginalFile: boolean = True;
     lastfind: boolean = False;
-    i: integer = 1;
+    i: integer;
     PatchListe: TpatchList;
     methodname: string = '';
     index: integer = 0;
@@ -2492,6 +2492,7 @@ var
     if not testSyntax then
       PatchListe.loadFromFileWithEncoding(ExpandFileName(PatchFilename), flag_encoding);
 
+    i := 1;
     while (i <= workingSection.Count) and syntaxcheck do
     begin
       ErrorInfo := '';
