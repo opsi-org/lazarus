@@ -348,6 +348,8 @@ type
     FtestSyntax: boolean;  // default=false ; if true then run syntax check
 
 
+    procedure ParseMultilineStatement(var linecounter: integer;
+      var remaining: string; var Sektion: TWorkSection);
     procedure parsePowershellCall(var Command: string; var AccessString: string;
       var HandlePolicy: string; var Option: string; var Remaining: string;
       var syntaxCheck: boolean; var InfoSyntaxError: string;
@@ -9848,10 +9850,10 @@ begin
               then
               begin
                 s := Remaining;
+              end;
                 {$IFDEF UNIX}
                 logdatei.log('Option window_state is ignored at Linux', LLWarning);
                 {$ENDIF UNIX}
-              end;
               {$IFDEF WIN32}
               if s = '' then
                 link_showwindow := 0
@@ -21882,6 +21884,32 @@ begin
   end;
 end;
 
+procedure TuibInstScript.ParseMultilineStatement(var linecounter: integer;
+  var remaining: string; var Sektion: TWorkSection);
+var
+  addnextline: boolean = False;
+begin
+  // Handling of multiline statements
+  repeat
+    addnextline := False;
+    Remaining := Remaining + trim(Sektion.strings[linecounter - 1]);
+    LogDatei.log_prog('Readline: ' + Remaining, LLDebug2);
+    // if space or tab and backslash add the next line
+    if (EndsStr(' \', Remaining) or EndsStr(chr(9) + '\', Remaining)) then
+    begin
+      if not ContainsText(Remaining, 'escapestring') then //but not for escapestring
+      begin
+        addnextline := True;
+        Inc(linecounter);
+        Remaining := TrimRightSet(Remaining, ['\']);
+        LogDatei.log_prog('Readline addnext detected: ' + Remaining, LLDebug2);
+      end;
+    end;
+  until (not addnextline) or (linecounter > Sektion.Count);
+  //linecounter must not be out of bounds:
+  if (linecounter > Sektion.Count) then linecounter := Sektion.Count;
+end;
+
 procedure TuibInstScript.SetVariableWithErrors(const Sektion: TWorkSection;
   var Remaining: string; const Expressionstr: string; linecounter: integer;
   var InfoSyntaxError: string; var NestLevel: integer);
@@ -22319,8 +22347,10 @@ begin
     (((actionresult > tsrFatalError) and (FExtremeErrorLevel > levelfatal) and
       not scriptstopped) or testSyntax) do
   begin
-    //writeln(actionresult);
-    Remaining := trim(Sektion.strings[linecounter - 1]);
+    Remaining := '';
+
+    ParseMultilineStatement(linecounter, remaining, Sektion);
+
     // Replace constants on every line in primary section:
     ApplyTextConstantsToString(Remaining, False);
     logdatei.log_prog('Working doAktionen: Remaining:' + remaining, LLDebug2);
