@@ -2407,7 +2407,7 @@ begin
     end;
 end;
 
-function GetWorkSectionForPatch(const Section: TXStringList; const presetDir: string): TXStringList;
+function GetWorkSection(const Section: TXStringList; const presetDir: string): TXStringList;
 begin
   // create working object, i.e. a copy of the section that can be modified
   Result := TXStringList.Create;
@@ -2483,7 +2483,7 @@ var
 
     ProcessMess;
     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
-    workingSection := GetWorkSectionForPatch(Section, presetDir);
+    workingSection := GetWorkSection(Section, presetDir);
 
     { create the list we work on }
     PatchListe := TPatchList.Create;
@@ -3415,7 +3415,7 @@ var
 
     ProcessMess;
     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
-    workingSection := GetWorkSectionForPatch(Section, presetDir);
+    workingSection := GetWorkSection(Section, presetDir);
 
     Patchdatei := TuibPatchIniFile.Create;
     Patchdatei.Clear;
