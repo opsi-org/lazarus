@@ -857,16 +857,12 @@ end;
 *)
 
 function getProfilesDirList: TStringList;
-var
-  list: TStringList;
 begin
   {$IFDEF WINDOWS}
   {$IFDEF WIN32}
   Result := getProfilesDirListWin;
   {$ELSE WIN32}
-  list := TStringList.Create;
-  Result := list;
-  list.Free;
+  Result := TStringList.Create;
   {$ENDIF WIN32}
   {$ENDIF WINDOWS}
   {$IFDEF LINUX}
