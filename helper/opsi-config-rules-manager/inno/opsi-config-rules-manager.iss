@@ -65,7 +65,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Source: "..\opsiconfigrulesmgr.exe"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\libcrypto-1_1.dll"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\libssl-1_1.dll"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\opsi-config-rules.d\*"; DestDir: "{app}\opsi-config-rules.d"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\opsi-config-rules.d\*.ini"; DestDir: "{app}\opsi-config-rules.d"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
