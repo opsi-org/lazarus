@@ -562,7 +562,11 @@ begin
       LogDatei.log('Error (getLinuxReleaseInfo): Could not get release info.', LLError);
     end;
   end;
-  //get SubRelease (only Suse);
+  (*
+  For SUSE distributions the subrelease (=patchlevel) is relevant because packages
+  might be only compatible with a specific patchlevel.
+  The subrelease is not relevant for other Linux distributions like Debian/Ubuntu or RedHat.
+  *)
   if (pos('suse', lowercase(Result.Values['ID'])) > 0) then
   begin
     Release := Result.Values['Release'];
