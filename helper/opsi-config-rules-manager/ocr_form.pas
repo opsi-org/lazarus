@@ -31,6 +31,7 @@ type
     CBoxRules: TComboBox;
     FlowPanel1: TFlowPanel;
     FlowPanel2: TFlowPanel;
+    ImageList1: TImageList;
     Label1: TLabel;
     Label3: TLabel;
     ListBoxClient: TListBox;
@@ -435,8 +436,20 @@ begin
 end;
 
 procedure TForm1.TreeView1SelectionChanged(Sender: TObject);
+var
+  myNode, myNewNode : TTreeNode;
+  str : string;
+  i : integer;
 begin
-
+  ListBoxClient.Items.Clear;
+  myNode := TTreeview(Sender).Items.GetSelections(0);
+  str := myNode.Text;
+  for i := 0 to myNode.Count - 1 do
+  begin
+    ListBoxClient.Items.Add(mynode.Items[i].Text);
+    ListBoxClient.Selected[i];
+  end;
+  logdatei.log('myNode.Count: '+intToStr(myNode.Count), LLDebug2);
 end;
 
 function startOpsiServiceConnection: boolean;
@@ -586,6 +599,9 @@ begin
         myNode := form1.TreeView1.Items.FindNodeWithText('Gruppen');
       myNewNode := form1.TreeView1.Items.AddChild(myNode,name);
       myNewNode.Text:= name;
+      myNewNode.ImageIndex:= 2;
+      myNewNode.SelectedIndex:= 2;
+      myNewNode.StateIndex:= 3;
       //LogDatei.log('Add Group: ' + name + ' as child of: '+myNode.Text, LLDebug);
       LogDatei.log('Add Group: ' + name , LLDebug);
       if myNode <> nil then LogDatei.log(' as child of: '+myNode.Text, LLDebug);
@@ -638,6 +654,9 @@ begin
             myNode := form1.TreeView1.Items.FindNodeWithText('Gruppen');
           myNewNode := form1.TreeView1.Items.AddChild(myNode,clientid);
           myNewNode.Text:= clientid;
+          myNewNode.ImageIndex:= 0;
+          myNewNode.SelectedIndex:= 1;
+          myNewNode.StateIndex:= 3;
           //LogDatei.log('Add Group: ' + name + ' as child of: '+myNode.Text, LLDebug);
           LogDatei.log('Add clientid: ' + clientid , LLDebug);
           if myNode <> nil then LogDatei.log(' as child of: '+myNode.Text, LLDebug);
