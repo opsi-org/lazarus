@@ -2869,7 +2869,7 @@ begin
                   if (i <= ParamListe.Count) then
                   begin
                     opsiserviceClientId := ParamListe.Strings[i - 1];
-                    opsiserviceUser := opsiserviceClientId;
+                    if opsiserviceUser = '' then opsiserviceUser := opsiserviceClientId;
                     computername := opsiserviceClientId;
                     if (length(computername) = 0) or
                       (computername[1] = ParamDelim) then
