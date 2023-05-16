@@ -23,12 +23,12 @@ AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
 DefaultDirName={autopf}\{#group}\opsi-config-rules-manager
 DisableProgramGroupPage=yes
-LicenseFile=W:\opsi-setup-detector\inno\agplv3.rtf
+LicenseFile=.\agplv3.rtf
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
 OutputDir=.\innoout
 OutputBaseFilename=opsi-config-rules-manager-{#MyAppVersion}-setup
-SetupIconFile=W:\opsi-setup-detector\inno\analyze1.ico
+SetupIconFile=..\opsi.ico
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
