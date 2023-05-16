@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "opsi-config-rules-manager"
-#define MyAppVersion "4.2.0.0-1"
+#define MyAppVersion "4.2.0.0-2"
 #define MyAppPublisher "uib gmbh"
 #define MyAppURL "https://opsi.org/"
 #define MyAppExeName "opsiconfigrulesmgr.exe"
