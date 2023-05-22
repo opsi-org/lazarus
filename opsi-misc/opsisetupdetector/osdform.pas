@@ -3690,7 +3690,7 @@ procedure TResultform1.FileHelpClick(Sender: TObject);
 var
   myUrl : string;
 begin
-  if osdsettings.mylang = 'de' then
+  if LowerCase(osdsettings.mylang) = 'de' then
     myUrl := 'https://docs.opsi.org/opsi-docs-de/4.2/manual/modules/setup-detector.html'
   else
     myUrl := 'https://docs.opsi.org/opsi-docs-en/4.2/manual/modules/setup-detector.html';
@@ -3967,7 +3967,7 @@ procedure TResultform1.SpeedButtonHelpAnalyzeClick(Sender: TObject);
 var
   myUrl : string;
 begin
-  if osdsettings.mylang = 'de' then
+  if LowerCase(osdsettings.mylang) = 'de' then
     myUrl := 'https://docs.opsi.org/opsi-docs-de/4.2/windows-client-manual/softwareintegration.html#opsi-setup-detector-use-single-analyze'
   else
     myUrl := 'https://docs.opsi.org/opsi-docs-en/4.2/windows-client-manual/softwareintegration.html#opsi-setup-detector-use-single-analyze';
@@ -3978,7 +3978,7 @@ procedure TResultform1.SpeedButtonHelpCreateClick(Sender: TObject);
   var
   myUrl : string;
 begin
-  if osdsettings.mylang = 'de' then
+  if LowerCase(osdsettings.mylang) = 'de' then
     myUrl := 'https://docs.opsi.org/opsi-docs-de/4.2/windows-client-manual/softwareintegration.html#opsi-setup-detector-product-create'
   else
     myUrl := 'https://docs.opsi.org/opsi-docs-en/4.2/windows-client-manual/softwareintegration.html#opsi-setup-detector-product-create';
@@ -3990,7 +3990,7 @@ procedure TResultform1.SpeedButtonHelpIconClick(Sender: TObject);
   var
     myUrl : string;
   begin
-    if osdsettings.mylang = 'de' then
+    if LowerCase(osdsettings.mylang) = 'de' then
       myUrl := 'https://docs.opsi.org/opsi-docs-de/4.2/windows-client-manual/softwareintegration.html#opsi-setup-detector-product-configuration-icon'
     else
       myUrl := 'https://docs.opsi.org/opsi-docs-en/4.2/windows-client-manual/softwareintegration.html#opsi-setup-detector-product-configuration-icon';
@@ -4001,7 +4001,7 @@ procedure TResultform1.SpeedButtonHelpMainClick(Sender: TObject);
 var
   myUrl : string;
 begin
-  if osdsettings.mylang = 'de' then
+  if LowerCase(osdsettings.mylang) = 'de' then
     myUrl := 'https://docs.opsi.org/opsi-docs-de/4.2/manual/modules/setup-detector.html'
   else
     myUrl := 'https://docs.opsi.org/opsi-docs-en/4.2/manual/modules/setup-detector.html';
@@ -4012,7 +4012,7 @@ procedure TResultform1.SpeedButtonHelpProd1Click(Sender: TObject);
 var
   myUrl : string;
 begin
-  if osdsettings.mylang = 'de' then
+  if LowerCase(osdsettings.mylang) = 'de' then
     myUrl := 'https://docs.opsi.org/opsi-docs-de/4.2/windows-client-manual/softwareintegration.html#opsi-setup-detector-product-configuration1'
   else
     myUrl := 'https://docs.opsi.org/opsi-docs-en/4.2/windows-client-manual/softwareintegration.html#opsi-setup-detector-product-configuration1';
@@ -4023,7 +4023,7 @@ procedure TResultform1.SpeedButtonHelpProd2Click(Sender: TObject);
 var
   myUrl : string;
 begin
-  if osdsettings.mylang = 'de' then
+  if LowerCase(osdsettings.mylang) = 'de' then
     myUrl := 'https://docs.opsi.org/opsi-docs-de/4.2/windows-client-manual/softwareintegration.html#opsi-setup-detector-product-configuration-priority_dependecy'
   else
     myUrl := 'https://docs.opsi.org/opsi-docs-en/4.2/windows-client-manual/softwareintegration.html#opsi-setup-detector-product-configuration-priority_dependency';
@@ -4034,10 +4034,10 @@ procedure TResultform1.SpeedButtonHelpSartOSIndepClick(Sender: TObject);
 var
   myUrl : string;
 begin
-  if osdsettings.mylang = 'de' then
-    myUrl := 'https://docs.opsi.org/opsi-docs-de/4.2/manual/modules/setup-detector.html'
+  if LowerCase(osdsettings.mylang) = 'de' then
+    myUrl := 'https://docs.opsi.org/opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-tasks-os-independent'
   else
-    myUrl := 'https://docs.opsi.org/opsi-docs-en/4.2/manual/modules/setup-detector.html';
+    myUrl := 'https://docs.opsi.org/opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-tasks-os-independent';
   OpenURL(myUrl);
 end;
 
@@ -4045,7 +4045,7 @@ procedure TResultform1.SpeedButtonHelpSetupClick(Sender: TObject);
 var
   myUrl : string;
 begin
-  if osdsettings.mylang = 'de' then
+  if LowerCase(osdsettings.mylang) = 'de' then
     myUrl := 'https://docs.opsi.org/opsi-docs-de/4.2/manual/modules/setup-detector.html'
   else
     myUrl := 'https://docs.opsi.org/opsi-docs-en/4.2/manual/modules/setup-detector.html';
@@ -4056,10 +4056,10 @@ procedure TResultform1.SpeedButtonHelpStartLinClick(Sender: TObject);
 var
   myUrl : string;
 begin
-  if osdsettings.mylang = 'de' then
-    myUrl := 'https://docs.opsi.org/opsi-docs-de/4.2/manual/modules/setup-detector.html'
+  if LowerCase(osdsettings.mylang) = 'de' then
+    myUrl := 'https://docs.opsi.org/opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-tasks-linux'
   else
-    myUrl := 'https://docs.opsi.org/opsi-docs-en/4.2/manual/modules/setup-detector.html';
+    myUrl := 'https://docs.opsi.org/opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-tasks-linux';
   OpenURL(myUrl);
 end;
 
@@ -4067,10 +4067,10 @@ procedure TResultform1.SpeedButtonHelpStartMacClick(Sender: TObject);
 var
   myUrl : string;
 begin
-  if osdsettings.mylang = 'de' then
-    myUrl := 'https://docs.opsi.org/opsi-docs-de/4.2/manual/modules/setup-detector.html'
+  if LowerCase(osdsettings.mylang) = 'de' then
+    myUrl := 'https://docs.opsi.org/opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-tasks-macos'
   else
-    myUrl := 'https://docs.opsi.org/opsi-docs-en/4.2/manual/modules/setup-detector.html';
+    myUrl := 'https://docs.opsi.org/opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-tasks-macos';
   OpenURL(myUrl);
 end;
 
@@ -4078,10 +4078,10 @@ procedure TResultform1.SpeedButtonHelpStartMultiClick(Sender: TObject);
 var
   myUrl : string;
 begin
-  if osdsettings.mylang = 'de' then
-    myUrl := 'https://docs.opsi.org/opsi-docs-de/4.2/manual/modules/setup-detector.html'
+  if LowerCase(osdsettings.mylang) = 'de' then
+    myUrl := 'https://docs.opsi.org/opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-tasks-multi'
   else
-    myUrl := 'https://docs.opsi.org/opsi-docs-en/4.2/manual/modules/setup-detector.html';
+    myUrl := 'https://docs.opsi.org/opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-tasks-multi';
   OpenURL(myUrl);
 end;
 
@@ -4089,10 +4089,10 @@ procedure TResultform1.SpeedButtonHelpStartWinClick(Sender: TObject);
 var
   myUrl : string;
 begin
-  if osdsettings.mylang = 'de' then
-    myUrl := 'https://docs.opsi.org/opsi-docs-de/4.2/manual/modules/setup-detector.html'
+  if LowerCase(osdsettings.mylang) = 'de' then
+    myUrl := 'https://docs.opsi.org/opsi-docs-de/4.2/windows-client-manual/softwareintegration.html#opsi-setup-detector-tasks-win'
   else
-    myUrl := 'https://docs.opsi.org/opsi-docs-en/4.2/manual/modules/setup-detector.html';
+    myUrl := 'https://docs.opsi.org/opsi-docs-en/4.2/windows-client-manual/softwareintegration.html#opsi-setup-detector-tasks-win';
   OpenURL(myUrl);
 end;
 
