@@ -518,7 +518,7 @@ type
     procedure OpenMSTFile(var mysetup: TSetupFile);
     procedure chooseInstallDir(var mysetup: TSetupFile);
     procedure chooseUninstaller(var mysetup: TSetupFile);
-    procedure updateUninstaller(var mysetup: TSetupFile);
+
     procedure SetTICheckBoxesMST(Installer: TKnownInstaller);
     procedure chooseTargetProgram(var mysetup: TSetupFile);
   public
@@ -533,6 +533,7 @@ type
     numberIcons, indexSelectedIcon: integer;
     loadDefaultIcon: boolean;
     procedure memoadd(line: string);
+    procedure updateUninstaller(var mysetup: TSetupFile);
   end;
 
 
@@ -2891,7 +2892,7 @@ begin
 
     mysetup.uninstallCheck.Clear;
     uninstcheckstr := mysetup.uninstallProg;
-    // the use of the  $installdir$ variable for the promary section function fileexists
+    // the use of the  $installdir$ variable for the primary section function fileexists
     // will for example result to:
     // if fileexists(""+$installdir$+"\uninst.exe")
     uninstcheckstr := StringReplace(uninstcheckstr, '$installdir$',

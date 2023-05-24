@@ -168,6 +168,7 @@ type
     FinstallCommandLine: string;
     FuninstallCommandLine: string;
     FuninstallProg: string;
+    FuninstallDirectory: string;
     FtargetProg: string;
     FuninstallCheck: TStrings;
     FisExitcodeFatalFunction: string;
@@ -186,6 +187,7 @@ type
     procedure SetUninstallProg(const AValue: string);
     procedure SetTargetProg(const AValue: string);
     procedure SetInstallDirectory(const AValue: string);
+    procedure SetUninstallDirectory(const AValue: string);
     //procedure OnRestoreProperty(Sender: TObject; AObject: TObject;
     //  Info: PPropInfo; AValue: TJSONData; var Handled: Boolean);
   published
@@ -223,6 +225,7 @@ type
     property uninstallCommandLine: string read FuninstallCommandLine
       write FuninstallCommandLine;
     property uninstallProg: string read FuninstallProg write SetUninstallProg;
+    property uninstallDirectory: string read FuninstallDirectory write SetUninstallDirectory;
     property targetProg: string read FtargetProg write SetTargetProg;
     property uninstallCheck: TStrings read FuninstallCheck write SetUninstallCheck;
     property uninstall_waitforprocess: string
@@ -830,6 +833,16 @@ begin
   FinstallDirectory := str;
 end;
 
+procedure TSetupFile.SetUninstallDirectory(const AValue: string);
+var
+  str: string;
+begin
+  str := AValue;
+  str := opsiunquotestr2(str, '"');
+  str := opsiunquotestr2(str, '''');
+  FuninstallDirectory := str;
+end;
+
 
 procedure TSetupFile.initValues;
 begin
@@ -848,6 +861,7 @@ begin
   FinstallerId := stUnknown;
   FrequiredSpace := 0;
   FinstallDirectory := 'unknown';
+  FuninstallDirectory := '';
   Fmarkerlist.Clear;
   Finfolist.Clear;
   Flink := '';

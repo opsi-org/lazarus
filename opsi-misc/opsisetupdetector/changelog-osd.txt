@@ -126,9 +126,10 @@ opsi-setup-detector (4.2.2.0-1) stable; urgency=low
    * new detection: PortableApps.com
    * new detection: install4j
    * fix: control file: licenseRequired: False ; fixes #4828
+   * fix: trim service_url before use ; fixes #4825
+   * feature: inno: read uninstall directory from iss file ; fixes #4622
 
    todo:
-   remove all mywrite
 
 
 -- Detlef Oertel <d.oertel@uib.de>  Wed,  29 Mar 2023 : 15:00:00 +0200

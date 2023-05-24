@@ -20,6 +20,7 @@ uses
   Process,
   fileutil,
   lazfileutils,
+  strutils,
   SysUtils,
   fileinfo,
   winpeimagereader,
@@ -477,6 +478,8 @@ var
   tmpint: integer;
   ArchitecturesAllowed: string = '';
   ArchitecturesInstallIn64BitMode: string = '';
+  UninstallFilesDir: string = '';
+  uninstfile: string = '';
 
   function translateInnoConstants(myline: string; arch: string): string;
   var
@@ -524,6 +527,7 @@ begin
   DefaultDirName := '';
   ArchitecturesInstallIn64BitMode := '';
   ArchitecturesAllowed := '';
+  UninstallFilesDir := '';
   {$IFDEF WINDOWS}
 
   myoutlines := TStringList.Create;
@@ -597,6 +601,8 @@ begin
           ArchitecturesInstallIn64BitMode := Copy(issLine, pos('=', issLine) + 1, 100);
         if (0 < pos('architecturesallowed=', lowercase(issLine))) then
           ArchitecturesAllowed := Copy(issLine, pos('=', issLine) + 1, 100);
+        if (0 < pos('uninstallfilesdir=', lowercase(issLine))) then
+          UninstallFilesDir := Copy(issLine, pos('=', issLine) + 1, 100);
         ReadLn(fISS, issLine);
 
       end;
@@ -635,6 +641,19 @@ begin
         DefaultDirName := translateInnoConstants(DefaultDirName, '32');
       end;
       mysetup.installDirectory := DefaultDirName;
+      if UninstallFilesDir <> '' then
+      begin
+        UninstallFilesDir := StringReplace(UninstallFilesDir, '{app}',
+          DefaultDirName, [rfIgnoreCase]);
+        mysetup.uninstallDirectory:= UninstallFilesDir;
+        uninstfile := ExtractFileName(ReplaceText(mysetup.uninstallProg,'$installdir$', mysetup.installDirectory));
+        // use $installdir$ if possible
+        mysetup.uninstallDirectory := ReplaceText(mysetup.uninstallDirectory, mysetup.installDirectory, '$installdir$');
+        mysetup.uninstallProg := mysetup.uninstallDirectory + '\' + uninstfile;
+        resultForm1.updateUninstaller(mysetup);
+      end
+      else mysetup.uninstallDirectory:= DefaultDirName;
+
       aktProduct.productdata.comment := AppVerName;
       with mysetup do
       begin
