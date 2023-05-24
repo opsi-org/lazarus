@@ -605,7 +605,6 @@ procedure ChangeDirectory(newdir: string);
 function strContains(const str: string; const substr: string): boolean;
 function createNewOpsiHostKey: string;
 function getProfilesDirList: TStringList;
-//function loadUnicodeTextFile(filename: string): TStringList;
 function opsiunquotestr(s1, s2: string): string;
 
 function cmdLineInputDialog(var inputstr: string; const message, default: string;
@@ -762,15 +761,10 @@ const
 
   ExtractTempSubDirectory = 'decompr' + PathDelim;
   UsedFilesTempSubDirectory = 'usedfs' + PathDelim;
-//ziffern = ['0'..'9'];
 
 (* Hilfsfunktionen *)
 
 (* ---- allgemeine Systemaufrufe --- *)
-
-//recursionlevel: integer = 0;
-
-//function RegDeleteKeyEx; external advapi32 name 'RegDeleteKeyEx';
 
 function posFromEnd(const substr: string; const s: string): integer;
 var
@@ -825,48 +819,13 @@ begin
     inputstr := default;
 end;
 
-(*
-// removed for Lazarus 1.8
-function loadUnicodeTextFile(filename: string): TStringList;
-var
-  fCES: TCharEncStream;
-begin
-  Result := TStringList.Create;
-  fCES := TCharEncStream.Create;
-  fCES.Reset;
-  fileName := ExpandFileName(fileName);
-  fCES.LoadFromFile(fileName);
-  fCES.ANSIEnc := GetSystemEncoding;
-  Result.Text := fCES.UTF8Text;
-  fCES.Free;
-end;
-
-
-function stringListLoadUnicodeFromList(inlist: Tstringlist): TStringList;
-var
-  fCES: TCharEncStream;
-begin
-  Result := TStringList.Create;
-  fCES := TCharEncStream.Create;
-  fCES.Reset;
-  inlist.SaveToStream(fCES);
-  fCES.ANSIEnc := GetSystemEncoding;
-  Result.Text := fCES.UTF8Text;
-  fCES.Free;
-end;
-*)
-
 function getProfilesDirList: TStringList;
-var
-  list: TStringList;
 begin
   {$IFDEF WINDOWS}
   {$IFDEF WIN32}
   Result := getProfilesDirListWin;
   {$ELSE WIN32}
-  list := TStringList.Create;
-  Result := list;
-  list.Free;
+  Result := TStringList.Create;
   {$ENDIF WIN32}
   {$ENDIF WINDOWS}
   {$IFDEF LINUX}

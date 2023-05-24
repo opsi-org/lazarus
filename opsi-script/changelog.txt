@@ -12,6 +12,10 @@ opsi-script (4.12.9.1) unreleased; urgency=medium
 
   * [fix] oswebservice.pas: getSubListResult, getProductPropertyList:
           Empty (property) values are now handelt correct and without raising an exception.(j.werner)
+  * [new] osparser.pas: multi line statements:
+          a opsi-script line will concatenated with the next line
+          if the line ends with whitespace+backslash
+          and not contains EscapeString  (d.oertel)
 
 -- j.werner <j.werner@uib.de> 11 April 2023
 
