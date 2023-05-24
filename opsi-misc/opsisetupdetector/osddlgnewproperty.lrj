@@ -1,6 +1,7 @@
 {"version":1,"strings":[
 {"hash":47789187,"name":"tfnewpropdlg.caption","sourcebytes":[111,112,115,105,45,115,101,116,117,112,45,100,101,116,101,99,116,111,114,32,45,32,80,114,111,112,101,114,116,105,101,115],"value":"opsi-setup-detector - Properties"},
 {"hash":219759454,"name":"tfnewpropdlg.label1.caption","sourcebytes":[80,108,101,97,115,101,32,101,100,105,116,32,116,104,101,32,80,114,111,112,101,114,116,121,46],"value":"Please edit the Property."},
+{"hash":110408640,"name":"tfnewpropdlg.speedbuttonhelpconfig.hint","sourcebytes":[83,104,111,119,32,72,101,108,112],"value":"Show Help"},
 {"hash":203680933,"name":"tfnewpropdlg.groupbox1.caption","sourcebytes":[80,114,111,112,101,114,116,121,32,84,121,112,101],"value":"Property Type"},
 {"hash":371956,"name":"tfnewpropdlg.radiobuttonpropstring.caption","sourcebytes":[84,101,120,116],"value":"Text"},
 {"hash":157690686,"name":"tfnewpropdlg.radiobuttonpropbool.caption","sourcebytes":[66,111,111,108,101,97,110],"value":"Boolean"},

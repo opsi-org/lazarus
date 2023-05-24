@@ -105,9 +105,9 @@ var
   myUrl : string;
 begin
   if SetDefaultLang('') = 'de' then
-    myUrl := 'https://docs.opsi.org/opsi-docs-de/4.2/windows-client-manual/softwareintegration.html#opsi-setup-detector-use-start'
+    myUrl := 'https://docs.opsi.org/opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-use-start'
   else
-    myUrl := 'https://docs.opsi.org/opsi-docs-en/4.2/windows-client-manual/softwareintegration.html#opsi-setup-detector-use-start';
+    myUrl := 'https://docs.opsi.org/opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-use-start';
   OpenURL(myUrl);
 end;
 

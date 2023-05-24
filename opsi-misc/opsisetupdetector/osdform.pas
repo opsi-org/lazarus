@@ -3968,9 +3968,9 @@ var
   myUrl : string;
 begin
   if LowerCase(osdsettings.mylang) = 'de' then
-    myUrl := 'https://docs.opsi.org/opsi-docs-de/4.2/windows-client-manual/softwareintegration.html#opsi-setup-detector-use-single-analyze'
+    myUrl := 'https://docs.opsi.org/opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-use-single-analyze'
   else
-    myUrl := 'https://docs.opsi.org/opsi-docs-en/4.2/windows-client-manual/softwareintegration.html#opsi-setup-detector-use-single-analyze';
+    myUrl := 'https://docs.opsi.org/opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-use-single-analyze';
   OpenURL(myUrl);
 end;
 
@@ -3979,9 +3979,9 @@ procedure TResultform1.SpeedButtonHelpCreateClick(Sender: TObject);
   myUrl : string;
 begin
   if LowerCase(osdsettings.mylang) = 'de' then
-    myUrl := 'https://docs.opsi.org/opsi-docs-de/4.2/windows-client-manual/softwareintegration.html#opsi-setup-detector-product-create'
+    myUrl := 'https://docs.opsi.org/opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-product-create'
   else
-    myUrl := 'https://docs.opsi.org/opsi-docs-en/4.2/windows-client-manual/softwareintegration.html#opsi-setup-detector-product-create';
+    myUrl := 'https://docs.opsi.org/opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-product-create';
   OpenURL(myUrl);
   //ShowMessage(rsNotImplemented);
 end;
@@ -3991,9 +3991,9 @@ procedure TResultform1.SpeedButtonHelpIconClick(Sender: TObject);
     myUrl : string;
   begin
     if LowerCase(osdsettings.mylang) = 'de' then
-      myUrl := 'https://docs.opsi.org/opsi-docs-de/4.2/windows-client-manual/softwareintegration.html#opsi-setup-detector-product-configuration-icon'
+      myUrl := 'https://docs.opsi.org/opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-product-configuration-icon'
     else
-      myUrl := 'https://docs.opsi.org/opsi-docs-en/4.2/windows-client-manual/softwareintegration.html#opsi-setup-detector-product-configuration-icon';
+      myUrl := 'https://docs.opsi.org/opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-product-configuration-icon';
     OpenURL(myUrl);
   end;
 
@@ -4013,9 +4013,9 @@ var
   myUrl : string;
 begin
   if LowerCase(osdsettings.mylang) = 'de' then
-    myUrl := 'https://docs.opsi.org/opsi-docs-de/4.2/windows-client-manual/softwareintegration.html#opsi-setup-detector-product-configuration1'
+    myUrl := 'https://docs.opsi.org/opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-product-configuration1'
   else
-    myUrl := 'https://docs.opsi.org/opsi-docs-en/4.2/windows-client-manual/softwareintegration.html#opsi-setup-detector-product-configuration1';
+    myUrl := 'https://docs.opsi.org/opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-product-configuration1';
   OpenURL(myUrl);
 end;
 
@@ -4024,9 +4024,9 @@ var
   myUrl : string;
 begin
   if LowerCase(osdsettings.mylang) = 'de' then
-    myUrl := 'https://docs.opsi.org/opsi-docs-de/4.2/windows-client-manual/softwareintegration.html#opsi-setup-detector-product-configuration-priority_dependecy'
+    myUrl := 'https://docs.opsi.org/opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-product-configuration-priority_dependecy'
   else
-    myUrl := 'https://docs.opsi.org/opsi-docs-en/4.2/windows-client-manual/softwareintegration.html#opsi-setup-detector-product-configuration-priority_dependency';
+    myUrl := 'https://docs.opsi.org/opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-product-configuration-priority_dependency';
   OpenURL(myUrl);
 end;
 
@@ -4046,9 +4046,9 @@ var
   myUrl : string;
 begin
   if LowerCase(osdsettings.mylang) = 'de' then
-    myUrl := 'https://docs.opsi.org/opsi-docs-de/4.2/manual/modules/setup-detector.html'
+    myUrl := 'https://docs.opsi.org/opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-use-single-setup-data'
   else
-    myUrl := 'https://docs.opsi.org/opsi-docs-en/4.2/manual/modules/setup-detector.html';
+    myUrl := 'https://docs.opsi.org/opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-use-single-setup-data';
   OpenURL(myUrl);
 end;
 
@@ -4090,9 +4090,9 @@ var
   myUrl : string;
 begin
   if LowerCase(osdsettings.mylang) = 'de' then
-    myUrl := 'https://docs.opsi.org/opsi-docs-de/4.2/windows-client-manual/softwareintegration.html#opsi-setup-detector-tasks-win'
+    myUrl := 'https://docs.opsi.org/opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-tasks-win'
   else
-    myUrl := 'https://docs.opsi.org/opsi-docs-en/4.2/windows-client-manual/softwareintegration.html#opsi-setup-detector-tasks-win';
+    myUrl := 'https://docs.opsi.org/opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-tasks-win';
   OpenURL(myUrl);
 end;
 

@@ -1098,7 +1098,7 @@ begin
     textlist.Add('advice: ' + aktProduct.productdata.advice);
     textlist.Add('version: ' + aktProduct.productdata.productversion);
     textlist.Add('priority: ' + IntToStr(aktProduct.productdata.priority));
-    textlist.Add('licenseRequired: ');
+    textlist.Add('licenseRequired: False');
     textlist.Add('productClasses: ');
     textlist.Add('setupScript: ' + aktProduct.productdata.setupscript);
     // No uninstall for Meta

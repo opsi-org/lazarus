@@ -16,6 +16,7 @@ uses
   ExtCtrls,
   Buttons,
   StdCtrls,
+  LclIntf,
   lcltranslator,
   osdbasedata,
   osddatamod;
@@ -52,6 +53,7 @@ type
     Panel7: TPanel;
     RadioButtonPropString: TRadioButton;
     RadioButtonPropBool: TRadioButton;
+    SpeedButtonHelpConfig: TSpeedButton;
     procedure BitBtnAddPropClick(Sender: TObject);
     procedure BitBtnDelPropClick(Sender: TObject);
     procedure CheckBoxPropMultiValChange(Sender: TObject);
@@ -61,6 +63,7 @@ type
     procedure FormShow(Sender: TObject);
     procedure RadioButtonPropBoolChange(Sender: TObject);
     procedure RadioButtonPropStringChange(Sender: TObject);
+    procedure SpeedButtonHelpConfigClick(Sender: TObject);
   private
 
   public
@@ -131,6 +134,17 @@ begin
     ListBoxPropDefVal.MultiSelect := False;
     ListBoxPropDefVal.ExtendedSelect := False;
   end;
+end;
+
+procedure TFNewPropDlg.SpeedButtonHelpConfigClick(Sender: TObject);
+var
+  myUrl : string;
+begin
+  if SetDefaultLang('') = 'de' then
+    myUrl := 'https://docs.opsi.org/opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-product-configuration-properties'
+  else
+    myUrl := 'https://docs.opsi.org/opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-product-configuration-properties';
+  OpenURL(myUrl);
 end;
 
 procedure TFNewPropDlg.CheckBoxPropMultiValChange(Sender: TObject);

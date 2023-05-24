@@ -16,6 +16,8 @@ uses
   ExtCtrls,
   Buttons,
   StdCtrls,
+  lcltranslator,
+  LclIntf,
   osdbasedata;
 
 type
@@ -42,10 +44,12 @@ type
     Panel2: TPanel;
     RadioButtonAction: TRadioButton;
     RadioButtonState: TRadioButton;
+    SpeedButtonHelpConfig: TSpeedButton;
     procedure ComboBoxActStateChange(Sender: TObject);
     procedure EditproductidChange(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure RadioButtonActionChange(Sender: TObject);
+    procedure SpeedButtonHelpConfigClick(Sender: TObject);
   private
 
   public
@@ -88,6 +92,17 @@ begin
     if ComboBoxActState.Items.IndexOf(ComboBoxActState.Text) < 0 then
       ComboBoxActState.Text := 'installed';
   end;
+end;
+
+procedure TFNewDepDlg.SpeedButtonHelpConfigClick(Sender: TObject);
+var
+  myUrl : string;
+begin
+  if SetDefaultLang('') = 'de' then
+    myUrl := 'https://docs.opsi.org/opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-product-configuration-dependecies'
+  else
+    myUrl := 'https://docs.opsi.org/opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-product-configuration-dependecies';
+  OpenURL(myUrl);
 end;
 
 procedure TFNewDepDlg.FormShow(Sender: TObject);
