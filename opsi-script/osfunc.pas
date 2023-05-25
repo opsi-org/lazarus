@@ -6609,7 +6609,7 @@ begin
     if not Logged then
       Logdatei.Log(LogSCommand, LLinfo);
 
-    LogS := 'Warning:  section ' + Sektion + ' existed already - nothing to do';
+    LogS := 'Section ' + Sektion + ' existed already - nothing to do';
     Logdatei.Log(LogS, LLwarning);
   end;
 
@@ -6721,7 +6721,7 @@ begin
       if not Logged then
         Logged := Logdatei.Log(LogS, LLinfo);
 
-      LogS := 'Warning:  found neither entry ' + Eintrag + 'in section ' +
+      LogS := 'found neither entry ' + Eintrag + 'in section ' +
         Sektion + ' not found';
       Logdatei.Log(LogS, LLinfo);
 
