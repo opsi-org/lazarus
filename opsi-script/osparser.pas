@@ -2457,8 +2457,6 @@ var
     goon: boolean = True;
 
   begin
-    //ps := LogDatei.LogSIndentPlus (+3) + 'FILE ' +  PatchdateiName;
-    //LogDatei.log (ps, LLinfo);
     Logdatei.log('', LLInfo);
     Logdatei.log('Patching: ' + PatchFilename, LLInfo);
     ps := LogDatei.LogSIndentPlus(+3) + 'FILE ' + PatchFilename;

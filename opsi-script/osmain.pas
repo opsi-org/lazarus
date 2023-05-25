@@ -1383,24 +1383,7 @@ begin
       end;
 
       if PerformShutdown = tsrRegisterForShutdown then
-      begin
         WriteEntry(WinstRegFinalShutdownVar, trdInteger, IntToStr(RegCallShutdown));
-        //LogDatei.log('Written RegCallShutdown', LLinfo)
-      end
-      else
-      begin
-        // we tried to ensure that we have a correct registry entry:
-        // if it does not exist it is created with value 0
-        // but it seems not to work
-        //try
-        //  val := ReadInteger (WinstRegFinalShutdownVar);
-        //  LogDatei.log('Read RegCallShutdown: ' + Inttostr(val), LLinfo)
-        //except
-        // LogDatei.log('Not read RegCallShutdown', LLinfo);
-
-        // WriteEntry(WinstRegFinalShutdownVar, trdInteger, IntToStr (RegNoCallShutdown));
-        //end
-      end;
 
       LogDatei.log('BuildPC: handle reboot options: registry log continue .....',
         LLDebug3);
