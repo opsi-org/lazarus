@@ -26886,8 +26886,8 @@ begin
     LogDatei.log(GetSystemDefaultLocale(LOCALE_SABBREVLANGNAME) +
       '  -  System default locale ',
       LLessential);
-    tmpstr := 'MS Windows ' + GetSystemOSVersionInfoEx('major_version') +
-      '.' + GetSystemOSVersionInfoEx('minor_version');
+    tmpstr := 'MS Windows ' + GetMSVersionName + ' (' + GetSystemOSVersionInfoEx('major_version') +
+      '.' + GetSystemOSVersionInfoEx('minor_version')+')';
     if Is64BitSystem then
       tmpstr := tmpstr + ' 64 Bit'
     else
