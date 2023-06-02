@@ -546,6 +546,10 @@ procedure checkWorkbench;
 //function startOpsiServiceConnection: boolean;
 procedure initGUI;
 
+const
+  opsidocs_base_url = 'https://bonifax/opsidoc/antora/';
+  //opsidocs_base_url = opsidocs_base_url+'';
+
 
 var
   resultForm1: TresultForm1;
@@ -632,7 +636,7 @@ resourcestring
   rsCopyFileOnlyCap = 'Only selected file';
   //    'Should we copy not only the setup file. but the complete directory ?';
   rsSelectAppOrDir =
-    'First select MacOS .app a directory that contains the MacOS installer files';
+    'First select MacOS .app directory or a directory that contains the MacOS installer files';
   rsSelectMacFile = 'Now select the MacOS installer file.';
   rsRpmAnalyze = 'Analysis of RPM files';
   rsRPMAnalyzeNotLinux = 'Detailed analysis of rpm files can only be done in linux';
@@ -3692,9 +3696,9 @@ var
   myUrl : string;
 begin
   if LowerCase(osdsettings.mylang) = 'de' then
-    myUrl := 'https://docs.opsi.org/opsi-docs-de/4.2/manual/modules/setup-detector.html'
+    myUrl := opsidocs_base_url+'opsi-docs-de/4.2/manual/modules/setup-detector.html'
   else
-    myUrl := 'https://docs.opsi.org/opsi-docs-en/4.2/manual/modules/setup-detector.html';
+    myUrl := opsidocs_base_url+'opsi-docs-en/4.2/manual/modules/setup-detector.html';
   OpenURL(myUrl);
 end;
 
@@ -3969,9 +3973,9 @@ var
   myUrl : string;
 begin
   if LowerCase(osdsettings.mylang) = 'de' then
-    myUrl := 'https://docs.opsi.org/opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-use-single-analyze'
+    myUrl := opsidocs_base_url+'opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-use-single-analyze'
   else
-    myUrl := 'https://docs.opsi.org/opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-use-single-analyze';
+    myUrl := opsidocs_base_url+'opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-use-single-analyze';
   OpenURL(myUrl);
 end;
 
@@ -3980,9 +3984,9 @@ procedure TResultform1.SpeedButtonHelpCreateClick(Sender: TObject);
   myUrl : string;
 begin
   if LowerCase(osdsettings.mylang) = 'de' then
-    myUrl := 'https://docs.opsi.org/opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-product-create'
+    myUrl := opsidocs_base_url+'opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-product-create'
   else
-    myUrl := 'https://docs.opsi.org/opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-product-create';
+    myUrl := opsidocs_base_url+'opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-product-create';
   OpenURL(myUrl);
   //ShowMessage(rsNotImplemented);
 end;
@@ -3992,9 +3996,9 @@ procedure TResultform1.SpeedButtonHelpIconClick(Sender: TObject);
     myUrl : string;
   begin
     if LowerCase(osdsettings.mylang) = 'de' then
-      myUrl := 'https://docs.opsi.org/opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-product-configuration-icon'
+      myUrl := opsidocs_base_url+'opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-product-configuration-icon'
     else
-      myUrl := 'https://docs.opsi.org/opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-product-configuration-icon';
+      myUrl := opsidocs_base_url+'opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-product-configuration-icon';
     OpenURL(myUrl);
   end;
 
@@ -4003,9 +4007,9 @@ var
   myUrl : string;
 begin
   if LowerCase(osdsettings.mylang) = 'de' then
-    myUrl := 'https://docs.opsi.org/opsi-docs-de/4.2/manual/modules/setup-detector.html'
+    myUrl := opsidocs_base_url+'opsi-docs-de/4.2/manual/modules/setup-detector.html'
   else
-    myUrl := 'https://docs.opsi.org/opsi-docs-en/4.2/manual/modules/setup-detector.html';
+    myUrl := opsidocs_base_url+'opsi-docs-en/4.2/manual/modules/setup-detector.html';
   OpenURL(myUrl);
 end;
 
@@ -4014,9 +4018,9 @@ var
   myUrl : string;
 begin
   if LowerCase(osdsettings.mylang) = 'de' then
-    myUrl := 'https://docs.opsi.org/opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-product-configuration1'
+    myUrl := opsidocs_base_url+'opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-product-configuration1'
   else
-    myUrl := 'https://docs.opsi.org/opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-product-configuration1';
+    myUrl := opsidocs_base_url+'opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-product-configuration1';
   OpenURL(myUrl);
 end;
 
@@ -4025,9 +4029,9 @@ var
   myUrl : string;
 begin
   if LowerCase(osdsettings.mylang) = 'de' then
-    myUrl := 'https://docs.opsi.org/opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-product-configuration-priority_dependecy'
+    myUrl := opsidocs_base_url+'opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-product-configuration-priority_dependecy'
   else
-    myUrl := 'https://docs.opsi.org/opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-product-configuration-priority_dependency';
+    myUrl := opsidocs_base_url+'opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-product-configuration-priority_dependency';
   OpenURL(myUrl);
 end;
 
@@ -4036,9 +4040,9 @@ var
   myUrl : string;
 begin
   if LowerCase(osdsettings.mylang) = 'de' then
-    myUrl := 'https://docs.opsi.org/opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-tasks-os-independent'
+    myUrl := opsidocs_base_url+'opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-tasks-os-independent'
   else
-    myUrl := 'https://docs.opsi.org/opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-tasks-os-independent';
+    myUrl := opsidocs_base_url+'opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-tasks-os-independent';
   OpenURL(myUrl);
 end;
 
@@ -4047,9 +4051,9 @@ var
   myUrl : string;
 begin
   if LowerCase(osdsettings.mylang) = 'de' then
-    myUrl := 'https://docs.opsi.org/opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-use-single-setup-data'
+    myUrl := opsidocs_base_url+'opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-use-single-setup-data'
   else
-    myUrl := 'https://docs.opsi.org/opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-use-single-setup-data';
+    myUrl := opsidocs_base_url+'opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-use-single-setup-data';
   OpenURL(myUrl);
 end;
 
@@ -4058,9 +4062,9 @@ var
   myUrl : string;
 begin
   if LowerCase(osdsettings.mylang) = 'de' then
-    myUrl := 'https://docs.opsi.org/opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-tasks-linux'
+    myUrl := opsidocs_base_url+'opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-tasks-linux'
   else
-    myUrl := 'https://docs.opsi.org/opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-tasks-linux';
+    myUrl := opsidocs_base_url+'opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-tasks-linux';
   OpenURL(myUrl);
 end;
 
@@ -4069,9 +4073,9 @@ var
   myUrl : string;
 begin
   if LowerCase(osdsettings.mylang) = 'de' then
-    myUrl := 'https://docs.opsi.org/opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-tasks-macos'
+    myUrl := opsidocs_base_url+'opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-tasks-macos'
   else
-    myUrl := 'https://docs.opsi.org/opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-tasks-macos';
+    myUrl := opsidocs_base_url+'opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-tasks-macos';
   OpenURL(myUrl);
 end;
 
@@ -4080,9 +4084,9 @@ var
   myUrl : string;
 begin
   if LowerCase(osdsettings.mylang) = 'de' then
-    myUrl := 'https://docs.opsi.org/opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-tasks-multi'
+    myUrl := opsidocs_base_url+'opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-tasks-multi'
   else
-    myUrl := 'https://docs.opsi.org/opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-tasks-multi';
+    myUrl := opsidocs_base_url+'opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-tasks-multi';
   OpenURL(myUrl);
 end;
 
@@ -4091,9 +4095,9 @@ var
   myUrl : string;
 begin
   if LowerCase(osdsettings.mylang) = 'de' then
-    myUrl := 'https://docs.opsi.org/opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-tasks-win'
+    myUrl := opsidocs_base_url+'opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-tasks-win'
   else
-    myUrl := 'https://docs.opsi.org/opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-tasks-win';
+    myUrl := opsidocs_base_url+'opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-tasks-win';
   OpenURL(myUrl);
 end;
 

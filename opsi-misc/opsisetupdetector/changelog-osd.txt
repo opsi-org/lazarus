@@ -128,6 +128,8 @@ opsi-setup-detector (4.2.2.0-1) stable; urgency=low
    * fix: control file: licenseRequired: False ; fixes #4828
    * fix: trim service_url before use ; fixes #4825
    * feature: inno: read uninstall directory from iss file ; fixes #4622
+   * updated translation files: de / es / en
+   * call online help from docs.opsi.org with context
 
    todo:
 

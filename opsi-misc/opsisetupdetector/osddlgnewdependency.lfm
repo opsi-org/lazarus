@@ -6,6 +6,7 @@ object FNewDepDlg: TFNewDepDlg
   Caption = 'opsi-setup-detector: Dependency Editor'
   ClientHeight = 420
   ClientWidth = 444
+  OnActivate = FormActivate
   OnShow = FormShow
   Position = poScreenCenter
   LCLVersion = '2.2.6.0'
@@ -89,7 +90,7 @@ object FNewDepDlg: TFNewDepDlg
       ParentColor = False
       ParentFont = False
     end
-    object SpeedButtonHelpConfig: TSpeedButton
+    object SpeedButtonHelpDependecies: TSpeedButton
       Left = 417
       Height = 88
       Hint = 'Show Help'
@@ -134,7 +135,7 @@ object FNewDepDlg: TFNewDepDlg
         0000000000000000000000000000000000130000008C000000DA000000FB0000
         00FB000000DC000000930000001A000000000000000000000000
       }
-      OnClick = SpeedButtonHelpConfigClick
+      OnClick = SpeedButtonHelpDependeciesClick
       ShowHint = True
       ParentShowHint = False
     end

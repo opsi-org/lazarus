@@ -125,11 +125,6 @@
             <CustomOptions Value="-dOSDGUI
 -dOPSI_AS_USER
 -dOPSI"/>
-            <OtherDefines Count="3">
-              <Define0 Value="OSDGUI"/>
-              <Define1 Value="OPSI_AS_USER"/>
-              <Define2 Value="OPSI"/>
-            </OtherDefines>
           </Other>
         </CompilerOptions>
       </Item3>

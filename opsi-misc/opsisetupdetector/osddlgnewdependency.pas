@@ -44,12 +44,13 @@ type
     Panel2: TPanel;
     RadioButtonAction: TRadioButton;
     RadioButtonState: TRadioButton;
-    SpeedButtonHelpConfig: TSpeedButton;
+    SpeedButtonHelpDependecies: TSpeedButton;
     procedure ComboBoxActStateChange(Sender: TObject);
     procedure EditproductidChange(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure RadioButtonActionChange(Sender: TObject);
-    procedure SpeedButtonHelpConfigClick(Sender: TObject);
+    procedure SpeedButtonHelpDependeciesClick(Sender: TObject);
   private
 
   public
@@ -65,6 +66,8 @@ resourcestring
   rsDepDlgProductId = 'productId' + LineEnding + 'of the dependent product';
 
 implementation
+uses
+  osdform;
 
 {$R *.lfm}
 
@@ -94,14 +97,14 @@ begin
   end;
 end;
 
-procedure TFNewDepDlg.SpeedButtonHelpConfigClick(Sender: TObject);
+procedure TFNewDepDlg.SpeedButtonHelpDependeciesClick(Sender: TObject);
 var
   myUrl : string;
 begin
-  if SetDefaultLang('') = 'de' then
-    myUrl := 'https://docs.opsi.org/opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-product-configuration-dependecies'
+  if LowerCase(osdsettings.mylang) = 'de' then
+    myUrl := opsidocs_base_url+'opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-product-configuration-dependecies'
   else
-    myUrl := 'https://docs.opsi.org/opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-product-configuration-dependecies';
+    myUrl := opsidocs_base_url+'opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-product-configuration-dependecies';
   OpenURL(myUrl);
 end;
 
@@ -123,6 +126,12 @@ procedure TFNewDepDlg.EditproductidChange(Sender: TObject);
 begin
   TEdit(Sender).Caption := cleanOpsiId(TEdit(Sender).Caption);
   TEdit(Sender).SelStart := Length(TEdit(Sender).Caption);
+end;
+
+procedure TFNewDepDlg.FormActivate(Sender: TObject);
+begin
+  SetDefaultLang(osdsettings.mylang, osdsettings.mylocaledir);
+  Repaint;
 end;
 
 

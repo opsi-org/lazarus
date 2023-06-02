@@ -53,17 +53,18 @@ type
     Panel7: TPanel;
     RadioButtonPropString: TRadioButton;
     RadioButtonPropBool: TRadioButton;
-    SpeedButtonHelpConfig: TSpeedButton;
+    SpeedButtonHelpProperties: TSpeedButton;
     procedure BitBtnAddPropClick(Sender: TObject);
     procedure BitBtnDelPropClick(Sender: TObject);
     procedure CheckBoxPropMultiValChange(Sender: TObject);
     procedure EditPropNameChange(Sender: TObject);
     procedure EditPropNameEditingDone(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure RadioButtonPropBoolChange(Sender: TObject);
     procedure RadioButtonPropStringChange(Sender: TObject);
-    procedure SpeedButtonHelpConfigClick(Sender: TObject);
+    procedure SpeedButtonHelpPropertiesClick(Sender: TObject);
   private
 
   public
@@ -136,14 +137,14 @@ begin
   end;
 end;
 
-procedure TFNewPropDlg.SpeedButtonHelpConfigClick(Sender: TObject);
+procedure TFNewPropDlg.SpeedButtonHelpPropertiesClick(Sender: TObject);
 var
   myUrl : string;
 begin
-  if SetDefaultLang('') = 'de' then
-    myUrl := 'https://docs.opsi.org/opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-product-configuration-properties'
+  if LowerCase(osdsettings.mylang) = 'de' then
+    myUrl := opsidocs_base_url+'opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-product-configuration-properties'
   else
-    myUrl := 'https://docs.opsi.org/opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-product-configuration-properties';
+    myUrl := opsidocs_base_url+'opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-product-configuration-properties';
   OpenURL(myUrl);
 end;
 
@@ -194,6 +195,12 @@ begin
       mtError, [mbOK], '');
     valid := False;
   end;
+end;
+
+procedure TFNewPropDlg.FormActivate(Sender: TObject);
+begin
+  SetDefaultLang(osdsettings.mylang, osdsettings.mylocaledir);
+  Repaint;
 end;
 
 procedure TFNewPropDlg.FormCreate(Sender: TObject);

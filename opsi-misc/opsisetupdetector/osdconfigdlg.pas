@@ -48,6 +48,9 @@ var
 
 implementation
 
+uses
+  osdform;
+
 {$R *.lfm}
 
 { TFOSDConfigdlg }
@@ -84,7 +87,7 @@ begin
   myconfigurationhints.Add('Service_user=' + rsService_user);
   myconfigurationhints.Add('Service_pass=' + rsService_pass);
   myconfigurationhints.Add('preferSilent=' + rsPreferSilent);
-
+  SetDefaultLang(osdsettings.mylang, osdsettings.mylocaledir);
   Repaint;
 end;
 
@@ -104,10 +107,10 @@ procedure TFOSDConfigdlg.SpeedButtonHelpConfigClick(Sender: TObject);
 var
   myUrl : string;
 begin
-  if SetDefaultLang('') = 'de' then
-    myUrl := 'https://docs.opsi.org/opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-use-start'
+  if LowerCase(osdsettings.mylang) = 'de' then
+    myUrl := opsidocs_base_url+'opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-use-start'
   else
-    myUrl := 'https://docs.opsi.org/opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-use-start';
+    myUrl := opsidocs_base_url+'opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-use-start';
   OpenURL(myUrl);
 end;
 
