@@ -26622,7 +26622,7 @@ begin
     depotdrive_bak := depotdrive;
     depotdir_bak := depotdir;
   {$IFDEF UNIX}
-    computername := getHostnameLin;
+    if computername = '' then computername := getHostnameLin;
     logdatei.log('computername: ' + computername, LLDebug);
   {$ENDIF LINUX}
   {$IFDEF GUI}

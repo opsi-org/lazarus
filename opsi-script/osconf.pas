@@ -268,7 +268,7 @@ begin
 
 
     {$IFDEF UNIX}
-    computername := getHostnameLin;
+    if computername = '' then computername := getHostnameLin;
     {$ENDIF UNIX}
     Result := True;
     depoturl := '';
