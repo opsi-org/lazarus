@@ -605,7 +605,6 @@ procedure ChangeDirectory(newdir: string);
 function strContains(const str: string; const substr: string): boolean;
 function createNewOpsiHostKey: string;
 function getProfilesDirList: TStringList;
-//function loadUnicodeTextFile(filename: string): TStringList;
 function opsiunquotestr(s1, s2: string): string;
 
 function cmdLineInputDialog(var inputstr: string; const message, default: string;
@@ -762,15 +761,10 @@ const
 
   ExtractTempSubDirectory = 'decompr' + PathDelim;
   UsedFilesTempSubDirectory = 'usedfs' + PathDelim;
-//ziffern = ['0'..'9'];
 
 (* Hilfsfunktionen *)
 
 (* ---- allgemeine Systemaufrufe --- *)
-
-//recursionlevel: integer = 0;
-
-//function RegDeleteKeyEx; external advapi32 name 'RegDeleteKeyEx';
 
 function posFromEnd(const substr: string; const s: string): integer;
 var
@@ -825,48 +819,13 @@ begin
     inputstr := default;
 end;
 
-(*
-// removed for Lazarus 1.8
-function loadUnicodeTextFile(filename: string): TStringList;
-var
-  fCES: TCharEncStream;
-begin
-  Result := TStringList.Create;
-  fCES := TCharEncStream.Create;
-  fCES.Reset;
-  fileName := ExpandFileName(fileName);
-  fCES.LoadFromFile(fileName);
-  fCES.ANSIEnc := GetSystemEncoding;
-  Result.Text := fCES.UTF8Text;
-  fCES.Free;
-end;
-
-
-function stringListLoadUnicodeFromList(inlist: Tstringlist): TStringList;
-var
-  fCES: TCharEncStream;
-begin
-  Result := TStringList.Create;
-  fCES := TCharEncStream.Create;
-  fCES.Reset;
-  inlist.SaveToStream(fCES);
-  fCES.ANSIEnc := GetSystemEncoding;
-  Result.Text := fCES.UTF8Text;
-  fCES.Free;
-end;
-*)
-
 function getProfilesDirList: TStringList;
-var
-  list: TStringList;
 begin
   {$IFDEF WINDOWS}
   {$IFDEF WIN32}
   Result := getProfilesDirListWin;
   {$ELSE WIN32}
-  list := TStringList.Create;
-  Result := list;
-  list.Free;
+  Result := TStringList.Create;
   {$ENDIF WIN32}
   {$ENDIF WINDOWS}
   {$IFDEF LINUX}
@@ -5021,7 +4980,7 @@ begin
       runninguser, LLDebug);
   if AddAccessRightsToACL(ExtractFileDir(Filename), runninguser,
     JwaWindows.GENERIC_ALL, JwaWindows.SET_ACCESS,
-    JwaWindows.SUB_CONTAINERS_AND_OBJECTS_INHERIT) = True then
+    JwaWindows.NO_INHERITANCE) = True then
     LogDatei.log('Access Rights (dir) modified and granted to :' + runninguser, LLDebug);
 
   // does the file path points to a user profile ?
@@ -9542,19 +9501,13 @@ var
   FileMask: string = '';
   DeleteDeeperDir, DeleteStartDir: boolean;
   {$IFDEF WINDOWS}
-  exist, new: PWchar;
-  {$ELSE WINDOWS}
-  exist, new: PChar;
-  {$ENDIF WINDOWS}
-  moveflags: DWORD;
-
-  {$IFDEF WINDOWS}
+  exist: PWchar;
   exitbool: winbool;
   errorNo: integer;
-
-{$ENDIF WINDOWS}
-
-
+  {$ELSE WINDOWS}
+  exist: PChar;
+  {$ENDIF WINDOWS}
+  moveflags: DWORD;
 
   procedure ExecDelete
     (const CompleteName: string; DeleteDir: boolean);
@@ -9791,6 +9744,7 @@ begin
   testname := IncludeTrailingPathDelimiter(lowercase(Filename));
   if (testname = 'c:\') or (testname = 'c:\windows\') or
     (testname = 'c:\windows\system32\') or (testname = '/Applications/') or
+    (testname = 'c:\program files\') or (testname = 'c:\program files (x86)\') or
     (Filename = PathDelim) or (Filename = '\\') or (1 = pos('\', Filename)) then
   begin
     LogDatei.log('By policy we will not delete: ' + Filename, LLError);
@@ -9812,7 +9766,6 @@ begin
     LogS := 'Delete';
   LogS := LogS + ' "' + CompleteName + '"';
   LogDatei.log_prog(LogS, LLDebug);
-
 
   Filemask := ExtractFileName(CompleteName);
 
@@ -10597,7 +10550,9 @@ begin
   else
   begin
     Result := True;
-    Filename := MyFolderPath + PathDelim + description + '.lnk';
+    Filename := MyFolderPath + PathDelim + description;
+    if Copy(Filename, Length(Filename)-3) <> '.url' then
+      Filename := Filename + '.lnk';
     if not SysUtils.FileExists(Filename) then
     begin
       LogS := 'Info: Link ' + Linkname + ' does not exist';

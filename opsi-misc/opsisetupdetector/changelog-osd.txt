@@ -28,11 +28,14 @@ stWixToolset,
 * National Instruments installer
   ** Labview32 in phywe/measure-ct
   ** ;https://knowledge.ni.com/KnowledgeArticleDetails?id=kA00Z0000019Ld6SAE&l=de-DE
+
 * Bitrock Installer
   * setupmspec32bits.exe (Phywe spec)
   * pattern: <description>BitRock Installer</description>
   * https://iserv.eu/doc/development/deploy/packages/installer/bitrock/
   * --mode unattended --unattendedmodeui minimal
+  * was vmware installbuilder
+  * now installBuilder : https://installbuilder.com/
 
 * Astrum astrum-installwizard
   * Firma is dead:
@@ -80,6 +83,64 @@ CompanyNameIgor PavlovBFileDescription7z Setup SFX*FileVersion9.200InternalName7
 
 todo:
    *
+
+opsi-setup-detector (4.2.1.17-1) stable; urgency=low
+
+   * Fix writing property values to control file
+       * osdcreate: createopsifiles
+       * osdcreate: opsiquotestr
+   * Fix writing updatescript to control file
+       * osdcreate: initaktproduct
+
+-- Detlef Oertel <d.oertel@uib.de>  Wed,  15 Mar 2023 : 15:00:00 +0200
+
+opsi-setup-detector (4.2.1.16-1) stable; urgency=low
+
+   * Fix Hint Configuration service url
+   * fix: Make 'MSI Name' editable because it will become the DisplayName
+       * osdform FlowPanelMsiId: enabled = true
+       * osdform FlowPanelMsiId1: enabled = true
+       * osdform TIEditMsiName1: readonly = false
+       * osdform TIEditMsiName2: readonly = false
+       * osdform TIEditMsiId1: readonly = true
+       * osdform TIEditMsiId1: enabled = false
+       * osdform TIEditMsiId2: readonly = true
+       * osdform TIEditMsiId2: enabled = false
+   * Change: Property: 'Install_from_local_tmpdir' now default = True
+       * osdbasedata: makeproperties : myprop.boolDefault := True;
+   * Fix: preparation of dependency editor for meta products
+       * osdform: BitBtnAddDepClick
+
+-- Detlef Oertel <d.oertel@uib.de>  Fri,  10 Mar 2023 : 15:00:00 +0200
+
+
+opsi-setup-detector (4.2.1.15-1) stable; urgency=low
+
+   * New: Checkbox and configuration to switch beteen silent and unattended install mode
+     * osdbasedata: TSetupFile: boolean property preferSilent
+     * osdbasedata: TConfiguration: boolean property preferSilent
+     * osdbasedata: hint for preferSilent
+     * osdform: setup[0-2]: TICheckBoxS(x)Silent
+     * osdform: eventhandler for TICheckBoxS(x)Silent: TICheckBoxS1SilentChange
+     * osdform: links and hints for TICheckBoxS(x)Silent
+     * osdconfigdlg:  hint for preferSilent
+     * osdanalyzewin, osdanalyzelin: use property preferSilent to set (un)installcommandline
+   * fix: nogui + singleAnalyzeCreate mode: use radiobutton (from configuration) to decide build mode
+   * New copy existing libraries '*.opsilib' from cutom channel to clientpath
+     * osdcreate: createClientFiles; // additional optional files for 'custom'
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue,  31 Jan 2023 : 15:00:00 +0200
+
+opsi-setup-detector (4.2.1.14-1) stable; urgency=low
+
+   * osdform: fix mysetup.uninstallProg $installdir$ handling:
+     use mysetup.uninstallProg un modified for mysetup.uninstallCommandLine (secondary section)
+     modify it for mysetup.uninstallCheck in order to resolve the variable (promary section)
+   * functions opsiquotestr, opsiquotelist from parserhelper to osdcreate
+   * osdcreate: add declarations.opsiinc and sections.opsiinc to list of infiles at channel custom
+   * osdcreate: patchscript: warning if infile could not be found
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue,  24 Jan 2023 : 15:00:00 +0200
 
 opsi-setup-detector (4.2.1.13-1) stable; urgency=low
 

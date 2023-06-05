@@ -882,21 +882,12 @@ begin
     exit;
 
   ProductvarsForPC := opsidata.getProductproperties;
-  if runproductlist then
-    if not opsidata.setAddProductOnClientDefaults(True) then
-      LogDatei.log('failed telling server to look for productOnClient defaults',
-        LLerror);
   if not opsidata.initProduct then
   begin
     extremeErrorLevel := levelFatal;
     LogDatei.log(
         'failed opsidata.initProduct', LLcritical);
   end;
-  if runproductlist then
-    if not opsidata.setAddProductOnClientDefaults(False) then
-      LogDatei.log(
-        'failed telling server to stop looking for productOnClient defaults',
-        LLerror);
   LogDatei.log('ProcessNonZeroScript opsidata initialized', LLdebug2);
   Pfad := opsidata.getSpecialScriptPath;
   //only for backward compatibility and for special circumstances
@@ -1092,14 +1083,6 @@ var
         mInfo);
       //FBatchOberflaeche.setInfoLabel('Reloading product list after reinstallation...');
       {$ENDIF GUI}
-      if opsidata.getOpsiServiceVersion = '4' then
-      begin
-        LogDatei.log('telling server to look for dependent products',
-          LLessential);
-        if not TOpsi4Data(opsidata).setAddDependentProductOnClients(True) then
-          LogDatei.log('failed telling server to look for dependent products',
-            LLerror);
-      end;
       LogDatei.log('setting all on-products to setup', LLessential);
       for i := 1 to Produkte.Count do
       begin
@@ -1123,18 +1106,13 @@ var
             opsidata.setProductState(tpsNotInstalled);
             if productActionRequest in [tapNull, tapUpdate] then
             begin
-              opsidata.setProductActionRequest(tapSetup);
+              opsidata.setProductActionRequestWithDependencies(tapSetup);
               LogDatei.log('product "' + Produkt + '" set to setup',
                 LLessential);
             end;
           end;
         end;
       end;
-      if opsidata.getOpsiServiceVersion = '4' then
-        if not TOpsi4Data(opsidata).setAddDependentProductOnClients(False) then
-          LogDatei.log(
-            'failed telling server to look not for dependent products',
-            LLerror);
 
       opsidata.saveOpsiConf;
       // reload the new productlist
@@ -2108,7 +2086,7 @@ begin
             //OpsiData.setOptions (opsiclientd_serviceoptions);
             opsidata.setActualClient(computername);
             startupmessages.Append(computername);
-            startupmessages.Append(readConfigFromService);
+            startupmessages.Append(readConfigsFromService);
             startTime := now;
             (*
             omc := TOpsiMethodCall.Create('backend_info', []);
@@ -2874,7 +2852,8 @@ begin
                   if (i <= ParamListe.Count) then
                   begin
                     opsiserviceClientId := ParamListe.Strings[i - 1];
-                    computername := ParamListe.Strings[i - 1];
+                    if opsiserviceUser = '' then opsiserviceUser := opsiserviceClientId;
+                    computername := opsiserviceClientId;
                     if (length(computername) = 0) or
                       (computername[1] = ParamDelim) then
                     begin

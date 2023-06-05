@@ -10,8 +10,12 @@
         <CompatibilityMode Value="True"/>
       </Flags>
       <SessionStorage Value="InIDEConfig"/>
+      <Scaled Value="True"/>
       <ResourceType Value="res"/>
       <UseXPManifest Value="True"/>
+      <XPManifest>
+        <DpiAware Value="True/PM_V2"/>
+      </XPManifest>
       <Icon Value="0"/>
     </General>
     <i18n>
@@ -22,8 +26,8 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="12"/>
-      <RevisionNr Value="8"/>
-      <StringTable Comments="Compiled with Lazarus 2.2.0 / FPC 3.2.2" CompanyName="uib gmbh" FileDescription="opsi-script" InternalName="opsi-script" LegalCopyright="AGPL v3" LegalTrademarks="opsi, opsi.org, open pc server integration" OriginalFilename="opsi-script" ProductName="opsi" ProductVersion="4.2"/>
+      <RevisionNr Value="10"/>
+      <StringTable Comments="Compiled with Lazarus 2.2.6 / FPC 3.2.2" CompanyName="uib gmbh" FileDescription="opsi-script" InternalName="opsi-script" LegalCopyright="AGPL v3" LegalTrademarks="opsi, opsi.org, open pc server integration" OriginalFilename="opsi-script" ProductName="opsi" ProductVersion="4.2"/>
     </VersionInfo>
     <BuildModes Count="16">
       <Item1 Name="default" Default="True"/>
@@ -549,6 +553,9 @@
             </Optimizations>
           </CodeGeneration>
           <Linking>
+            <Debugging>
+              <UseHeaptrc Value="True"/>
+            </Debugging>
             <LinkSmart Value="True"/>
             <Options>
               <LinkerOptions Value="-sectcreate __TEXT __info_plist Info-os.plist"/>
@@ -861,7 +868,7 @@
         <PackageName Value="FCL"/>
       </Item3>
     </RequiredPackages>
-    <Units Count="73">
+    <Units Count="74">
       <Unit0>
         <Filename Value="opsiscript.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -1187,6 +1194,14 @@
         <Filename Value="osdefinedfunctions.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit72>
+      <Unit73>
+        <Filename Value="../common/custommessagebox.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="CustomMessageForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="CustomMessageBox"/>
+      </Unit73>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

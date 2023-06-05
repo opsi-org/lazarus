@@ -149,8 +149,9 @@ type
     function  GetGradientAr2(aColor:TColor;sz:Integer):TClrArray;
     function  HLStoRGB(hue,lum,sat: THLSRange): TColor;
     function  RGBtoHLS(RGBColor: TColor): THLSRec;
+    (* Following function is commented out since it caused an access violation. (a.schmitz@uib.de)
     function  GetColorBetween(StartColor, EndColor: TColor; Pointvalue,
-                              Von, Bis : Extended): TColor;
+                              Von, Bis : Extended): TColor; *)
     procedure SetOrientation(value:TQBarOrientation);
     procedure SetBarKind    (value:TQBarKind);
     procedure SetBarLook    (value:TQBarLook);
@@ -318,7 +319,8 @@ Begin
 
   For i := 0 To fUSefullDrawSpace Do
   Begin
-    clr := GetColorBetween(fStartClr, fFinalClr, (i), 0, fUSefullDrawSpace);
+    // Always use StartColor instead of function GetColorBetween since it caused an access violation. (a.schmitz@uib.de)
+    clr := fStartClr;
     If fBarKind = bkCylinder
        Then Self.fPixDescr[i] := GetGradientAr2( clr, rowSz )
        Else For j := 0 To rowSz -1 Do
@@ -506,7 +508,9 @@ begin
 end;
 
 
-
+// Following function GetColorBetween is commented out since the assembly line
+// 'call CalcColorBytes' caused an access violation in on variable F. (a.schmitz@uib.de)
+(*
 function TQProgressBar.GetColorBetween(StartColor, EndColor: TColor; Pointvalue,
                                        Von, Bis : Extended): TColor;                 // NIH
 {$IFDEF CPU64}
@@ -582,7 +586,7 @@ begin
   end;
 End;
 {$ENDIF CPU64}
-
+*)
 
 procedure TQProgressBar.Paint;
 // Main loop. Called each time a setting changes, notably, each time

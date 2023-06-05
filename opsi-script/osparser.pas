@@ -73,6 +73,7 @@ uses
   LCLIntf,
   oslistedit,
   osinputstring,
+  CustomMessageBox,
   StdCtrls,
 {$ENDIF GUI}
   TypInfo,
@@ -139,7 +140,7 @@ type
     tsIdapiConfig, tsLDAPsearch,
     tsFileActions, tsLinkFolder,
     tsWinBatch, tsDOSBatchFile, tsDOSInAnIcon,
-    tsShellBatchFile, tsShellInAnIcon, tsExecutePython,
+    tsShellBatchFile, tsShellInAnIcon, tsShellScript, tsExecutePython,
     tsExecuteWith, tsExecuteWith_escapingStrings,
     tsOpsiServiceCall,
     tsOpsiServiceHashList,
@@ -148,14 +149,13 @@ type
     // start of other commands  after tsWorkOnStringList
     tsWorkOnStringList,
     tsOpsiServiceCallStat,
-    //tsTestCommand,
     tsStayWhileWindowOpen,
     tsCondOpen, tsCondThen, tsCondElse, tsCondElseIf, tsCondClose,
     tsSwitch, tsSwitchCaseOpen, tsSwitchCaseClose,
     tsSwitchDefaultOpen, tsSwitchClose,
     tsLoopStringList, tsLoopForTo,
     tsMessage, tsMessageFile, tsShowBitmap,
-    tsImportLib,
+    tsImportLib, tsSetDebugLib,
     tsIncludeInsert, tsIncludeAppend,
     tsIncludeLog,
     tsShrinkFileToMB,  //internal undocumented
@@ -177,7 +177,7 @@ type
     tsSetFatalError, tsSetSuccess, tsSetNoUpdate, tsSetSuspended,
     tsSetMarkerErrorNumber,
     tsSetReportMessages, tsSetTimeMark, tsLogDiffTime,
-    tsSetDebug_Prog,
+    tsSetDebugProg,
     tsFatalOnSyntaxError,
     tsFatalOnRuntimeError,
     tsAutoActivityDisplay,
@@ -348,6 +348,8 @@ type
     FtestSyntax: boolean;  // default=false ; if true then run syntax check
 
 
+    procedure ParseMultilineStatement(var linecounter: integer;
+      var remaining: string; var Sektion: TWorkSection);
     procedure parsePowershellCall(var Command: string; var AccessString: string;
       var HandlePolicy: string; var Option: string; var Remaining: string;
       var syntaxCheck: boolean; var InfoSyntaxError: string;
@@ -511,18 +513,18 @@ type
       const Sektion: TWorkSection; const linecounter: integer): boolean;
     function IsVariableNameAlreadyInUse(VariableName: string;
       const Sektion: TWorkSection; const linecounter: integer): boolean;
+    function SkipCommentAtLineEnd(Remaining: string; Sektion: TWorkSection;
+      linecounter: integer): integer;
     function doAktionen(Sektion: TWorkSection;
       const CallingSektion: TWorkSection): TSectionResult;
 
     (* for other sections *)
-    function doTextpatch(const Sektion: TWorkSection; Filename: string;
-      PatchParameter: string): TSectionResult;
+    function doTextpatch(const Sektion: TWorkSection; Filename: string): TSectionResult;
 
     function doTests(const Sektion: TWorkSection;
       TestParameter: string): TSectionResult;
 
-    function doInifilePatches(const Sektion: TWorkSection; Filename: string;
-      PatchParameter: string): TSectionResult;
+    function doInifilePatches(const Sektion: TWorkSection; Filename: string): TSectionResult;
 
     function doHostsPatch(const Sektion: TWorkSection;
       HostsFilename: string): TSectionResult;
@@ -642,7 +644,6 @@ const
   NameInitSektion = 'Initial';
   NameAktionenSektion = 'Actions';
   NameProfileActionsSection = 'ProfileActions';
-  //NameAktionenSektion2              = 'Actions';
 
   (* Generic parameters *)
   Parameter_64Bit = '/64Bit';
@@ -739,8 +740,6 @@ var
   // we are between deffunc and endfunc line (even in a not active code)
   cmd64checked: boolean = False;
 
-
-
 //PreDefinedVariableSkinDirectorybinaryName : String;
 //PreDefinedVariableSkinDirectoryValue : String;
 
@@ -750,7 +749,6 @@ resourcestring
   rsGetPassword = 'Please enter opsi service user password:';
   rsReadyToContinue = 'Ready to continue ?';
   rsAbortProgram = 'Abort program ?';
-
 
 
 implementation
@@ -2101,32 +2099,14 @@ begin
 end;
 
 destructor TuibInstScript.Destroy;
-var
-  counter, i: integer;
 begin
-  FVarList.Free;
-  VarList := nil;
-  FValuesList.Free;
-  ValuesList := nil;
-  FlistOfStringLists.Free;
-  listOfStringLists := nil;
-  FContentOfStringLists.Free;
-  ContentOfStringLists := nil;
-  FLinesOriginList.Free;
-  FLinesOriginList := nil;
-  FLibList.Free;
-  FLibList := nil;
-  FsectionNameList.Free;
-  FsectionNameList := nil;
-  (*
-  counter := length(FSectionInfoArray);
-  if counter > 0 then
-    for i := 0 to counter - 1 do
-    begin
-      FSectionInfoArray[i] := nil;
-      FSectionInfoArray[i].Free;
-    end;
-    *)
+  FreeAndNil(FVarList);
+  FreeAndNil(FValuesList);
+  FreeAndNil(FListOfStringLists);
+  FreeAndNil(FContentOfStringLists);
+  FreeAndNil(FLinesOriginList);
+  FreeAndNil(FLibList);
+  FreeAndNil(FsectionNameList);
   SetLength(FSectionInfoArray, 0);
 end;
 
@@ -2405,104 +2385,107 @@ begin
   {$ENDIF GUI}
 end;
 
+
+function CreatePatchFileIfFileNotExists(const FileName: string): boolean;
+var
+  ErrorInfo: string = '';
+begin
+    Result := True;
+    if not FileExists(FileName) then
+    begin
+      LogDatei.log(LogDatei.LogSIndentPlus(+3) + 'The file "' +
+        FileName + '" does not exist and will be created ', LLInfo);
+      LogDatei.NumberOfHints := Logdatei.NumberOfHints + 1;
+      if CreateTextfile(FileName, ErrorInfo) then
+      begin
+        if ErrorInfo <> '' then
+          LogDatei.log(LogDatei.LogSIndentPlus(+3) + ErrorInfo, LLWarning);
+      end
+      else
+      begin
+        LogDatei.log(LogDatei.LogSIndentPlus(+3) + ErrorInfo, LLError);
+        Result := False;
+      end;
+    end;
+end;
+
+function GetWorkSection(const Section: TXStringList; const presetDir: string): TXStringList;
+begin
+  // create working object, i.e. a copy of the section that can be modified
+  Result := TXStringList.Create;
+  Result.Assign(Section);
+  Result.GlobalReplace(1, '%userprofiledir%', presetDir, False);
+  Result.GlobalReplace(1, '%currentprofiledir%', presetDir, False);
+end;
+
+function GetPatchFileName(FileName: string; Profile: string): string;
+begin
+  Result := SysUtils.StringReplace(Filename, '%userprofiledir%',
+    Profile, [rfReplaceAll, rfIgnoreCase]);
+  Result := SysUtils.StringReplace(Result, '%currentprofiledir%',
+    Profile, [rfReplaceAll, rfIgnoreCase]);
+  Result := ExpandFileName(Result);
+end;
+
 function TuibInstScript.doTextpatch(const Sektion: TWorkSection;
-  Filename: string; PatchParameter: string): TSectionResult;
+  Filename: string): TSectionResult;
 
 var
-  i, j, insertLineIndx: integer;
-  methodname: string = '';
-  s: string = '';
-  r: string = '';
-  s0: string = '';
-  s1: string = '';
-  s2: string = '';
-  startofline: string = '';
-  oldLine: string = '';
-  old_s2: string = '';
-  x: string = '';
-  found: boolean;
-  lastfind: boolean;
-  PatchListe: TpatchList;
-  ErrorInfo: string = '';
-  FileError: string = '';
-  syntaxCheck: boolean;
-  indx: integer;
-  d, sum: integer;
-  saveToOriginalFile: boolean;
-  working: boolean;
-  goOn: boolean;
-  secondStringList: TStringList;
-  PatchFilename: string = '';
-  Patchdatei: TuibPatchIniFile;
   ProfileList: TStringList;
   pc: integer = 0;
 
-  procedure CheckRemainder(var SyntaxCheck: boolean);
-  begin
-    if r <> '' then
-      errorinfo := ErrorRemaining
-    else
-      syntaxCheck := True;
-  end;
-
-
-
-  procedure doTextpatchMain(const Section: TXStringList; const presetDir: string);
+  procedure doTextpatchMain(const Section: TXStringList; const presetDir: string;
+    const PatchFilename: string);
   var
-    i: integer = 0;
+    saveToOriginalFile: boolean = True;
+    lastfind: boolean = False;
+    i: integer;
+    PatchListe: TpatchList;
+    methodname: string = '';
     index: integer = 0;
     patchlistcounter: integer = 0;
     workingSection: TXStringList;
     NameValueSeparator: char;
     goon: boolean = True;
+    insertLineIndx: integer = -1;
+    startofline: string = '';
+    FileError: string = '';
+    syntaxCheck: boolean = True;
+    j: integer = 0;
+    s: string = '';
+    r: string = '';
+    s0: string = '';
+    s1: string = '';
+    s2: string = '';
+    oldLine: string = '';
+    old_s2: string = '';
+    x: string = '';
+    found: boolean;
+    ErrorInfo: string = '';
+    indx: integer;
+    d, sum: integer;
+    working: boolean;
+    secondStringList: TStringList;
+
+    procedure CheckRemainder(var SyntaxCheck: boolean);
+    begin
+      if r <> '' then
+        errorinfo := ErrorRemaining
+      else
+        syntaxCheck := True;
+    end;
 
   begin
     Logdatei.log('', LLInfo);
     Logdatei.log('Patching: ' + PatchFilename, LLInfo);
-    ps := LogDatei.LogSIndentPlus(+3) + 'FILE ' + PatchFilename;
-    LogDatei.log(ps, LLinfo);
-
-    workingSection := TXStringList.Create;
-    workingSection.Assign(Section);
-    workingSection.GlobalReplace(1, '%userprofiledir%', presetDir, False);
-    workingSection.GlobalReplace(1, '%currentprofiledir%', presetDir, False);
 
     if not testSyntax then
-      if not FileExists(ExpandFileName(PatchFilename)) then
-      begin
-        try
-          ps := LogDatei.LogSIndentPlus(+3) +
-            'Info: This file does not exist and will be created ';
-          LogDatei.log(ps, LLInfo);
-          LogDatei.NumberOfHints := Logdatei.NumberOfHints + 1;
-
-          if CreateTextfile(ExpandFileName(PatchFilename), ErrorInfo) then
-          begin
-            if ErrorInfo <> '' then
-            begin
-              ps := LogDatei.LogSIndentPlus(+3) + 'Warning: ' + ErrorInfo;
-              LogDatei.log(ps, LLWarning);
-            end;
-          end
-          else
-          begin
-            ps := LogDatei.LogSIndentPlus(+3) + 'Error: ' + ErrorInfo;
-            LogDatei.log(ps, LLError);
-            exit; // ------------------------------  exit
-          end;
-        except
-          on E: Exception do
-          begin
-            LogDatei.log('Error in osparser..doTextpatchMain failed to create file: '
-              + ExpandFileName(PatchFilename) + ' Msg.: ' + E.Message, LLError);
-            exit;
-          end;
-        end;
-      end;
-
+      if not CreatePatchFileIfFileNotExists(PatchFilename) then
+        exit;
 
     ProcessMess;
     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+    workingSection := GetWorkSection(Section, presetDir);
 
     { create the list we work on }
     PatchListe := TPatchList.Create;
@@ -2510,13 +2493,8 @@ var
     PatchListe.ItemPointer := -1;
     if not testSyntax then
       PatchListe.loadFromFileWithEncoding(ExpandFileName(PatchFilename), flag_encoding);
-    //PatchListe.LoadFromFile(ExpandFileName(PatchFilename));
-    //PatchListe.Text := reencode(PatchListe.Text, 'system');
-    saveToOriginalFile := True;
-    lastfind := False;
 
     i := 1;
-    syntaxcheck := True;
     while (i <= workingSection.Count) and syntaxcheck do
     begin
       ErrorInfo := '';
@@ -2524,7 +2502,7 @@ var
       r := cutLeftBlanks(workingSection.strings[i - 1]);
       if (r = '') or (r[1] = LineIsCommentChar) then
         syntaxCheck := True
-      // continue
+        // continue
       else
       begin
         logdatei.log('Patchtextfile: command: ' + r, LLDebug3);
@@ -2913,7 +2891,6 @@ var
                   //secondStringList.Text := reencode(secondStringList.Text, 'system');
                   patchliste.SetItemPointer(0);
 
-                  j := 0;
                   goOn := True;
                   while (patchliste.Count > 0) and (j + 1 <= secondStringList.Count) and
                     goOn do
@@ -2967,7 +2944,6 @@ var
             if not testSyntax then
               if syntaxCheck then
               begin
-                insertLineIndx := -1;
                 PatchListe.ItemPointer :=
                   PatchListe.FindFirstItemStartingWith(s0 + '("' + s1 + '"', True, -1);
                 while PatchListe.ItemPointer > -1 do
@@ -3030,7 +3006,6 @@ var
           if not testSyntax then
             if syntaxCheck then
             begin
-              insertLineIndx := -1;
               startofline := s0 + '("' + s1 + '"';
 
               PatchListe.ItemPointer :=
@@ -3100,7 +3075,6 @@ var
             end;
 
         end
-
 
         else if (LowerCase(methodname) = lowercase(
           'AddStringListElement_To_Netscape_User_Pref')) then
@@ -3193,56 +3167,35 @@ var
         reportError(Sektion, i, Sektion.strings[i - 1], errorinfo);
     end;
 
-
     if not testSyntax then
       if saveToOriginalFile then
         PatchListe.SaveToFile(PatchFilename, flag_encoding);
-    //osencoding.saveTextFileWithEncoding(PatchListe, PatchFilename, flag_encoding);
-    //PatchListe.SaveToFile(PatchFilename);
-
-    PatchListe.Free;
-    PatchListe := nil;
 
     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
-    workingSection.Free;
-  end;   //doTextpatchMain
+    FreeAndNil(PatchListe);
+    FreeAndNil(workingSection);
+  end;
 
 begin
   Result := tsrPositive;
-  //Filename := ExpandFileName(Filename);
-
   if not initSection(Sektion, OldNumberOfErrors, OldNumberOfWarnings) then
     exit;
 
-  if (lowercase(PatchParameter) = lowercase(Parameter_AllNTUserProfiles)) or
-    (lowercase(PatchParameter) = lowercase(Parameter_AllUserProfiles)) or
-    flag_all_ntuser then
+  if flag_all_ntuser then
   begin
     flag_all_ntuser := False;
     ProfileList := getProfilesDirList;
     for pc := 0 to ProfileList.Count - 1 do
-    begin
-      PatchFilename := SysUtils.StringReplace(Filename, '%userprofiledir%',
-        ProfileList.Strings[pc], [rfReplaceAll, rfIgnoreCase]);
-      PatchFilename := SysUtils.StringReplace(PatchFilename,
-        '%currentprofiledir%', ProfileList.Strings[pc], [rfReplaceAll, rfIgnoreCase]);
-      PatchFilename := ExpandFileName(PatchFilename);
-      doTextpatchMain(Sektion, ProfileList.Strings[pc]);
-    end;
+      doTextpatchMain(Sektion, ProfileList.Strings[pc],
+        GetPatchFileName(Filename, ProfileList.Strings[pc]));
   end
   else
   begin
     if runLoginScripts then
-    begin
-      PatchFilename := SysUtils.StringReplace(Filename, '%userprofiledir%',
-        GetUserProfilePath, [rfReplaceAll, rfIgnoreCase]);
-      PatchFilename := SysUtils.StringReplace(PatchFilename,
-        '%currentprofiledir%', GetUserProfilePath, [rfReplaceAll, rfIgnoreCase]);
-    end
+      doTextpatchMain(Sektion, GetUserProfilePath,
+        GetPatchFileName(Filename, GetUserProfilePath))
     else
-      PatchFilename := Filename;
-    PatchFilename := ExpandFileName(PatchFilename);
-    doTextpatchMain(Sektion, GetUserProfilePath);
+      doTextpatchMain(Sektion, GetUserProfilePath, ExpandFileName(Filename));
   end;
 
   finishSection(Sektion, OldNumberOfErrors, OldNumberOfWarnings,
@@ -3250,10 +3203,7 @@ begin
 
   if ExitOnError and (DiffNumberOfErrors > 0) then
     Result := tsrExitProcess;
-
 end;
-
-
 
 function TuibInstScript.doTests(const Sektion: TWorkSection;
   TestParameter: string): TSectionResult;
@@ -3439,89 +3389,44 @@ begin
     Result := tsrExitProcess;
 end;
 
-
-
 function TuibInstScript.doInifilePatches(const Sektion: TWorkSection;
-  Filename: string; PatchParameter: string): TSectionResult;
+  Filename: string): TSectionResult;
 var
   pc: integer = 0;
-  Befehlswort: string = '';
-  Rest: string = '';
-  Bereich: string = '';
-  Eintrag: string = '';
-  AlterEintrag: string = '';
-  /// Value : String;
-  Patchdateiname: string = '';
-  Patchdatei: TuibPatchIniFile;
-  ErrorInfo: string = '';
   ProfileList: TStringList;
 
-  procedure doInifilePatchesMain(const presetDir: string);
+  procedure doInifilePatchesMain(Section: TXStringList; const presetDir: string;
+    const PatchdateiName: string);
   var
     i: integer = 0;
-    dummy: string;
-    mytxtfile: TStringList;
     workingSection: TXStringList;
+    Patchdatei: TuibPatchIniFile;
+    Befehlswort: string = '';
+    Rest: string = '';
+    Bereich: string = '';
+    Eintrag: string = '';
+    AlterEintrag: string = '';
+
   begin
-    //ps := LogDatei.LogSIndentPlus (+3) + 'FILE ' +  PatchdateiName;
-    //LogDatei.log (ps, LLinfo);
     Logdatei.log('', LLInfo);
     Logdatei.log('Patching: ' + PatchdateiName, LLInfo);
 
-
     if not testSyntax then
-      if not FileExists(PatchdateiName) then
-      begin
-        ps := LogDatei.LogSIndentPlus(+3) +
-          'Info: This file does not exist and will be created ';
-        LogDatei.log(ps, LLInfo);
-        LogDatei.NumberOfHints := Logdatei.NumberOfHints + 1;
-
-
-        if CreateTextfile(PatchdateiName, ErrorInfo) then
-        begin
-          if ErrorInfo <> '' then
-          begin
-            ps := LogDatei.LogSIndentPlus(+3) + 'Warning: ' + ErrorInfo;
-            LogDatei.log(ps, LLWarning);
-          end;
-        end
-        else
-        begin
-          ps := LogDatei.LogSIndentPlus(+3) + 'Error: ' + ErrorInfo;
-          LogDatei.log(ps, LLError);
-          exit; // ------------------------------  exit
-        end;
-      end;
-
+      if not CreatePatchFileIfFileNotExists(PatchdateiName) then
+        exit;
 
     ProcessMess;
-
     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
-
-    // create working opbjects
-    // copy const sektion to var workingsection so it can be modified
-    workingSection := TXStringList.Create;
-    workingSection.Assign(Sektion);
-    workingSection.GlobalReplace(1, '%userprofiledir%', presetDir, False);
-    workingSection.GlobalReplace(1, '%currentprofiledir%', presetDir, False);
+    workingSection := GetWorkSection(Section, presetDir);
 
     Patchdatei := TuibPatchIniFile.Create;
-    //mytxtfile := TStringlist.Create;
-
-
     Patchdatei.Clear;
     if not testSyntax then
     begin
       if FileExists(PatchdateiName) then
         Patchdatei.loadFromFileWithEncoding(ExpandFileName(PatchdateiName),
           flag_encoding);
-      // mytxtfile := loadTextFileWithEncoding(ExpandFileName(PatchdateiName),
-      //   flag_encoding);
-      //Patchdatei.LoadFromFile  (ExpandFileName(PatchdateiName));
-      //Patchdatei.Text := mytxtfile.Text;
-      //Patchdatei.text := reencode(Patchdatei.Text, flag_encoding,dummy,'system');
-      //Patchdatei.text := reencode(Patchdatei.Text, flag_encoding,dummy,system);
+
       for i := 0 to Patchdatei.Count - 1 do
         logdatei.log_prog('Loaded: ' + Patchdatei.Strings[i], LLDebug);
     end;
@@ -3591,29 +3496,21 @@ var
     Logdatei.log('--- ', LLInfo);
     if not testSyntax then
     begin
-      //Patchdatei.Text:= reencode(Patchdatei.Text, 'system',dummy,flag_encoding);
       if not ((flag_encoding = 'utf8') or (flag_encoding = 'UTF-8')) then
-      begin
-        //mytxtfile.Text := reencode(Patchdatei.Text, 'utf8',dummy,flag_encoding);
-        //mytxtfile.SaveToFile(PatchdateiName);
-        Patchdatei.SaveToFile(PatchdateiName, flag_encoding);
-      end
+        Patchdatei.SaveToFile(PatchdateiName, flag_encoding)
       else
-      begin
         Patchdatei.SaveToFile(PatchdateiName, 'utf8');
-      end;
+
       for i := 0 to Patchdatei.Count - 1 do
         logdatei.log_prog('Saved: ' + Patchdatei.Strings[i], LLDebug);
     end;
-    Patchdatei.Free;
-    Patchdatei := nil;
+
+    FreeAndNil(Patchdatei);
     FreeAndNil(workingSection);
   end;
 
 begin
   Result := tsrPositive;
-  //Filename := ExpandFileName(Filename);
-
   if not initSection(Sektion, OldNumberOfErrors, OldNumberOfWarnings) then
     exit;
 
@@ -3622,35 +3519,22 @@ begin
     flag_all_ntuser := False;
     ProfileList := getProfilesDirList;
     for pc := 0 to ProfileList.Count - 1 do
-    begin
-      PatchdateiName := SysUtils.StringReplace(Filename, '%userprofiledir%',
-        ProfileList.Strings[pc], [rfReplaceAll, rfIgnoreCase]);
-      PatchdateiName := SysUtils.StringReplace(PatchdateiName,
-        '%currentprofiledir%', ProfileList.Strings[pc], [rfReplaceAll, rfIgnoreCase]);
-      PatchdateiName := ExpandFileName(PatchdateiName);
-      doInifilePatchesMain(ProfileList.Strings[pc]);
-    end;
+      doInifilePatchesMain(Sektion, ProfileList.Strings[pc],
+        GetPatchFileName(Filename, ProfileList.Strings[pc]));
   end
   else
   begin
     if runLoginScripts then
-    begin
-      PatchdateiName := SysUtils.StringReplace(Filename, '%userprofiledir%',
-        GetUserProfilePath, [rfReplaceAll, rfIgnoreCase]);
-      PatchdateiName := SysUtils.StringReplace(PatchdateiName,
-        '%currentprofiledir%', GetUserProfilePath, [rfReplaceAll, rfIgnoreCase]);
-    end
+      doInifilePatchesMain(Sektion, GetUserProfilePath,
+        GetPatchFileName(Filename, GetUserProfilePath))
     else
-      PatchdateiName := Filename;
-    PatchdateiName := ExpandFileName(PatchdateiName);
-    doInifilePatchesMain(GetUserProfilePath);
+      doInifilePatchesMain(Sektion, GetUserProfilePath, ExpandFileName(Filename));
   end;
 
   LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
 
   finishSection(Sektion, OldNumberOfErrors, OldNumberOfWarnings,
     DiffNumberOfErrors, DiffNumberOfWarnings);
-
 
   if ExitOnError and (DiffNumberOfErrors > 0) then
     Result := tsrExitProcess;
@@ -5992,8 +5876,7 @@ begin
         begin
           if (GetUserNameEx_ <> '') then
           begin
-            hkulist := TStringList.Create;
-            hkulist.AddStrings(GetRegistryKeyList('HKU\', False));
+            hkulist := GetRegistryKeyList('HKU\', False);
             for i := 0 to hkulist.Count - 1 do
               LogDatei.log('found in hku  ' + hkulist.Strings[i], LLDebug2);
             hkulist.Free;
@@ -6259,8 +6142,7 @@ begin
         begin
           if (GetUserNameEx_ <> '') then
           begin
-            hkulist := TStringList.Create;
-            hkulist.AddStrings(GetRegistryKeyList('HKU\', False));
+            hkulist := GetRegistryKeyList('HKU\', False);
             for i := 0 to hkulist.Count - 1 do
               LogDatei.log('found in hku  ' + hkulist.Strings[i], LLDebug2);
             hkulist.Free;
@@ -8423,7 +8305,6 @@ var
   remaining: string = '';
 
   findresultcode: integer = 0;
-  //searchresult : TSearchRec;
   ch: char;
   oldDisableWow64FsRedirectionStatus: pointer = nil;
   Wow64FsRedirectionDisabled: boolean;
@@ -8440,7 +8321,6 @@ var
     j: integer = 0;
     dummyint: integer = 0;
     workingSection: TXStringList;
-    ///info : string;
     remaining_with_leading_blanks: string = '';
     search4file: boolean;
     mode, strmode, rwxPart: string;  // used on linux
@@ -8482,7 +8362,6 @@ var
       logdatei.log(Remaining, LLDebug2);
     end;
 
-
     for i := 1 to Sektion.Count do
     begin
       Remaining := cutLeftBlanks(workingSection.strings[i - 1]);
@@ -8490,7 +8369,7 @@ var
       SyntaxCheck := True;
 
       if (Remaining = '') or (Remaining[1] = LineIsCommentChar) then
-      // continue
+        // continue
       else
       begin
         GetWord(Remaining, Expressionstr, Remaining, WordDelimiterSet0);
@@ -9228,7 +9107,6 @@ var
           end;
         end
 
-
         else if (UpperCase(Expressionstr) = 'SYMLINK') then
         begin
           go_on := True;
@@ -9471,11 +9349,8 @@ var
         else
           reportError(Sektion, i, Expressionstr, 'is not a valid command');
       end;
-
     end;
-
     workingSection.Free;
-
   end;
 
 begin
@@ -9546,20 +9421,15 @@ begin
     {$ENDIF WIN32}
   end;
 
-
-  Install.Free;
-  Install := nil;
+  FreeAndNil(Install);
 
   finishSection(Sektion, OldNumberOfErrors, OldNumberOfWarnings,
     DiffNumberOfErrors, DiffNumberOfWarnings);
 
-
   if ExitOnError and (DiffNumberOfErrors > 0) then
     Result := tsrExitProcess;
 
-
   LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
-
 end;
 
 
@@ -9577,6 +9447,7 @@ begin
   end;
   LogDatei.log_prog(FeatureNameForLogging + ': ' + Result, LLDebug);
 end;
+
 
 procedure linkActionsMain(const Sektion: TWorkSection; const UibInstScript: TuibInstScript; const testSyntax: boolean);
   var
@@ -9873,13 +9744,17 @@ begin
 
             else if LowerCase(Expressionstr) = 'window_state' then
             begin
+              // https://learn.microsoft.com/en-us/windows/win32/api/shobjidl_core/nf-shobjidl_core-ishelllinkw-setshowcmd
+              // https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-showwindow
               if not getString(Remaining, s, Remaining, errorinfo, False)
               then
+              begin
                 s := Remaining;
+              end;
                 {$IFDEF UNIX}
-              logdatei.log('Option window_state is ignored at Linux', LLWarning);
+                logdatei.log('Option window_state is ignored at Linux', LLWarning);
                 {$ENDIF UNIX}
-                {$IFDEF WIN32}
+              {$IFDEF WIN32}
               if s = '' then
                 link_showwindow := 0
               else
@@ -9893,10 +9768,10 @@ begin
                   link_showwindow := 3
                 else
                   UibInstScript.reportError(Sektion, i, Sektion.Strings[i - 1],
-                    '"' + s + '" could not converted to a window_state key.');
+                    '"' + s + '" could not be converted to a window_state key.');
                 LogDatei.log_prog('link_showwindow: ' + s, LLDebug);
               end;
-                {$ENDIF WIN32}
+              {$ENDIF WIN32}
             end
 
             else if LowerCase(Expressionstr) = 'link_categories' then
@@ -12103,6 +11978,7 @@ var
   list2: TXStringList = nil;
   list3: TXStringList = nil;
   slist: TStringList = nil;
+  templist: TStringList = nil;
   inifile: TuibIniScript;
   uibInifile: TuibIniFile;
   localSection: TWorkSection;
@@ -12224,11 +12100,11 @@ begin
           if Skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxCheck := True;
-            list.Text := '';
             if not testSyntax then
               try
                 //LogDatei.log ('Executing0 ' + s1, LLInfo);
-                list.Text := execShellCall(s1, 'sysnative', 1, True).Text;
+                FreeAndNil(list); //free list before assign new TXStringlist object to variable
+                list := TXStringList(execShellCall(s1, 'sysnative', 1, True));
               except
                 on e: Exception do
                 begin
@@ -12245,13 +12121,13 @@ begin
     else if LowerCase(s) = LowerCase('powershellcall') then
     begin
       parsePowershellCall(s1, s2, s3, s4, r, syntaxCheck, InfoSyntaxError, tmpbool);
-      list.Text := '';
       if syntaxCheck then
         {$IFDEF WINDOWS}
         if not testSyntax then
         begin
           try
-            list.Text := execPowershellCall(s1, s2, 1, True, False, tmpbool1, s4).Text;
+            FreeAndNil(list); //free list before assign new TXStringlist object to variable
+            list := TXStringList(execPowershellCall(s1, s2, 1, True, False, tmpbool1, s4));
           except
             on e: Exception do
             begin
@@ -12356,7 +12232,8 @@ begin
               try
                 s1 := ExpandFileName(s1);
                 if FileExists(s1) then
-                  TStringList(list).Assign(loadUnicodeTextFile(s1, tmpbool, tmpstr))
+                  list.loadFromUnicodeFile(s1, tmpbool, tmpstr)
+                  //TStringList(list).Assign(loadUnicodeTextFile(s1, tmpbool, tmpstr))
                 else
                 begin
                   LogDatei.log(
@@ -12576,7 +12453,7 @@ begin
 
                   if not (localKindOfStatement in
                     [tsDOSBatchFile, tsDOSInAnIcon, tsShellBatchFile,
-                    tsShellInAnIcon, tsExecutePython, tsExecuteWith,
+                    tsShellInAnIcon, tsShellScript, tsExecutePython, tsExecuteWith,
                     tsExecuteWith_escapingStrings, tsWinBatch]) then
                   begin
                     InfoSyntaxError := 'not implemented for this kind of section';
@@ -12615,7 +12492,7 @@ begin
                             True {catchout}, 1, list);
 
                         tsDOSBatchFile, tsDOSInAnIcon, tsShellBatchFile,
-                        tsShellInAnIcon:
+                        tsShellInAnIcon, tsShellScript:
                           execDOSBatch(localSection, r1,
                             SW_HIDE, True {catchout}, 1,
                             [ttpWaitOnTerminate], list);
@@ -12766,7 +12643,9 @@ begin
             if not testSyntax then
             begin
               list.Clear;
-              list.AddStrings(parseUrl(s1));
+              templist := parseUrl(s1);
+              list.text := templist.Text;
+              freeandnil(templist);
             end;
           end;
     end
@@ -13212,7 +13091,9 @@ begin
             if not testSyntax then
             begin
               list.Clear;
-              list.AddStrings(getSubListByContainingRegex(s1, list1));
+              templist := getSubListByContainingRegex(s1, list1);
+              list.Text:=templist.Text;
+              FreeAndNil(templist);
             end;
           end;
           FreeAndNil(list1);
@@ -13230,8 +13111,9 @@ begin
               syntaxcheck := True;
               if not testSyntax then
               begin
-                list.Clear;
-                list.AddStrings(getSubListByContainingRegex(list2, list3));
+                templist := getSubListByContainingRegex(list2, list3);
+                list.Text:=templist.Text;
+                FreeAndNil(templist);
               end;
             end;
             FreeAndNil(list3);
@@ -13255,8 +13137,9 @@ begin
             syntaxcheck := True;
             if not testSyntax then
             begin
-              list.Clear;
-              list.AddStrings(getRegexMatchList(s1, list1));
+              templist := getRegexMatchList(s1, list1);
+              list.Text:=templist.Text;
+              FreeAndNil(templist);
             end;
           end;
           FreeAndNil(list1);
@@ -13274,8 +13157,9 @@ begin
               syntaxcheck := True;
               if not testSyntax then
               begin
-                list.Clear;
-                list.AddStrings(getRegexMatchList(list2, list3));
+                templist := getRegexMatchList(list2, list3);
+                list.Text:=templist.Text;
+                FreeAndNil(templist);
               end;
             end;
             FreeAndNil(list3);
@@ -13298,8 +13182,9 @@ begin
             skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxcheck := True;
-            list.Clear;
-            list.AddStrings(removeFromListByContainingRegex(s1, list1));
+            templist := removeFromListByContainingRegex(s1, list1);
+            list.Text:=templist.Text;
+            FreeAndNil(templist);
           end;
           FreeAndNil(list1);
         end
@@ -13314,8 +13199,9 @@ begin
               skip(')', r, r, InfoSyntaxError) then
             begin
               syntaxcheck := True;
-              list.Clear;
-              list.AddStrings(removeFromListByContainingRegex(list2, list3));
+              templist := removeFromListByContainingRegex(list2, list3);
+              list.Text:=templist.Text;
+              FreeAndNil(templist);
             end;
             FreeAndNil(list3);
           end;
@@ -13552,8 +13438,9 @@ begin
                     syntaxCheck := True;
                     if not testSyntax then
                     begin
-                      list.Clear;
-                      list.AddStrings(stringReplaceRegexInList(list1, s1, s2));
+                      templist := stringReplaceRegexInList(list1, s1, s2);
+                      list.Text:=templist.Text;
+                      FreeAndNil(templist);
                     end;
                   end;
         list1.Free;
@@ -14345,8 +14232,9 @@ begin
             begin
               s1 := ExpandFileName(s1);
               try
-                list.Clear;
-                list.AddStrings(LoadTOMLFile(s1));
+                templist := LoadTOMLFile(s1);
+                list.Text:=templist.Text;
+                FreeAndNil(templist);
               except
                 on e: Exception do
                 begin
@@ -14370,8 +14258,9 @@ begin
             if not testSyntax then
             begin
               try
-                list.Clear;
-                list.AddStrings(GetTOMLAsStringList(s1));
+                templist := GetTOMLAsStringList(s1);
+                list.Text:=templist.Text;
+                FreeAndNil(templist);
               except
                 on e: Exception do
                 begin
@@ -14395,8 +14284,9 @@ begin
             if not testSyntax then
             begin
               try
-                list.Clear;
-                list.AddStrings(GetTOMLKeys(s1));
+                templist := GetTOMLKeys(s1);
+                list.Text:=templist.Text;
+                FreeAndNil(templist);
               except
                 on e: Exception do
                 begin
@@ -14420,8 +14310,9 @@ begin
             if not testSyntax then
             begin
               try
-                list.Clear;
-                list.AddStrings(GetTOMLTableNames(s1));
+                templist := GetTOMLTableNames(s1);
+                list.Text:=templist.Text;
+                FreeAndNil(templist);
               except
                 on e: Exception do
                 begin
@@ -14447,8 +14338,9 @@ begin
                 if not testSyntax then
                 begin
                   try
-                    list.Clear;
-                    list.AddStrings(GetTOMLTable(s1, s2));
+                    templist := GetTOMLTable(s1, s2);
+                    list.Text:=templist.Text;
+                    FreeAndNil(templist);
                   except
                     on e: Exception do
                     begin
@@ -14542,7 +14434,11 @@ begin
       begin
         syntaxcheck := True;
         if not testSyntax then
-          list.AddStrings(getIpMacHash);
+        begin
+          templist := getIpMacHash;
+          list.Text:=templist.Text;
+          FreeAndNil(templist);
+        end
       end;
     end
    {$ENDIF WIN32}
@@ -14687,7 +14583,11 @@ begin
       syntaxcheck := True;
         {$IFDEF LINUX}
       if not testSyntax then
-        list.AddStrings(getLinuxVersionMap);
+      begin
+        templist := getLinuxVersionMap;
+        list.Text:= templist.Text;
+        FreeAndNil(templist);
+      end;
         {$ELSE LINUX}
       LogDatei.log('getLinuxVersionMap is only implemented for Linux',
         LLError);
@@ -14701,7 +14601,11 @@ begin
       syntaxcheck := True;
         {$IFDEF DARWIN}
       if not testSyntax then
-        list.AddStrings(getMacosVersionMap);
+      begin
+        templist := getMacosVersionMap;
+        list.Text:= templist.Text;
+        FreeAndNil(templist);
+      end;
         {$ELSE DARWIN}
       LogDatei.log('getMacosVersionMap is only implemented for macOS',
         LLError);
@@ -15166,7 +15070,11 @@ begin
       begin
         syntaxcheck := True;
         if not testSyntax then
-          list.AddStrings(getProcessList);
+        begin
+          templist := getProcessList;
+          list.Text := templist.Text;
+          FreeAndNil(templist);
+        end;
       end;
     end
 
@@ -15176,7 +15084,11 @@ begin
       begin
         syntaxcheck := True;
         if not testSyntax then
-          list.AddStrings(getProfilesDirList);
+        begin
+          templist := getProfilesDirList;
+          list.Text := templist.Text;
+          FreeAndNil(templist);
+        end;
       end;
     end
 
@@ -15185,7 +15097,11 @@ begin
       begin
         syntaxcheck := True;
         if not testSyntax then
-          list.AddStrings(listCertificatesFromSystemStore());
+        begin
+          templist := listCertificatesFromSystemStore();
+          list.Text := templist.Text;
+          FreeAndNil(templist);
+        end;
       end;
     end
 
@@ -15197,7 +15113,11 @@ begin
       list.Clear;
       {$ELSE}
       if not testSyntax then
-        list.AddStrings(getHwBiosShortlist);
+      begin
+        templist := getHwBiosShortlist;
+        list.Text := templist.Text;
+        FreeAndNil(templist);
+      end;
       {$ENDIF}
     end
     else
@@ -15214,6 +15134,8 @@ begin
         LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 4;
       end;
   end;
+
+  if Assigned(slist) then FreeAndNil(slist);
 
   if syntaxcheck then
     Remaining := r
@@ -17736,7 +17658,38 @@ begin
               end;
     end
 
-
+    else if LowerCase(s) = LowerCase('showmessagebox') then
+    begin
+      list1 := TXStringList.Create;
+      itemlist := TXStringList.Create;
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s, InfoSyntaxError) then // s = title
+          if Skip(',', r, r, InfoSyntaxError) then
+            if produceStringList(script, r, r, list1, InfoSyntaxError) then // list1 = message list
+              if Skip(',', r, r, InfoSyntaxError) then
+                if produceStringList(script, r, r, itemlist, InfoSyntaxError) then // itemlist = button list
+                  if Skip(',', r, r, InfoSyntaxError) then
+                    if EvaluateString(r, r, s1, InfoSyntaxError) then // s1 = timeout message
+                      if Skip(',', r, r, InfoSyntaxError) then
+                        if EvaluateString(r, r, s2, InfoSyntaxError) then // s2 = timeout
+                          if Skip(')', r, r, InfoSyntaxError) then
+                          begin
+                            syntaxCheck := True;
+                            {$IFDEF GUI}
+                            if not testsyntax then
+                            begin
+                              CustomMessageForm := TCustomMessageForm.Create(nil);
+                              CustomMessageForm.ShowBox(s, TStringList(list1),
+                                TStringList(itemlist), s1, s2);
+                              StringResult := CustomMessageForm.ExitCode;
+                              if Assigned(CustomMessageForm) then
+                                FreeAndNil(CustomMessageForm);
+                            end;
+                            {$ENDIF GUI}
+                          end;
+      FreeAndNil(list1);
+      FreeAndNil(itemlist);
+    end
 
     else if LowerCase(s) = LowerCase('stringreplace') then
     begin
@@ -18919,9 +18872,7 @@ begin
 
           if not errorOccured then
           begin
-            omc := TOpsiMethodCall.Create('getAndAssignSoftwareLicenseKey', parameters);
-
-            testresult := local_opsidata.CheckAndRetrieveString(omc, errorOccured);
+            testresult := local_opsidata.demandLicenseKey(parameters, errorOccured);
           end;
         end;
 
@@ -21833,6 +21784,32 @@ begin
   end;
 end;
 
+procedure TuibInstScript.ParseMultilineStatement(var linecounter: integer;
+  var remaining: string; var Sektion: TWorkSection);
+var
+  addnextline: boolean = False;
+begin
+  // Handling of multiline statements
+  repeat
+    addnextline := False;
+    Remaining := Remaining + trim(Sektion.strings[linecounter - 1]);
+    LogDatei.log_prog('Readline: ' + Remaining, LLDebug2);
+    // if space or tab and backslash add the next line
+    if (EndsStr(' \', Remaining) or EndsStr(chr(9) + '\', Remaining)) then
+    begin
+      if not ContainsText(Remaining, 'escapestring') then //but not for escapestring
+      begin
+        addnextline := True;
+        Inc(linecounter);
+        Remaining := TrimRightSet(Remaining, ['\']);
+        LogDatei.log_prog('Readline addnext detected: ' + Remaining, LLDebug2);
+      end;
+    end;
+  until (not addnextline) or (linecounter > Sektion.Count);
+  //linecounter must not be out of bounds:
+  if (linecounter > Sektion.Count) then linecounter := Sektion.Count;
+end;
+
 procedure TuibInstScript.SetVariableWithErrors(const Sektion: TWorkSection;
   var Remaining: string; const Expressionstr: string; linecounter: integer;
   var InfoSyntaxError: string; var NestLevel: integer);
@@ -21888,6 +21865,18 @@ begin
       Inc(FNumberOfErrors);
     end;
   end;
+end;
+
+function TuibInstScript.SkipCommentAtLineEnd(Remaining: string; Sektion: TWorkSection;
+  linecounter: integer): integer;
+begin
+  // allow only spaces or a comment at line end but nothing else
+  Remaining := Trim(Remaining);
+  if (Remaining = '') or (Remaining.Chars[0] = ';') then
+    Result := tsrPositive
+  else
+    Result := reportError(Sektion, linecounter, Remaining,
+      'Only a comment is allowed here before the line end!');
 end;
 
 function TuibInstScript.doAktionen(Sektion: TWorkSection;
@@ -22245,9 +22234,7 @@ begin
   {$IFDEF GUI}
   FBatchOberflaeche.SetBatchWindowMode(batchWindowMode);
   // do not overwrite messages in in LabelInfo
-  FBatchOberflaeche.LoadSkin('', False);
   Application.ProcessMessages;
-  //setWindowState(batchWindowMode);
   {$ENDIF GUI}
 
   linecounter := 1;
@@ -22260,8 +22247,10 @@ begin
     (((actionresult > tsrFatalError) and (FExtremeErrorLevel > levelfatal) and
       not scriptstopped) or testSyntax) do
   begin
-    //writeln(actionresult);
-    Remaining := trim(Sektion.strings[linecounter - 1]);
+    Remaining := '';
+
+    ParseMultilineStatement(linecounter, remaining, Sektion);
+
     // Replace constants on every line in primary section:
     ApplyTextConstantsToString(Remaining, False);
     logdatei.log_prog('Working doAktionen: Remaining:' + remaining, LLDebug2);
@@ -23683,7 +23672,32 @@ begin
                     InfoSyntaxError);
               end; // tsImportLib
 
+              tsSetDebugLib:
+                if skip('=', remaining, remaining, InfoSyntaxError) then
+                begin
+                  // change the config 'debug_lib' also in test syntax mode
+                  GetWord(Remaining, Expressionstr, Remaining, [' ', ';']);
 
+                  if (LowerCase(Expressionstr) = 'true') or
+                    (LowerCase(Expressionstr) = 'false') then
+                  begin
+                    LogDatei.log('debug_lib was ' +
+                      LowerCase(BoolToStr(logdatei.debug_lib, True)) +
+                      ' is set to ' + LowerCase(Expressionstr), LLInfo);
+                    LogDatei.debug_lib := StrToBool(LowerCase(Expressionstr));
+                    ActionResult :=
+                      SkipCommentAtLineEnd(Remaining, Sektion, linecounter);
+                  end
+                  else
+                  begin
+                    InfoSyntaxError := '"' + Expressionstr + '" is no valid boolean!';
+                    ActionResult :=
+                      reportError(Sektion, linecounter, Remaining, InfoSyntaxError);
+                  end;
+                end
+                else
+                  ActionResult :=
+                    reportError(Sektion, linecounter, Remaining, InfoSyntaxError);
 
               tsIncludeInsert:
               begin
@@ -24651,7 +24665,7 @@ begin
 
                     if not (localKindOfStatement in
                       [tsDOSBatchFile, tsDOSInAnIcon,
-                      tsShellBatchFile, tsShellInAnIcon,
+                      tsShellBatchFile, tsShellInAnIcon, tsShellScript,
                       tsExecutePython, tsExecuteWith, tsExecuteWith_escapingStrings,
                       tsWinBatch, tsRegistryHack, tsFileActions]) then
                     begin
@@ -24708,7 +24722,7 @@ begin
                                   True {catchout}, 1, tmplist);
 
                               tsDOSBatchFile, tsDOSInAnIcon, tsShellBatchFile,
-                              tsShellInAnIcon:
+                              tsShellInAnIcon, tsShellScript:
                                 execDOSBatch(localSection, tmpstr,
                                   SW_HIDE, True {catchout}, 0,
                                   [ttpWaitOnTerminate], tmplist);
@@ -24955,7 +24969,7 @@ begin
                     reportError(Sektion, linecounter, Sektion.strings[linecounter - 1],
                     InfoSyntaxError);
 
-              tsSetDebug_Prog:
+              tsSetDebugProg:
                 if skip('=', remaining, remaining, InfoSyntaxError) then
                 begin
                   //if not testSyntax then
@@ -25636,7 +25650,7 @@ begin
                 end;
                 // if not testSyntax then
                 // testSyntax is done in doTextpatch
-                ActionResult := doTextpatch(ArbeitsSektion, Filename, '');
+                ActionResult := doTextpatch(ArbeitsSektion, Filename);
               end;
 
               tsTests:
@@ -25644,7 +25658,6 @@ begin
                 if not testSyntax then
                   ActionResult := doTests(ArbeitsSektion, Remaining);
               end;
-
 
               tsPatchIniFile:
               begin
@@ -25715,7 +25728,7 @@ begin
                 end;
                 //if not testSyntax then
                 // testSyntax is done in doInifilePatches
-                ActionResult := doInifilePatches(ArbeitsSektion, Filename, '');
+                ActionResult := doInifilePatches(ArbeitsSektion, Filename);
               end;
 
               tsHostsPatch:
@@ -25973,37 +25986,7 @@ begin
               end;
                {$ENDIF WIN32}
 
-              tsDosBatchFile:
-              begin
-                logdatei.log('Execution of: ' + ArbeitsSektion.Name +
-                  ' ' + Remaining, LLNotice);
-                if not testSyntax then
-                  ActionResult :=
-                    execDOSBatch(ArbeitsSektion, Remaining, SW_ShowNormal,
-                    False {dont catch out}, 0, [ttpWaitOnTerminate], output);
-              end;
-
-              tsDosInAnIcon:
-              begin
-                logdatei.log('Execution of: ' + ArbeitsSektion.Name +
-                  ' ' + Remaining, LLNotice);
-                if not testSyntax then
-                  ActionResult :=
-                    execDOSBatch(ArbeitsSektion, Remaining, SW_HIDE,
-                    True {catch out}, 0, [ttpWaitOnTerminate], output);
-              end;
-
-              tsShellBatchFile:
-              begin
-                logdatei.log('Execution of: ' + ArbeitsSektion.Name +
-                  ' ' + Remaining, LLNotice);
-                if not testSyntax then
-                  ActionResult :=
-                    execDOSBatch(ArbeitsSektion, Remaining, SW_ShowNormal,
-                    False {dont catch out}, 0, [ttpWaitOnTerminate], output);
-              end;
-
-              tsShellInAnIcon:
+              tsShellInAnIcon, tsShellBatchFile, tsDosInAnIcon, tsDosBatchFile, tsShellScript:
               begin
                 logdatei.log('Execution of: ' + ArbeitsSektion.Name +
                   ' ' + Remaining, LLNotice);
@@ -26131,6 +26114,7 @@ begin
 
                 if not IsVariableNameReserved(Expressionstr, SectionSpecifier,
                   call, Sektion, linecounter) then
+                begin
                   // in local function ?
                   if inDefinedFuncNestCounter > 0 then
                   begin
@@ -26162,10 +26146,10 @@ begin
                     LogDatei.log('defined global string list ' +
                       Expressionstr, LLDebug);
                   end;
+                end;
                 if CheckDirectVariableInitialization(Remaining) then
                   SetVariableWithErrors(Sektion, Remaining, Expressionstr + Remaining,
                     linecounter, InfoSyntaxError, NestLevel);
-                ;
               end;
 
               tsDefineFunction:
@@ -26638,7 +26622,7 @@ begin
     depotdrive_bak := depotdrive;
     depotdir_bak := depotdir;
   {$IFDEF UNIX}
-    computername := getHostnameLin;
+    if computername = '' then computername := getHostnameLin;
     logdatei.log('computername: ' + computername, LLDebug);
   {$ENDIF LINUX}
   {$IFDEF GUI}
@@ -26671,7 +26655,7 @@ begin
             if not isMounted(depotdir) then
             begin
               logdatei.log('Try remount ...', LLWarning);
-              mount_depotshare(depotDir, opsiservicePassword, osconf.computername);
+              mount_depotshare(depotDir, DepotUser, opsiservicePassword, osconf.computername);
             end;
           end;
         {$ENDIF LINUX}
@@ -27285,12 +27269,8 @@ begin
     LogDatei.log_prog('End: Definition of global system variables', LLinfo);
 
 
-
     Aktionsliste := TWorkSection.Create(NestingLevel, nil);
   {$IFDEF GUI}
-    FBatchOberflaeche.LoadSkin('');
-    FBatchOberflaeche.setPicture('', '');
-    FBatchOberflaeche.Repaint;
     Application.ProcessMessages;
   {$ENDIF GUI}
     { initial section  }
@@ -27304,7 +27284,13 @@ begin
     try
       { inital section  }
       if Aktionsliste.Count > 0 then
-        weiter := Script.doAktionen(Aktionsliste, Aktionsliste)
+      begin
+        LogDatei.log(
+            'The [Initial] section is deprecated! Please use the [Actions] section for all configurations and actions.',
+            LLWarning);
+        Script.FNumberOfWarnings := Script.FNumberOfWarnings + 1;
+        weiter := Script.doAktionen(Aktionsliste, Aktionsliste);
+      end
       else
         weiter := tsrPositive;
 
@@ -27353,6 +27339,16 @@ begin
           { Here do we run the script }
           LogDatei.log('Starting with script...', LLDebug);
           weiter := Script.doAktionen(Aktionsliste, Aktionsliste);
+        end
+        else
+        begin
+          LogDatei.log(
+            'We could not find an actions section in your script and therefore your script might not be executed!'
+            + ' Please check if the section head ''[' + NameAktionenSektion +
+            ']'' exists and is written correctly.',
+            LLcritical);
+          Script.FNumberOfErrors := Script.NumberOfErrors + 1;
+          extremeErrorLevel := levelFatal;
         end;
       end;
       try
@@ -27378,14 +27374,12 @@ begin
 
     freeDefinedFunctions;
 
-
   {$IFDEF GUI}
     CentralForm.Memo1.SelectAll;
     CentralForm.Memo1.SelStart := CentralForm.Memo1.SelLength;
   {$ENDIF GUI}
 
     // write final messages to log
-
 
     LogDatei.LogSIndentLevel := 0;
 
@@ -27524,7 +27518,6 @@ begin
   PStatNames^ [tsProfileActions] := 'ProfileAction';
   PStatNames^ [tsPatchAnyTextfile] := 'PatchTextFile';
   PStatNames^ [tsTests] := 'Tests';
-  //PStatNames^ [tsTestCommand]         := 'Testcommand';
   PStatNames^ [tsPatchIniFile] := 'Patches';
   PStatNames^ [tsHostsPatch] := 'PatchHosts';
 
@@ -27540,6 +27533,7 @@ begin
   PStatNames^ [tsDOSInAnIcon] := 'DOSInAnIcon';
   PStatNames^ [tsShellBatchFile] := 'ShellBatch';
   PStatNames^ [tsShellInAnIcon] := 'ShellInAnIcon';
+  PStatNames^ [tsShellScript] := 'ShellScript';
   PStatNames^ [tsExecutePython] := 'ExecPython';
   PStatNames^ [tsExecuteWith] := 'ExecWith';
   PStatNames^ [tsExecuteWith_escapingStrings] := 'ExecWith_escapingStrings';
@@ -27585,21 +27579,18 @@ begin
   PStatNames^ [tsSetSkinDir] := 'SetSkinDirectory';
 
   PStatNames^ [tsImportLib] := 'ImportLib';
+  PStatNames^ [tsSetDebugLib] := 'SetDebug_lib';
   PStatNames^ [tsIncludeInsert] := 'Include_Insert';
   PStatNames^ [tsIncludeAppend] := 'Include_Append';
   PStatNames^ [tsIncludeLog] := 'IncludeLog';
   PStatNames^ [tsShrinkFileToMB] := 'ShrinkFileToMB';
   PStatNames^ [tsChangeDirectory] := 'ChangeDirectory';
 
-
-
   PStatNames^ [tsExitWindows] := 'ExitWindows';
   PStatNames^ [tsBlockInput] := 'BlockInput';
-  PStatNames^ [tsSetDebug_prog] := 'SetDebug_prog';
+  PStatNames^ [tsSetDebugProg] := 'SetDebug_prog'; // undocumented
 
-
-  PStatNames^ [tsAddConnection] := 'AddConnection';
-  (* nicht dokumentiert *)
+  PStatNames^ [tsAddConnection] := 'AddConnection'; // undocumented
 
   PStatNames^ [tsSetOldLogLevel] := 'LogLevel';
   PStatNames^ [tsSetLogLevel] := 'SetLogLevel';

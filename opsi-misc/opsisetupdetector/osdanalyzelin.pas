@@ -29,8 +29,6 @@ uses
   osdanalyzegeneral,
   osparserhelper;
 
-
-
 procedure get_aktProduct_general_info_lin(installerId: TKnownInstaller;
   myfilename: string; var mysetup: TSetupFile);
 
@@ -43,8 +41,6 @@ implementation
 
 uses
   osdform;
-
-
 
 procedure get_aktProduct_general_info_lin(installerId: TKnownInstaller;
   myfilename: string; var mysetup: TSetupFile);
@@ -77,9 +73,16 @@ begin
   mysetup.installerSourceDir := '%scriptpath%/files' + IntToStr(mysetup.ID);
   mysetup.installCommandLine :=
     'set $exitcode$ = shellCall(''' + '$installerSourceDir$ + ' +
-    '"/' + mysetup.setupFileName +
-    //    '"%scriptpath%/files' + IntToStr(mysetup.ID) + '/' + mysetup.setupFileName +
-    '" ' + installerArray[integer(mysetup.installerId)].unattendedsetup + ''')';
+    '"/' + mysetup.setupFileName;
+  //    '"%scriptpath%/files' + IntToStr(mysetup.ID) + '/' + mysetup.setupFileName +
+  if mysetup.preferSilent then
+    mysetup.installCommandLine :=
+      mysetup.installCommandLine + '" ' +
+      installerArray[integer(mysetup.installerId)].unattendedsetup + ''')'
+  else
+    mysetup.installCommandLine :=
+      mysetup.installCommandLine + '" ' +
+      installerArray[integer(mysetup.installerId)].silentsetup + ''')';
   str1 := '';
   // productId and name
   if str1 <> '' then
@@ -134,7 +137,8 @@ begin
     'CreateStringlist($PackageName$)))');
   mysetup.uninstallCheck.Add('	set $oldProgFound$ = "true"');
   mysetup.uninstallCheck.Add('endif');
-  mysetup.uninstallCommandLine := 'set $exitcode$ = linuxRemoveOnePackage($PackageName$)';
+  mysetup.uninstallCommandLine :=
+    'set $exitcode$ = linuxRemoveOnePackage($PackageName$)';
   LogDatei.log('Finished with get_aktProduct_general_info_lin', LLinfo);
   ;
 end; //get_aktProduct_general_info_lin
@@ -332,13 +336,18 @@ begin
     mysetup.uninstallProg := ExtractFileNameOnly(
       installerArray[integer(mysetup.installerId)].uninstallProg);
     mysetup.uninstallCheck.Clear;
-    str1 := 'if fileexists(''"'+mysetup.uninstallProg + '"'')';
+    str1 := 'if fileexists(''"' + mysetup.uninstallProg + '"'')';
     mysetup.uninstallCheck.Add(str1);
 
     mysetup.uninstallCheck.Add('	set $oldProgFound$ = "true"');
     mysetup.uninstallCheck.Add('endif');
-    str1 := 'set $exitcode$ = shellCall(''"' +
-      mysetup.uninstallProg + '" ' + installerArray[integer(mysetup.installerId)].unattendeduninstall + ''')';
+    str1 := 'set $exitcode$ = shellCall(''"' + mysetup.uninstallProg ;
+    if mysetup.preferSilent then
+      str1 := str1 +
+      '" ' + installerArray[integer(mysetup.installerId)].unattendeduninstall + ''')'
+    else
+      str1 := str1 +
+      '" ' + installerArray[integer(mysetup.installerId)].silentuninstall + ''')';
     mysetup.uninstallCommandLine := str1;
   end
   else
