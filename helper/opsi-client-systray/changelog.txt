@@ -1,5 +1,11 @@
 
 [changelog]
+opsi_client_systray  4.2.0.0
+
+* new compiled with version number 4.2.0.0
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue, 06 Jun 2023:15:00:00 +0200
+
 opsi_client_systray  4.1.2.4
 
   * dispose allocated memory for string (StrDispose) in function GetSystemDefaultLocale
