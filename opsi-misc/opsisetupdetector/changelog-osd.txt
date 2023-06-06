@@ -130,6 +130,7 @@ opsi-setup-detector (4.2.2.0-1) stable; urgency=low
    * feature: inno: read uninstall directory from iss file ; fixes #4622
    * updated translation files: de / es / en
    * call online help from docs.opsi.org with context
+   * fix osdanalyzewin: get_inno_info  code based installdir
 
    todo:
 

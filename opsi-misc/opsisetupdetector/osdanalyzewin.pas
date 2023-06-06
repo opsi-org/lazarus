@@ -504,6 +504,7 @@ var
     innoToOpsi.Add('{autopf}=%ProgramFiles' + arch + 'Dir%');
     innoToOpsi.Add('{code:DefDirRoot}=%ProgramFiles' + arch + 'Dir%');
     innoToOpsi.Add('{code:installDir}=%ProgramFiles' + arch + 'Dir%\<unknown>');
+    innoToOpsi.Add('{code:UNKNOWN}=%ProgramFiles' + arch + 'Dir%\<unknown>');
     innoToOpsi.Add('{win}=%Systemroot%');
     innoToOpsi.Add('{sys}=%System%');
     innoToOpsi.Add('{sysnative}=%System%');
@@ -631,6 +632,10 @@ begin
         else
           AppVerName := AppName + AppVersion;
       end;
+      // if installdir is resolved at runtime by code then it is unknown
+      if (0 < pos(lowercase('{code:', lowercase(DefaultDirName))) then
+          DefaultDirName := '{code:UNKNOWN}';
+      // try to translate well known inno constants to opsi
       if (0 < pos('x64', lowercase(ArchitecturesInstallIn64BitMode))) and
         (0 = pos('x86', lowercase(ArchitecturesInstallIn64BitMode))) then
       begin
