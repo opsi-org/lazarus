@@ -22033,7 +22033,9 @@ var
     while goon do
     begin
 
-      if skip(Parameter_AllNTUserDats, Remaining, Remaining, ErrorInfo) then
+      if skip(Parameter_AllNTUserDats, Remaining, Remaining, ErrorInfo) or
+         skip(Parameter_AllUserProfiles, Remaining, Remaining, ErrorInfo)
+      then
         flag_all_ntuser := True
 
       else if skip(Parameter_AllUsrClassDats, Remaining, Remaining, ErrorInfo) then
