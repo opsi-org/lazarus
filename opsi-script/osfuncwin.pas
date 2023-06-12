@@ -253,7 +253,7 @@ begin
       //ProcessMess;
       {$ENDIF GUI}
 
-      //LogDatei.DependentAdd(copy (cmd, 1, 5) + ' ... :' + output_line, LevelInfo);
+      //Logdatei.Log(copy (cmd, 1, 5) + ' ... :' + output_line, LLinfo);
 
       // shift remainder of buffer down
 
@@ -305,7 +305,7 @@ begin
     end;
     GetExitCodeProcess(pi.hProcess, lpExitCode);
     exitCode := longint(lpExitCode);
-    //LogDatei.DependentAdd('ExitCode ' + IntToStr(exitCode), LLInfo);
+    //Logdatei.Log('ExitCode ' + IntToStr(exitCode), LLInfo);
   end;
   //lines.add('waiting 0');
      {
@@ -387,8 +387,7 @@ begin
       //WSACleanup;
     end
   except
-    Logdatei.DependentAddError('gethostname error ' +
-      IntToStr(wsagetlasterror), LLError);
+    Logdatei.Log('gethostname error ' + IntToStr(wsagetlasterror), LLError);
   end;
 end;
 

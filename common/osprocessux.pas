@@ -95,7 +95,7 @@ begin
       if n > 0 then
       begin
         Inc(BytesRead, n);
-        //Logdatei.DependentAdd('RunCommandAndCaptureOut: read: ' +
+        //Logdatei.Log('RunCommandAndCaptureOut: read: ' +
         //IntToStr(n) + ' bytes', LLdebug2);
         //Write('.');
       end;
@@ -105,7 +105,7 @@ begin
   until n <= 0;
   //if BytesRead > 0 then WriteLn;
   M.SetSize(BytesRead);
-  //Logdatei.DependentAdd('RunCommandAndCaptureOut: -- executed --', LLdebug2);
+  //Logdatei.Log('RunCommandAndCaptureOut: -- executed --', LLdebug2);
   //WriteLn('-- executed --');
 end;
 

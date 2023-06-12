@@ -203,7 +203,7 @@ begin
     except
       on E: Exception do
       begin
-        LogDatei.DependentAdd('Exception in getLinProcessList, system message: "' +
+        Logdatei.Log('Exception in getLinProcessList, system message: "' +
           E.Message + '"',
           LLError);
       end
@@ -273,7 +273,7 @@ begin
     except
       on E: Exception do
       begin
-        LogDatei.DependentAdd('Exception in getLinProcessList, system message: "' +
+        Logdatei.Log('Exception in getLinProcessList, system message: "' +
           E.Message + '"',
           LLError);
       end
@@ -407,7 +407,7 @@ begin
       mypass + '@' + myshare + ' ' + mymountpoint + '"';
   //cmd := '/bin/bash -c "/sbin/mount_smbfs -N //' +mydomain+'\;'+ myuser+':'+mypass+'@'+myshare+' '+mymountpoint+'"';
 
-  LogDatei.DependentAdd('calling: ' + cmd, LLNotice);
+  Logdatei.Log('calling: ' + cmd, LLNotice);
   //if not RunCommandAndCaptureOut(cmd, True, TXStringlist(outlines), report,
   //if not RunCommandAndCaptureOut(cmd, True, outlines, report,
   {$IFDEF OPSISCRIPT}
@@ -486,7 +486,7 @@ begin
   if LogDatei <> nil then
   begin
     LogDatei.LogSIndentLevel := 0;
-    LogDatei.DependentAdd('============   ' + ExtractFileNameOnly(ParamStr(0)) +
+    Logdatei.Log('============   ' + ExtractFileNameOnly(ParamStr(0)) +
       ' shutdown regularly and direct. Time ' + FormatDateTime(
       'yyyy-mm-dd  hh:mm:ss ', now) + '.', LLessential);
 

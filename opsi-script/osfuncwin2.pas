@@ -156,12 +156,12 @@ begin
   if Is64BitSystem then
   begin
     myreg := TRegistry.Create(KEY_ALL_ACCESS or KEY_WOW64_64KEY);
-    LogDatei.DependentAdd('Registry started without redirection (64 Bit)', LLdebug3);
+    Logdatei.Log('Registry started without redirection (64 Bit)', LLdebug3);
   end
   else
   begin
     myreg := TRegistry.Create(KEY_ALL_ACCESS or KEY_WOW64_32KEY);
-    LogDatei.DependentAdd('Registry started with redirection (32 Bit)', LLdebug3);
+    Logdatei.Log('Registry started with redirection (32 Bit)', LLdebug3);
   end;
   myreg.RootKey := HKEY_LOCAL_MACHINE;
   if myreg.KeyExists('SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList\' +
@@ -173,7 +173,7 @@ begin
     myreg.CloseKey();
     profilepath := StringReplace(profilepath, '%SystemDrive%',
       extractfiledrive(GetWinDirectory));
-    LogDatei.DependentAdd('found profile reg entry for sid: ' + sid +
+    Logdatei.Log('found profile reg entry for sid: ' + sid +
       ' and path: ' + profilepath, LLdebug3);
     Result := profilepath;
   end;
@@ -195,12 +195,12 @@ begin
   if Is64BitSystem then
   begin
     noredirect := True;
-    LogDatei.DependentAdd('Registry started without redirection (64 Bit)', LLdebug3);
+    Logdatei.Log('Registry started without redirection (64 Bit)', LLdebug3);
   end
   else
   begin
     noredirect := False;
-    LogDatei.DependentAdd('Registry started with redirection (32 Bit)', LLdebug3);
+    Logdatei.Log('Registry started with redirection (32 Bit)', LLdebug3);
   end;
   StringResult := GetRegistrystringvalue(aktkey, 'ProfileImagePath', noredirect);
   profilepath := StringReplace(StringResult, '%SystemDrive%',
@@ -233,13 +233,13 @@ begin
   begin
     myreg := TRegistry.Create(KEY_ALL_ACCESS or KEY_WOW64_64KEY);
     //myreg.KeyOpenMode := KEY_ALL_ACCESS or KEY_WOW64_64KEY;
-    LogDatei.DependentAdd('Registry started without redirection (64 Bit)', LLdebug);
+    Logdatei.Log('Registry started without redirection (64 Bit)', LLdebug);
   end
   else
   begin
     myreg := TRegistry.Create(KEY_ALL_ACCESS or KEY_WOW64_32KEY);
     //myreg.KeyOpenMode := KEY_ALL_ACCESS or KEY_WOW64_32KEY;
-    LogDatei.DependentAdd('Registry started with redirection (32 Bit)', LLdebug);
+    Logdatei.Log('Registry started with redirection (32 Bit)', LLdebug);
   end;
   myreg.RootKey := HKEY_LOCAL_MACHINE;
   if myreg.KeyExists('SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList\' +
@@ -251,13 +251,13 @@ begin
     myreg.CloseKey();
     if DeleteProfile(PChar(sid), nil, nil) then
     begin
-      LogDatei.DependentAdd('Deleted profile of temporary Admin opsiSetupAdmin ',
+      Logdatei.Log('Deleted profile of temporary Admin opsiSetupAdmin ',
         LLDebug);
       Result := True;
     end
     else
     begin
-      logdatei.DependentAdd('Could not delete profile for sid : ' +
+      Logdatei.Log('Could not delete profile for sid : ' +
         sid + ' - ' + IntToStr(GetLastError) + ' (' +
         SysErrorMessage(GetLastError) + ')', LLNotice);
 
@@ -265,38 +265,38 @@ begin
       //myreg.free;
       profilepath := StringReplace(profilepath, '%SystemDrive%',
         extractfiledrive(GetWinDirectory));
-      LogDatei.DependentAdd('deleted profile reg entry for sid: ' +
+      Logdatei.Log('deleted profile reg entry for sid: ' +
         sid + ' and path: ' + profilepath, LLdebug);
       if DirectoryExists(profilepath) then
       begin
-        LogDatei.DependentAdd('profilepath exists: ' + profilepath, LLdebug);
+        Logdatei.Log('profilepath exists: ' + profilepath, LLdebug);
         output := TXStringlist.Create;
         commandline := 'cmd.exe /c  FOR /D %A IN ("' + GetProfilesPath +
           '\opsiSetupAdmin.*") DO rmdir /s /q "%A"';
-        LogDatei.DependentAdd('Executing ' + commandline, levelcomplete);
+        Logdatei.Log('Executing ' + commandline, LLinfo);
         if not RunCommandAndCaptureOut(commandline, True, output,
           report, SW_HIDE, longintdummy) then
         begin
-          LogDatei.DependentAdd('Error: ' + Report, LLError);
+          Logdatei.Log('Error: ' + Report, LLError);
         end
         else
         begin
           LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 6;
-          LogDatei.DependentAdd('', LevelInfo);
-          LogDatei.DependentAdd('output:', LevelInfo);
-          LogDatei.DependentAdd('--------------', LevelInfo);
+          Logdatei.Log('', LLinfo);
+          Logdatei.Log('output:', LLinfo);
+          Logdatei.Log('--------------', LLinfo);
           for i := 0 to output.Count - 1 do
           begin
-            LogDatei.DependentAdd(output.strings[i], LevelInfo);
+            Logdatei.Log(output.strings[i], LLinfo);
           end;
           LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
-          LogDatei.DependentAdd('', LevelInfo);
+          Logdatei.Log('', LLinfo);
         end;
         output.Free;
         if not DirectoryExists(profilepath) then
         begin
           Result := True;
-          LogDatei.DependentAdd('deleted profile: ' + profilepath, LLdebug);
+          Logdatei.Log('deleted profile: ' + profilepath, LLdebug);
         end;
       end;
     end;
@@ -332,34 +332,34 @@ begin
     profilepath := getProfileImagePathfromSid(sid);
     if DirectoryExists(profilepath) then
     begin
-      LogDatei.DependentAdd('profilepath exists: ' + profilepath, LLdebug);
+      Logdatei.Log('profilepath exists: ' + profilepath, LLdebug);
       output := TXStringlist.Create;
       commandline := 'cmd.exe /c  FOR /D %A IN ("' + GetProfilesPath +
         '\opsiSetupAdmin.*") DO rmdir /s /q "%A"';
-      LogDatei.DependentAdd('Executing ' + commandline, levelcomplete);
+      Logdatei.Log('Executing ' + commandline, LLinfo);
       if not RunCommandAndCaptureOut(commandline, True, output,
         report, SW_HIDE, longintdummy) then
       begin
-        LogDatei.DependentAdd('Error: ' + Report, LLError);
+        Logdatei.Log('Error: ' + Report, LLError);
       end
       else
       begin
         LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 6;
-        LogDatei.DependentAdd('', LevelInfo);
-        LogDatei.DependentAdd('output:', LevelInfo);
-        LogDatei.DependentAdd('--------------', LevelInfo);
+        Logdatei.Log('', LLinfo);
+        Logdatei.Log('output:', LLinfo);
+        Logdatei.Log('--------------', LLinfo);
         for i := 0 to output.Count - 1 do
         begin
-          LogDatei.DependentAdd(output.strings[i], LevelInfo);
+          Logdatei.Log(output.strings[i], LLinfo);
         end;
         LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
-        LogDatei.DependentAdd('', LevelInfo);
+        Logdatei.Log('', LLinfo);
       end;
       output.Free;
       if not DirectoryExists(profilepath) then
       begin
         Result := True;
-        LogDatei.DependentAdd('deleted profile: ' + profilepath, LLdebug);
+        Logdatei.Log('deleted profile: ' + profilepath, LLdebug);
       end;
     end;
   end;
@@ -575,18 +575,18 @@ begin
     if GetWindowThreadProcessId(h, @pid) <> 0 then
     begin
       if not GetProcessUserBypid(pid, myuser, mydomain) then
-        LogDatei.DependentAdd('Could not get user for pid: ' + IntToStr(pid), LLWarning);
+        Logdatei.Log('Could not get user for pid: ' + IntToStr(pid), LLWarning);
     end
     else
-      LogDatei.DependentAdd('Could not get pid for current session', LLWarning);
+      Logdatei.Log('Could not get pid for current session', LLWarning);
   end
   else
-    LogDatei.DependentAdd('Could not get handle for current session: no user',
+    Logdatei.Log('Could not get handle for current session: no user',
       LLWarning);
   if not (myuser = GetUserNameEx_) then
-    LogDatei.DependentAdd('Strange: different users found: ' + myuser +
+    Logdatei.Log('Strange: different users found: ' + myuser +
       ' + ' + GetUserNameEx_, LLWarning);
-  LogDatei.DependentAdd('Session owner found: ' + mydomain + '\' + myuser, LLInfo);
+  Logdatei.Log('Session owner found: ' + mydomain + '\' + myuser, LLInfo);
   Result := mydomain + '\' + myuser;
 end;
 
@@ -718,11 +718,11 @@ begin
     if Regist.OpenKey('\Software\opsi.org\test', False) then
     begin
       str := regist.ReadString('myname');
-      LogDatei.DependentAdd(str, LLEssential);
+      Logdatei.Log(str, LLEssential);
       //memo1.Append(str);
     end
     else
-      LogDatei.DependentAdd('failed', LLEssential);
+      Logdatei.Log('failed', LLEssential);
     //memo1.Append('DSiGetUserNameEx :'+DSiGetUserNameEx);
     //RetrieveSIDInfo(
     //('Software\opsi.org\test','myname','not-found').asstring;
@@ -731,11 +731,11 @@ begin
   finally
     impersonator.Free  // Revert to the SYSTEM account
   end;
-  LogDatei.DependentAdd('DSiGetUserNameEx :' + DSiGetUserNameEx, LLEssential);
-  LogDatei.DependentAdd('DSiGetDomain :' + DSiGetDomain, LLEssential);
-  LogDatei.DependentAdd('GetDomainUserSidS :' + GetDomainUserSidS(
+  Logdatei.Log('DSiGetUserNameEx :' + DSiGetUserNameEx, LLEssential);
+  Logdatei.Log('DSiGetDomain :' + DSiGetDomain, LLEssential);
+  Logdatei.Log('GetDomainUserSidS :' + GetDomainUserSidS(
     DSiGetDomain, DSiGetUserNameEx, str), LLEssential);
-  LogDatei.DependentAdd('GetLocalUserSidStr :' + GetLocalUserSidStr(
+  Logdatei.Log('GetLocalUserSidStr :' + GetLocalUserSidStr(
     DSiGetUserNameEx), LLEssential);
   //DSiGetDomain
   //GetDomainUserSidS
@@ -743,20 +743,20 @@ begin
   regist.RootKey := HKEY_USERS;
   str := GetLocalUserSidStr(DSiGetUserNameEx);
   str := copy(str, 2, length(str) - 2);
-  LogDatei.DependentAdd('sidStr :' + str, LLEssential);
+  Logdatei.Log('sidStr :' + str, LLEssential);
   if Regist.OpenKey('\' + str + '\Software\opsi.org\test', False) then
   begin
     str := regist.ReadString('myname');
-    LogDatei.DependentAdd('read from hkusers: ' + str, LLEssential);
+    Logdatei.Log('read from hkusers: ' + str, LLEssential);
     //memo1.Append(str);
   end
   else
-    LogDatei.DependentAdd('openkey failed', LLEssential);
+    Logdatei.Log('openkey failed', LLEssential);
   if Impersonate2loggedonUser then
-    LogDatei.DependentAdd('Desktop :' + DSiGetFolderLocation(
+    Logdatei.Log('Desktop :' + DSiGetFolderLocation(
       CSIDL_DESKTOPDIRECTORY), LLEssential)
   else
-    LogDatei.DependentAdd('impersonate failed :' + DSiGetFolderLocation(
+    Logdatei.Log('impersonate failed :' + DSiGetFolderLocation(
       CSIDL_DESKTOPDIRECTORY), LLEssential);
   RevertToSelf;
   regist.Free;
@@ -844,7 +844,7 @@ if EnumProcesses(@PrIDs, SizeOf(PrIDs), bia) then
           resultstring :=  resultstring + Domain+'\'+UserName;
       Result.add(resultstring);
     end;
-  end else LogDatei.DependentAddError('Error: getting process list',LLError);
+  end else Logdatei.Log('Error: getting process list',LLError);
  //else //RaiseLastOSError(); //if enumprocesses...
 end;
 *)
@@ -983,7 +983,7 @@ begin
       end;
     end
     else
-      LogDatei.DependentAddError('Error: getting process list', LLError)
+      Logdatei.Log('Error: getting process list', LLError)
   else
     RaiseLastOSError(); //if enumprocesses...
 end;
@@ -1016,8 +1016,8 @@ begin
   begin
     procdetails.Clear;
     stringsplit(proclist.Strings[i], ';', procdetails);
-    //LogDatei.DependentAdd(proclist.Strings[i],LLDebug);
-    //LogDatei.DependentAdd('analyze: exe: ' + procdetails.Strings[0] +
+    //Logdatei.Log(proclist.Strings[i],LLDebug);
+    //Logdatei.Log('analyze: exe: ' + procdetails.Strings[0] +
     //  ' pid: ' + procdetails.Strings[1] + ' from user: ' + procdetails.Strings[2], LLEssential);
     if procdetails.Strings[1] <> '' then
     begin
@@ -1105,15 +1105,15 @@ begin
   Result := False;
   {$IFDEF WIN32}
   if not DSiEnablePrivilege('SE_DEBUG_NAME') then
-    LogDatei.DependentAddWarning(
+    Logdatei.Log(
       'Warning: Could not get SE_DEBUG_NAME Privelege to kill process -> will try with out',
       LLWarning);
   hProcess := OpenProcess(PROCESS_ALL_ACCESS, False, pid);
   if hProcess <> 0 then
   begin
-    LogDatei.DependentAdd('Try to kill process with pid: ' + IntToStr(pid), LLDebug);
+    Logdatei.Log('Try to kill process with pid: ' + IntToStr(pid), LLDebug);
     Result := TerminateProcess(hProcess, 0);
-    LogDatei.DependentAdd('killed process with pid: ' + IntToStr(pid), LLDebug);
+    Logdatei.Log('killed process with pid: ' + IntToStr(pid), LLDebug);
     CloseHandle(hProcess);
   end;// if hProcess <> 0 then begin
   {$ENDIF WIN32}
@@ -1203,7 +1203,7 @@ begin
   begin
     procdetails.Clear;
     stringsplit(proclist.Strings[i], ';', procdetails);
-    //LogDatei.DependentAdd(proclist.Strings[i],LLDebug);
+    //Logdatei.Log(proclist.Strings[i],LLDebug);
     LogDatei.log_prog('analyze: exe: ' + procdetails.Strings[0] +
       ' pid: ' + procdetails.Strings[1] + ' from user: ' +
       procdetails.Strings[2], LLDebug);
@@ -1232,7 +1232,7 @@ begin
           LogDatei.log('Will not kill exe: ' + foundexe + ' pid: ' +
             IntToStr(pid) + ' from user: ' + domuser, LLDebug);
       end;
-      //else LogDatei.DependentAdd('No user found for exe: '+exename+' and pid: '+IntToStr(pid),LLDebug);
+      //else Logdatei.Log('No user found for exe: '+exename+' and pid: '+IntToStr(pid),LLDebug);
     end;
   end;
 end;// KillProcessbyname(const exename : string;): Boolean;
@@ -1394,47 +1394,47 @@ begin
 (*
        wnetresult :=  unmountSmbShare('p:', true);
                 if NO_ERROR <>  wnetresult then
-                  LogDatei.DependentAdd('Error unmounting p: '+ SysErrorMessage(wnetresult), LLWarning);
+                  Logdatei.Log('Error unmounting p: '+ SysErrorMessage(wnetresult), LLWarning);
 *)
-    logdatei.DependentAdd('Try ro remove temporary admin ....', LLDebug2);
+    Logdatei.Log('Try ro remove temporary admin ....', LLDebug2);
     if opsiSetupAdmin_processInfoShell_hProcess <> 0 then
       if not TerminateProcess(opsiSetupAdmin_processInfoShell_hProcess, 0) then
-        logdatei.DependentAdd('Could not stop started explorer : ' +
+        Logdatei.Log('Could not stop started explorer : ' +
           IntToStr(GetLastError) + ' (' + SysErrorMessage(GetLastError) +
           ')', LLWarning)
       else
-        logdatei.DependentAdd(
+        Logdatei.Log(
           'Stopped explorer shell for temporary Admin opsiSetupAdmin',
           LLDebug2);
     if RevertToSelf then
     begin
-      logdatei.DependentAdd('Reverted to self.', LLDebug2);
+      Logdatei.Log('Reverted to self.', LLDebug2);
     end
     else
-      logdatei.DependentAdd('Revert to self failed', LLDebug2);
+      Logdatei.Log('Revert to self failed', LLDebug2);
 (*
     wnetresult :=  mountSmbShare('p:','\\sepiolina\opsi_depot','pcpatch','linux123',false);
       if NO_ERROR <>  wnetresult then
-       LogDatei.DependentAdd('Error remounting p: '+ SysErrorMessage(wnetresult), LLWarning);
+       Logdatei.Log('Error remounting p: '+ SysErrorMessage(wnetresult), LLWarning);
 *)
     retrieveFoldersFromWinApi;
-    LogDatei.DependentAdd('current appdata is now: ' + GetAppDataPath, LLDebug2);
+    Logdatei.Log('current appdata is now: ' + GetAppDataPath, LLDebug2);
     //Impersonate2loggedonUser;
     //retrieveFoldersFromWinApi;
-    //LogDatei.DependentAdd('current appdata is now: ' + GetAppDataPath, LLDebug2);
+    //Logdatei.Log('current appdata is now: ' + GetAppDataPath, LLDebug2);
     CloseHandle(opsiSetupAdmin_processInfoShell_hProcess);
     CloseHandle(opsiSetupAdmin_processInfoShell_hThread);
     opsiSetupAdmin_processInfoShell_hProcess := 0;
     opsiSetupAdmin_processInfoShell_hThread := 0;
     if not (opsiSetupAdmin_lpEnvironment = nil) then
       if not DestroyEnvironmentBlock(opsiSetupAdmin_lpEnvironment) then
-        logdatei.DependentAdd('Could not destroy Environment : ' +
+        Logdatei.Log('Could not destroy Environment : ' +
           IntToStr(GetLastError) + ' (' + SysErrorMessage(GetLastError) +
           ')', LLWarning);
 
     if not UnloadUserProfile(opsiSetupAdmin_org_logonHandle,
       opsiSetupAdmin_ProfileHandle) then
-      logdatei.DependentAdd('Could not unload userprofile : ' + IntToStr(
+      Logdatei.Log('Could not unload userprofile : ' + IntToStr(
         GetLastError) + ' (' + SysErrorMessage(GetLastError) + ')', LLNotice);
     CloseHandle(opsiSetupAdmin_logonHandle);
   end;
@@ -1446,12 +1446,12 @@ begin
   if DeleteProfile(PChar(strsid), nil, nil) then
     //if delUserProfile(strsid) then
   begin
-    LogDatei.DependentAdd('Deleted profile of temporary Admin opsiSetupAdmin ',
+    Logdatei.Log('Deleted profile of temporary Admin opsiSetupAdmin ',
       LLDebug);
     profiledeleted := True;
   end
   else
-    logdatei.DependentAdd('Could not delete profile for sid : ' +
+    Logdatei.Log('Could not delete profile for sid : ' +
       strsid + ' - ' + IntToStr(GetLastError) + ' (' +
       SysErrorMessage(GetLastError) + ')', LLNotice);
 
@@ -1459,7 +1459,7 @@ begin
   Result := (Err = NERR_SUCCESS);
   if Result then
   begin
-    LogDatei.DependentAdd('Deleted temporary Admin opsiSetupAdmin with sid: ' +
+    Logdatei.Log('Deleted temporary Admin opsiSetupAdmin with sid: ' +
       strsid, LLDebug);
     opsiSetupAdmin_created := False;
     if not profiledeleted then
@@ -1467,12 +1467,12 @@ begin
       //if delUserProfile(strsid) then
       if DeleteProfile(PChar(strsid), nil, nil) then
       begin
-        LogDatei.DependentAdd('Deleted profile of temporary Admin opsiSetupAdmin ',
+        Logdatei.Log('Deleted profile of temporary Admin opsiSetupAdmin ',
           LLDebug);
       end
       else
       begin
-        logdatei.DependentAdd('Could not delete profile for sid : ' +
+        Logdatei.Log('Could not delete profile for sid : ' +
           strsid + ' - ' + IntToStr(GetLastError) + ' (' +
           SysErrorMessage(GetLastError) + ')', LLNotice);
         if delUserProfile(strsid) then
@@ -1480,9 +1480,9 @@ begin
       end;
     end;
     retrieveFoldersFromWinApi;
-    //LogDatei.DependentAdd('current appdata is now: '+GetAppDataPath, LLDebug);
+    //Logdatei.Log('current appdata is now: '+GetAppDataPath, LLDebug);
   end;
-  LogDatei.DependentAdd('current appdata is now: ' + GetAppDataPath, LLDebug2);
+  Logdatei.Log('current appdata is now: ' + GetAppDataPath, LLDebug2);
 end;
 
 {$ENDIF WIN32}
@@ -1551,19 +1551,19 @@ begin
                 begin
                   // Prüfen ob es sich um einen Benutzer handelt und ob es die
                   // SessionId des aufrufenden Prozesses ist
-                  LogDatei.DependentAdd('Found winlogon for owner:' +
+                  Logdatei.Log('Found winlogon for owner:' +
                     OwnerName, LLDebug2);
                   if (OwnerType = 1) and
                     ProcessIdToSessionId(GetCurrentProcessId, sid) and
                     (PSesDat^.Session = sid) then
                   begin
-                    LogDatei.DependentAdd('Found winlogon for owner:' +
+                    Logdatei.Log('Found winlogon for owner:' +
                       OwnerName + ' which is user and in session: ' +
                       IntToStr(sid), LLDebug2);
                     if AnsiLowerCase(OwnerName) = AnsiLowerCase(Username) then
                     begin
                       Sessionid := sid;
-                      LogDatei.DependentAdd('owner:' + OwnerName +
+                      Logdatei.Log('owner:' + OwnerName +
                         ' matches searched user name', LLDebug2);
                     end;
 (*
@@ -1583,7 +1583,7 @@ begin
                         //  LogonTime:=FileTimeToDateTime(LocalFileTime);
                         //  result:=true;
                         //end;
-                        LogDatei.DependentAdd('Found winlogon for owner:'+UserName+' logon type: ', LLDebug2);
+                        Logdatei.Log('Found winlogon for owner:'+UserName+' logon type: ', LLDebug2);
                       end;
                     end;
                     LSAFreeReturnBuffer(pBuffer);
@@ -1610,16 +1610,16 @@ begin
   end;
  (*
   if GetSessionByToken(horgToken,FoundSessionid) then
-    LogDatei.DependentAdd('Org token in session: '+intToStr(FoundSessionid), LLDebug2);
+    Logdatei.Log('Org token in session: '+intToStr(FoundSessionid), LLDebug2);
   if not SetTokenInformation(horgToken, TokenSessionId, @Sessionid, sizeof(Sessionid)) then
-    LogDatei.DependentAdd('Could not add logon handle to session. Error: '+intToStr(GetLastError), LLError);
+    Logdatei.Log('Could not add logon handle to session. Error: '+intToStr(GetLastError), LLError);
   if not WTSQueryUserToken(SessionId,hdupToken) then
-    LogDatei.DependentAdd('Could not get primary user Token. Error: '+intToStr(GetLastError), LLError)
+    Logdatei.Log('Could not get primary user Token. Error: '+intToStr(GetLastError), LLError)
   else
   begin
     hToken := hdupToken;
     GetUserByToken(hdupToken, dupUser,dupDomain);
-    LogDatei.DependentAdd('Got Token from process:'+ProcessName+' in session: '+inttostr(Sessionid)+' for user: '+dupUser, LLDebug2);
+    Logdatei.Log('Got Token from process:'+ProcessName+' in session: '+inttostr(Sessionid)+' for user: '+dupUser, LLDebug2);
   end;
  *)
 
@@ -1632,28 +1632,28 @@ begin
       Process.dwSize := SizeOf(Process);
       if Process32First(hSnapshot, Process) then
         repeat
-          //LogDatei.DependentAdd('Found process:'+Process.szExeFile, LLDebug2);
+          //Logdatei.Log('Found process:'+Process.szExeFile, LLDebug2);
           //if not GetProcessUserBypid(Process.th32ProcessID, FoundUserName, FoundDomain) then
-          //LogDatei.DependentAdd('Did not found user for process:'+Process.szExeFile, LLDebug2)
+          //Logdatei.Log('Did not found user for process:'+Process.szExeFile, LLDebug2)
           //else
           begin
-            //LogDatei.DependentAdd('Found process:'+Process.szExeFile+' for user: '+FoundUserName, LLDebug2);
+            //Logdatei.Log('Found process:'+Process.szExeFile+' for user: '+FoundUserName, LLDebug2);
             if not ProcessIdToSessionId(Process.th32ProcessID, FoundSessionid) then
-            //LogDatei.DependentAdd('Could not get Sessionid.', LLDebug2)
+            //Logdatei.Log('Could not get Sessionid.', LLDebug2)
             else
             if (AnsiLowerCase(Process.szExeFile) = AnsiLowerCase(ProcessName)) and
               (FoundSessionid = Sessionid)
             //and (AnsiLowerCase(FoundUserName) = AnsiLowerCase(UserName))
             then
             begin
-              LogDatei.DependentAdd('Found process:' + ProcessName +
+              Logdatei.Log('Found process:' + ProcessName +
                 ' in session: ' + IntToStr(Sessionid), LLDebug2);
               hProcess :=
                 //OpenProcess(PROCESS_ALL_ACCESS, false, Process.th32ProcessID);
                 OpenProcess(MAXIMUM_ALLOWED, False, Process.th32ProcessID);
               if (hProcess <> 0) and (hProcess <> INVALID_HANDLE_VALUE) then
                 try
-                  LogDatei.DependentAdd('Try to get token ....', LLDebug2);
+                  Logdatei.Log('Try to get token ....', LLDebug2);
                   //Result := OpenProcessToken(hProcess, TOKEN_ALL_ACCESS, hToken);
                   Result := OpenProcessToken(hProcess,
                     TOKEN_ADJUST_PRIVILEGES or TOKEN_QUERY or
@@ -1665,7 +1665,7 @@ begin
                   Result := SetTokenInformation(hdupToken, TokenSessionId,
                     @Sessionid, sizeof(Sessionid));
                   if not LookupPrivilegeValue(nil, SE_DEBUG_NAME, myLuid) then
-                    LogDatei.DependentAdd('Could not LookupPrivilegeValue.', LLError)
+                    Logdatei.Log('Could not LookupPrivilegeValue.', LLError)
                   else
                   begin
                     NewState.PrivilegeCount := 1;
@@ -1673,12 +1673,12 @@ begin
                     NewState.Privileges[0].Attributes := SE_PRIVILEGE_ENABLED;
                     if not AdjustTokenPrivileges(hdupToken, False,
                       @NewState, SizeOf(TTokenPrivileges), @PrevState, @Return) then
-                      LogDatei.DependentAdd('Could not AdjustTokenPrivileges.', LLError);
+                      Logdatei.Log('Could not AdjustTokenPrivileges.', LLError);
                     //else
                     begin
                       hToken := hdupToken;
                       GetUserByToken(hdupToken, dupUser, dupDomain);
-                      LogDatei.DependentAdd('Got Token from process:' +
+                      Logdatei.Log('Got Token from process:' +
                         ProcessName + ' in session: ' + IntToStr(Sessionid) +
                         ' for user: ' + dupUser, LLDebug2);
                     end;
@@ -1727,7 +1727,7 @@ begin
             if (hProcess <> 0) and (hProcess <> INVALID_HANDLE_VALUE) then
         (*
                   try
-            LogDatei.DependentAdd('Try to get token ....', LLDebug2);
+            Logdatei.Log('Try to get token ....', LLDebug2);
             //Result := OpenProcessToken(hProcess, TOKEN_ALL_ACCESS, hToken);
             Result := OpenProcessToken(hProcess, TOKEN_ADJUST_PRIVILEGES
                                               or TOKEN_QUERY
@@ -1740,7 +1740,7 @@ begin
                         jwawinnt.TokenPrimary, hdupToken);
             Result := SetTokenInformation(hdupToken, TokenSessionId, @Sessionid, sizeof(Sessionid));
             if not LookupPrivilegeValue(nil, SE_DEBUG_NAME, myLuid) then
-              LogDatei.DependentAdd('Could not LookupPrivilegeValue.', LLError)
+              Logdatei.Log('Could not LookupPrivilegeValue.', LLError)
             else
             begin
               NewState.PrivilegeCount := 1;
@@ -1748,12 +1748,12 @@ begin
               NewState.Privileges[0].Attributes := SE_PRIVILEGE_ENABLED;
               if not AdjustTokenPrivileges(hdupToken, False, @NewState,
                 SizeOf(TTokenPrivileges), @PrevState, @Return) then
-                LogDatei.DependentAdd('Could not AdjustTokenPrivileges.', LLError)
+                Logdatei.Log('Could not AdjustTokenPrivileges.', LLError)
               else
               begin
                 hToken := hdupToken;
                 GetUserByToken(hdupToken, dupUser,dupDomain);
-                LogDatei.DependentAdd('Got Token from process:'+ProcessName+' in session: '+inttostr(Sessionid)+' for user: '+dupUser, LLDebug2);
+                Logdatei.Log('Got Token from process:'+ProcessName+' in session: '+inttostr(Sessionid)+' for user: '+dupUser, LLDebug2);
               end;
             end;
           finally
@@ -1764,7 +1764,7 @@ begin
               try
                 Result := OpenProcessToken(hProcess, TOKEN_ALL_ACCESS, hToken);
                 //GetUserByToken(hToken, dupUser,dupDomain);
-                //LogDatei.DependentAdd('Got Token from process:'+ProcessName+' in session: '+inttostr(Sessionid)+' for user: '+dupUser, LLDebug2);
+                //Logdatei.Log('Got Token from process:'+ProcessName+' in session: '+inttostr(Sessionid)+' for user: '+dupUser, LLDebug2);
               finally
                 CloseHandle(hProcess);
               end;
@@ -1794,7 +1794,7 @@ var
   Environment: Pointer;
   StartupInfo: jwawinbase.TStartupInfo;
 begin
-  LogDatei.DependentAdd('CreateProcessElevated 1', LLDebug2);
+  Logdatei.Log('CreateProcessElevated 1', LLDebug2);
   Result := False;
   @CreateEnvironmentBlock := GetProcAddress(LoadLibrary('userenv.dll'),
     'CreateEnvironmentBlock');
@@ -1806,7 +1806,7 @@ begin
   //@WTSGetActiveConsoleSessionId := GetProcAddress(LoadLibrary('kernel32.dll'), 'WTSGetActiveConsoleSessionId');
   //@WTSQueryUserToken := GetProcAddress(LoadLibrary('wtsapi32.dll'), 'WTSQueryUserToken');
   begin
-    LogDatei.DependentAdd('CreateProcessElevated 2', LLDebug2);
+    Logdatei.Log('CreateProcessElevated 2', LLDebug2);
     Result := OpenShellProcessToken('opsiclientd.exe', hUserToken);
     if not Result then
       Result := OpenShellProcessToken('opsiclientd.exe', hUserToken);
@@ -1821,7 +1821,7 @@ begin
             hElevatedToken := hUserToken;
           end;
           try
-            LogDatei.DependentAdd('CreateProcessElevated 3', LLDebug2);
+            Logdatei.Log('CreateProcessElevated 3', LLDebug2);
             if CreateEnvironmentBlock(@Environment, hElevatedToken, False) then
               try
                 FillChar(StartupInfo, SizeOf(StartupInfo), #0);
@@ -1832,20 +1832,20 @@ begin
                   False, CREATE_NEW_CONSOLE or CREATE_DEFAULT_ERROR_MODE or
                   CREATE_UNICODE_ENVIRONMENT, Environment, lpCurrentDirectory,
                   StartupInfo, ProcessInfo);
-                LogDatei.DependentAdd('CreateProcessElevated 4', LLDebug);
+                Logdatei.Log('CreateProcessElevated 4', LLDebug);
                 //Kernzuweisung
                 SetProcessAffinityMask(ProcessInfo.hProcess, counter + 1);
               finally
-                LogDatei.DependentAdd('CreateProcessElevated 5', LLDebug2);
+                Logdatei.Log('CreateProcessElevated 5', LLDebug2);
                 DestroyEnvironmentBlock(Environment);
               end;
           finally
-            LogDatei.DependentAdd('CreateProcessElevated 6', LLDebug2);
+            Logdatei.Log('CreateProcessElevated 6', LLDebug2);
             //CloseHandle(hElevatedToken);
           end;
         end;
       finally
-        LogDatei.DependentAdd('CreateProcessElevated 7', LLDebug2);
+        Logdatei.Log('CreateProcessElevated 7', LLDebug2);
         //CloseHandle(hUserToken);
       end;
   end;
@@ -2010,12 +2010,12 @@ var
 
 begin
   Result := TStringList.Create;
-  LogDatei.DependentAdd('getIpMacHash start', LLDebug2);
+  Logdatei.Log('getIpMacHash start', LLDebug2);
   try
     // Initialize COM. ------------------------------------------
     if Succeeded(CoInitializeEx(nil, COINIT_MULTITHREADED)) then
       try
-        LogDatei.DependentAdd('getIpMacHash CoInitializeEx', LLDebug2);
+        Logdatei.Log('getIpMacHash CoInitializeEx', LLDebug2);
         // Set general COM security levels --------------------------
         // Note: If you are using Windows 2000, you need to specify -
         // the default authentication credentials for a user by using
@@ -2024,7 +2024,7 @@ begin
         if Failed(CoInitializeSecurity(nil, -1, nil, nil,
           RPC_C_AUTHN_LEVEL_DEFAULT, RPC_C_IMP_LEVEL_IMPERSONATE, nil,
           EOAC_NONE, nil)) then
-          LogDatei.DependentAdd('Error: getIpMacHash: Failed:  CoInitializeSecurity',
+          Logdatei.Log('Error: getIpMacHash: Failed:  CoInitializeSecurity',
             LLError);
         // Obtain the initial locator to WMI -------------------------
         if Succeeded(CoCreateInstance(CLSID_WbemLocator, nil,
@@ -2066,7 +2066,7 @@ begin
                           begin
                             Result.add(VarToStr(VarArrayGet(pIp, [I])) +
                               '=' + VarToStr(pMac));
-                            LogDatei.DependentAdd(VarToStr(VarArrayGet(pIp, [I])) +
+                            Logdatei.Log(VarToStr(VarArrayGet(pIp, [I])) +
                               '=' + VarToStr(pMac), LLDebug2);
                             //writeln(VarToStr(VarArrayGet(pIp,[I]))+' '+VarToStr(pMac));
                     (*
@@ -2083,7 +2083,7 @@ begin
                     end
                     else
                       //Writeln(Format('Error executing WQL sentence %x',[Succeed]));
-                      LogDatei.DependentAdd('Error executing WQL sentence ' +
+                      Logdatei.Log('Error executing WQL sentence ' +
                         IntToStr(Succeed), LLError);
                   finally
                     FUnsecuredApartment := nil;
@@ -2099,7 +2099,7 @@ begin
       end;
   except
     on E: Exception do
-      LogDatei.DependentAdd('Error in wiwin32.getIpMacHash: ' + E.Message, LLError);
+      Logdatei.Log('Error in wiwin32.getIpMacHash: ' + E.Message, LLError);
     //writeln('Error in ip2mac: '+E.Message);
   end;
 end;
@@ -2228,7 +2228,7 @@ begin
     Result := True;
   end
   else
-    LogDatei.DependentAdd('Could not find winlogon token for user: ' + myuser, LLError);
+    Logdatei.Log('Could not find winlogon token for user: ' + myuser, LLError);
   myhandle := myduptoken;
 end;
 
@@ -2240,7 +2240,7 @@ begin
   Result := 0;
   try
     if not DSiEnablePrivilege('SE_DEBUG_NAME') then
-      LogDatei.DependentAddWarning(
+      Logdatei.Log(
         'Warning: Could not get SE_DEBUG_NAME Privilege  -> will try with out',
         LLWarning);
     //Initialize the counter

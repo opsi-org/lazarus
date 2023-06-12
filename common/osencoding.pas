@@ -509,7 +509,7 @@ begin
         Inc(i);
       until (found = True) or (i >= myencodings.Count);
     end;
-    //logdatei.DependentAdd('searchText: '+searchText+', foundencodingstring: '+foundencodingstring+', mysystemEncoding: '+mysystemEncoding,LLEssential);
+    //Logdatei.Log('searchText: '+searchText+', foundencodingstring: '+foundencodingstring+', mysystemEncoding: '+mysystemEncoding,LLEssential);
     //result := foundencodingstring;
   end
   else

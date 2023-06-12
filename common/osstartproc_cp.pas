@@ -185,7 +185,7 @@ var
   Found: boolean = False;
   teststring: string = '';
 begin
-  //Logdatei.DependentAdd ('FindTask for ' + ExeFilename, LevelComplete);
+  //Logdatei.Log ('FindTask for ' + ExeFilename, LLinfo);
   info := '';
   Result := False;
   Found := False;
@@ -203,9 +203,9 @@ begin
       Found := True;
       processID := FProcessEntry32.th32ProcessID;
       parentProcessID := FProcessEntry32.th32ParentProcessID;
-      //LogDatei.DependentAdd (ExtractFileName(FProcessEntry32.szExeFile) + ', processId ' + #9 +
+      //Logdatei.Log (ExtractFileName(FProcessEntry32.szExeFile) + ', processId ' + #9 +
       //  IntToStr (FProcessEntry32.th32ProcessID) + #9 + 'parent process ' + #9 +
-      //  IntToStr (FProcessEntry32.th32ParentProcessID), LevelComplete);
+      //  IntToStr (FProcessEntry32.th32ParentProcessID), LLinfo);
     end;
     ContinueLoop := (not Found) and Process32Next(FSnapshotHandle, FProcessEntry32);
   end;
@@ -441,7 +441,7 @@ begin
       //if not CreateProcessElevated(nil, CmdLinePasStr, PChar(GetCurrentDir),0, ProcessInfo) then
       //begin
       //  result := false;
-      //  logdatei.DependentAdd('Could not start process ', LLError);
+      //  Logdatei.Log('Could not start process ', LLError);
       //end
       //else
       begin
