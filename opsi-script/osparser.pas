@@ -4742,27 +4742,6 @@ begin
       LogDatei.log('Key is: ' + key, LLdebug2);
       GetWord(key, key0, key, ['\']);
       LogDatei.log('Key0 is: ' + key0, LLdebug2);
-      if Is64BitSystem and ('software' = lowerCase(key0)) then
-      begin
-        LogDatei.log('key starting with software on 64 bit. Key is: ' + key, LLdebug);
-        if not flag_force64 then
-        begin
-          key := key0 + '\wow6432node' + key;
-          LogDatei.log(
-            'key starting with software on 64 bit has to be redirected. So we work with: '
-            + key,
-            LLdebug);
-        end
-        else
-        begin
-          key := key_completepath;
-          LogDatei.log(
-            'key starting with software on 64 bit. Redirection is disabled. So we work with: '
-            + key,
-            LLdebug);
-        end;
-      end
-      else
       if (flag_all_ntuser or flag_ntuser or flag_all_usrclass or runLoginScripts) and
         (('HKEY_CURRENT_USER' = UpperCase(key0)) or ('HKCU' = UpperCase(key0))) then
       begin
@@ -5135,28 +5114,6 @@ begin
             LogDatei.log('Key is: ' + key, LLdebug);
             GetWord(key, key0, key, ['\']);
             LogDatei.log('Key0 is: ' + key0, LLdebug2);
-            if Is64BitSystem and ('software' = lowerCase(key0)) then
-            begin
-              LogDatei.log('key starting with software on 64 bit. Key is: ' + key,
-                LLdebug);
-              if not flag_force64 then
-              begin
-                key := key0 + '\wow6432node' + key;
-                LogDatei.log(
-                  'key starting with software on 64 bit has to be redirected. So we work with: '
-                  + key,
-                  LLdebug);
-              end
-              else
-              begin
-                key := key_completepath;
-                LogDatei.log(
-                  'key starting with software on 64 bit. Redirection is disabled. So we work with: '
-                  + key,
-                  LLdebug);
-              end;
-            end
-            else
             if (flag_all_ntuser or flag_ntuser or flag_all_usrclass or
               runLoginScripts) and (('HKEY_CURRENT_USER' = UpperCase(key0)) or
               ('HKCU' = UpperCase(key0))) then
