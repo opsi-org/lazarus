@@ -7,24 +7,29 @@ opsi-script (4.12.10.0) unreleased; urgency=medium
   * [fix] osparser: doRegistryHackRegeditFormat / doRegistryHack
           remove condition branch: 'if Is64BitSystem and ('software' = lowerCase(key0)) then'
           (#4839, !155, d.oertel)
+  * [fix] oslog: includelog with utf16lebom  (d.oertel, j.werner, !157, #4841)
   * [fix] osfunc.pas: getProfilesDirList: Fix memory issue (!154, a.schmitz)
   * [fix] osfunclin.pas: getLinuxReleaseInfo: Fix getting subrelease (#947, !148, a.schmitz)
+  * [fix] osconf.pas and osparser.pas: set computername on Unix only if it was not set before and is empty, 
+          set opsiserviceUser to opsiserviceClientId if opsiserviceUser is empty and opsiserviceClientId was set (j.werner, !150, #4816)
   * [new] osfunc.pas: DeleteShellLink: If the file ends on .url, then delete the url link, otherwise (as before) add a .lnk ending and delete the lnk link (#4399, !141, a.schmitz)
   * [new] osfunc.pas: AllDelete: Prevent deletion of program files directories (#3192, !142, a.schmitz)
-  * [chg] osparser.pas: Refactor doTextpatch and doInifilePatches in preparation for the new config file section (!153, a.schmitz)
-  * [chg] osfunclin.pas: getLinuxReleaseInfoFromLSBRelease: Use lazarus RunCommand instead of RunCommandAndCaptureOut to avoid confusing exceptions in the log (!147, a.schmitz)
+  * [new] osparser: allow modifier name '/AllUserProfiles'  in registry sections in addition to '/AllNTUserDats‘(j.werner, !158, #4827)
+  * [new] unify ShellInAnIcon and ShellBatch, ShellScript as new name for ShellInAnIcon/...-Sections (j.werner, !152)
+  * [new] osparser.pas: multi line statements: a opsi-script line will concatenated with the next line if the line ends with whitespace+backslash
+          and not contains EscapeString  (d.oertel)
+  * [change] osparser.pas: Refactor doTextpatch and doInifilePatches in preparation for the new config file section (!153, a.schmitz)
+  * [change] osfunclin.pas: getLinuxReleaseInfoFromLSBRelease: Use lazarus RunCommand instead of RunCommandAndCaptureOut to avoid confusing exceptions in the log (!147, a.schmitz)
+  * [change] remove old log levels and logging functions (j.werner, !126)
+  * [change] osparser.pas, createAndProcessScript: Logheader show Windows 11 (j.werner, !156, #4840)
 
--- j.werner <j.werner@uib.de> 04 May 2023
+-- j.werner <j.werner@uib.de> 13 June 2023
 
 
-opsi-script (4.12.9.1) unreleased; urgency=medium
+opsi-script (4.12.9.1) stable; urgency=medium
 
   * [fix] oswebservice.pas: getSubListResult, getProductPropertyList:
           Empty (property) values are now handelt correct and without raising an exception.(j.werner)
-  * [new] osparser.pas: multi line statements:
-          a opsi-script line will concatenated with the next line
-          if the line ends with whitespace+backslash
-          and not contains EscapeString  (d.oertel)
 
 -- j.werner <j.werner@uib.de> 14 April 2023
 
