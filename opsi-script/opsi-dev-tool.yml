@@ -8,30 +8,6 @@ project:
   licenses: AGPL-3.0
 
 pull-binaries:
-  - name: ssl-libs
-    server-type: binaryindex
-    destination: upload/win32/opsi-script
-    extract: true
-    post-script:
-      - cp upload/win32/opsi-script/ssl-libs/*.dll upload/win32/opsi-script/
-      - rm -r upload/win32/opsi-script/ssl-libs
-    os: windows
-    architecture: x86
-    version: 0
-    branch: development
-    server-url: http://binaryindex.uib.gmbh
-  - name: ssl-libs
-    server-type: binaryindex
-    destination: upload/win64/opsi-script
-    extract: true
-    post-script:
-      - cp upload/win64/opsi-script/ssl-libs/*.dll upload/win64/opsi-script/
-      - rm -r upload/win64/opsi-script/ssl-libs
-    os: windows
-    architecture: x64
-    version: 0
-    branch: development
-    server-url: http://binaryindex.uib.gmbh
   - name: shutdownexe
     server-type: binaryindex
     destination: upload/win32/opsi-script
