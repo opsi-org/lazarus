@@ -5742,10 +5742,8 @@ begin
           Productvars.Values['productVersion'];
         //if FProductOnClient_aktobject.isNull('productVersion') then
         //  FProductOnClient_aktobject := FProductOnClient_aktobject.put('productVersion',nil);
-        parastr := FProductOnClient_aktobject.asJson(False, False);
         FProductOnClient_aktobject.S['productVersion'] :=
           Productvars.Values['productVersion'];
-        parastr := FProductOnClient_aktobject.asJson(False, False);
       end;
     end;
     if lastAction <> tac4Custom then
