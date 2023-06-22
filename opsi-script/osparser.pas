@@ -11926,7 +11926,7 @@ var
   ///sx,
   tmpstr, tmpstr1, tmpstr2, tmpstr3: string;
   tmpint: integer;
-  tmpbool, tmpbool1: boolean;
+  tmpbool: boolean;
   a1: integer = 0;
   a2: integer = 0;
   int64_1: int64;
@@ -12084,7 +12084,7 @@ begin
         begin
           try
             FreeAndNil(list); //free list before assign new TXStringlist object to variable
-            list := TXStringList(execPowershellCall(s1, s2, 1, True, False, tmpbool1, s4));
+            list := TXStringList(execPowershellCall(s1, s2, 1, True, False, tmpbool, s4));
           except
             on e: Exception do
             begin
