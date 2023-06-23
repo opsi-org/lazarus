@@ -1,7 +1,7 @@
 object MyMessageDlg: TMyMessageDlg
-  Left = 241
+  Left = 244
   Height = 241
-  Top = 582
+  Top = 584
   Width = 600
   Caption = 'opsi-script Message'
   ClientHeight = 241
@@ -10,7 +10,7 @@ object MyMessageDlg: TMyMessageDlg
   Font.Name = 'Arial'
   OnHide = FormHide
   Position = poScreenCenter
-  LCLVersion = '2.2.2.0'
+  LCLVersion = '2.2.6.0'
   object Panel1: TPanel
     Left = 0
     Height = 57

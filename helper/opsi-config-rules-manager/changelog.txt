@@ -1,0 +1,14 @@
+
+opsiconfigrulesmgr 4.2.0.1 23.6.2023
+
+* add multidepot useability
+* add Treenode 'All' for all clients of selected depot
+* read, log and show internal version
+
+d.oertel@uib.de
+
+opsiconfigrulesmgr 4.2.0.0 16.5.2023
+
+* initial
+
+d.oertel@uib.de
