@@ -431,6 +431,16 @@ end;
 begin
 
   myconfiguration := TConfiguration.Create;
+  // get internal version
+  FileVerInfo := TFileVersionInfo.Create(nil);
+  try
+    FileVerInfo.FileName := ParamStr(0);
+    FileVerInfo.ReadFileInfo;
+    myVersion := FileVerInfo.VersionStrings.Values['FileVersion'];
+  finally
+    FileVerInfo.Free;
+  end;
+
 
 
   // Initialize logging

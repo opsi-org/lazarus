@@ -1,7 +1,7 @@
 object Form1: TForm1
-  Left = 474
+  Left = 476
   Height = 656
-  Top = 197
+  Top = 187
   Width = 908
   Caption = 'opsi-config-rule manager'
   ClientHeight = 636
@@ -222,6 +222,7 @@ object Form1: TForm1
       Width = 366
       Align = alTop
       ItemHeight = 0
+      MultiSelect = True
       OnSelectionChange = ListBoxServerSelectionChange
       TabOrder = 1
     end

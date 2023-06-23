@@ -441,17 +441,23 @@ var
   str: string;
   i: integer;
 begin
-  for i := 0 to myNode.Count - 1 do
+  if myNode.Text = 'All' then
   begin
-    if mynode.Items[i].HasChildren then
-      // recursive call
-      addClientsFromNode(mynode.Items[i])
-    else
-    // check if it is really a client
-    // a client has ImageIndex = 0 (see procedure readclients)
-    if mynode.Items[i].ImageIndex = 0 then
-      form1.ListBoxClient.Items.Add(mynode.Items[i].Text);
-  end;
+    form1.ListBoxClient.Clear;
+    form1.ListBoxClient.Items.AddStrings(allClientIdsList);
+  end
+  else
+    for i := 0 to myNode.Count - 1 do
+    begin
+      if mynode.Items[i].HasChildren then
+        // recursive call
+        addClientsFromNode(mynode.Items[i])
+      else
+      // check if it is really a client
+      // a client has ImageIndex = 0 (see procedure readclients)
+      if mynode.Items[i].ImageIndex = 0 then
+        form1.ListBoxClient.Items.Add(mynode.Items[i].Text);
+    end;
   //logdatei.log('myNode.Count: '+intToStr(myNode.Count), LLDebug2);
 end;
 
@@ -626,6 +632,8 @@ begin
     Application.ProcessMessages;
     form1.TreeView1.Items.Clear;
     LogDatei.log('readgroups', LLnotice);
+    myNode := Form1.TreeView1.Items.Add(nil, 'All');
+    myNode.Text := 'All';
     myNode := Form1.TreeView1.Items.Add(nil, 'Gruppen');
     myNode.Text := 'Gruppen';
     myNode := Form1.TreeView1.Items.Add(nil, 'clientdirectory');
@@ -635,7 +643,8 @@ begin
     method := 'group_getObjects';
     params := ['', '{"type":"HostGroup"}'];
     LogErrorMessage := 'Warning: Could not group_getObjects from service';
-    serviceresult := localservicedata.getJSONFromService(method, params, logErrorMessage);
+    serviceresult := localservicedata.getJSONFromService(method,
+      params, logErrorMessage);
     LogDatei.log('Serviceresult from readgroups: ' + serviceresult, LLdebug);
     jsonAsObjectGetValueByKey(serviceresult, 'result', jsonstr);
     if jsonAsArrayCountElements(jsonstr) > 0 then
@@ -696,7 +705,6 @@ begin
   *)
     method := 'configState_getClientToDepotserver';
     // get selected servers
-    (*
     for i := 0 to Form1.ListBoxServer.Count - 1 do
       if Form1.ListBoxServer.Selected[i] then
       begin
@@ -704,9 +712,10 @@ begin
         selectedServerList.Add(Name);
         LogDatei.log('Selected server: ' + Name, LLdebug);
       end;
-     *)
+     (*
     tmpstr := Form1.ListBoxServer.Items[Form1.ListBoxServer.ItemIndex];
     selectedServerList.Add(tmpstr);
+    *)
     if stringListToJsonArray(selectedServerList, jsonstr) then
     begin
       params := [jsonstr];
