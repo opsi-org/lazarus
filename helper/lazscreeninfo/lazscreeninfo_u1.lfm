@@ -1,0 +1,227 @@
+object Form1: TForm1
+  Left = 445
+  Height = 550
+  Top = 363
+  Width = 439
+  Caption = 'Form1'
+  ClientHeight = 550
+  ClientWidth = 439
+  OnMouseMove = FormMouseMove
+  OnShow = FormShow
+  LCLVersion = '2.2.6.0'
+  object FlowPanel1: TFlowPanel
+    Left = 2
+    Height = 162
+    Top = 2
+    Width = 435
+    Align = alTop
+    BorderSpacing.Around = 2
+    Caption = 'FlowPanel1'
+    ControlList = <    
+      item
+        Control = Label1
+        WrapAfter = waAuto
+        Index = 0
+      end    
+      item
+        Control = Label2
+        WrapAfter = waAuto
+        Index = 1
+      end    
+      item
+        Control = Label3
+        WrapAfter = waAuto
+        Index = 2
+      end    
+      item
+        Control = Label4
+        WrapAfter = waAuto
+        Index = 3
+      end    
+      item
+        Control = Label5
+        WrapAfter = waAuto
+        Index = 4
+      end    
+      item
+        Control = Label6
+        WrapAfter = waAuto
+        Index = 5
+      end    
+      item
+        Control = Label7
+        WrapAfter = waAuto
+        Index = 6
+      end    
+      item
+        Control = Label8
+        WrapAfter = waAuto
+        Index = 7
+      end    
+      item
+        Control = Label9
+        WrapAfter = waAuto
+        Index = 8
+      end    
+      item
+        Control = Label10
+        WrapAfter = waAuto
+        Index = 9
+      end    
+      item
+        Control = Button1
+        WrapAfter = waAuto
+        Index = 10
+      end>
+    FlowLayout = tlTop
+    FlowStyle = fsLeftRightTopBottom
+    TabOrder = 0
+    object Label1: TLabel
+      Left = 3
+      Height = 28
+      Top = 3
+      Width = 41
+      Anchors = []
+      BorderSpacing.Around = 2
+      Caption = 'Top: '
+      Font.Height = -20
+      ParentColor = False
+      ParentFont = False
+    end
+    object Label2: TLabel
+      Left = 48
+      Height = 28
+      Top = 3
+      Width = 41
+      Anchors = []
+      BorderSpacing.Around = 2
+      Caption = 'Top: '
+      Font.Height = -20
+      ParentColor = False
+      ParentFont = False
+    end
+    object Label3: TLabel
+      Left = 93
+      Height = 28
+      Top = 3
+      Width = 36
+      Anchors = []
+      BorderSpacing.Around = 2
+      Caption = 'Left:'
+      Font.Height = -20
+      ParentColor = False
+      ParentFont = False
+    end
+    object Label4: TLabel
+      Left = 133
+      Height = 28
+      Top = 3
+      Width = 41
+      Anchors = []
+      BorderSpacing.Around = 2
+      Caption = 'Top: '
+      Font.Height = -20
+      ParentColor = False
+      ParentFont = False
+    end
+    object Label5: TLabel
+      Left = 178
+      Height = 28
+      Top = 3
+      Width = 76
+      Anchors = []
+      BorderSpacing.Around = 2
+      Caption = 'Monitor:'
+      Font.Height = -20
+      ParentColor = False
+      ParentFont = False
+    end
+    object Label6: TLabel
+      Left = 258
+      Height = 28
+      Top = 3
+      Width = 41
+      Anchors = []
+      BorderSpacing.Around = 2
+      Caption = 'Top: '
+      Font.Height = -20
+      ParentColor = False
+      ParentFont = False
+    end
+    object Label7: TLabel
+      Left = 303
+      Height = 28
+      Top = 3
+      Width = 59
+      Anchors = []
+      BorderSpacing.Around = 2
+      Caption = 'MTop: '
+      Font.Height = -20
+      ParentColor = False
+      ParentFont = False
+    end
+    object Label8: TLabel
+      Left = 366
+      Height = 28
+      Top = 3
+      Width = 41
+      Anchors = []
+      BorderSpacing.Around = 2
+      Caption = 'Top: '
+      Font.Height = -20
+      ParentColor = False
+      ParentFont = False
+    end
+    object Label9: TLabel
+      Left = 3
+      Height = 28
+      Top = 35
+      Width = 59
+      Anchors = []
+      BorderSpacing.Around = 2
+      Caption = 'MLeft: '
+      Font.Height = -20
+      ParentColor = False
+      ParentFont = False
+    end
+    object Label10: TLabel
+      Left = 66
+      Height = 28
+      Top = 35
+      Width = 41
+      Anchors = []
+      BorderSpacing.Around = 2
+      Caption = 'Top: '
+      Font.Height = -20
+      ParentColor = False
+      ParentFont = False
+    end
+    object Button1: TButton
+      Left = 109
+      Height = 25
+      Top = 33
+      Width = 75
+      Anchors = []
+      Caption = 'Button1'
+      OnClick = Button1Click
+      TabOrder = 0
+    end
+  end
+  object Memo1: TMemo
+    Left = 0
+    Height = 384
+    Top = 166
+    Width = 439
+    Align = alClient
+    Lines.Strings = (
+      'Memo1'
+    )
+    TabOrder = 1
+  end
+  object Timer1: TTimer
+    Interval = 100
+    OnTimer = Timer1Timer
+    Left = 293
+    Top = 35
+  end
+end
