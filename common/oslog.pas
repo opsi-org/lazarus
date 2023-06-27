@@ -1673,20 +1673,24 @@ procedure TLogInfo.includelogtail(fname: string; logtailLinecount: integer;
 var
   includelogStrList: TStringList;
   //supportedEncodings: TStringList;
-  aktline, includeLogLineStart, includelogLinecount: integer;
+  aktline, includeLogLineStart, includelogLinecount, i: integer;
   bool: boolean;
   str: string;
 begin
   try
+    includelogStrList := TStringList.Create;
+    //supportedEncodings := TStringList.Create;
     try
       Fname := ExpandFileName(Fname);
       if lowercase(sourceEncoding) = 'unicode' then
       begin
-        includelogStrList := loadUnicodeTextFile(Fname, bool, str);
+        includelogStrList.Assign(loadUnicodeTextFile(Fname, bool, str));
       end
       else
       begin
-        includelogStrList := loadTextFileWithEncoding(Fname, sourceEncoding);
+        includelogStrList.LoadFromFile(FName);
+        includelogStrList.Text :=
+          reencode(includelogStrList.Text, sourceEncoding, sourceEncoding);
       end;
       includelogLinecount := includelogStrList.Count;
       if logtailLinecount > 0 then
@@ -1732,6 +1736,7 @@ begin
     end;
   finally
     includelogStrList.Free;
+    //supportedEncodings.Free;
   end;
 end;
 
