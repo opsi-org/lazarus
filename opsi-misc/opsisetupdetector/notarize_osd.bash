@@ -5,11 +5,11 @@ set -e -x
 CODE_SIGN_SIGNATURE="Developer ID Application: uib gmbh (5H88T32F7P)"
 APPLE_ID_USER=macos@uib.de
 
-#APP_SPECIFIC_PASSWORD=fqwo-ztjg-ljte-xkpl
+#APP_SPECIFIC_PASSWORD=$1
 #BUNDLE_ID=org.opsi.opsi-setup-detector
 #EXECUTABLE_NAME=opsi-setup-detector
 
-APP_SPECIFIC_PASSWORD=ncyy-meep-bace-ppgc
+APP_SPECIFIC_PASSWORD=$1
 BUNDLE_ID=org.opsi.opsisetupdetector
 EXECUTABLE_NAME=opsisetupdetector
 EXECUTABLE_SOURCE_x86=`pwd`/compiler_out/binarys/x86_64-darwin/${EXECUTABLE_NAME}

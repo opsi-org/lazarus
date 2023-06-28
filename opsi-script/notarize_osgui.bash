@@ -9,7 +9,7 @@ APPLE_ID_USER=macos@uib.de
 #BUNDLE_ID=org.opsi.opsi-script-nogui
 #EXECUTABLE_NAME=opsi-script-nogui
 
-APP_SPECIFIC_PASSWORD=bues-hpoq-pors-iymh
+APP_SPECIFIC_PASSWORD=$1
 BUNDLE_ID=org.opsi.opsi-script-gui
 EXECUTABLE_NAME=opsi-script-gui
 EXECUTABLE_SOURCE=`pwd`/compiler_out/binarys/x86_64-darwin/${EXECUTABLE_NAME}

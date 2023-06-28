@@ -7,7 +7,7 @@ APPLE_ID_USER=macos@uib.de
 # Login to https://appleid.apple.com 
 # and find the Security > App-Specific Password > Generate Password section. 
 # Copy this password, which will be in the form xxxx-xxxx-xxxx-xxxx.
-APP_SPECIFIC_PASSWORD=hptt-seiv-uazr-ndir
+APP_SPECIFIC_PASSWORD=$1
 
 BUNDLE_ID=org.opsi.opsiclientdmac
 EXECUTABLE_NAME=opsiclientd_mac

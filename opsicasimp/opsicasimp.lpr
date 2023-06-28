@@ -605,7 +605,6 @@ var
         //LogDatei.log('hwauditsr: '+hwauditstr,LLNotice);
         MyOpsiMethodCall('auditHardwareOnHost_createObjects', hwauditstr);
         //productOnClient_deleteObjects([<ProductOnClient(clientId=u'pctry4detlef.uib.local', productId=u'win10-x64-1709', installationStatus=u'unknown', actionRequest=u'setup')>])
-        // getPcpatchPassword(u'pctry4detlef.uib.local')
         MyOpsiMethodCall('getPcpatchPassword', [myclientid]);
         // productOnClient_updateObjects(<ProductOnClient(clientId=u'pct
         MyOpsiMethodCall('productOnClient_updateObjects', ['[{"clientId":"'+myclientid+'","productId":"'+myproduct+'","installationStatus":"installed","actionRequest":"None","type":"ProductOnClient","productType":"NetbootProduct","actionProgress":"","actionResult":"successful","lastAction":"setup"}]']);

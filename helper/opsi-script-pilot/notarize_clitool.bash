@@ -7,7 +7,7 @@ APPLE_ID_USER=d.oertel@uib.de
 # Login to https://appleid.apple.com 
 # and find the Security > App-Specific Password > Generate Password section. 
 # Copy this password, which will be in the form xxxx-xxxx-xxxx-xxxx.
-APP_SPECIFIC_PASSWORD=ellk-nvja-xmhq-lmhc
+APP_SPECIFIC_PASSWORD=$1
 
 BUNDLE_ID=org.opsi.opsi-script-pilot
 EXECUTABLE_NAME=opsi-script-pilot
