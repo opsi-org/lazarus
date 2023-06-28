@@ -1628,16 +1628,16 @@ begin
     end;
     try
       // run the body of the function
-      LogDatei.log_prog('prepare run the body of the function ... ', LLDebug2);
+      LogDatei.log_prog('prepare run the body of the function ... ', LLNotice);
       Inc(inDefinedFuncNestCounter);
       if inDefinedFuncNestCounter < 100 then
       begin
       section := TWorkSection.Create(Nestlevel, nil);
       callingsection := TWorkSection.Create(0, nil);
-      section.Assign(DFcontent);
-      LogDatei.log_prog('start run the body of the function ... ', LLDebug2);
+      section.Text := DFcontent.Text;
+      LogDatei.log_prog('start run the body of the function ... ', LLNotice);
       sectionresult := script.doAktionen(section, callingsection);
-      LogDatei.log_prog('finished run the body of the function ... ', LLDebug2);
+      LogDatei.log_prog('finished run the body of the function ... ', LLNotice);
       Nestlevel := section.NestingLevel;
       call := True;
       case DFResultType of
@@ -1659,16 +1659,18 @@ begin
         LogDatei.log('Error: recursion depth >= 100 not allowed - stopping recursion',LLerror);
       end;
       Dec(inDefinedFuncNestCounter);
+       LogDatei.log_prog('definedFunctionsCallStack.Delete ... Count: ' + IntToStr(definedFunctionsCallStack.Count), LLNotice);
       definedFunctionsCallStack.Delete(definedFunctionsCallStack.Count - 1);
       // dec var instance counter for recursive calls
+      LogDatei.log_prog('destroyAllVarInstances ... ', LLNotice);
       destroyAllVarInstances;
       LogDatei.log_prog('DFVarInstanceIndex: ' + IntToStr(DFVarInstanceIndex) +
-        ' inDefinedFuncNestCounter: ' + IntToStr(inDefinedFuncNestCounter), LLDebug);
+        ' inDefinedFuncNestCounter: ' + IntToStr(inDefinedFuncNestCounter), LLNotice);
 
     except
       on e: Exception do
       begin
-        LogDatei.log_prog('Exception: osd call: run body: ' + e.message, LLError);
+        LogDatei.log_prog('Exception (Line ' + {$INCLUDE %LINE%} + '): osdefined function call: run body: ' + e.message, LLError);
         raise;
       end;
     end;
