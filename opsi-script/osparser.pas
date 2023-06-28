@@ -15204,8 +15204,17 @@ begin
 
     // defined local function ?
     GetWord(s0, funcname, r, WordDelimiterSet5);
-    FuncIndex := definedFunctionNames.IndexOf(LowerCase(funcname));
-    // string variable?
+    try
+      FuncIndex := definedFunctionNames.IndexOf(LowerCase(funcname));
+    except
+      on E: Exception do
+      begin
+        Logdatei.log('Line: ' + {$INCLUDE %LINE%}', Exception in Evaluatestring (defined local function, getting FuncIndex, funcname: ' + funcname + ', FuncIndex: ' + IntToStr(FuncIndex) + '), s0: ' + s0, LLCritical);
+        Logdatei.log(e.ClassName + ' system message: "' + E.Message +
+          '" - giving up',
+          LLCritical);
+      end;
+    end;     // string variable?
     GetWord(s0, s, r, WordDelimiterSet3);
     VarIndex := VarList.IndexOf(LowerCase(s));
 
@@ -15213,26 +15222,37 @@ begin
     // defined local function ?
     if FuncIndex >= 0 then
     begin
-      if not (definedFunctionArray[FuncIndex].datatype = dfpString) then
-      begin
-        // error
-        syntaxCheck := False;
-        LogDatei.log('Syntax Error: defined function: ' + funcname +
-          ' is not from type string.', LLError);
-      end
-      else
-      begin
-        if definedFunctionArray[FuncIndex].call(r, r, NestLevel) then
+      try
+        if not (definedFunctionArray[FuncIndex].datatype = dfpString) then
         begin
-          StringResult := definedFunctionArray[FuncIndex].Resultstring;
-          syntaxCheck := True;
-          //logdatei.log('We leave the defined function: inDefFunc3: '+IntToStr(inDefFunc3),LLInfo);
+          // error
+          syntaxCheck := False;
+          LogDatei.log('Syntax Error: defined function: ' + funcname +
+            ' is not from type string.', LLError);
         end
         else
         begin
-          // defined function call failed
-          LogDatei.log('Call of defined function: ' + funcname + ' failed', LLError);
-          syntaxCheck := False;
+          if definedFunctionArray[FuncIndex].call(r, r, NestLevel) then
+          begin
+            StringResult := definedFunctionArray[FuncIndex].Resultstring;
+            syntaxCheck := True;
+            //logdatei.log('We leave the defined function: inDefFunc3: '+IntToStr(inDefFunc3),LLInfo);
+          end
+          else
+          begin
+            // defined function call failed
+            LogDatei.log('Call of defined function: ' + funcname + ' failed', LLError);
+            syntaxCheck := False;
+          end;
+        end;
+
+      except
+        on E: Exception do
+        begin
+          Logdatei.log('Line: ' + {$INCLUDE %LINE%}', Exception in Evaluatestring (defined local function, funcname: ' + funcname + ', FuncIndex: ' + IntToStr(FuncIndex)  + '), s0: ' + s0, LLCritical);
+          Logdatei.log(e.ClassName + ' system message: "' + E.Message +
+            '" - giving up',
+            LLCritical);
         end;
       end;
     end
