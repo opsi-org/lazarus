@@ -129,8 +129,8 @@ end;
 
 procedure TOpsiHTTPSAcceptingThread.InitSSLOpsi;
 begin
-  AcceptorSocket.SSL.Username:= 'adminuser'; //'vmmacdev1onmm1.uib.local';
-  AcceptorSocket.SSL.Password:= 'linux123'; //'aead8f8c57a92e14ac820bf8d3df1805'; //'linux123';
+  AcceptorSocket.SSL.Username:= '';
+  AcceptorSocket.SSL.Password:= ''; 
 end;
 
 
