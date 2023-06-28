@@ -14,7 +14,8 @@ uses
   Classes,
   Process,
   SysUtils,
-  osparserhelper;
+  osparserhelper,
+  fileutil;
 
 {$IFDEF WINDOWS}
 procedure registerForWinExplorer(doregister: boolean);
@@ -25,6 +26,7 @@ function RunCommandAndCaptureOut
   var report: string; showcmd: integer; var ExitCode: longint): boolean;
 function grepexe(instring: string): string;
 function CompareDotSeparatedNumbers(s1, s2, s3: string): boolean;
+function detect_opb_path(path: string): string;
 
 implementation
 
@@ -423,7 +425,7 @@ end;
 
 function CompareDotSeparatedNumbers(s1, s2, s3: string): boolean;
 var
-  BooleanResult: boolean;
+  BooleanResult: boolean = False;
   intresult: integer;
   sx: string;
 begin
@@ -474,5 +476,53 @@ begin
   Result := BooleanResult;
 end;
 
+function detect_opb_path(path: string): string;
+const
+  {$IFDEF WINDOWS}
+  TARGETBIN = 'opsipackagebuilder.exe';
+  {$ELSE WINDOWS}
+  TARGETBIN = 'opsipackagebuilder';
+
+  {$ENDIF WINDOWS}
+
+
+  function opb_path_ok(path: string): boolean;
+  begin
+    Result := False;
+    if FileExists(path) then
+      if ExtractFileName(path) = TARGETBIN then
+        Result := True;
+  end;
+
+begin
+  // by default empty
+  Result := '';
+  // check given path
+  if opb_path_ok(path) then Result := path
+  else
+  begin
+    // try to find in search path
+    { Using FindDefaultExecutablePath from fileutil }
+    path := FindDefaultExecutablePath(TARGETBIN);
+    if opb_path_ok(path) then Result := path
+    else
+    begin
+      // try to find in oPB default path
+      {$IFDEF WINDOWS}
+      path := 'C:\Program Files (x86)\opsi PackageBuilderNG\' + TARGETBIN;
+      {$ENDIF WINDOWS}
+
+      {$IFDEF LINUX}
+      path := '/usr/bin/' + TARGETBIN;
+      {$ENDIF LINUX}
+
+      {$IFDEF DARWIN}
+      path := '/Applications/opsiPackageBuilder.app/Contents/MacOS/' + TARGETBIN;
+      {$ENDIF DARWIN}
+
+      if opb_path_ok(path) then Result := path;
+    end;
+  end;
+end;
 
 end.

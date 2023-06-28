@@ -1705,6 +1705,10 @@ begin
         CloseFile(fConfig);
       end;
     end;
+
+    // init FPathToOpsiPackageBuilder;
+    FPathToOpsiPackageBuilder := detect_opb_path(FPathToOpsiPackageBuilder);
+
     if Assigned(logdatei) then
       logdatei.log('Finished readconfig', LLDebug2);
 

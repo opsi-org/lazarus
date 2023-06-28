@@ -633,7 +633,7 @@ begin
           AppVerName := AppName + AppVersion;
       end;
       // if installdir is resolved at runtime by code then it is unknown
-      if (0 < pos(lowercase('{code:', lowercase(DefaultDirName))) then
+      if (0 < pos(lowercase('{code:'), lowercase(DefaultDirName))) then
           DefaultDirName := '{code:UNKNOWN}';
       // try to translate well known inno constants to opsi
       if (0 < pos('x64', lowercase(ArchitecturesInstallIn64BitMode))) and
