@@ -5,7 +5,7 @@ set -e -x
 CODE_SIGN_SIGNATURE="Developer ID Application: uib gmbh (5H88T32F7P)"
 APPLE_ID_USER=macos@uib.de
 
-#APP_SPECIFIC_PASSWORD=fqwo-ztjg-ljte-xkpl
+#APP_SPECIFIC_PASSWORD=$1
 #BUNDLE_ID=org.opsi.opsi-script-nogui
 #EXECUTABLE_NAME=opsi-script-nogui
 
