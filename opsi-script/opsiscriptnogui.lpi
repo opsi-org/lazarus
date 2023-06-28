@@ -173,7 +173,7 @@
     </PublishOptions>
     <RunParams>
       <local>
-        <CommandLineParams Value="-opsiservice https://192.168.1.14:4447/rpc -clientid pctry5detlef.uib.local -username pctry5detlef.uib.local -password 2eb916a353d8604133a64e762ff45c88"/>
+        <CommandLineParams Value="-opsiservice https://:4447/rpc -clientid -username -password "/>
         <LaunchingApplication Use="True"/>
         <Display Use="True"/>
       </local>
@@ -181,7 +181,7 @@
       <Modes Count="1">
         <Mode0 Name="default">
           <local>
-            <CommandLineParams Value="-opsiservice https://192.168.1.14:4447/rpc -clientid pctry5detlef.uib.local -username pctry5detlef.uib.local -password 2eb916a353d8604133a64e762ff45c88"/>
+            <CommandLineParams Value="-opsiservice https://:4447/rpc -clientid -username -password "/>
             <LaunchingApplication Use="True"/>
             <Display Use="True"/>
           </local>
