@@ -132,6 +132,7 @@ opsi-setup-detector (4.2.2.0-1) stable; urgency=low
    * call online help from docs.opsi.org with context
    * fix osdanalyzewin: get_inno_info  code based installdir
    * feature: osd configuration: auto-detect path to packageBuilder; fixes: #4844
+   * new: osdcreate: create control file also in 4.3 toml style
 
    todo:
 

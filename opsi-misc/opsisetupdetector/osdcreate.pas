@@ -1086,32 +1086,130 @@ begin
   try
     helplist := TStringList.Create;
     textlist := TStringList.Create;
+
+   // create control file (pre 4.3 not_toml style)
+   textlist.Add('[Package]');
+   textlist.Add('version: ' + IntToStr(aktProduct.productdata.packageversion));
+   textlist.Add('depends: ');
+   textlist.Add('');
+   textlist.Add('[Product]');
+   textlist.Add('type: ' + aktProduct.productdata.producttype);
+   textlist.Add('id: ' + aktProduct.productdata.productId);
+   textlist.Add('name: ' + aktProduct.productdata.productName);
+   textlist.Add('description: ' + aktProduct.productdata.description);
+   textlist.Add('advice: ' + aktProduct.productdata.advice);
+   textlist.Add('version: ' + aktProduct.productdata.productversion);
+   textlist.Add('priority: ' + IntToStr(aktProduct.productdata.priority));
+   textlist.Add('licenseRequired: False');
+   textlist.Add('productClasses: ');
+   textlist.Add('setupScript: ' + aktProduct.productdata.setupscript);
+   // No uninstall for Meta
+   if not (osdsettings.runmode in [createMeta]) then
+     textlist.Add('uninstallScript: ' + aktProduct.productdata.uninstallscript);
+   textlist.Add('updateScript: ' + aktProduct.productdata.updatescript);
+   textlist.Add('alwaysScript: ');
+   textlist.Add('onceScript: ');
+   textlist.Add('customScript: ');
+   if aktProduct.productdata.customizeProfile then
+     textlist.Add('userLoginScript: ' + aktProduct.productdata.setupscript)
+   else
+     textlist.Add('userLoginScript: ');
+
+
+   //dependencies
+   for i := 0 to aktProduct.dependencies.Count - 1 do
+   begin
+     mydep := TPDependency(aktProduct.dependencies.Items[i]);
+     textlist.Add('');
+     textlist.Add('[ProductDependency]');
+     textlist.Add('action: setup');
+     textlist.Add('requiredProduct: ' + mydep.Required_ProductId);
+     case mydep.Required_State of
+       noState: ;
+       installed: textlist.Add('requiredStatus: installed');
+       not_installed: textlist.Add('requiredStatus: not installed');
+       unknown: textlist.Add('requiredStatus: unknown');
+     end;
+     case mydep.Required_Action of
+       noRequest: ;
+       setup: textlist.Add('requiredAction: setup');
+       uninstall: textlist.Add('requiredAction: uninstall');
+       TPActionRequest.update: textlist.Add('requiredAction: update');
+     end;
+     case mydep.Required_Type of
+       doNotMatter: textlist.Add('requirementType: ');
+       before: textlist.Add('requirementType: before');
+       after: textlist.Add('requirementType: after');
+     end;
+   end;
+
+   //ProductProperties
+   for i := 0 to aktProduct.properties.Count - 1 do
+   begin
+     myprop := TPProperty(aktProduct.properties.Items[i]);
+     textlist.Add('');
+     textlist.Add('[ProductProperty]');
+     case myprop.Property_Type of
+       bool: textlist.Add('type: bool');
+       unicode: textlist.Add('type: unicode');
+     end;
+     textlist.Add('name: ' + myprop.Property_Name);
+     textlist.Add('description: ' + myprop.description);
+     if myprop.Property_Type = bool then
+     begin
+       textlist.Add('default: ' + BoolToStr(myprop.boolDefault, True));
+     end
+     else
+     begin
+       textlist.Add('multivalue: ' + BoolToStr(myprop.multivalue, True));
+       textlist.Add('editable: ' + BoolToStr(myprop.editable, True));
+       helplist.Text := myprop.GetValueLines.Text;
+       opsiquotelist(helplist, '"');
+       if stringListToJsonArray(helplist, tmpstr) then
+         textlist.Add('values: ' + tmpstr)
+       else
+         LogDatei.log('Failed to write property values entry for property: ' +
+           myprop.Property_Name, LLerror);
+       helplist.Text := myprop.GetDefaultLines.Text;
+       opsiquotelist(helplist, '"');
+       if stringListToJsonArray(helplist, tmpstr) then
+         textlist.Add('default: ' + tmpstr)
+       else
+         LogDatei.log('Failed to write property default entry for property: ' +
+           myprop.Property_Name, LLerror);
+     end;
+   end;
+   textlist.SaveToFile(opsipath + pathdelim + 'control');
+   // END: create control file (pre 4.3 not_toml style)
+
+
+    // create control file (4.3 toml style)
     textlist.Add('[Package]');
-    textlist.Add('version: ' + IntToStr(aktProduct.productdata.packageversion));
-    textlist.Add('depends: ');
+    textlist.Add('version = ' + IntToStr(aktProduct.productdata.packageversion));
+    textlist.Add('depends = ""');
     textlist.Add('');
     textlist.Add('[Product]');
-    textlist.Add('type: ' + aktProduct.productdata.producttype);
-    textlist.Add('id: ' + aktProduct.productdata.productId);
-    textlist.Add('name: ' + aktProduct.productdata.productName);
-    textlist.Add('description: ' + aktProduct.productdata.description);
-    textlist.Add('advice: ' + aktProduct.productdata.advice);
-    textlist.Add('version: ' + aktProduct.productdata.productversion);
-    textlist.Add('priority: ' + IntToStr(aktProduct.productdata.priority));
-    textlist.Add('licenseRequired: False');
-    textlist.Add('productClasses: ');
-    textlist.Add('setupScript: ' + aktProduct.productdata.setupscript);
+    textlist.Add('type = "' + aktProduct.productdata.producttype+'"');
+    textlist.Add('id = "' + aktProduct.productdata.productId+'"');
+    textlist.Add('name = "' + aktProduct.productdata.productName+'"');
+    textlist.Add('description = "' + aktProduct.productdata.description+'"');
+    textlist.Add('advice = "' + aktProduct.productdata.advice+'"');
+    textlist.Add('version = ' + aktProduct.productdata.productversion+'"');
+    textlist.Add('priority = ' + IntToStr(aktProduct.productdata.priority));
+    textlist.Add('licenseRequired = False');
+    textlist.Add('productClasses = ""');
+    textlist.Add('setupScript: ' + aktProduct.productdata.setupscript+'"');
     // No uninstall for Meta
     if not (osdsettings.runmode in [createMeta]) then
-      textlist.Add('uninstallScript: ' + aktProduct.productdata.uninstallscript);
-    textlist.Add('updateScript: ' + aktProduct.productdata.updatescript);
-    textlist.Add('alwaysScript: ');
-    textlist.Add('onceScript: ');
-    textlist.Add('customScript: ');
+      textlist.Add('uninstallScript = "' + aktProduct.productdata.uninstallscript+'"');
+    textlist.Add('updateScript = "' + aktProduct.productdata.updatescript+'"');
+    textlist.Add('alwaysScript = ""');
+    textlist.Add('onceScript: = ""');
+    textlist.Add('customScript = ""');
     if aktProduct.productdata.customizeProfile then
-      textlist.Add('userLoginScript: ' + aktProduct.productdata.setupscript)
+      textlist.Add('userLoginScript = "' + aktProduct.productdata.setupscript+'"')
     else
-      textlist.Add('userLoginScript: ');
+      textlist.Add('userLoginScript = ""');
 
 
     //dependencies
@@ -1120,24 +1218,24 @@ begin
       mydep := TPDependency(aktProduct.dependencies.Items[i]);
       textlist.Add('');
       textlist.Add('[ProductDependency]');
-      textlist.Add('action: setup');
-      textlist.Add('requiredProduct: ' + mydep.Required_ProductId);
+      textlist.Add('action = "setup"');
+      textlist.Add('requiredProduct = "' + mydep.Required_ProductId+'"');
       case mydep.Required_State of
         noState: ;
-        installed: textlist.Add('requiredStatus: installed');
-        not_installed: textlist.Add('requiredStatus: not installed');
-        unknown: textlist.Add('requiredStatus: unknown');
+        installed: textlist.Add('requiredStatus = "installed"');
+        not_installed: textlist.Add('requiredStatus = "not installed"');
+        unknown: textlist.Add('requiredStatus = "unknown"');
       end;
       case mydep.Required_Action of
         noRequest: ;
-        setup: textlist.Add('requiredAction: setup');
-        uninstall: textlist.Add('requiredAction: uninstall');
-        TPActionRequest.update: textlist.Add('requiredAction: update');
+        setup: textlist.Add('requiredAction = "setup"');
+        uninstall: textlist.Add('requiredAction = "uninstall"');
+        TPActionRequest.update: textlist.Add('requiredAction = "update"');
       end;
       case mydep.Required_Type of
-        doNotMatter: textlist.Add('requirementType: ');
-        before: textlist.Add('requirementType: before');
-        after: textlist.Add('requirementType: after');
+        doNotMatter: textlist.Add('requirementType = ""');
+        before: textlist.Add('requirementType = "before"');
+        after: textlist.Add('requirementType = "after"');
       end;
     end;
 
@@ -1148,19 +1246,19 @@ begin
       textlist.Add('');
       textlist.Add('[ProductProperty]');
       case myprop.Property_Type of
-        bool: textlist.Add('type: bool');
-        unicode: textlist.Add('type: unicode');
+        bool: textlist.Add('type = "bool"');
+        unicode: textlist.Add('type = "unicode"');
       end;
-      textlist.Add('name: ' + myprop.Property_Name);
-      textlist.Add('description: ' + myprop.description);
+      textlist.Add('name = "' + myprop.Property_Name+'"');
+      textlist.Add('description = "' + myprop.description+'"');
       if myprop.Property_Type = bool then
       begin
-        textlist.Add('default: ' + BoolToStr(myprop.boolDefault, True));
+        textlist.Add('default = ' + BoolToStr(myprop.boolDefault, True));
       end
       else
       begin
-        textlist.Add('multivalue: ' + BoolToStr(myprop.multivalue, True));
-        textlist.Add('editable: ' + BoolToStr(myprop.editable, True));
+        textlist.Add('multivalue = ' + BoolToStr(myprop.multivalue, True));
+        textlist.Add('editable = ' + BoolToStr(myprop.editable, True));
         helplist.Text := myprop.GetValueLines.Text;
         opsiquotelist(helplist, '"');
         if stringListToJsonArray(helplist, tmpstr) then
@@ -1177,8 +1275,12 @@ begin
             myprop.Property_Name, LLerror);
       end;
     end;
-    textlist.SaveToFile(opsipath + pathdelim + 'control');
-    //FreeAndNil(textlist);
+    textlist.SaveToFile(opsipath + pathdelim + 'control.toml');
+    // END: create control file (4.3 toml style)
+
+
+
+
 
     // changelog
     textlist.Clear;
