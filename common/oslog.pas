@@ -1686,10 +1686,11 @@ begin
     end
     else
     begin
-      //includelogStrList.LoadFromFile(FName);
-      //includelogStrList.Text :=
-      //  reencode(includelogStrList.Text, sourceEncoding, sourceEncoding);
-      includelogStrList := loadTextFileWithEncoding(Fname, sourceEncoding);
+      includelogStrList := TStringList.Create;
+      includelogStrList.LoadFromFile(FName);
+      includelogStrList.Text :=
+        reencode(includelogStrList.Text, sourceEncoding, sourceEncoding);
+      //includelogStrList := loadTextFileWithEncoding(Fname, sourceEncoding);
     end;
     try
       includelogLinecount := includelogStrList.Count;
