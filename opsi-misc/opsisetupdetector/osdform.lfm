@@ -5703,11 +5703,10 @@ object resultForm1: TresultForm1
         ParentFont = False
         object FlowPanel1: TFlowPanel
           Left = 0
-          Height = 49
+          Height = 80
           Top = 0
           Width = 1099
           Align = alTop
-          AutoWrap = False
           BorderWidth = 3
           ControlList = <          
             item
@@ -5731,19 +5730,14 @@ object resultForm1: TresultForm1
               Index = 3
             end          
             item
-              Control = Label63
+              Control = SpeedButtonHelpSetup
               WrapAfter = waAuto
               Index = 4
             end          
             item
-              Control = TIS1Url
+              Control = FlowPanel9
               WrapAfter = waAuto
               Index = 5
-            end          
-            item
-              Control = SpeedButtonHelpSetup
-              WrapAfter = waAuto
-              Index = 6
             end>
           FlowLayout = tlTop
           FlowStyle = fsLeftRightTopBottom
@@ -5779,39 +5773,6 @@ object resultForm1: TresultForm1
             PropertyNameAsCaption = False
             TabOrder = 0
           end
-          object Label63: TLabel
-            Left = 602
-            Height = 21
-            Top = 13
-            Width = 34
-            Anchors = []
-            BorderSpacing.Left = 20
-            BorderSpacing.Top = 6
-            BorderSpacing.Around = 3
-            BorderSpacing.InnerBorder = 2
-            Caption = 'Info: '
-            Font.Height = -16
-            ParentColor = False
-            ParentFont = False
-          end
-          object TIS1Url: TTILabel
-            Left = 648
-            Height = 21
-            Top = 13
-            Width = 51
-            Anchors = []
-            BorderSpacing.Left = 6
-            BorderSpacing.Top = 6
-            BorderSpacing.Around = 3
-            BorderSpacing.InnerBorder = 2
-            Font.Color = clBlue
-            Font.Height = -16
-            Font.Style = [fsUnderline]
-            OnClick = TIS1UrlClick
-            OnMouseEnter = TIS1UrlMouseEnter
-            OnMouseLeave = TIS1UrlMouseLeave
-            ParentFont = False
-          end
           object TILabelInstaller1: TTILabel
             Left = 176
             Height = 21
@@ -5846,7 +5807,7 @@ object resultForm1: TresultForm1
             TabOrder = 1
           end
           object SpeedButtonHelpSetup: TSpeedButton
-            Left = 802
+            Left = 679
             Height = 22
             Hint = 'Show Help'
             Top = 14
@@ -5896,11 +5857,66 @@ object resultForm1: TresultForm1
             ShowHint = True
             ParentShowHint = False
           end
+          object FlowPanel9: TFlowPanel
+            Left = 4
+            Height = 36
+            Top = 39
+            Width = 800
+            Anchors = []
+            BevelOuter = bvNone
+            ControlList = <            
+              item
+                Control = Label63
+                WrapAfter = waAuto
+                Index = 0
+              end            
+              item
+                Control = TIS1Url
+                WrapAfter = waAuto
+                Index = 1
+              end>
+            FlowLayout = tlTop
+            FlowStyle = fsLeftRightTopBottom
+            TabOrder = 2
+            object Label63: TLabel
+              Left = 23
+              Height = 21
+              Top = 9
+              Width = 34
+              Anchors = []
+              BorderSpacing.Left = 20
+              BorderSpacing.Top = 6
+              BorderSpacing.Around = 3
+              BorderSpacing.InnerBorder = 2
+              Caption = 'Info: '
+              Font.Height = -16
+              ParentColor = False
+              ParentFont = False
+            end
+            object TIS1Url: TTILabel
+              Left = 69
+              Height = 21
+              Top = 9
+              Width = 51
+              Anchors = []
+              BorderSpacing.Left = 6
+              BorderSpacing.Top = 6
+              BorderSpacing.Around = 3
+              BorderSpacing.InnerBorder = 2
+              Font.Color = clBlue
+              Font.Height = -16
+              Font.Style = [fsUnderline]
+              OnClick = TIS1UrlClick
+              OnMouseEnter = TIS1UrlMouseEnter
+              OnMouseLeave = TIS1UrlMouseLeave
+              ParentFont = False
+            end
+          end
         end
         object FlowPanelSetup32: TFlowPanel
           Left = 0
           Height = 41
-          Top = 49
+          Top = 80
           Width = 1099
           Align = alTop
           Alignment = taLeftJustify
@@ -5952,7 +5968,7 @@ object resultForm1: TresultForm1
         object FlowPanelMST: TFlowPanel
           Left = 0
           Height = 41
-          Top = 90
+          Top = 121
           Width = 1099
           Align = alTop
           Alignment = taLeftJustify
@@ -6060,7 +6076,7 @@ object resultForm1: TresultForm1
         object FlowPanel5: TFlowPanel
           Left = 0
           Height = 41
-          Top = 172
+          Top = 203
           Width = 1099
           Align = alTop
           Alignment = taLeftJustify
@@ -6112,7 +6128,7 @@ object resultForm1: TresultForm1
         object FlowPanelMsiId: TFlowPanel
           Left = 0
           Height = 41
-          Top = 131
+          Top = 162
           Width = 1099
           Align = alTop
           Alignment = taLeftJustify
@@ -6203,7 +6219,7 @@ object resultForm1: TresultForm1
         object FlowPanel7: TFlowPanel
           Left = 0
           Height = 41
-          Top = 213
+          Top = 244
           Width = 1099
           Align = alTop
           Alignment = taLeftJustify
@@ -6383,7 +6399,7 @@ object resultForm1: TresultForm1
         object FlowPanelSetup34: TFlowPanel
           Left = 0
           Height = 41
-          Top = 254
+          Top = 285
           Width = 1099
           Align = alTop
           Alignment = taLeftJustify
@@ -6435,7 +6451,7 @@ object resultForm1: TresultForm1
         object FlowPanelSetup35: TFlowPanel
           Left = 0
           Height = 41
-          Top = 295
+          Top = 326
           Width = 1099
           Align = alTop
           Alignment = taLeftJustify
@@ -6487,7 +6503,7 @@ object resultForm1: TresultForm1
         object FlowPanelSetup36: TFlowPanel
           Left = 0
           Height = 41
-          Top = 336
+          Top = 367
           Width = 1099
           Align = alTop
           Alignment = taLeftJustify
@@ -6684,8 +6700,8 @@ object resultForm1: TresultForm1
         end
         object FlowPanel17: TFlowPanel
           Left = 0
-          Height = 250
-          Top = 377
+          Height = 219
+          Top = 408
           Width = 1099
           Align = alClient
           ControlList = <          
@@ -6702,7 +6718,7 @@ object resultForm1: TresultForm1
             Left = 940
             Height = 52
             Hint = 'Go to the next Step'
-            Top = 188
+            Top = 157
             Width = 149
             Align = alRight
             Anchors = [akRight]
@@ -6885,17 +6901,17 @@ object resultForm1: TresultForm1
               Index = 3
             end          
             item
-              Control = Label69
+              Control = SpeedButtonHelpSetup1
               WrapAfter = waAuto
               Index = 4
             end          
             item
-              Control = TIS2Url
+              Control = Label69
               WrapAfter = waAuto
               Index = 5
             end          
             item
-              Control = SpeedButtonHelpSetup1
+              Control = TIS2Url
               WrapAfter = waAuto
               Index = 6
             end>
@@ -6934,7 +6950,7 @@ object resultForm1: TresultForm1
             TabOrder = 0
           end
           object Label69: TLabel
-            Left = 602
+            Left = 725
             Height = 21
             Top = 13
             Width = 34
@@ -6949,7 +6965,7 @@ object resultForm1: TresultForm1
             ParentFont = False
           end
           object TIS2Url: TTILabel
-            Left = 648
+            Left = 771
             Height = 21
             Top = 13
             Width = 51
@@ -7000,7 +7016,7 @@ object resultForm1: TresultForm1
             TabOrder = 1
           end
           object SpeedButtonHelpSetup1: TSpeedButton
-            Left = 802
+            Left = 679
             Height = 22
             Hint = 'Show Help'
             Top = 14
@@ -8039,17 +8055,17 @@ object resultForm1: TresultForm1
               Index = 3
             end          
             item
-              Control = Label87
+              Control = SpeedButtonHelpSetup2
               WrapAfter = waAuto
               Index = 4
             end          
             item
-              Control = TIS3Url
+              Control = Label87
               WrapAfter = waAuto
               Index = 5
             end          
             item
-              Control = SpeedButtonHelpSetup2
+              Control = TIS3Url
               WrapAfter = waAuto
               Index = 6
             end>
@@ -8088,7 +8104,7 @@ object resultForm1: TresultForm1
             TabOrder = 0
           end
           object Label87: TLabel
-            Left = 602
+            Left = 725
             Height = 21
             Top = 13
             Width = 34
@@ -8103,7 +8119,7 @@ object resultForm1: TresultForm1
             ParentFont = False
           end
           object TIS3Url: TTILabel
-            Left = 648
+            Left = 771
             Height = 21
             Top = 13
             Width = 51
@@ -8154,7 +8170,7 @@ object resultForm1: TresultForm1
             TabOrder = 1
           end
           object SpeedButtonHelpSetup2: TSpeedButton
-            Left = 802
+            Left = 679
             Height = 22
             Hint = 'Show Help'
             Top = 14

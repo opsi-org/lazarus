@@ -124,6 +124,7 @@ type
     FlowPanel4: TFlowPanel;
     FlowPanel6: TFlowPanel;
     FlowPanel8: TFlowPanel;
+    FlowPanel9: TFlowPanel;
     FlowPanelLinuxTitle: TFlowPanel;
     FlowPanelCustomDir: TFlowPanel;
     FlowPanelLinuxTitle2: TFlowPanel;
@@ -170,6 +171,7 @@ type
     Label5: TLabel;
     Label56: TLabel;
     Label6: TLabel;
+    Label63: TLabel;
     Label86: TLabel;
     Label87: TLabel;
     Label88: TLabel;
@@ -191,7 +193,6 @@ type
     LabelIconName: TLabel;
     LabelIconDir: TLabel;
     LabelIconPreview: TLabel;
-    Label63: TLabel;
     Label69: TLabel;
     Label57: TLabel;
     Label58: TLabel;
@@ -371,8 +372,8 @@ type
     TimerFirstconfig: TTimer;
     TIRadioGroupCreateMode: TTIRadioGroup;
     TIRadioGroupBuildMode: TTIRadioGroup;
-    TIS1Url: TTILabel;
     TILabelInstaller1: TTILabel;
+    TIS1Url: TTILabel;
     TIS2Url: TTILabel;
     TIS3Url: TTILabel;
     TISpinEditPrio: TTISpinEdit;
@@ -1686,10 +1687,13 @@ end;
 procedure TResultform1.MenuItemOpenProjClick(Sender: TObject);
 begin
   OpenDialog1.FilterIndex := 8;   // project file
-  if DirectoryExists(myconfiguration.workbench_Path) then
+  if DirectoryExists(myconfiguration.LastProjectFileDir) then
+    OpenDialog1.InitialDir := myconfiguration.LastProjectFileDir
+  else if DirectoryExists(myconfiguration.workbench_Path) then
     OpenDialog1.InitialDir := myconfiguration.workbench_Path;
   if OpenDialog1.Execute then
   begin
+    myconfiguration.LastProjectFileDir := ExtractFileDir(OpenDialog1.FileName);
     LogDatei.log('Start import Project file from: ' + OpenDialog1.FileName, LLnotice);
     initaktproduct;
     resultform1.updateGUI;

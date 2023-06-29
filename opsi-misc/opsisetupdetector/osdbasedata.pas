@@ -48,7 +48,6 @@ type
     Fstartupfinished: boolean;
     Fmylocaledir: string;
     Fmylang: string;
-    //Fmyfilename: string;
     Fmyexitcode : integer;
     FCreateModeCreateOnly: boolean;
     FCreateModeBuildPackage: boolean;
@@ -73,15 +72,7 @@ type
     property startupfinished: boolean read Fstartupfinished write Fstartupfinished;
     property mylocaledir: string read Fmylocaledir write Fmylocaledir;
     property mylang: string read Fmylang write Fmylang;
-    //property opsitmp: string read Fopsitmp write Fopsitmp;
     property myexitcode: integer read Fmyexitcode write Fmyexitcode;
-    (*
-    property CreateModeCreateOnly: boolean read FCreateModeCreateOnly write FCreateModeCreateOnly;
-    property CreateModeBuildPackage: boolean read FCreateModeBuildPackage write FCreateModeBuildPackage;
-    property CreateModePackageBuilder: boolean read FCreateModePackageBuilder write FCreateModePackageBuilder;
-    property BuildModebuildOnly: boolean read FBuildModebuildOnly write FBuildModebuildOnly;
-    property BuildModebuildInstall: boolean read FBuildModebuildInstall write FBuildModebuildInstall;
-    *)
     property BuildMode: TStrings read FBuildMode write SetBuildMode;
     property BuildModeIndex: integer read FBuildModeIndex write SetBuildModeIndex;
     property BuildModeValue: string read FBuildModeValue write SetBuildModeValue;
@@ -188,8 +179,6 @@ type
     procedure SetTargetProg(const AValue: string);
     procedure SetInstallDirectory(const AValue: string);
     procedure SetUninstallDirectory(const AValue: string);
-    //procedure OnRestoreProperty(Sender: TObject; AObject: TObject;
-    //  Info: PPropInfo; AValue: TJSONData; var Handled: Boolean);
   published
     // proc
     procedure SetArchitecture(const AValue: TArchitecture);
@@ -451,11 +440,9 @@ default: ["xenial_bionic"]
   private
     Fconfig_version: string;
     { help to detect and handle changes of config file structure }
-    //Fworkbench_share: string;
-    Fworkbench_Path: string;
-    //Fworkbench_mounted: boolean;
-    Fconfig_filled: boolean;
-    FregisterInFilemanager: boolean;
+    Fworkbench_Path: string;   // local path to the (mounted) workbench share
+    Fconfig_filled: boolean;   // is the initial configuration done ?
+    FregisterInFilemanager: boolean; // create context menue entry in file manage to call osd
     Femail_address: string;
     FFullName: string;
     Fimport_libraries: TStrings;
@@ -467,9 +454,6 @@ default: ["xenial_bionic"]
     FCreateRadioIndex: integer;  // Create mode
     FBuildRadioIndex: integer;  // Build mode
     FpreferSilent: boolean;  // Install mode (unattended / silent)
-    //FCreateQuiet: boolean;
-    //FCreateBuild: boolean;
-    //FCreateInstall: boolean;
     FUsePropDesktopicon: boolean;
     FUsePropLicenseOrPool: boolean;
     FProperties: TPProperties;
@@ -481,7 +465,7 @@ default: ["xenial_bionic"]
     FService_pass: string;
     FUseService: boolean;
     FTemplateChannel: TTemplateChannels;
-    //FtargetOS : TTargetOS;
+    FLastProjectFileDir : string;  // last dir from wich we opend a project file
     procedure SetLibraryLines(const AValue: TStrings);
     procedure SetPreInstallLines(const AValue: TStrings);
     procedure SetPostInstallLines(const AValue: TStrings);
@@ -491,9 +475,7 @@ default: ["xenial_bionic"]
     procedure SetWorkbench_path(const AValue: string);
   published
     property config_version: string read Fconfig_version write Fconfig_version;
-    //property workbench_share: string read Fworkbench_share write Fworkbench_share;
     property workbench_Path: string read Fworkbench_Path write SetWorkbench_path;
-    //property workbench_mounted: boolean read Fworkbench_mounted write Fworkbench_mounted;
     property config_filled: boolean read Fconfig_filled write Fconfig_filled;
     property registerInFilemanager: boolean
       read FregisterInFilemanager write FregisterInFilemanager;
@@ -511,14 +493,10 @@ default: ["xenial_bionic"]
     property CreateRadioIndex: integer read FCreateRadioIndex write FCreateRadioIndex;
     property BuildRadioIndex: integer read FBuildRadioIndex write FBuildRadioIndex;
     property preferSilent: boolean read FpreferSilent write FpreferSilent;
-    //property CreateQuiet: boolean read FCreateQuiet write FCreateQuiet;
-    //property CreateBuild: boolean read FCreateBuild write FCreateBuild;
-    //property CreateInstall: boolean read FCreateInstall write FCreateInstall;
     property UsePropDesktopicon: boolean read FUsePropDesktopicon
       write FUsePropDesktopicon;
     property UsePropLicenseOrPool: boolean read FUsePropLicenseOrPool
       write FUsePropLicenseOrPool;
-    //property Properties: TPProperties read FProperties  write SetProperties;
     property Readme_txt_templ: string read FReadme_txt_templ write FReadme_txt_templ;
     property ShowCheckEntryWarning: boolean
       read FShowCheckEntryWarning write FShowCheckEntryWarning;
@@ -529,7 +507,7 @@ default: ["xenial_bionic"]
     property Service_pass: string read FService_pass write FService_pass;
     property templateChannel: TtemplateChannels
       read FTemplateChannel write FTemplateChannel;
-    //property UseService: boolean read FUseService write FUseService;
+    property LastProjectFileDir: string read FLastProjectFileDir write FLastProjectFileDir;
 
     procedure writeconfig;
     procedure readconfig;
