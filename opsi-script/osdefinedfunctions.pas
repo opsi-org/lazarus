@@ -2002,15 +2002,15 @@ begin
     try
       for i := high(definedFunctionArray) downto 0 do
       begin
-          LogDatei.log('definedFunctionNames[' + IntToStr(i) + ']: ' + definedFunctionNames[i], LLNotice);
-          LogDatei.log('definedFunctionArray[' + IntToStr(i)+ '].DFName: ' + definedFunctionArray[i].DFName, LLNotice);
-          if assigned(definedFunctionArray[i]) then FreeAndNil(definedFunctionArray[i]);
+        if assigned(definedFunctionArray[i]) then FreeAndNil(definedFunctionArray[i]);
       end;
     except
       on E: Exception do
       begin
-        LogDatei.log('Exception in freeDefinedFunctions (Line' + {$INCLUDE %LINE%} + '):', LLError);
+        LogDatei.log('Exception in freeDefinedFunctions (Line ' + {$INCLUDE %LINE%} + '):', LLError);
         LogDatei.log('i: ' + IntToStr(i), LLError);
+        LogDatei.log('definedFunctionNames[' + IntToStr(i) + ']: ' + definedFunctionNames[i], LLError);
+        LogDatei.log('definedFunctionArray[' + IntToStr(i)+ '].DFName: ' + definedFunctionArray[i].DFName, LLError);
       end
     end;
   finally
