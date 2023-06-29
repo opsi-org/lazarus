@@ -179,6 +179,8 @@ type
     procedure SetTargetProg(const AValue: string);
     procedure SetInstallDirectory(const AValue: string);
     procedure SetUninstallDirectory(const AValue: string);
+    //procedure OnRestoreProperty(Sender: TObject; AObject: TObject;
+    //  Info: PPropInfo; AValue: TJSONData; var Handled: Boolean);
   published
     // proc
     procedure SetArchitecture(const AValue: TArchitecture);
@@ -466,6 +468,8 @@ default: ["xenial_bionic"]
     FUseService: boolean;
     FTemplateChannel: TTemplateChannels;
     FLastProjectFileDir : string;  // last dir from wich we opend a project file
+    FLastSetupFileDir : string;  // last dir from wich we opend a setup file
+    FLasticonFileDir : string;  // last dir from wich we opend a icon file
     procedure SetLibraryLines(const AValue: TStrings);
     procedure SetPreInstallLines(const AValue: TStrings);
     procedure SetPostInstallLines(const AValue: TStrings);
@@ -508,6 +512,8 @@ default: ["xenial_bionic"]
     property templateChannel: TtemplateChannels
       read FTemplateChannel write FTemplateChannel;
     property LastProjectFileDir: string read FLastProjectFileDir write FLastProjectFileDir;
+    property LastSetupFileDir: string read FLastSetupFileDir write FLastSetupFileDir;
+    property LasticonFileDir: string read FLasticonFileDir write FLasticonFileDir;
 
     procedure writeconfig;
     procedure readconfig;
@@ -1421,6 +1427,13 @@ begin
   FUsePropDesktopicon := False;
   FTemplateChannel := default;
   FpreferSilent := False; // Unattended
+  {$IFDEF UNIX}
+  FLasticonFileDir := '/usr/share/opsi-setup-detector/icons';
+  {$ENDIF UNIX}
+  {$IFDEF WINDOWS}
+   FLasticonFileDir :=
+      ExtractFileDir(Application.Params[0]) + PathDelim + 'icons';
+  {$ENDIF WINDOWS}
   //readconfig;
 end;
 

@@ -134,6 +134,9 @@ opsi-setup-detector (4.2.2.0-1) stable; urgency=low
    * feature: osd configuration: auto-detect path to packageBuilder; fixes: #4844
    * new: osdcreate: create control file also in 4.3 toml style
    * feature: store and use last dir from which we opend a project file
+   * feature: store and use last dir from which we opend a setup file
+   * feature: store and use last dir from which we opend a icon file
+   * setup tabs: more space for the info link
 
    todo:
 

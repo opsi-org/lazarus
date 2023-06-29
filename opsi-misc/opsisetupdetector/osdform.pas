@@ -115,11 +115,13 @@ type
     FlowPanel18: TFlowPanel;
     FlowPanel19: TFlowPanel;
     FlowPanel2: TFlowPanel;
+    FlowPanel20: TFlowPanel;
     FlowPanel21: TFlowPanel;
     FlowPanel22: TFlowPanel;
     FlowPanel23: TFlowPanel;
     FlowPanel24: TFlowPanel;
     FlowPanel25: TFlowPanel;
+    FlowPanel26: TFlowPanel;
     FlowPanel3: TFlowPanel;
     FlowPanel4: TFlowPanel;
     FlowPanel6: TFlowPanel;
@@ -165,6 +167,8 @@ type
     Label100: TLabel;
     Label101: TLabel;
     Label102: TLabel;
+    Label103: TLabel;
+    Label104: TLabel;
     Label2: TLabel;
     Label3: TLabel;
     Label4: TLabel;
@@ -173,7 +177,6 @@ type
     Label6: TLabel;
     Label63: TLabel;
     Label86: TLabel;
-    Label87: TLabel;
     Label88: TLabel;
     Label89: TLabel;
     Label90: TLabel;
@@ -193,7 +196,6 @@ type
     LabelIconName: TLabel;
     LabelIconDir: TLabel;
     LabelIconPreview: TLabel;
-    Label69: TLabel;
     Label57: TLabel;
     Label58: TLabel;
     Label59: TLabel;
@@ -1776,6 +1778,8 @@ begin
     //RadioButtonPackageBuilder.Enabled := True;
     // is not pössible via rtti
     //CheckGroupBuildMode.Enabled := True;
+
+    // enable build
     TIRadioGroupBuildMode.Enabled := True;
   end
   else
@@ -1786,6 +1790,9 @@ begin
     //RadioButtonPackageBuilder.Enabled := False;
     // is not pössible via rtti
     //CheckGroupBuildMode.Enabled := False;
+
+    // disable build if also no service data
+    if ((myconfiguration.Service_URL = '') or (myconfiguration.Service_user = ''))  then
     TIRadioGroupBuildMode.Enabled := False;
   end;
   logdatei.log('Finished MenuItemConfigClick', LLDebug2);
@@ -1840,8 +1847,11 @@ var
   localTOSset: TTargetOSset;
 begin
   openDialog1.FilterIndex := 1;   // setup
+  if DirectoryExists(myconfiguration.LastSetupFileDir) then
+    OpenDialog1.InitialDir := myconfiguration.LastSetupFileDir;
   if OpenDialog1.Execute then
   begin
+    myconfiguration.LastSetupFileDir := ExtractFileDir(OpenDialog1.FileName);
     osdsettings.runmode := singleAnalyzeCreate;
     setRunMode;
     PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
@@ -1992,6 +2002,8 @@ begin
     SelectDirectoryDialog1.InitialDir :=
       ExtractFileDir(Application.Params[0]) + PathDelim + 'icons';
     {$ENDIF WINDOWS}
+    if DirectoryExists(myconfiguration.LasticonFileDir) then
+    SelectDirectoryDialog1.InitialDir := myconfiguration.LasticonFileDir;
     selectDirectory := SelectDirectoryDialog1.Execute;
   except
     on E: Exception do
@@ -2004,6 +2016,7 @@ begin
   // fill dynIconFlowPanel and store the icon display infos in IconList
   if selectDirectory then
   begin
+    myconfiguration.LasticonFileDir := ExtractFileDir(SelectDirectoryDialog1.FileName);
     iconDirectory := SelectDirectoryDialog1.FileName + PathDelim;
     LogDatei.log('Open Icon dir: ' + iconDirectory, LLnotice);
     // get all files from the selected directory
@@ -2095,8 +2108,11 @@ var
   localTOSset: TTargetOSset;
 begin
   openDialog1.FilterIndex := 1;   // setup
+  if DirectoryExists(myconfiguration.LastSetupFileDir) then
+    OpenDialog1.InitialDir := myconfiguration.LastSetupFileDir;
   if OpenDialog1.Execute then
   begin
+    myconfiguration.LastSetupFileDir := ExtractFileDir(OpenDialog1.FileName);
     osdsettings.runmode := analyzeCreateWithUser;
     setRunMode;
     PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
@@ -2195,8 +2211,11 @@ begin
   MessageDlg(rsTwonalyzeAndCreateMsgHead, rsTwonalyzeAndCreateMsgFirstSetup,
     mtInformation, [mbOK], '');
   OpenDialog1.FilterIndex := 1;   // setup
+  if DirectoryExists(myconfiguration.LastSetupFileDir) then
+    OpenDialog1.InitialDir := myconfiguration.LastSetupFileDir;
   if OpenDialog1.Execute then
   begin
+    myconfiguration.LastSetupFileDir := ExtractFileDir(OpenDialog1.FileName);
     osdsettings.runmode := twoAnalyzeCreate_1;
     setRunMode;
     aktProduct.SetupFiles[0].copyCompleteDir := showCompleteDirDlg;
@@ -2811,8 +2830,11 @@ var
   str: string;
 begin
   OpenDialog1.FilterIndex := 4;
+  if DirectoryExists(myconfiguration.LastSetupFileDir) then
+    OpenDialog1.InitialDir := myconfiguration.LastSetupFileDir;
   if OpenDialog1.Execute then
   begin
+    myconfiguration.LastSetupFileDir := ExtractFileDir(OpenDialog1.FileName);
     mysetup.mstFullFileName := OpenDialog1.FileName;
     str := ' TRANSFORMS="$installerSourceDir$\' + mysetup.mstFileName + '"';
     mysetup.installCommandLine := mysetup.installCommandLine + str;
@@ -2925,6 +2947,8 @@ var
   uninstfile, uninstdir: string;
 begin
   OpenDialog1.FilterIndex := 1;
+  if DirectoryExists('C:\Program Files') then
+    OpenDialog1.InitialDir := 'C:\Program Files';
   if OpenDialog1.Execute then
   begin
     uninstfile := ExtractFileName(OpenDialog1.FileName);
@@ -2948,6 +2972,8 @@ end;
 procedure TResultform1.chooseTargetProgram(var mysetup: TSetupFile);
 begin
   OpenDialog1.FilterIndex := 1;
+  if DirectoryExists('C:\Program Files') then
+    OpenDialog1.InitialDir := 'C:\Program Files';
   if OpenDialog1.Execute then
   begin
     mysetup.targetProg := ExtractFileName(OpenDialog1.FileName);
@@ -3540,12 +3566,12 @@ var
 begin
   goon := False;
   isapp := False;
-
-  OpenDialog1.InitialDir := filename;
-  ;
   OpenDialog1.FilterIndex := 6;   // linux
+  if DirectoryExists(myconfiguration.LastSetupFileDir) then
+    OpenDialog1.InitialDir := myconfiguration.LastSetupFileDir;
   if OpenDialog1.Execute then
   begin
+    myconfiguration.LastSetupFileDir := ExtractFileDir(OpenDialog1.FileName);
     filename := OpenDialog1.FileName;
     goon := True;
   end
@@ -3587,6 +3613,8 @@ var
 begin
   goon := False;
   isapp := False;
+  if DirectoryExists(myconfiguration.LastSetupFileDir) then
+    SelectDirectoryDialog1.InitialDir := myconfiguration.LastSetupFileDir;
   if SelectDirectoryDialog1.Execute then
   begin
     goon := True;
@@ -3645,8 +3673,11 @@ begin
     mtConfirmation, [mbYes, mbNo], '') = mrYes then
   begin
     OpenDialog1.FilterIndex := 1;   // setup
-    if OpenDialog1.Execute then
-    begin
+    if DirectoryExists(myconfiguration.LastSetupFileDir) then
+    OpenDialog1.InitialDir := myconfiguration.LastSetupFileDir;
+  if OpenDialog1.Execute then
+  begin
+    myconfiguration.LastSetupFileDir := ExtractFileDir(OpenDialog1.FileName);
       PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
       Application.ProcessMessages;
       localTOSset := aktProduct.productdata.targetOSset;
@@ -3678,8 +3709,11 @@ end;
 procedure TResultform1.BtAnalyzeOnlyClick(Sender: TObject);
 begin
   OpenDialog1.FilterIndex := 1;   // setup
+  if DirectoryExists(myconfiguration.LastSetupFileDir) then
+    OpenDialog1.InitialDir := myconfiguration.LastSetupFileDir;
   if OpenDialog1.Execute then
   begin
+    myconfiguration.LastSetupFileDir := ExtractFileDir(OpenDialog1.FileName);
     osdsettings.runmode := analyzeOnly;
     setRunMode;
     MemoAnalyze.Clear;

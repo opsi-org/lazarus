@@ -6873,11 +6873,10 @@ object resultForm1: TresultForm1
         ParentFont = False
         object FlowPanel2: TFlowPanel
           Left = 0
-          Height = 49
+          Height = 80
           Top = 0
           Width = 1099
           Align = alTop
-          AutoWrap = False
           BorderWidth = 3
           ControlList = <          
             item
@@ -6906,14 +6905,9 @@ object resultForm1: TresultForm1
               Index = 4
             end          
             item
-              Control = Label69
+              Control = FlowPanel20
               WrapAfter = waAuto
               Index = 5
-            end          
-            item
-              Control = TIS2Url
-              WrapAfter = waAuto
-              Index = 6
             end>
           FlowLayout = tlTop
           FlowStyle = fsLeftRightTopBottom
@@ -6948,39 +6942,6 @@ object resultForm1: TresultForm1
             OnChange = TICheckBoxS2MstChange
             PropertyNameAsCaption = False
             TabOrder = 0
-          end
-          object Label69: TLabel
-            Left = 725
-            Height = 21
-            Top = 13
-            Width = 34
-            Anchors = []
-            BorderSpacing.Left = 20
-            BorderSpacing.Top = 6
-            BorderSpacing.Around = 3
-            BorderSpacing.InnerBorder = 2
-            Caption = 'Info: '
-            Font.Height = -16
-            ParentColor = False
-            ParentFont = False
-          end
-          object TIS2Url: TTILabel
-            Left = 771
-            Height = 21
-            Top = 13
-            Width = 51
-            Anchors = []
-            BorderSpacing.Left = 6
-            BorderSpacing.Top = 6
-            BorderSpacing.Around = 3
-            BorderSpacing.InnerBorder = 2
-            Font.Color = clBlue
-            Font.Height = -16
-            Font.Style = [fsUnderline]
-            OnClick = TIS1UrlClick
-            OnMouseEnter = TIS1UrlMouseEnter
-            OnMouseLeave = TIS1UrlMouseLeave
-            ParentFont = False
           end
           object TILabelInstaller2: TTILabel
             Left = 176
@@ -7066,11 +7027,66 @@ object resultForm1: TresultForm1
             ShowHint = True
             ParentShowHint = False
           end
+          object FlowPanel20: TFlowPanel
+            Left = 4
+            Height = 36
+            Top = 39
+            Width = 800
+            Anchors = []
+            BevelOuter = bvNone
+            ControlList = <            
+              item
+                Control = Label103
+                WrapAfter = waAuto
+                Index = 0
+              end            
+              item
+                Control = TIS2Url
+                WrapAfter = waAuto
+                Index = 1
+              end>
+            FlowLayout = tlTop
+            FlowStyle = fsLeftRightTopBottom
+            TabOrder = 2
+            object Label103: TLabel
+              Left = 23
+              Height = 21
+              Top = 9
+              Width = 34
+              Anchors = []
+              BorderSpacing.Left = 20
+              BorderSpacing.Top = 6
+              BorderSpacing.Around = 3
+              BorderSpacing.InnerBorder = 2
+              Caption = 'Info: '
+              Font.Height = -16
+              ParentColor = False
+              ParentFont = False
+            end
+            object TIS2Url: TTILabel
+              Left = 69
+              Height = 21
+              Top = 9
+              Width = 51
+              Anchors = []
+              BorderSpacing.Left = 6
+              BorderSpacing.Top = 6
+              BorderSpacing.Around = 3
+              BorderSpacing.InnerBorder = 2
+              Font.Color = clBlue
+              Font.Height = -16
+              Font.Style = [fsUnderline]
+              OnClick = TIS1UrlClick
+              OnMouseEnter = TIS1UrlMouseEnter
+              OnMouseLeave = TIS1UrlMouseLeave
+              ParentFont = False
+            end
+          end
         end
         object FlowPanelMST1: TFlowPanel
           Left = 0
           Height = 41
-          Top = 90
+          Top = 121
           Width = 1099
           Align = alTop
           Alignment = taLeftJustify
@@ -7179,7 +7195,7 @@ object resultForm1: TresultForm1
         object FlowPanelMsiId1: TFlowPanel
           Left = 0
           Height = 41
-          Top = 131
+          Top = 162
           Width = 1099
           Align = alTop
           Alignment = taLeftJustify
@@ -7270,7 +7286,7 @@ object resultForm1: TresultForm1
         object FlowPanel11: TFlowPanel
           Left = 0
           Height = 41
-          Top = 172
+          Top = 203
           Width = 1099
           Align = alTop
           Alignment = taLeftJustify
@@ -7322,7 +7338,7 @@ object resultForm1: TresultForm1
         object FlowPanel12: TFlowPanel
           Left = 0
           Height = 41
-          Top = 213
+          Top = 244
           Width = 1099
           Align = alTop
           Alignment = taLeftJustify
@@ -7502,7 +7518,7 @@ object resultForm1: TresultForm1
         object FlowPanelSetup33: TFlowPanel
           Left = 0
           Height = 41
-          Top = 49
+          Top = 80
           Width = 1099
           Align = alTop
           Alignment = taLeftJustify
@@ -7554,7 +7570,7 @@ object resultForm1: TresultForm1
         object FlowPanelSetup37: TFlowPanel
           Left = 0
           Height = 41
-          Top = 254
+          Top = 285
           Width = 1099
           Align = alTop
           Alignment = taLeftJustify
@@ -7606,7 +7622,7 @@ object resultForm1: TresultForm1
         object FlowPanelSetup38: TFlowPanel
           Left = 0
           Height = 41
-          Top = 295
+          Top = 326
           Width = 1099
           Align = alTop
           Alignment = taLeftJustify
@@ -7658,7 +7674,7 @@ object resultForm1: TresultForm1
         object FlowPanelSetup39: TFlowPanel
           Left = 0
           Height = 41
-          Top = 336
+          Top = 367
           Width = 1099
           Align = alTop
           Alignment = taLeftJustify
@@ -7855,8 +7871,8 @@ object resultForm1: TresultForm1
         end
         object FlowPanel13: TFlowPanel
           Left = 0
-          Height = 250
-          Top = 377
+          Height = 219
+          Top = 408
           Width = 1099
           Align = alClient
           ControlList = <          
@@ -7873,7 +7889,7 @@ object resultForm1: TresultForm1
             Left = 940
             Height = 54
             Hint = 'Go to the next Step'
-            Top = 186
+            Top = 155
             Width = 149
             Anchors = []
             AutoSize = True
@@ -8027,11 +8043,10 @@ object resultForm1: TresultForm1
         ParentFont = False
         object FlowPanel8: TFlowPanel
           Left = 0
-          Height = 49
+          Height = 80
           Top = 0
           Width = 1099
           Align = alTop
-          AutoWrap = False
           BorderWidth = 3
           ControlList = <          
             item
@@ -8060,14 +8075,9 @@ object resultForm1: TresultForm1
               Index = 4
             end          
             item
-              Control = Label87
+              Control = FlowPanel26
               WrapAfter = waAuto
               Index = 5
-            end          
-            item
-              Control = TIS3Url
-              WrapAfter = waAuto
-              Index = 6
             end>
           FlowLayout = tlTop
           FlowStyle = fsLeftRightTopBottom
@@ -8102,39 +8112,6 @@ object resultForm1: TresultForm1
             OnChange = TICheckBoxS2MstChange
             PropertyNameAsCaption = False
             TabOrder = 0
-          end
-          object Label87: TLabel
-            Left = 725
-            Height = 21
-            Top = 13
-            Width = 34
-            Anchors = []
-            BorderSpacing.Left = 20
-            BorderSpacing.Top = 6
-            BorderSpacing.Around = 3
-            BorderSpacing.InnerBorder = 2
-            Caption = 'Info: '
-            Font.Height = -16
-            ParentColor = False
-            ParentFont = False
-          end
-          object TIS3Url: TTILabel
-            Left = 771
-            Height = 21
-            Top = 13
-            Width = 51
-            Anchors = []
-            BorderSpacing.Left = 6
-            BorderSpacing.Top = 6
-            BorderSpacing.Around = 3
-            BorderSpacing.InnerBorder = 2
-            Font.Color = clBlue
-            Font.Height = -16
-            Font.Style = [fsUnderline]
-            OnClick = TIS1UrlClick
-            OnMouseEnter = TIS1UrlMouseEnter
-            OnMouseLeave = TIS1UrlMouseLeave
-            ParentFont = False
           end
           object TILabelInstaller3: TTILabel
             Left = 176
@@ -8220,11 +8197,66 @@ object resultForm1: TresultForm1
             ShowHint = True
             ParentShowHint = False
           end
+          object FlowPanel26: TFlowPanel
+            Left = 4
+            Height = 36
+            Top = 39
+            Width = 800
+            Anchors = []
+            BevelOuter = bvNone
+            ControlList = <            
+              item
+                Control = Label104
+                WrapAfter = waAuto
+                Index = 0
+              end            
+              item
+                Control = TIS3Url
+                WrapAfter = waAuto
+                Index = 1
+              end>
+            FlowLayout = tlTop
+            FlowStyle = fsLeftRightTopBottom
+            TabOrder = 2
+            object Label104: TLabel
+              Left = 23
+              Height = 21
+              Top = 9
+              Width = 34
+              Anchors = []
+              BorderSpacing.Left = 20
+              BorderSpacing.Top = 6
+              BorderSpacing.Around = 3
+              BorderSpacing.InnerBorder = 2
+              Caption = 'Info: '
+              Font.Height = -16
+              ParentColor = False
+              ParentFont = False
+            end
+            object TIS3Url: TTILabel
+              Left = 69
+              Height = 21
+              Top = 9
+              Width = 51
+              Anchors = []
+              BorderSpacing.Left = 6
+              BorderSpacing.Top = 6
+              BorderSpacing.Around = 3
+              BorderSpacing.InnerBorder = 2
+              Font.Color = clBlue
+              Font.Height = -16
+              Font.Style = [fsUnderline]
+              OnClick = TIS1UrlClick
+              OnMouseEnter = TIS1UrlMouseEnter
+              OnMouseLeave = TIS1UrlMouseLeave
+              ParentFont = False
+            end
+          end
         end
         object FlowPanelMST2: TFlowPanel
           Left = 0
           Height = 41
-          Top = 90
+          Top = 121
           Width = 1099
           Align = alTop
           Alignment = taLeftJustify
@@ -8333,7 +8365,7 @@ object resultForm1: TresultForm1
         object FlowPanelMsiId2: TFlowPanel
           Left = 0
           Height = 41
-          Top = 131
+          Top = 162
           Width = 1099
           Align = alTop
           Alignment = taLeftJustify
@@ -8424,7 +8456,7 @@ object resultForm1: TresultForm1
         object FlowPanel22: TFlowPanel
           Left = 0
           Height = 41
-          Top = 172
+          Top = 203
           Width = 1099
           Align = alTop
           Alignment = taLeftJustify
@@ -8476,7 +8508,7 @@ object resultForm1: TresultForm1
         object FlowPanel24: TFlowPanel
           Left = 0
           Height = 41
-          Top = 213
+          Top = 244
           Width = 1099
           Align = alTop
           Alignment = taLeftJustify
@@ -8656,7 +8688,7 @@ object resultForm1: TresultForm1
         object FlowPanelSetup40: TFlowPanel
           Left = 0
           Height = 41
-          Top = 49
+          Top = 80
           Width = 1099
           Align = alTop
           Alignment = taLeftJustify
@@ -8708,7 +8740,7 @@ object resultForm1: TresultForm1
         object FlowPanelSetup41: TFlowPanel
           Left = 0
           Height = 41
-          Top = 254
+          Top = 285
           Width = 1099
           Align = alTop
           Alignment = taLeftJustify
@@ -8760,7 +8792,7 @@ object resultForm1: TresultForm1
         object FlowPanelSetup42: TFlowPanel
           Left = 0
           Height = 41
-          Top = 295
+          Top = 326
           Width = 1099
           Align = alTop
           Alignment = taLeftJustify
@@ -8812,7 +8844,7 @@ object resultForm1: TresultForm1
         object FlowPanelSetup43: TFlowPanel
           Left = 0
           Height = 41
-          Top = 336
+          Top = 367
           Width = 1099
           Align = alTop
           Alignment = taLeftJustify
@@ -9009,8 +9041,8 @@ object resultForm1: TresultForm1
         end
         object FlowPanel25: TFlowPanel
           Left = 0
-          Height = 250
-          Top = 377
+          Height = 219
+          Top = 408
           Width = 1099
           Align = alClient
           ControlList = <          
@@ -9027,7 +9059,7 @@ object resultForm1: TresultForm1
             Left = 940
             Height = 54
             Hint = 'Go to the next Step'
-            Top = 186
+            Top = 155
             Width = 149
             Anchors = []
             AutoSize = True
