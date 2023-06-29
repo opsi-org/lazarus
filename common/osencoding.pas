@@ -691,7 +691,7 @@ begin
   end;
 
   if isEncodingUnicode(encoding) then
-    Result.AddStrings(loadUnicodeTextFile(filename, bool, str))
+    Result := loadUnicodeTextFile(filename, bool, str)
   else
   begin
     try
