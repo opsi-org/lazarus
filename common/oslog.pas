@@ -1672,26 +1672,26 @@ procedure TLogInfo.includelogtail(fname: string; logtailLinecount: integer;
   sourceEncoding: string);
 var
   includelogStrList: TStringList;
-  //supportedEncodings: TStringList;
-  aktline, includeLogLineStart, includelogLinecount, i: integer;
+  aktline, includeLogLineStart, includelogLinecount: integer;
   bool: boolean;
   str: string;
 begin
   try
-    includelogStrList := TStringList.Create;
-    //supportedEncodings := TStringList.Create;
+  //includelogStrList := TStringList.Create;
+    Fname := ExpandFileName(Fname);
+    if lowercase(sourceEncoding) = 'unicode' then
+    begin
+      //includelogStrList.Assign(loadUnicodeTextFile(Fname, bool, str));
+      includelogStrList := loadUnicodeTextFile(Fname, bool, str);
+    end
+    else
+    begin
+      //includelogStrList.LoadFromFile(FName);
+      //includelogStrList.Text :=
+      //  reencode(includelogStrList.Text, sourceEncoding, sourceEncoding);
+      includelogStrList := loadTextFileWithEncoding(Fname, sourceEncoding);
+    end;
     try
-      Fname := ExpandFileName(Fname);
-      if lowercase(sourceEncoding) = 'unicode' then
-      begin
-        includelogStrList.Assign(loadUnicodeTextFile(Fname, bool, str));
-      end
-      else
-      begin
-        includelogStrList.LoadFromFile(FName);
-        includelogStrList.Text :=
-          reencode(includelogStrList.Text, sourceEncoding, sourceEncoding);
-      end;
       includelogLinecount := includelogStrList.Count;
       if logtailLinecount > 0 then
       begin
@@ -1726,6 +1726,9 @@ begin
       Log('################################################################',
         LLDebug);
       Log('End including LogFile "' + Fname + '"', LLDebug);
+      finally
+        if assigned(includelogStrList) then FreeAndNil(includelogStrList);
+      end;
     except
       on E: Exception do
       begin
@@ -1734,10 +1737,6 @@ begin
           LLwarning);
       end
     end;
-  finally
-    includelogStrList.Free;
-    //supportedEncodings.Free;
-  end;
 end;
 
 function TLogInfo.PartbiggerthanMB(maxsize: integer): boolean;
