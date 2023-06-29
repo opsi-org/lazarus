@@ -1998,14 +1998,27 @@ procedure freeDefinedFunctions;
 var
   i: integer;
 begin
-  for i := definedFunctionNames.Count - 1 downto 0 do
-  begin
-    definedFunctionArray[i].Destroy;
+  try
+    try
+      for i := high(definedFunctionArray) downto 0 do
+      begin
+          LogDatei.log('definedFunctionNames[' + IntToStr(i) + ']: ' + definedFunctionNames[i], LLNotice);
+          LogDatei.log('definedFunctionArray[' + IntToStr(i)+ '].DFName: ' + definedFunctionArray[i].DFName, LLNotice);
+          if assigned(definedFunctionArray[i]) then FreeAndNil(definedFunctionArray[i]);
+      end;
+    except
+      on E: Exception do
+      begin
+        LogDatei.log('Exception in freeDefinedFunctions (Line' + {$INCLUDE %LINE%} + '):', LLError);
+        LogDatei.log('i: ' + IntToStr(i), LLError);
+      end
+    end;
+  finally
+    SetLength(definedFunctionArray, 0);
+    definedFunctioncounter := 0;
+    definedFunctionNames.Clear;
+    definedFunctionsCallStack.Clear;
   end;
-  SetLength(definedFunctionArray, 0);
-  definedFunctioncounter := 0;
-  definedFunctionNames.Clear;
-  definedFunctionsCallStack.Clear;
 end;
 
 function addLoopvarToVarList(const loopvar: string; var errmesg: string): boolean;
