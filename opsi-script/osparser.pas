@@ -26147,7 +26147,7 @@ begin
                   LogDatei.log('tsDefineFunction: Passing well known localfunction: ' +
                     Expressionstr, LLInfo);
                   GetContentOfDefinedFunction(tmpbool, linecounter,
-                    FaktScriptLineNumber, Sektion, SectionSpecifier, call, False);
+                    FaktScriptLineNumber, Sektion, SectionSpecifier, call, False).Free;
                   LogDatei.log('tsDefineFunction: passed well known localfunction: ' +
                     Expressionstr, LLInfo);
                   Dec(inDefFunc3);
