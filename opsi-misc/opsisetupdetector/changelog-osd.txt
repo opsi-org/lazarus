@@ -137,6 +137,7 @@ opsi-setup-detector (4.2.2.0-1) stable; urgency=low
    * feature: store and use last dir from which we opend a setup file
    * feature: store and use last dir from which we opend a icon file
    * setup tabs: more space for the info link
+   * fix opsi-logviewer call for linux and mac
 
    todo:
 

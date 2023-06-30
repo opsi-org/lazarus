@@ -1024,21 +1024,25 @@ procedure TResultform1.MenuHelpLogClick(Sender: TObject);
 var
   ErrorMessage: string;
   PathOpsiLogViewer: string;
+  paramstring : string;
 begin
   {$IFDEF WINDOWS}
   PathOpsiLogViewer :=
     'C:\Program Files (x86)\opsi.org\opsi-logviewer\opsi-logviewer.exe';
+  paramstring := LogDatei.FileName;
   {$ENDIF WINDOWS}
   {$IFDEF LINUX}
   PathOpsiLogViewer := '/usr/share/opsi-logviewer/logviewer'; // '/usr/bin/logviewer'
+  paramstring := ' -f '+LogDatei.FileName;
   {$ENDIF LINUX}
   {$IFDEF DARWIN}
-  //PathOpsiLogViewer := '/Applications/opsi-logviewer.app/Contents/MacOS/opsi-logviewer';
-  ShowMessage('Logview is temporary not working. Please use the opsi-logviewer product.');
-  {$ELSE}
+  PathOpsiLogViewer := '/Applications/opsi-logviewer.app/Contents/MacOS/opsi-logviewer';
+  paramstring := ' -f '+LogDatei.FileName;
+  //ShowMessage('Logview is temporary not working. Please use the opsi-logviewer product.');
+  {$ENDIF DARWIN}
   if FileExists(PathOpsiLogViewer) then
   begin
-    if ExecuteProcess(PathOpsiLogViewer, LogDatei.FileName) <> 0 then
+    if ExecuteProcess(PathOpsiLogViewer, paramstring) <> 0 then
     begin
       ErrorMessage := rsErrorLoadingLogViewer;
       LogDatei.log(ErrorMessage, LLInfo);
@@ -1051,7 +1055,6 @@ begin
     LogDatei.log(ErrorMessage, LLInfo);
     ShowMessage(ErrorMessage);
   end;
-  {$ENDIF DARWIN}
 end;
 
 procedure TResultform1.MenuItemOpenProjClick(Sender: TObject);
