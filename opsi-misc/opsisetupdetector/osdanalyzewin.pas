@@ -67,7 +67,7 @@ uses
   osdmain;
 {$ENDIF OSDGUI}
 
-
+{$IFDEF WINDOWS}
 procedure KillProcess(name: String);
 var h:tHandle;
     pe:tProcessEntry32;
@@ -90,7 +90,7 @@ begin
   finally
   end;
 end;
-
+{$ENDIF WINDOWS}
 
 
 function getProductInfoFromResource(infokey: string; filename: string): string;
