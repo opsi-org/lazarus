@@ -9,7 +9,6 @@ uses
   Dialogs, StdCtrls,
   strutils,
   {$IFDEF WINDOWS}
-  osdhelper,
   shlobj,
   winpeimagereader,
   {$ENDIF WINDOWS}
@@ -25,7 +24,8 @@ uses
   lcltranslator,
   oscrypt,
   osparserhelper,
-  oswebservice;
+  oswebservice,
+  osdhelper;
 
 type
 
