@@ -2010,7 +2010,6 @@ begin
         LogDatei.log('Exception in freeDefinedFunctions (Line ' + {$INCLUDE %LINE%} + '):', LLError);
         LogDatei.log('i: ' + IntToStr(i), LLError);
         LogDatei.log('definedFunctionNames[' + IntToStr(i) + ']: ' + definedFunctionNames[i], LLError);
-        LogDatei.log('definedFunctionArray[' + IntToStr(i)+ '].DFName: ' + definedFunctionArray[i].DFName, LLError);
       end
     end;
   finally

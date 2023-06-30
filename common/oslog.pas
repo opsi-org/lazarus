@@ -1677,11 +1677,9 @@ var
   str: string;
 begin
   try
-  //includelogStrList := TStringList.Create;
     Fname := ExpandFileName(Fname);
     if lowercase(sourceEncoding) = 'unicode' then
     begin
-      //includelogStrList.Assign(loadUnicodeTextFile(Fname, bool, str));
       includelogStrList := loadUnicodeTextFile(Fname, bool, str);
     end
     else
@@ -1690,7 +1688,6 @@ begin
       includelogStrList.LoadFromFile(FName);
       includelogStrList.Text :=
         reencode(includelogStrList.Text, sourceEncoding, sourceEncoding);
-      //includelogStrList := loadTextFileWithEncoding(Fname, sourceEncoding);
     end;
     try
       includelogLinecount := includelogStrList.Count;
