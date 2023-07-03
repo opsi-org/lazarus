@@ -1032,8 +1032,14 @@ begin
   paramstring := LogDatei.FileName;
   {$ENDIF WINDOWS}
   {$IFDEF LINUX}
+  // call of logviewer at linux (N.Otto 3.7.2023):
+  // /usr/share/opsi-configed/java/jre/bin/java -jar "/usr/share/opsi-configed/configed.jar" --logviewer
+  PathOpsiLogViewer := '/usr/share/opsi-configed/java/jre/bin/java';
+  paramstring := ' -jar "/usr/share/opsi-configed/configed.jar" --logviewer -f '+LogDatei.FileName;
+  (*
   PathOpsiLogViewer := '/usr/share/opsi-logviewer/logviewer'; // '/usr/bin/logviewer'
   paramstring := ' -f '+LogDatei.FileName;
+  *)
   {$ENDIF LINUX}
   {$IFDEF DARWIN}
   PathOpsiLogViewer := '/Applications/opsi-logviewer.app/Contents/MacOS/opsi-logviewer';
