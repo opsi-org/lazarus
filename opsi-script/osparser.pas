@@ -27302,12 +27302,17 @@ begin
         else
         begin
           LogDatei.log(
-            'We could not find an actions section in your script and therefore your script might not be executed!'
-            + ' Please check if the section head ''[' + NameAktionenSektion +
-            ']'' exists and is written correctly.',
-            LLcritical);
-          Script.FNumberOfErrors := Script.NumberOfErrors + 1;
-          extremeErrorLevel := levelFatal;
+            'We did not find an actions section in your script, or your actions section is empty.' +
+            ' Therefore nothing is executed!' +
+            ' Please check that the section head ''[' + NameAktionenSektion +
+            ']'' exists and is written correctly.' +
+            ' Please also check that the actions section is not empty.' +
+            ' If this is a meta package, please write in the setup script a non-empty actions section' +
+            ' (e.g. with a command like ''comment "Meta package: %installingProdName%"'').' +
+            ' Writing meta packages with no or an empty actions section is discouraged.' +
+            ' We will turn this warning into an error in one of the next opsi-script versions.',
+            LLWarning);
+          Script.FNumberOfWarnings := Script.NumberOfWarnings + 1;
         end;
       end;
       try
