@@ -1,5 +1,0 @@
-object ServiceMapper: TServiceMapper
-  DaemonDefs = <>
-  left = 509
-  top = 246
-end
