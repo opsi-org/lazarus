@@ -2007,9 +2007,10 @@ begin
     except
       on E: Exception do
       begin
-        LogDatei.log('Exception in freeDefinedFunctions (Line ' + {$INCLUDE %LINE%} + '):', LLError);
-        LogDatei.log('i: ' + IntToStr(i), LLError);
-        LogDatei.log('definedFunctionNames[' + IntToStr(i) + ']: ' + definedFunctionNames[i], LLError);
+        LogDatei.log('Exception in freeDefinedFunctions (Line ' +
+          {$INCLUDE %LINE%} + '): definedFunctionArray[' +
+          IntToStr(i) + ']; definedFunctionNames[' + IntToStr(i) + ']:  ' +
+          definedFunctionNames[i], LLError);
       end
     end;
   finally

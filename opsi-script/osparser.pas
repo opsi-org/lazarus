@@ -15209,10 +15209,9 @@ begin
     except
       on E: Exception do
       begin
-        Logdatei.log('Line: ' + {$INCLUDE %LINE%}', Exception in Evaluatestring (defined local function, getting FuncIndex, funcname: ' + funcname + ', FuncIndex: ' + IntToStr(FuncIndex) + '), s0: ' + s0, LLCritical);
-        Logdatei.log(e.ClassName + ' system message: "' + E.Message +
-          '" - giving up',
-          LLCritical);
+        Logdatei.log('Line: ' + {$INCLUDE %LINE%}', Exception('+ e.ClassName + ' system message: ' +
+          E.Message + ') in Evaluatestring (defined local function, getting FuncIndex, funcname: ' +
+          funcname + ', FuncIndex: ' + IntToStr(FuncIndex) + '), s0: ' + s0 + ', - giving up', LLCritical);
       end;
     end;     // string variable?
     GetWord(s0, s, r, WordDelimiterSet3);
@@ -15249,10 +15248,9 @@ begin
       except
         on E: Exception do
         begin
-          Logdatei.log('Line: ' + {$INCLUDE %LINE%}', Exception in Evaluatestring (defined local function, funcname: ' + funcname + ', FuncIndex: ' + IntToStr(FuncIndex)  + '), s0: ' + s0, LLCritical);
-          Logdatei.log(e.ClassName + ' system message: "' + E.Message +
-            '" - giving up',
-            LLCritical);
+          Logdatei.log('Line: ' + {$INCLUDE %LINE%}', Exception('+ e.ClassName + ' system message: ' +
+            E.Message + ') in Evaluatestring (defined local function, getting FuncIndex, funcname: ' +
+            funcname + ', FuncIndex: ' + IntToStr(FuncIndex) + '), s0: ' + s0 + ', - giving up', LLCritical);
         end;
       end;
     end
