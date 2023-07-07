@@ -681,8 +681,6 @@ var
   bool: boolean;
   str: string;
 begin
-  Result := TStringList.Create;
-
   if encoding = '' then
   begin
     LogDatei.log('Warning : encodingString is empty - Fallback to System encoding',
@@ -691,9 +689,10 @@ begin
   end;
 
   if isEncodingUnicode(encoding) then
-    Result.AddStrings(loadUnicodeTextFile(filename, bool, str))
+    Result := loadUnicodeTextFile(filename, bool, str)
   else
   begin
+    Result := TStringList.Create;
     try
       Result.loadFromFile(filename);
     except
