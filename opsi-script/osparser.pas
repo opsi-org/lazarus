@@ -840,10 +840,7 @@ end;
 
 function GetString
   (const s: string; var ResultString, Remaining, errorinfo: string;
-  StringInStringAllowed: boolean): boolean; overload; forward;
-function GetString
-  (const s: string; var ResultString, Remaining, errorinfo: string;
-  StringInStringAllowed, requote: boolean): boolean; overload; forward;
+  StringInStringAllowed: boolean; requote: boolean = False): boolean; forward;
 
 function SearchForSectionLines
   (const selfsection: TUIBInstScript; localsection, callingsection: TWorkSection;
@@ -1265,17 +1262,10 @@ begin
   end;
 end;
 
-function GetString
-  (const s: string; var ResultString, Remaining, errorinfo: string;
-  StringInStringAllowed: boolean): boolean;
-begin
-  Result := GetString(s, ResultString, Remaining, errorinfo,
-    StringInStringAllowed, False);
-end;
 
 function GetString
   (const s: string; var ResultString, Remaining, errorinfo: string;
-  StringInStringAllowed, requote: boolean): boolean;
+  StringInStringAllowed: boolean; requote: boolean = False): boolean;
 (* reads a string that is delimited either by ' or by "  (citation mark);
    if StringInStringallowed then the function interprets a double mark
    of the appropriate kind as being contained in the string.
