@@ -144,6 +144,13 @@ opsi-setup-detector (4.2.2.0-1) stable; urgency=low
 
 -- Detlef Oertel <d.oertel@uib.de>  Wed,  29 Mar 2023 : 15:00:00 +0200
 
+opsi-setup-detector (4.2.1.18-1) stable; urgency=low
+
+   * Fix: 'with user':
+     osdcreate: at 'with user' we need osd-lib also at the base dir (without subdir)
+
+-- Detlef Oertel <d.oertel@uib.de>  Mon,  17 Jul 2023 : 15:00:00 +0200
+
 opsi-setup-detector (4.2.1.17-1) stable; urgency=low
 
    * Fix writing property values to control file
