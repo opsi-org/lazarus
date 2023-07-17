@@ -1684,10 +1684,14 @@ begin
     end
     else
     begin
+    {$IFDEF UNIX}
       includelogStrList := TStringList.Create;
       includelogStrList.LoadFromFile(FName);
       includelogStrList.Text :=
         reencode(includelogStrList.Text, sourceEncoding, sourceEncoding);
+    {$ELSE}
+      includelogStrList := loadTextFileWithEncoding(Fname, sourceEncoding);
+    {$ENDIF}
     end;
     try
       includelogLinecount := includelogStrList.Count;
