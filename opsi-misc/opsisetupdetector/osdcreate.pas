@@ -918,6 +918,7 @@ begin
         end;
 
       subdir := '';
+      // at 'with user' we need osd-lib also at the 'localsetup' dir
       if osdsettings.runmode = analyzeCreateWithUser then
         subdir := pathdelim + 'localsetup';
       // No need to copy installer for templates or Meta
@@ -977,6 +978,13 @@ begin
         outfilename := clientpath + subdir + PathDelim + 'osd-lib.opsiscript';
         copyfile(infilename, outfilename, [cffOverwriteFile,
           cffCreateDestDirectory, cffPreserveTime], True);
+        // at 'with user' we need osd-lib also at the base dir (without subdir)
+        if osdsettings.runmode = analyzeCreateWithUser then
+        begin
+          outfilename := clientpath + PathDelim + 'osd-lib.opsiscript';
+        copyfile(infilename, outfilename, [cffOverwriteFile,
+          cffCreateDestDirectory, cffPreserveTime], True);
+        end;
 
         // OS specific install lib
 
