@@ -7,7 +7,7 @@ opsi-script (4.12.10.0) unreleased; urgency=medium
   * [fix] osparser: doRegistryHackRegeditFormat / doRegistryHack
           remove condition branch: 'if Is64BitSystem and ('software' = lowerCase(key0)) then'
           (#4839, !155, d.oertel)
-  * [fix] oslog: includelog with utf16lebom  (d.oertel, j.werner, !157, #4841)
+  * [fix] oslog: includelog with utf16lebom with unix compiler switch  (d.oertel, j.werner, !157, #4841)
   * [fix] osfunc.pas: getProfilesDirList: Fix memory issue (!154, a.schmitz)
   * [fix] osfunclin.pas: getLinuxReleaseInfo: Fix getting subrelease (#947, !148, a.schmitz)
   * [fix] osconf.pas and osparser.pas: set computername on Unix only if it was not set before and is empty, 
