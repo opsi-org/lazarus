@@ -5716,7 +5716,6 @@ var
   installationStatusS, actionResultS, actionRequestS, targetConfigurationS,
   lastActionS: string;
   parastr: string;
-  versionstr: string;
 
 begin
   //if FInstallableProducts.IndexOf(actualProduct) = -1 then exit;
@@ -5727,58 +5726,42 @@ begin
     lastActionS := actionRequest4toString(lastAction);
     installationStatusS := installationStatusToString(installationStatus);
 
-    //FProductOnClient_aktobject.put('actionProgress',stateS);
-    parastr := FProductOnClient_aktobject.asJson(False, False);
-    //FProductOnClient_aktobject :=
     FProductOnClient_aktobject.S['actionProgress'] := actionProgressS;
-    parastr := FProductOnClient_aktobject.asJson(False, False);
-    //FProductOnClient_aktobject :=
     FProductOnClient_aktobject.S['actionResult'] := actionResultS;
-    parastr := FProductOnClient_aktobject.asJson(False, False);
-    //FProductOnClient_aktobject :=
     FProductOnClient_aktobject.S['actionRequest'] := actionRequestS;
-    parastr := FProductOnClient_aktobject.asJson(False, False);
     if lastAction <> tac4Custom then
-      //FProductOnClient_aktobject :=
       FProductOnClient_aktobject.S['targetConfiguration'] := targetConfigurationS;
     parastr := FProductOnClient_aktobject.asJson(False, False);
     if lastAction <> tac4Custom then
     begin
       if (Productvars <> nil) and (Productvars.values['productVersion'] <> '') then
       begin
-        versionstr := Productvars.Values['productVersion'];
-        //FProductOnClient_aktobject :=
+        if Assigned(LogDatei) then
+           LogDatei.log('productVersion: ' + Productvars.Values['productVersion'] + ' (TOPsi4Data.ProductOnClient_update)', LLDebug);
         FProductOnClient_aktobject.S['productVersion'] :=
           Productvars.Values['productVersion'];
-        //        if FProductOnClient_aktobject.isNull('productVersion') then
-        //          FProductOnClient_aktobject := FProductOnClient_aktobject.put('productVersion',nil);
-        parastr := FProductOnClient_aktobject.asJson(False, False);
-        //FProductOnClient_aktobject :=
+        //if FProductOnClient_aktobject.isNull('productVersion') then
+        //  FProductOnClient_aktobject := FProductOnClient_aktobject.put('productVersion',nil);
         FProductOnClient_aktobject.S['productVersion'] :=
           Productvars.Values['productVersion'];
-        parastr := FProductOnClient_aktobject.asJson(False, False);
       end;
     end;
     if lastAction <> tac4Custom then
     begin
       if (Productvars <> nil) and (Productvars.values['packageVersion'] <> '') then
       begin
-        versionstr := Productvars.Values['packageVersion'];
-        //        if FProductOnClient_aktobject.isNull('packageVersion') then
-        //          FProductOnClient_aktobject := FProductOnClient_aktobject.put('packageVersion',nil);
-        //        parastr := FProductOnClient_aktobject.toString;
-        //FProductOnClient_aktobject :=
+        //if FProductOnClient_aktobject.isNull('packageVersion') then
+        //  FProductOnClient_aktobject := FProductOnClient_aktobject.put('packageVersion',nil);
         FProductOnClient_aktobject.S['packageVersion'] :=
           Productvars.Values['packageVersion'];
-        parastr := FProductOnClient_aktobject.asJson(False, False);
       end;
     end;
-    //FProductOnClient_aktobject :=
     FProductOnClient_aktobject.S['lastAction'] := lastActionS;
     if lastAction <> tac4Custom then
-      //FProductOnClient_aktobject :=
       FProductOnClient_aktobject.S['installationStatus'] := installationStatusS;
     parastr := FProductOnClient_aktobject.asJson(False, False);
+    LogDatei.log('Opsi4Data.ProductOnClient_update, params (JSON): ' +
+      parastr, LLDebug2);
     omc := TOpsiMethodCall.Create('productOnClient_updateObject', [parastr]);
     jO := FjsonExecutioner.retrieveJSONObject(omc);
     omc.Free;

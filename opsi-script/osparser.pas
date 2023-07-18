@@ -11916,7 +11916,7 @@ var
   ///sx,
   tmpstr, tmpstr1, tmpstr2, tmpstr3: string;
   tmpint: integer;
-  tmpbool, tmpbool1: boolean;
+  tmpbool: boolean;
   a1: integer = 0;
   a2: integer = 0;
   int64_1: int64;
@@ -12074,7 +12074,7 @@ begin
         begin
           try
             FreeAndNil(list); //free list before assign new TXStringlist object to variable
-            list := TXStringList(execPowershellCall(s1, s2, 1, True, False, tmpbool1, s4));
+            list := TXStringList(execPowershellCall(s1, s2, 1, True, False, tmpbool, s4));
           except
             on e: Exception do
             begin
@@ -15194,8 +15194,18 @@ begin
 
     // defined local function ?
     GetWord(s0, funcname, r, WordDelimiterSet5);
-    FuncIndex := definedFunctionNames.IndexOf(LowerCase(funcname));
-    // string variable?
+    try
+      FuncIndex := definedFunctionNames.IndexOf(LowerCase(funcname));
+    except
+      on E: Exception do
+      begin
+        Logdatei.log('Line: ' + {$INCLUDE %LINE%} + ', Exception(' +
+          e.ClassName + ' system message: ' + E.Message +
+          ') in Evaluatestring (defined local function, getting FuncIndex, funcname: ' +
+          funcname + ', FuncIndex: ' + IntToStr(FuncIndex) + '), s0: ' +
+          s0 + ', - giving up', LLCritical);
+      end;
+    end;     // string variable?
     GetWord(s0, s, r, WordDelimiterSet3);
     VarIndex := VarList.IndexOf(LowerCase(s));
 
@@ -15203,26 +15213,38 @@ begin
     // defined local function ?
     if FuncIndex >= 0 then
     begin
-      if not (definedFunctionArray[FuncIndex].datatype = dfpString) then
-      begin
-        // error
-        syntaxCheck := False;
-        LogDatei.log('Syntax Error: defined function: ' + funcname +
-          ' is not from type string.', LLError);
-      end
-      else
-      begin
-        if definedFunctionArray[FuncIndex].call(r, r, NestLevel) then
+      try
+        if not (definedFunctionArray[FuncIndex].datatype = dfpString) then
         begin
-          StringResult := definedFunctionArray[FuncIndex].Resultstring;
-          syntaxCheck := True;
-          //logdatei.log('We leave the defined function: inDefFunc3: '+IntToStr(inDefFunc3),LLInfo);
+          // error
+          syntaxCheck := False;
+          LogDatei.log('Syntax Error: defined function: ' + funcname +
+            ' is not from type string.', LLError);
         end
         else
         begin
-          // defined function call failed
-          LogDatei.log('Call of defined function: ' + funcname + ' failed', LLError);
-          syntaxCheck := False;
+          if definedFunctionArray[FuncIndex].call(r, r, NestLevel) then
+          begin
+            StringResult := definedFunctionArray[FuncIndex].Resultstring;
+            syntaxCheck := True;
+            //logdatei.log('We leave the defined function: inDefFunc3: '+IntToStr(inDefFunc3),LLInfo);
+          end
+          else
+          begin
+            // defined function call failed
+            LogDatei.log('Call of defined function: ' + funcname + ' failed', LLError);
+            syntaxCheck := False;
+          end;
+        end;
+
+      except
+        on E: Exception do
+        begin
+          Logdatei.log('Line: ' + {$INCLUDE %LINE%} + ', Exception(' +
+            e.ClassName + ' system message: ' + E.Message +
+            ') in Evaluatestring (defined local function, getting FuncIndex, funcname: ' +
+            funcname + ', FuncIndex: ' + IntToStr(FuncIndex) +
+            '), s0: ' + s0 + ', - giving up', LLCritical);
         end;
       end;
     end
@@ -26117,7 +26139,7 @@ begin
                   LogDatei.log('tsDefineFunction: Passing well known localfunction: ' +
                     Expressionstr, LLInfo);
                   GetContentOfDefinedFunction(tmpbool, linecounter,
-                    FaktScriptLineNumber, Sektion, SectionSpecifier, call, False);
+                    FaktScriptLineNumber, Sektion, SectionSpecifier, call, False).Free;
                   LogDatei.log('tsDefineFunction: passed well known localfunction: ' +
                     Expressionstr, LLInfo);
                   Dec(inDefFunc3);
@@ -27292,12 +27314,17 @@ begin
         else
         begin
           LogDatei.log(
-            'We could not find an actions section in your script and therefore your script might not be executed!'
-            + ' Please check if the section head ''[' + NameAktionenSektion +
-            ']'' exists and is written correctly.',
-            LLcritical);
-          Script.FNumberOfErrors := Script.NumberOfErrors + 1;
-          extremeErrorLevel := levelFatal;
+            'We did not find an actions section in your script, or your actions section is empty.' +
+            ' Therefore nothing is executed!' +
+            ' Please check that the section head ''[' + NameAktionenSektion +
+            ']'' exists and is written correctly.' +
+            ' Please also check that the actions section is not empty.' +
+            ' If this is a meta package, please write in the setup script a non-empty actions section' +
+            ' (e.g. with a command like ''comment "Meta package: %installingProdName%"'').' +
+            ' Writing meta packages with no or an empty actions section is discouraged.' +
+            ' We will turn this warning into an error in one of the next opsi-script versions.',
+            LLWarning);
+          Script.FNumberOfWarnings := Script.NumberOfWarnings + 1;
         end;
       end;
       try
