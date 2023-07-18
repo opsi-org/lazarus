@@ -121,8 +121,11 @@ opsi-setup-detector (4.2.2.0-1) stable; urgency=low
    * new cli parameter: -c / --template-channel
    * new Help menu: 'Open help' via default bowser
    * new Help menu: 'Open log file' via opsi-logviewer (if installed)
-   * new Help Icons (questionmarks) on every tab with context sensitive help
-   * new Help Icons (questionmarks) on dialogs: config, property, dependency with context sensitive help
+   * new Helpicon: help-circle20.png from  https://feathericons.com/
+   * new package icon: package16.png from  https://feathericons.com/
+   * new rebuild icon: refreshcw20.png from  https://feathericons.com/
+   * new Help Icons (help-circle20) on every tab with context sensitive help
+   * new Help Icons (help-circle20) on dialogs: config, property, dependency with context sensitive help
    * new detection: PortableApps.com
    * new detection: install4j
    * fix: control file: licenseRequired: False ; fixes #4828
@@ -138,6 +141,8 @@ opsi-setup-detector (4.2.2.0-1) stable; urgency=low
    * feature: store and use last dir from which we opend a icon file
    * setup tabs: more space for the info link
    * fix opsi-logviewer call for linux and mac
+   * new 'rebuild' button on create tab
+   * new config 'control_in_toml_format'
 
    todo:
 

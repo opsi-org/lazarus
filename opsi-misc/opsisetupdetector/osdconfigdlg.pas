@@ -87,6 +87,7 @@ begin
   myconfigurationhints.Add('Service_user=' + rsService_user);
   myconfigurationhints.Add('Service_pass=' + rsService_pass);
   myconfigurationhints.Add('preferSilent=' + rsPreferSilent);
+  myconfigurationhints.Add('control_in_toml_format=' + rsControl_in_toml_format);
   SetDefaultLang(osdsettings.mylang, osdsettings.mylocaledir);
   Repaint;
 end;

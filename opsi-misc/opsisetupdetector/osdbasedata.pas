@@ -470,6 +470,7 @@ default: ["xenial_bionic"]
     FLastProjectFileDir : string;  // last dir from wich we opend a project file
     FLastSetupFileDir : string;  // last dir from wich we opend a setup file
     FLasticonFileDir : string;  // last dir from wich we opend a icon file
+    Fcontrol_in_toml_format : boolean;
     procedure SetLibraryLines(const AValue: TStrings);
     procedure SetPreInstallLines(const AValue: TStrings);
     procedure SetPostInstallLines(const AValue: TStrings);
@@ -514,6 +515,8 @@ default: ["xenial_bionic"]
     property LastProjectFileDir: string read FLastProjectFileDir write FLastProjectFileDir;
     property LastSetupFileDir: string read FLastSetupFileDir write FLastSetupFileDir;
     property LasticonFileDir: string read FLasticonFileDir write FLasticonFileDir;
+    property control_in_toml_format: boolean read Fcontrol_in_toml_format write Fcontrol_in_toml_format;
+
 
     procedure writeconfig;
     procedure readconfig;
@@ -627,6 +630,10 @@ resourcestring
   rsPropInstallArchDescription = 'Which architecture (32 / 64 Bit) should be installed?';
   rsPreferSilent =
     'Should really silent installs (with no output) be preferred ? Default is false = unattended is preferred.';
+  rsControl_in_toml_format =
+    'Create control file in (opsi 4.3) toml format ?. ' + LineEnding +
+    'If true, you need opsi 4.3 (or up) ' + LineEnding +
+    'and the toml file is the main control file that should be maintained.';
 
 
 implementation
@@ -1427,6 +1434,7 @@ begin
   FUsePropDesktopicon := False;
   FTemplateChannel := default;
   FpreferSilent := False; // Unattended
+  Fcontrol_in_toml_format := False; // opsi 4.2
   {$IFDEF UNIX}
   FLasticonFileDir := '/usr/share/opsi-setup-detector/icons';
   {$ENDIF UNIX}

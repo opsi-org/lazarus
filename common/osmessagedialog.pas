@@ -124,7 +124,7 @@ end;
 function TMyMessageDlg.wiMessage(const ps: string;
   Results: TModalSet): TModalResults;
 begin
-  Result := wiMessageSized(ps, Results, 650, 240);
+  Result := wiMessageSized(ps, Results, 750, 280);
 end;
 
 function TMyMessageDlg.showMessage(const header: string; const ps: string; Results: TModalSet): TModalResults;
@@ -132,7 +132,7 @@ begin
   Caption:= header;
   Memo1.Font.Style:= [];
   Memo1.Font.Size:= 10;
-  Result := wiMessageSized(ps, Results, 650, 240);
+  Result := wiMessageSized(ps, Results, 650, 280);
 end;
 
 procedure TMyMessageDlg.FormHide(Sender: TObject);

@@ -165,6 +165,8 @@
 {"hash":151059844,"name":"tresultform1.processstatement.caption","sourcebytes":[112,108,101,97,115,101,32,119,97,105,116],"value":"please wait"},
 {"hash":139587652,"name":"tresultform1.btcreateproduct.hint","sourcebytes":[67,114,101,97,116,101,32,97,110,32,111,112,115,105,32,80,114,111,100,117,99,116],"value":"Create an opsi Product"},
 {"hash":160827061,"name":"tresultform1.btcreateproduct.caption","sourcebytes":[67,114,101,97,116,101,32,79,112,115,105,32,80,97,99,107,97,103,101],"value":"Create Opsi Package"},
+{"hash":263874869,"name":"tresultform1.bitbtnrebuild.hint","sourcebytes":[82,101,98,117,105,108,100,32,80,97,99,107,97,103,101],"value":"Rebuild Package"},
+{"hash":146390644,"name":"tresultform1.bitbtnrebuild.caption","sourcebytes":[32,82,101,98,117,105,108,100],"value":" Rebuild"},
 {"hash":199270530,"name":"tresultform1.statusbar1.panels[1].text","sourcebytes":[78,111,116,32,67,111,110,110,101,99,116,101,100,32,116,111,32,111,112,115,105,45,115,101,114,118,101,114],"value":"Not Connected to opsi-server"},
 {"hash":2805797,"name":"tresultform1.menuitemfile.caption","sourcebytes":[38,70,105,108,101],"value":"&File"},
 {"hash":5941396,"name":"tresultform1.menuitemstart.caption","sourcebytes":[83,116,97,114,116],"value":"Start"},

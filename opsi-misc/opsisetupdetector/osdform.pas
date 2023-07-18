@@ -57,6 +57,7 @@ type
   { TResultform1 }
 
   TResultform1 = class(TForm)
+    BitBtnRebuild: TBitBtn;
     BitBtnAddDep: TBitBtn;
     BitBtnChooseInstDir2: TBitBtn;
     BitBtnChooseInstDir3: TBitBtn;
@@ -403,6 +404,7 @@ type
     procedure BitBtnOpenFileClick(Sender: TObject);
     procedure BitBtnOpenMst1Click(Sender: TObject);
     procedure BitBtnOpenMst2Click(Sender: TObject);
+    procedure BitBtnRebuildClick(Sender: TObject);
     procedure BitBtnRecheckWorkbenchClick(Sender: TObject);
     procedure BitBtnWorkBenchPathClick(Sender: TObject);
     procedure BtAnalyzeNextStepClick(Sender: TObject);
@@ -654,6 +656,8 @@ resourcestring
   rsErrorLoadingLogViewer = 'An error occured while loading opsi-logviewer';
   rsErrorFindingLogViewer =
       'Please install the opsi-logviewer product. opsi-logviewer is not installed in ';
+  rsRebuildFinished = 'Rebuild opsi package finished.';
+  rsRebuildFailedBuild = 'Rebuild opsi package: build / install package failed';
 
 
   // Hints
@@ -2384,6 +2388,40 @@ begin
   OpenMSTFile(aktProduct.SetupFiles[1]);
 end;
 
+procedure TResultform1.BitBtnRebuildClick(Sender: TObject);
+var
+  radioindex: integer;
+  done: boolean = False;
+begin
+  // reset exitcode before (repeated) build:
+  system.ExitCode := 0;
+  logdatei.log('Start BtRebuildClick', LLDebug2);
+  if not DirectoryExists(myconfiguration.workbench_Path) then
+  begin
+    //checkok := False;
+    ShowMessage(sErrPacketBaseDirNotFound);
+  end;
+  try
+    PanelProcess.Visible := True;
+    procmess;
+    case TIRadioGroupCreateMode.ItemIndex of
+      0: ; // do nothing else
+      1: callServiceOrPackageBuilder;
+      2: ; // do nothing else
+    end;
+    procmess;
+    PanelProcess.Visible := False;
+    if (system.ExitCode = 0) then
+      ShowMessage(rsRebuildFinished)
+    else
+      ShowMessage(rsRebuildFailedBuild);
+  finally
+    PanelProcess.Visible := False;
+    procmess;
+  end;
+  logdatei.log('Finished BtRebuildClick', LLDebug2);
+end;
+
 
 procedure TResultform1.BtCreateEmptyTemplateWinClick(Sender: TObject);
 begin
@@ -3171,6 +3209,7 @@ begin
   list.Add('This is a part of the opsi.org project: https://opsi.org');
   list.Add('');
   list.add('Icons from Iconic (https://useiconic.com/) under MIT License.');
+  list.add('Icons from feathericons (https://feathericons.com/) under MIT License.');
   //list.add('https://github.com/iconic/open-iconic/blob/master/ICON-LICENSE');
   list.Add('');
   list.Add('Configuration: ');
