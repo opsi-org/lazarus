@@ -750,14 +750,17 @@ begin
           singleAnalyzeCreate:
           begin
             infilelist.Add('declarations.opsiinc');
+            infilelist.Add('sections.opsiinc');
           end;
           twoAnalyzeCreate_1, twoAnalyzeCreate_2:
           begin
             infilelist.Add('declarations.opsiinc');
+            infilelist.Add('sections.opsiinc');
           end;
           createTemplate:
           begin
             infilelist.Add('declarations.opsiinc');
+            infilelist.Add('sections.opsiinc');
           end;
           createMeta:
           begin

@@ -429,7 +429,8 @@ begin
           FNewDepDlg.LabelConnect.Font.Color := clRed;
           resultForm1.StatusBar1.Panels.Items[1].Text := 'Not connected to opsi server';
           {$ENDIF OSDGUI}
-          FreeAndNil(localservicedata);
+          // reset password from input dialog to empty in order to ask again on reconnect
+          if myconfiguration.Service_pass = '' then passwordToUse := '';
         end;
       end
       else

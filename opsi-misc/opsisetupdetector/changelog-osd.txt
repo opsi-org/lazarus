@@ -143,6 +143,7 @@ opsi-setup-detector (4.2.2.0-1) stable; urgency=low
    * fix opsi-logviewer call for linux and mac
    * new 'rebuild' button on create tab
    * new config 'control_in_toml_format'
+   * reset password from input dialog to empty in order to ask again on reconnect
 
    todo:
 
