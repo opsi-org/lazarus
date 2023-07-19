@@ -11783,12 +11783,12 @@ object resultForm1: TresultForm1
           Align = alTop
           ControlList = <          
             item
-              Control = BitBtnRebuild
+              Control = BtCreateProduct
               WrapAfter = waAuto
               Index = 0
             end          
             item
-              Control = BtCreateProduct
+              Control = BitBtnRebuild
               WrapAfter = waAuto
               Index = 1
             end>
@@ -11797,7 +11797,7 @@ object resultForm1: TresultForm1
           ParentFont = False
           TabOrder = 3
           object BtCreateProduct: TBitBtn
-            Left = 717
+            Left = 856
             Height = 86
             Hint = 'Create an opsi Product'
             Top = 10
@@ -12329,14 +12329,14 @@ object resultForm1: TresultForm1
             TabOrder = 0
           end
           object BitBtnRebuild: TBitBtn
-            Left = 989
-            Height = 30
+            Left = 612
+            Height = 39
             Hint = 'Rebuild Package'
-            Top = 41
-            Width = 139
+            Top = 56
+            Width = 235
             Anchors = []
-            BorderSpacing.Top = 40
-            Caption = ' Rebuild'
+            BorderSpacing.Top = 55
+            Caption = ' Rebuild Package only'
             Font.Height = 24
             Glyph.Data = {
               B6070000424DB607000000000000360000002800000018000000140000000100
