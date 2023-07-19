@@ -80,12 +80,14 @@ unit ssl_openssl3_lib;
 interface
 
 uses
+  osSSLPaths, //opsi ssl paths
   Classes,
   synafpc,
 {$IFNDEF MSWINDOWS}
   {$IFDEF FPC}
    {$IFDEF UNIX}
   BaseUnix,
+  FileUtil, // opsi do 20210201
    {$ENDIF UNIX}
   {$ELSE}
     {$IFDEF POSIX}
@@ -349,6 +351,8 @@ function IsSSLloaded: Boolean;
 function InitSSLInterface: Boolean;
 function DestroySSLInterface: Boolean;
 
+//set opsi specific ssl library paths
+procedure SetSSLPaths;
 var
   _X509Free: TX509Free = nil; {pf}
 
@@ -358,7 +362,11 @@ uses
 {$IFDEF OS2}
   Sockets,
 {$ENDIF OS2}
-  SyncObjs;
+  SyncObjs
+{$IFDEF OPSISCRIPT}
+  ,osMain
+{$ENDIF OPSISCRIPT}
+;
 
 type
 // libssl.dll
@@ -1236,6 +1244,17 @@ end;
 function LoadLib(const Value: String): HModule;
 begin
   Result := LoadLibrary(PChar(Value));
+{$IFDEF OPSISCRIPT}
+  if not Assigned(StartupMessages) then StartupMessages := TStringList.Create;
+  if (Result = NilHandle) then
+  begin
+    StartupMessages.Append('Could not load library: ' + Value);
+  end
+  else
+  begin
+    StartupMessages.Append('Load library: ' + Value);
+  end;
+{$ENDIF OPSISCRIPT}
 end;
 
 function GetProcAddr(module: HModule; const ProcName: string): SslPtr;
@@ -1259,6 +1278,7 @@ begin
   try
     if not IsSSLloaded then
     begin
+      SetSSLPaths; //set opsi specific ssl library paths
       SSLUtilHandle := LoadLib(DLLUtilName);
       SSLLibHandle := LoadLib(DLLSSLName);
       if (SSLLibHandle <> 0) and (SSLUtilHandle <> 0) then
@@ -1508,6 +1528,33 @@ begin
   Result := SSLLoaded;
 end;
 
+procedure SetSSLPaths; //opsi
+begin
+  // Specify here the name of the ssl libraries
+  // paths will be determined according operating system/architecture as needed for OPSI
+  {$IFDEF SSLPATH}
+  DLLSSLName := GetSSLPath(DLLSSLName);
+  DLLUtilName := GetSSLPath(DLLUtilName);
+	(*  
+    {$IFDEF WIN32}
+      DLLSSLName := GetSSLPath('libssl-1_1.dll');
+      DLLUtilName := GetSSLPath('libcrypto-1_1.dll');
+    {$ENDIF WIN32}
+    {$IFDEF WIN64}
+      DLLSSLName := GetSSLPath('libssl-1_1-x64.dll');
+      DLLUtilName := GetSSLPath('libcrypto-1_1-x64.dll');
+    {$ENDIF WIN64}
+    {$IFDEF LINUX}
+      DLLSSLName := GetSSLPath('libssl.so');
+      DLLUtilName := GetSSLPath('libcrypto.so'); ;
+    {$ENDIF LINUX}
+    {$IFDEF DARWIN}
+      DLLSSLName := GetSSLPath('libssl.dylib');
+      DLLUtilName := GetSSLPath('libcrypto.dylib');;
+    {$ENDIF DARWIN}
+	*)
+  {$ENDIF SSLPATH}
+end;
 initialization
 begin
   SSLCS:= TCriticalSection.Create;

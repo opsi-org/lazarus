@@ -10,7 +10,9 @@ unit oswebservice;
 {$MACRO ON}
 
 {$DEFINE SYNAPSE}
-
+{$DEFINE SSL_OPENSSL_UNIT:=ssl_openssl3}
+{$DEFINE SSL_OPENSSL_LIB_UNIT:=ssl_openssl3_lib}
+(*
 //ssl_openssl11 and ssl_openssl11_lib seam not to work under macos
 {$IFDEF DARWIN}
   {$DEFINE SSL_OPENSSL_UNIT:=ssl_openssl}
@@ -19,6 +21,7 @@ unit oswebservice;
   {$DEFINE SSL_OPENSSL_UNIT:=ssl_openssl11}
   {$DEFINE SSL_OPENSSL_LIB_UNIT:=ssl_openssl11_lib}
 {$ENDIF DARWIN}
+*)
 
 // This code is part of the opsi.org project
 
@@ -1285,7 +1288,8 @@ begin
     HTTPSender.Protocol := '1.1';
     //HTTPSender.Sock.PreferIP4:= False; //might be switched to false if IPv6 is standard
     //HTTPSender.Sock.Family:= SF_IP6; //do not set this if IPv4 addresses are still in use
-    HTTPSender.Sock.CreateWithSSL(TSSLOpenSSL);
+    //HTTPSender.Sock.CreateWithSSL(TSSLOpenSSL);
+    HTTPSender.Sock.CreateWithSSL(TSSLOpenSSL3);
     HTTPSender.Sock.Connect(ip, port);
     //LogDatei.log('IP: ' + ip + ' Resolved: ' + Httpsender.Sock.GetRemoteSinIP, LLDebug);
     if SSL_OPENSSL_LIB_UNIT.InitSSLInterface then
