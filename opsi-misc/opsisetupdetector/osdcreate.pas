@@ -1223,75 +1223,74 @@ begin
         textlist.Add('userLoginScript = ""');
       // the next line avoids a bug in  opsi-makepackage 4.3.0.36 [python-opsi=4.3.0.14]
       textlist.Add('windowsSoftwareIds = []');
-    end;
 
-    //dependencies
-    for i := 0 to aktProduct.dependencies.Count - 1 do
-    begin
-      mydep := TPDependency(aktProduct.dependencies.Items[i]);
-      textlist.Add('');
-      textlist.Add('[[ProductDependency]]');
-      textlist.Add('action = "setup"');
-      textlist.Add('requiredProduct = "' + mydep.Required_ProductId + '"');
-      case mydep.Required_State of
-        noState: ;
-        installed: textlist.Add('requiredStatus = "installed"');
-        not_installed: textlist.Add('requiredStatus = "not installed"');
-        unknown: textlist.Add('requiredStatus = "unknown"');
-      end;
-      case mydep.Required_Action of
-        noRequest: ;
-        setup: textlist.Add('requiredAction = "setup"');
-        uninstall: textlist.Add('requiredAction = "uninstall"');
-        TPActionRequest.update: textlist.Add('requiredAction = "update"');
-      end;
-      case mydep.Required_Type of
-        doNotMatter: textlist.Add('requirementType = ""');
-        before: textlist.Add('requirementType = "before"');
-        after: textlist.Add('requirementType = "after"');
-      end;
-    end;
-
-    //ProductProperties
-    for i := 0 to aktProduct.properties.Count - 1 do
-    begin
-      myprop := TPProperty(aktProduct.properties.Items[i]);
-      textlist.Add('');
-      textlist.Add('[[ProductProperty]]');
-      case myprop.Property_Type of
-        bool: textlist.Add('type = "bool"');
-        unicode: textlist.Add('type = "unicode"');
-      end;
-      textlist.Add('name = "' + myprop.Property_Name + '"');
-      textlist.Add('description = "' + myprop.description + '"');
-      if myprop.Property_Type = bool then
+      //dependencies
+      for i := 0 to aktProduct.dependencies.Count - 1 do
       begin
-        textlist.Add('default = [' +
-          lowercase(BoolToStr(myprop.boolDefault, True)) + ']');
-      end
-      else
-      begin
-        textlist.Add('multivalue = ' + lowercase(BoolToStr(myprop.multivalue, True)));
-        textlist.Add('editable = ' + lowercase(BoolToStr(myprop.editable, True)));
-        helplist.Text := myprop.GetValueLines.Text;
-        opsiquotelist(helplist, '"');
-        if stringListToJsonArray(helplist, tmpstr) then
-          textlist.Add('values = ' + tmpstr)
-        else
-          LogDatei.log('Failed to write property values entry for property: ' +
-            myprop.Property_Name, LLerror);
-        helplist.Text := myprop.GetDefaultLines.Text;
-        opsiquotelist(helplist, '"');
-        if stringListToJsonArray(helplist, tmpstr) then
-          textlist.Add('default = ' + tmpstr)
-        else
-          LogDatei.log('Failed to write property default entry for property: ' +
-            myprop.Property_Name, LLerror);
+        mydep := TPDependency(aktProduct.dependencies.Items[i]);
+        textlist.Add('');
+        textlist.Add('[[ProductDependency]]');
+        textlist.Add('action = "setup"');
+        textlist.Add('requiredProduct = "' + mydep.Required_ProductId + '"');
+        case mydep.Required_State of
+          noState: ;
+          installed: textlist.Add('requiredStatus = "installed"');
+          not_installed: textlist.Add('requiredStatus = "not installed"');
+          unknown: textlist.Add('requiredStatus = "unknown"');
+        end;
+        case mydep.Required_Action of
+          noRequest: ;
+          setup: textlist.Add('requiredAction = "setup"');
+          uninstall: textlist.Add('requiredAction = "uninstall"');
+          TPActionRequest.update: textlist.Add('requiredAction = "update"');
+        end;
+        case mydep.Required_Type of
+          doNotMatter: textlist.Add('requirementType = ""');
+          before: textlist.Add('requirementType = "before"');
+          after: textlist.Add('requirementType = "after"');
+        end;
       end;
-    end;
-    textlist.SaveToFile(opsipath + pathdelim + 'control.toml');
-    // END: create control file (4.3 toml style)
 
+      //ProductProperties
+      for i := 0 to aktProduct.properties.Count - 1 do
+      begin
+        myprop := TPProperty(aktProduct.properties.Items[i]);
+        textlist.Add('');
+        textlist.Add('[[ProductProperty]]');
+        case myprop.Property_Type of
+          bool: textlist.Add('type = "bool"');
+          unicode: textlist.Add('type = "unicode"');
+        end;
+        textlist.Add('name = "' + myprop.Property_Name + '"');
+        textlist.Add('description = "' + myprop.description + '"');
+        if myprop.Property_Type = bool then
+        begin
+          textlist.Add('default = [' +
+            lowercase(BoolToStr(myprop.boolDefault, True)) + ']');
+        end
+        else
+        begin
+          textlist.Add('multivalue = ' + lowercase(BoolToStr(myprop.multivalue, True)));
+          textlist.Add('editable = ' + lowercase(BoolToStr(myprop.editable, True)));
+          helplist.Text := myprop.GetValueLines.Text;
+          opsiquotelist(helplist, '"');
+          if stringListToJsonArray(helplist, tmpstr) then
+            textlist.Add('values = ' + tmpstr)
+          else
+            LogDatei.log('Failed to write property values entry for property: ' +
+              myprop.Property_Name, LLerror);
+          helplist.Text := myprop.GetDefaultLines.Text;
+          opsiquotelist(helplist, '"');
+          if stringListToJsonArray(helplist, tmpstr) then
+            textlist.Add('default = ' + tmpstr)
+          else
+            LogDatei.log('Failed to write property default entry for property: ' +
+              myprop.Property_Name, LLerror);
+        end;
+      end;
+      textlist.SaveToFile(opsipath + pathdelim + 'control.toml');
+      // END: create control file (4.3 toml style)
+    end;
 
 
 

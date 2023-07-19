@@ -564,6 +564,8 @@ var
   defaultIconFullFileName: string;
   opsitmp : string;
   localservicedata: TOpsi4Data = nil;
+  //localservicedataInitalized : boolean = false;
+  localservicedataConnected : boolean = false;
   passwordToUse: string;
   opsiserviceversion: string;
 
@@ -2480,7 +2482,9 @@ begin
   LogDatei.log('Log for: ' + Application.exename + ' opend at : ' +
     DateTimeToStr(now), LLEssential);
   LogDatei.log('opsi-setup-detector Version: ' + myVersion, LLEssential);
+  // we need log level 8 in order to see the strings in the binary in the log file
   LogDatei.LogLevel := 8;
+  //LogDatei.debug_prog:=true;
 
   myconfiguration.readconfig;
   LogDatei.log('Finished initialize basedata ', LLInfo);

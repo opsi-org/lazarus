@@ -20,10 +20,10 @@ uses
   osversioninfo,
   //{$IFNDEF WINDOWS}
   {$IFDEF OSDGUI}
-  forms,
-  dialogs,
-  controls,
-  graphics,
+  Forms,
+  Dialogs,
+  Controls,
+  Graphics,
   osddlgnewdependency,
   osddlgnewproperty,
   {$ELSE OSDGUI}
@@ -45,21 +45,22 @@ uses
 
 {$IFNDEF OSDGUI}
 type
-{ TOSD }
+  { TOSD }
 
   TOSD = class(TCustomApplication)
-protected
+  protected
 
-public
-  constructor Create(TheOwner: TComponent); override;
-  destructor Destroy; override;
-  //procedure WriteHelp; virtual;
-published
-  procedure DoRun; override;
-end;
+  public
+    constructor Create(TheOwner: TComponent); override;
+    destructor Destroy; override;
+    //procedure WriteHelp; virtual;
+  published
+    procedure DoRun; override;
+  end;
 
 var
-Application: TOSD;
+  Application: TOSD;
+
 {$ENDIF OSDGUI}
 
 
@@ -76,9 +77,11 @@ procedure AppTerminate;
 function startOpsiServiceConnection: boolean;
 
 implementation
+
 {$IFDEF OSDGUI}
 uses
   osdform;
+
 {$ENDIF OSDGUI}
 
 {$IFNDEF OSDGUI}
@@ -142,23 +145,23 @@ var
   i: integer;
   param: string;
   paramdel: string;
-  startgui : boolean;
+  startgui: boolean;
 begin
   silent := False;
   paramdel := '-';
-  startgui := false;
+  startgui := False;
   initLogging;
   filePath := ExtractFilePath(ParamStr(0));
   filepath := IncludeTrailingPathDelimiter(filepath);
   if not FileExists(filePath + 'opsi-script-gui') then
-    if which('opsi-script-gui',filepath) then
-     filePath := ExtractFilePath(filepath);
+    if which('opsi-script-gui', filepath) then
+      filePath := ExtractFilePath(filepath);
   if not FileExists(filePath + 'opsi-script-gui') then
-        filepath := '/usr/local/bin/';
+    filepath := '/usr/local/bin/';
   if not FileExists(filePath + 'opsi-script-gui') then
-        filepath := '/Applications/opsi-script.app/Contents/MacOS/';
+    filepath := '/Applications/opsi-script.app/Contents/MacOS/';
   if not FileExists(filePath + 'opsi-script-gui') then
-        filepath := '/usr/bin/';
+    filepath := '/usr/bin/';
   //logdatei.log('Launch: paramcount ' + Paramcount.ToString, LLessential);
   i := 1;
   while (i <= Paramcount) do
@@ -174,11 +177,11 @@ begin
     if check_gui_startable() then
     begin
       logdatei.log('gui ok ... ', LLnotice);
-      startgui := true;
+      startgui := True;
       {$IFDEF DARWIN}
       if getLoggedInUser = '' then
       begin
-        startgui := false;
+        startgui := False;
         logdatei.log('No logon at macos -  continue with nogui... ', LLnotice);
       end;
       {$ENDIF DARWIN}
@@ -186,7 +189,9 @@ begin
       begin
         if FileExists(filePath + 'opsi-script-gui') then
           logdatei.log('starting opsi-script-gui ... ', LLnotice)
-        else logdatei.log('No opsi-script-gui: '+filePath + 'opsi-script-gui'+'  -  continue with nogui... ', LLnotice);
+        else
+          logdatei.log('No opsi-script-gui: ' + filePath +
+            'opsi-script-gui' + '  -  continue with nogui... ', LLnotice);
         logdatei.Close;
         if FileExists(filePath + 'opsi-script-gui') then
         begin
@@ -240,9 +245,9 @@ procedure write_log_and_memo(line: string; loglevel: integer);
 begin
   {$IFDEF OSDGUI}
   if osdsettings.showgui then
-    begin
-      resultform1.memoadd(line);
-    end;
+  begin
+    resultform1.memoadd(line);
+  end;
   {$ENDIF OSDGUI}
   LogDatei.log(line, loglevel);
 end;
@@ -302,7 +307,8 @@ begin
     helplist.Append(' --m <mode> -> Define tho run mode <mode> (default=singleAnalyzeCreate)');
     helplist.Append(
       '     possible modes are: singleAnalyzeCreate, createTemplate');
-    helplist.Append(' --template-channel=<channel> -> Create product from template channel <channel>');
+    helplist.Append(
+      ' --template-channel=<channel> -> Create product from template channel <channel>');
     helplist.Append(' --c <channel> -> Create product from template channel <channel>');
     helplist.Append('     possible channels are: training, default, structured, custom');
     ShowMessage(helplist.Text);
@@ -376,11 +382,16 @@ var
   //passwordToUse: string; is a global var
   strlist: TStringList;
   sessionid: string;
+  //localservicedataConnected : boolean = false;
 begin
-  if localservicedata = nil then
-  begin
-    try
-      strlist := TStringList.Create;
+  try
+    strlist := TStringList.Create;
+
+
+    if not localservicedataConnected then
+    begin
+      if localservicedata <> nil then FreeAndNil(localservicedata);
+      if localservicedata = nil then
       localservicedata := TOpsi4Data.Create;
       if (myconfiguration.Service_URL <> '') and
         (myconfiguration.Service_user <> '') then
@@ -410,6 +421,7 @@ begin
           FNewDepDlg.LabelConnect.Font.Color := clGreen;
           resultForm1.StatusBar1.Panels.Items[1].Text :=
             'Connected to opsi server: ' + myconfiguration.Service_URL;
+          localservicedataConnected := true;
           // fetch produtIds from service
           strlist.Text := localservicedata.getLocalbootProductIds.Text;
           for i := 0 to strlist.Count - 1 do
@@ -442,14 +454,15 @@ begin
         FNewDepDlg.LabelConnect.Font.Color := clRed;
         resultForm1.StatusBar1.Panels.Items[1].Text := 'Not connected to opsi server';
         {$ENDIF OSDGUI}
-        FreeAndNil(localservicedata);
+        if localservicedata <> nil then
+          FreeAndNil(localservicedata);
       end;
-    finally
-      FreeAndNil(strlist);
-      {$IFDEF OSDGUI}
-      Screen.Cursor := crDefault;
-      {$ENDIF OSDGUI}
     end;
+  finally
+    FreeAndNil(strlist);
+      {$IFDEF OSDGUI}
+    Screen.Cursor := crDefault;
+      {$ENDIF OSDGUI}
   end;
 end;
 
@@ -466,7 +479,7 @@ var
   anaoutfile: Text;
   myExeDir: string;
   myerror: string;
-  myfilename : string;
+  myfilename: string;
   optionlist: TStringList;
 begin
   osdsettings.startupfinished := True; //avoid calling main on every show event
@@ -474,8 +487,8 @@ begin
   // initialize language
   osdsettings.mylocaledir := '';
   {$IFDEF DARWIN}
-  osdsettings.mylocaledir := ExtractFileDir(Application.ExeName) + PathDelim +
-    '../Resources/locale';
+  osdsettings.mylocaledir := ExtractFileDir(Application.ExeName) +
+    PathDelim + '../Resources/locale';
   {$ENDIF DARWIN}
   {$IFDEF LINUX}
   osdsettings.mylocaledir := ExtractFileDir(Application.ExeName) + PathDelim + 'locale';
@@ -564,7 +577,8 @@ begin
     osdsettings.mylang := SetDefaultLang('');
     {$IFDEF WINDOWS}
     if LowerCase(osdsettings.mylang) = '' then
-      osdsettings.mylang := LowerCase(copy(GetSystemDefaultLocale(LOCALE_SABBREVLANGNAME), 1, 2));
+      osdsettings.mylang := LowerCase(
+        copy(GetSystemDefaultLocale(LOCALE_SABBREVLANGNAME), 1, 2));
     {$ENDIF WINDOWS}
     SetDefaultLang(osdsettings.mylang, osdsettings.mylocaledir);
     LogDatei.log('Detected default lang: ' + osdsettings.mylang, LLInfo);
@@ -666,8 +680,11 @@ begin
   begin
     tmpstr := trim(Application.GetOptionValue('c', 'template-channel'));
     try
-      aktProduct.productdata.channelDir := templChannelStrings[TTemplateChannels(GetEnumValue(TypeInfo(TTemplateChannels), tmpstr))];
-      LogDatei.log('Will use as channelDir: ' + aktProduct.productdata.channelDir, LLInfo);
+      aktProduct.productdata.channelDir :=
+        templChannelStrings[TTemplateChannels(
+        GetEnumValue(TypeInfo(TTemplateChannels), tmpstr))];
+      LogDatei.log('Will use as channelDir: ' +
+        aktProduct.productdata.channelDir, LLInfo);
     except
       myerror := 'Error: Given mode: ' + tmpstr +
         ' is not valid. Should be on of: training, default, structured, custom';
@@ -818,8 +835,8 @@ begin
 
       if (osdsettings.runmode <> analyzeOnly) and
         (osdsettings.CreateModeIndex > 0)
-        // is the same as: (not RadioButtonCreateOnly.Checked)
-        then
+      // is the same as: (not RadioButtonCreateOnly.Checked)
+      then
       begin
         LogDatei.log('Start callServiceOrPackageBuilder in NOGUI mode: ', LLnotice);
         LogDatei.log('Start callServiceOrPackageBuilder with build + install: ',
@@ -861,4 +878,3 @@ end;
 
 
 end.
-
