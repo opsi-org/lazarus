@@ -213,7 +213,7 @@ const
 begin
   if not ('system' = LowerCase(DSiGetUserName)) then
   begin
-    LogDatei.DependentAdd(
+    Logdatei.Log(
       'Could not create temporary admin because not running as SYSTEM.',
       LLWarning);
     Result := False;
@@ -228,7 +228,7 @@ begin
     if getLoggedInUser = '' then
     begin
       dwThreadId := GetCurrentThreadId;
-      LogDatei.DependentAdd('Using CurrentThread for user: ' +
+      Logdatei.Log('Using CurrentThread for user: ' +
         getLoggedInUser, LLDebug);
     end
     else
@@ -243,7 +243,7 @@ begin
         if dwThreadId = 0 then
           dwThreadId := GetCurrentThreadId // failed
         else
-          LogDatei.DependentAdd('Found ThreadId :' + IntToStr(
+          Logdatei.Log('Found ThreadId :' + IntToStr(
             dwThreadId) + ' for logged on user: ' + getLoggedInUser, LLDebug);
       end;
     end;
@@ -260,17 +260,17 @@ begin
     end;
     if not Result then
     begin
-      LogDatei.DependentAdd('Failed to create temporary Admin opsiSetupAdmin - retry',
+      Logdatei.Log('Failed to create temporary Admin opsiSetupAdmin - retry',
         LLWarning);
       DeleteTemporaryLocalAdmin;
       Result := CreateWinUser(DSiGetComputerName, 'opsiSetupAdmin',
         opsiSetupAdmin_Password, wGroup);
     end;
     if not Result then
-      LogDatei.DependentAdd('Failed to create temporary Admin opsiSetupAdmin ', LLError)
+      Logdatei.Log('Failed to create temporary Admin opsiSetupAdmin ', LLError)
     else
     begin
-      LogDatei.DependentAdd(
+      Logdatei.Log(
         'Created temporary Admin opsiSetupAdmin as member of group: ' +
         wgroup, LLDebug);
       opsiSetupAdmin_created := True;
@@ -278,7 +278,7 @@ begin
        //if (GetNTVersionMajor >= 6) then
        //begin
        //  dwLogonType := LOGON32_LOGON_NETWORK_CLEARTEXT;
-       //  LogDatei.DependentAdd('runElevated=true + nt6 --> LOGON_NETWORK_CLEARTEXT', LLDebug2);
+       //  Logdatei.Log('runElevated=true + nt6 --> LOGON_NETWORK_CLEARTEXT', LLDebug2);
        //end
        //else dwLogonType := LOGON32_LOGON_INTERACTIVE;
        dwLogonType := LOGON32_LOGON_INTERACTIVE;
@@ -287,7 +287,7 @@ begin
         logonHandle) then
       begin
         Result := False;
-        LogDatei.DependentAdd('Logged in as temporary Admin opsiSetupAdmin failed: '
+        Logdatei.Log('Logged in as temporary Admin opsiSetupAdmin failed: '
           + IntToStr(GetLastError) + ' (' + SysErrorMessage(GetLastError) +
           ')', LLError);
       end
@@ -295,19 +295,19 @@ begin
       begin
         opsiSetupAdmin_org_logonHandle := logonHandle;
         opsiSetupAdmin_logonHandle := logonHandle;
-        LogDatei.DependentAdd('Logged in as temporary Admin opsiSetupAdmin ', LLDebug);
+        Logdatei.Log('Logged in as temporary Admin opsiSetupAdmin ', LLDebug);
 
         if (GetNTVersionMajor >= 6) and opsiSetupAdmin_runElevated then
         //if OpenShellProcessToken('winlogon.exe', hUserToken) then
         if OpenShellProcessInSessionToken('winlogon.exe',1,'opsiSetupAdmin',
                        opsiSetupAdmin_org_logonHandle, opsiSetupAdmin_logonHandle) then
-           LogDatei.DependentAdd('Switched to winlogon token',LLDebug2)
-        else LogDatei.DependentAdd('Failed to Switch to winlogon token',LLDebug2);
+           Logdatei.Log('Switched to winlogon token',LLDebug2)
+        else Logdatei.Log('Failed to Switch to winlogon token',LLDebug2);
 
         if runas in [traAdminProfile, traAdminProfileExplorer,
           traAdminProfileImpersonate, traAdminProfileImpersonateExplorer] then
         begin
-          LogDatei.DependentAdd(
+          Logdatei.Log(
             'we will work with the logged on user with profile', LLInfo);
           FillChar(lpProfileInfo, SizeOf(lpProfileInfo), 0);
           lpProfileInfo.dwSize := SizeOf(lpProfileInfo);
@@ -316,14 +316,14 @@ begin
           if not LoadUserProfile(logonHandle, lpProfileInfo) then
           begin
             Result := False;
-            LogDatei.DependentAdd(
+            Logdatei.Log(
               'Load profile for temporary Admin opsiSetupAdmin failed: ' +
               IntToStr(GetLastError) + ' (' + SysErrorMessage(GetLastError) +
               ')', LLError);
           end
           else
           begin
-            LogDatei.DependentAdd('Loaded profile for temporary Admin opsiSetupAdmin ',
+            Logdatei.Log('Loaded profile for temporary Admin opsiSetupAdmin ',
               LLDebug);
             opsiSetupAdmin_ProfileHandle := lpProfileInfo.hProfile;
             lpEnvironment := nil;
@@ -331,50 +331,50 @@ begin
             if not CreateEnvironmentBlock(lpEnvironment,logonHandle,false) then
             begin
               result := false;
-              LogDatei.DependentAdd('Create EnvironmentBlock for temporary Admin opsiSetupAdmin failed: '
+              Logdatei.Log('Create EnvironmentBlock for temporary Admin opsiSetupAdmin failed: '
                + IntToStr(GetLastError) + ' (' + SysErrorMessage(GetLastError) + ')', LLError);
             end
             else
 *)
             begin
-              //           LogDatei.DependentAdd(
+              //           Logdatei.Log(
               //             'Created EnvironmentBlock for temporary Admin opsiSetupAdmin ', LLDebug);
 
               //opsiSetupAdmin_lpEnvironment := lpEnvironment^;
               opsiSetupAdmin_lpEnvironment := nil;
               if not DSiEnablePrivilege('SE_TCB_NAME') then
               begin
-                LogDatei.DependentAdd('EnablePrivilege Error: ' +
+                Logdatei.Log('EnablePrivilege Error: ' +
                   IntToStr(GetLastError) + ' (' + SysErrorMessage(GetLastError) +
                   ')', LLError);
               end;
               if not DSiEnablePrivilege('SE_PRIVILEGE_ENABLED') then
               begin
-                LogDatei.DependentAdd('EnablePrivilege Error: ' +
+                Logdatei.Log('EnablePrivilege Error: ' +
                   IntToStr(GetLastError) + ' (' + SysErrorMessage(GetLastError) +
                   ')', LLError);
               end;
               if not DSiEnablePrivilege('SE_ASSIGNPRIMARYTOKEN_NAME') then
               begin
-                LogDatei.DependentAdd('EnablePrivilege Error: ' +
+                Logdatei.Log('EnablePrivilege Error: ' +
                   IntToStr(GetLastError) + ' (' + SysErrorMessage(GetLastError) +
                   ')', LLError);
               end;
               if not DSiEnablePrivilege('SE_INCREASE_QUOTA_NAME') then
               begin
-                LogDatei.DependentAdd('EnablePrivilege Error: ' +
+                Logdatei.Log('EnablePrivilege Error: ' +
                   IntToStr(GetLastError) + ' (' + SysErrorMessage(GetLastError) +
                   ')', LLError);
               end;
               if not DSiEnablePrivilege('SE_RESTORE_NAME') then
               begin
-                LogDatei.DependentAdd('EnablePrivilege Error: ' +
+                Logdatei.Log('EnablePrivilege Error: ' +
                   IntToStr(GetLastError) + ' (' + SysErrorMessage(GetLastError) +
                   ')', LLError);
               end;
               if not DSiEnablePrivilege('SE_BACKUP_NAME') then
               begin
-                LogDatei.DependentAdd('EnablePrivilege Error: ' +
+                Logdatei.Log('EnablePrivilege Error: ' +
                   IntToStr(GetLastError) + ' (' + SysErrorMessage(GetLastError) +
                   ')', LLError);
               end;
@@ -388,7 +388,7 @@ begin
               if not SetUserObjectFullAccess(hWindowStation) then
               begin
                 Result := False;
-                LogDatei.DependentAdd(
+                Logdatei.Log(
                   'SetUserObjectFullAccess(hWindowStation) failed: ' +
                   IntToStr(GetLastError) + ' (' + SysErrorMessage(GetLastError) +
                   ')', LLError);
@@ -403,12 +403,12 @@ begin
               if not SetUserObjectFullAccess(hDesktop) then
               begin
                 Result := False;
-                LogDatei.DependentAdd('SetUserObjectFullAccess(hDesktop) failed: '
+                Logdatei.Log('SetUserObjectFullAccess(hDesktop) failed: '
                   + IntToStr(GetLastError) + ' (' + SysErrorMessage(GetLastError) +
                   ')', LLError);
               end;
               opsiSetupAdmin_startupinfo_help := WinStaName + '\' + DeskTopName;
-              LogDatei.DependentAdd('Using Desktop : ' + opsiSetupAdmin_startupinfo_help,
+              Logdatei.Log('Using Desktop : ' + opsiSetupAdmin_startupinfo_help,
                 LLDebug);
               // get folders for opsiSetupAdmin
               initializeFoldersForToken(opsiSetupAdmin_org_logonHandle);
@@ -426,7 +426,7 @@ begin
                 WTSGetActiveConsoleSessionId, 'opsiSetupAdmin',logonhandle, myduptoken) then
                     opsiSetupAdmin_logonHandle := myduptoken
                 else
-                    LogDatei.DependentAdd('Could not find winlogon token of created user.', LLError);
+                    Logdatei.Log('Could not find winlogon token of created user.', LLError);
               end;
 *)
 (*
@@ -440,14 +440,14 @@ begin
                   0, 1, pInfo, nCount) then
                 begin
                   //error
-                  LogDatei.DependentAdd('WTSEnumerateProcesses failed: ' +
+                  Logdatei.Log('WTSEnumerateProcesses failed: ' +
                     IntToStr(GetLastError) + ' (' + SysErrorMessage(GetLastError) +
                     ')', LLError);
                 end
                 else
                 begin
                   if ncount = 0 then
-                    LogDatei.DependentAdd('No processes found.', LLError);
+                    Logdatei.Log('No processes found.', LLError);
                   notfound := True;
                   counter := 0;
                   while notfound and (counter < ncount) do
@@ -476,7 +476,7 @@ begin
                     Inc(pInfo);
                   end;
                   if notfound then
-                    LogDatei.DependentAdd('Could not find winlogon token of created user.', LLError)
+                    Logdatei.Log('Could not find winlogon token of created user.', LLError)
                   else
                   begin
                     winlogonProcess := OpenProcess(MAXIMUM_ALLOWED, False, winlogonpid);
@@ -486,7 +486,7 @@ begin
                       jwawinnt.SecurityIdentification,
                       jwawinnt.TokenPrimary, myduptoken);
                     opsiSetupAdmin_logonHandle := myduptoken;
-                    LogDatei.DependentAdd('Using winlogon token of created user.', LLDebug)
+                    Logdatei.Log('Using winlogon token of created user.', LLDebug)
                   end
                 end;
 *)
@@ -498,20 +498,20 @@ begin
 (*
                 wnetresult :=  unmountSmbShare('p:', true);
                 if NO_ERROR <>  wnetresult then
-                  LogDatei.DependentAdd('Error unmounting p: '+ SysErrorMessage(wnetresult), LLWarning);
+                  Logdatei.Log('Error unmounting p: '+ SysErrorMessage(wnetresult), LLWarning);
 *)
                 if ImpersonateLoggedOnUser(opsiSetupAdmin_logonHandle) then
                 begin
-                  LogDatei.DependentAdd('Impersonated to temporary admin.', LLDebug);
-                  LogDatei.DependentAdd('current appdata is now: ' + GetAppDataPath, LLDebug);
+                  Logdatei.Log('Impersonated to temporary admin.', LLDebug);
+                  Logdatei.Log('current appdata is now: ' + GetAppDataPath, LLDebug);
 (*
                   wnetresult :=  mountSmbShare('p:','\\sepiolina\opsi_depot','pcpatch','linux123',false);
                   if NO_ERROR <>  wnetresult then
-                    LogDatei.DependentAdd('Error remounting p: '+ SysErrorMessage(wnetresult), LLWarning);
+                    Logdatei.Log('Error remounting p: '+ SysErrorMessage(wnetresult), LLWarning);
 *)
                 end
                 else
-                  LogDatei.DependentAdd('Failed to impersonate to temporary admin.', LLError);
+                  Logdatei.Log('Failed to impersonate to temporary admin.', LLError);
               end;
 
     (*
@@ -631,7 +631,7 @@ begin
                 //Result := False;
                 tempstr := tempstr + ' .... CreateProcessAsUser Error ' +
                   IntToStr(GetLastError) + ' (' + SysErrorMessage(GetLastError) + ')';
-                LogDatei.DependentAdd(tempstr, LLError);
+                Logdatei.Log(tempstr, LLError);
 
                 //http://stackoverflow.com/questions/3072997/get-window-station-for-a-non-interactive-user-per-process-user-or-session
                 //http://www.codeproject.com/Articles/35773/Subverting-Vista-UAC-in-Both-32-and-64-bit-Archite
@@ -642,13 +642,13 @@ begin
               end
               else
               begin
-                LogDatei.DependentAdd(
+                Logdatei.Log(
                   'Created explorer shell for temporary Admin opsiSetupAdmin ', LLDebug);
                 opsiSetupAdmin_processInfoShell_hProcess := processInfoShell.hProcess;
                 opsiSetupAdmin_processInfoShell_hThread := processInfoShell.hThread;
               end;
               //initializeFoldersForUser(DSiGetComputerName, 'opsiSetupAdmin');
-              LogDatei.DependentAdd('current appdata is now: ' +
+              Logdatei.Log('current appdata is now: ' +
                 GetAppDataPath, LLDebug);
 
               // elevate logon handle if we are on nt6
@@ -658,7 +658,7 @@ begin
                 if OpenShellProcessToken('explorer.exe', myduptoken) then
                     opsiSetupAdmin_logonHandle := myduptoken
                 else
-                    LogDatei.DependentAdd('Could not find explorer token of created user.', LLWarning);
+                    Logdatei.Log('Could not find explorer token of created user.', LLWarning);
               end;
 
             end;
@@ -669,7 +669,7 @@ begin
         else    // adminmode=useronly
 
         begin
-          LogDatei.DependentAdd(
+          Logdatei.Log(
             'we will work with the logged on user without profile', LLInfo);
 
           opsiSetupAdmin_ProfileHandle := longword(nil);
@@ -677,37 +677,37 @@ begin
           opsiSetupAdmin_pSecAttrib := nil;
           if not DSiEnablePrivilege('SE_TCB_NAME') then
           begin
-            LogDatei.DependentAdd('EnablePrivilege Error: ' +
+            Logdatei.Log('EnablePrivilege Error: ' +
               IntToStr(GetLastError) + ' (' + SysErrorMessage(GetLastError) +
               ')', LLError);
           end;
           if not DSiEnablePrivilege('SE_PRIVILEGE_ENABLED') then
           begin
-            LogDatei.DependentAdd('EnablePrivilege Error: ' +
+            Logdatei.Log('EnablePrivilege Error: ' +
               IntToStr(GetLastError) + ' (' + SysErrorMessage(GetLastError) +
               ')', LLError);
           end;
           if not DSiEnablePrivilege('SE_ASSIGNPRIMARYTOKEN_NAME') then
           begin
-            LogDatei.DependentAdd('EnablePrivilege Error: ' +
+            Logdatei.Log('EnablePrivilege Error: ' +
               IntToStr(GetLastError) + ' (' + SysErrorMessage(GetLastError) +
               ')', LLError);
           end;
           if not DSiEnablePrivilege('SE_INCREASE_QUOTA_NAME') then
           begin
-            LogDatei.DependentAdd('EnablePrivilege Error: ' +
+            Logdatei.Log('EnablePrivilege Error: ' +
               IntToStr(GetLastError) + ' (' + SysErrorMessage(GetLastError) +
               ')', LLError);
           end;
           if not DSiEnablePrivilege('SE_RESTORE_NAME') then
           begin
-            LogDatei.DependentAdd('EnablePrivilege Error: ' +
+            Logdatei.Log('EnablePrivilege Error: ' +
               IntToStr(GetLastError) + ' (' + SysErrorMessage(GetLastError) +
               ')', LLError);
           end;
           if not DSiEnablePrivilege('SE_BACKUP_NAME') then
           begin
-            LogDatei.DependentAdd('EnablePrivilege Error: ' +
+            Logdatei.Log('EnablePrivilege Error: ' +
               IntToStr(GetLastError) + ' (' + SysErrorMessage(GetLastError) +
               ')', LLError);
           end;
@@ -721,7 +721,7 @@ begin
           if not SetUserObjectFullAccess(hWindowStation) then
           begin
             Result := False;
-            LogDatei.DependentAdd(
+            Logdatei.Log(
               'SetUserObjectFullAccess(hWindowStation) failed: ' +
               IntToStr(GetLastError) + ' (' + SysErrorMessage(GetLastError) +
               ')', LLError);
@@ -735,7 +735,7 @@ begin
           if not SetUserObjectFullAccess(hDesktop) then
           begin
             Result := False;
-            LogDatei.DependentAdd('SetUserObjectFullAccess(hDesktop) failed: '
+            Logdatei.Log('SetUserObjectFullAccess(hDesktop) failed: '
               + IntToStr(GetLastError) + ' (' + SysErrorMessage(GetLastError) +
               ')', LLError);
           end;

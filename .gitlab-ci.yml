@@ -27,7 +27,6 @@ workflow:
 
 stages:
   - build
-  - codesign
   - test_windows
   # - test_linux
   # - test_macos
@@ -114,86 +113,10 @@ compile opsi-script macos:
     - echo "Compiling $PROJECT_NAME for MacOS with GUI"
     - /Library/Lazarus/lazbuild $LAZ_PROJECT_FILE --build-all --build-mode=Release_mac_gui --ws=cocoa
     # - $BINARY_OUT_PATH = $PROJECT_NAME -eq "opsiscript")
-   
-    #---CODE SIGNING OPSI-SCRIPT---
-    - echo "Code signing opsi-script for macos"
-    - PATH_TO_BINARY=$PROJECT_REPOSITORY_PATH/compiler_out/binarys/x86_64-darwin/opsi-script
-    # - codesign -vvv --force --strict --options=runtime $ENTITLEMENTS --timestamp -s "$CODE_SIGN_SIGNATURE" $FULLPATHTOEXE
-    - codesign -vvv --force --strict  --timestamp -s "$CODE_SIGN_SIGNATURE" $PATH_TO_BINARY
-    - codesign --verify --verbose --strict $PATH_TO_BINARY
-    - codesign -dv -r- $PATH_TO_BINARY
-    - codesign -vvv --deep --strict $PATH_TO_BINARY
-    
-    #---CODE SIGNING OPSI-SCRIPT-GUI---
-    - echo "Code signing opsi-script-gui"
-    - PATH_TO_BINARY=$PROJECT_REPOSITORY_PATH/compiler_out/binarys/x86_64-darwin/opsi-script-gui
-    # - codesign -vvv --force --strict --options=runtime $ENTITLEMENTS --timestamp -s "$CODE_SIGN_SIGNATURE" $FULLPATHTOEXE
-    - codesign -vvv --force --strict  --timestamp -s "$CODE_SIGN_SIGNATURE" $PATH_TO_BINARY
-    - codesign --verify --verbose --strict $PATH_TO_BINARY
-    - codesign -dv -r- $PATH_TO_BINARY
-    - codesign -vvv --deep --strict $PATH_TO_BINARY
   artifacts:
     name: "opsi-script $BINARY_VERSION macos"
     paths:
       - $PROJECT_REPOSITORY_PATH/compiler_out/binarys/x86_64-darwin/
-
-
-codesign opsi-script windows:
-  stage: codesign
-  tags:
-    - laz-win10
-  rules:
-    - if: ($PROJECT_NAME == "opsiscript") && ($PLATFORM == "all" || $PLATFORM == "Windows")
-      when: never #disabled for the moment due to problems with similar pathes of different jobs
-  script:
-    - echo "Code signing opsi-script for windows"
-    - if (Test-Path -Path 'opsi-script\codesigned') { Remove-Item -Path 'opsi-script\codesigned' -Recurs }
-    - New-Item -Path 'opsi-script\codesigned\i386-win32' -ItemType Directory
-    - New-Item -Path 'opsi-script\codesigned\x86_64-win64' -ItemType Directory
-    - cp opsi-script\compiler_out\binarys\i386-win32\opsi-script.exe opsi-script\codesigned\i386-win32\opsi-script.exe
-    - cp opsi-script\compiler_out\binarys\i386-win32\opsi-script.exe opsi-script\codesigned\x86_64-win64\opsi-script.exe
-    - opsi-dev-tool -l info --signserver-sign opsi-script\codesigned\i386-win32\opsi-script.exe
-    - opsi-dev-tool -l info --signserver-sign opsi-script\codesigned\x86_64-win64\opsi-script.exe
-  artifacts:
-    name: "opsi-script $BINARY_VERSION windows codesigned"
-    paths:
-      - opsi-script\codesigned\ #i386-win32\opsi-script.exe
-      # - \opsi-script\compiler_out\binarys\x86_64-win64\opsi-script.exe
-
-
-codesign opsi-script macos:
-  stage: codesign
-  tags:
-    - laz-macos
-  variables:
-    PROJECT_REPOSITORY_PATH: "opsi-script"
-    ENTITLEMENTS: "--entitlements $PROJECT_REPOSITORY_PATH/opsi-script.entitlements" #maybe needed later
-  rules:
-    - if: ($PROJECT_NAME == "opsiscript") && ($PLATFORM == "all" || $PLATFORM == "MacOS")
-      when: never #disabled for the moment due to problems with similar pathes of difefrent jobs
-  script:
-    #Code signing opsi-script
-    - echo "Code signing opsi-script for macos"
-    - PATH_TO_BINARY=$PROJECT_REPOSITORY_PATH/compiler_out/binarys/x86_64-darwin/opsi-script
-    # - codesign -vvv --force --strict --options=runtime $ENTITLEMENTS --timestamp -s "$CODE_SIGN_SIGNATURE" $FULLPATHTOEXE
-    - codesign -vvv --force --strict  --timestamp -s "$CODE_SIGN_SIGNATURE" $PATH_TO_BINARY
-    - codesign --verify --verbose --strict $PATH_TO_BINARY
-    - codesign -dv -r- $PATH_TO_BINARY
-    - codesign -vvv --deep --strict $PATH_TO_BINARY
-    #Code signing opsi-script-gui
-    - echo "Code signing opsi-script-gui"
-    - PATH_TO_BINARY=$PROJECT_REPOSITORY_PATH/compiler_out/binarys/x86_64-darwin/opsi-script-gui
-    # - codesign -vvv --force --strict --options=runtime $ENTITLEMENTS --timestamp -s "$CODE_SIGN_SIGNATURE" $FULLPATHTOEXE
-    - codesign -vvv --force --strict  --timestamp -s "$CODE_SIGN_SIGNATURE" $PATH_TO_BINARY
-    - codesign --verify --verbose --strict $PATH_TO_BINARY
-    - codesign -dv -r- $PATH_TO_BINARY
-    - codesign -vvv --deep --strict $PATH_TO_BINARY
-  artifacts:
-    name: "opsi-script $BINARY_VERSION macos codesigned"
-    paths:
-      - $PROJECT_REPOSITORY_PATH/compiler_out/binarys/x86_64-darwin
-      # - $PROJECT_REPOSITORY_PATH/opsi-script #i386-win32\opsi-script.exe
-      # - $PROJECT_REPOSITORY_PATH/opsi-script-gui
 
 
 opsi-script-test windows:

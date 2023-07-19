@@ -10,7 +10,9 @@ unit oswebservice;
 {$MACRO ON}
 
 {$DEFINE SYNAPSE}
-
+{$DEFINE SSL_OPENSSL_UNIT:=ssl_openssl3}
+{$DEFINE SSL_OPENSSL_LIB_UNIT:=ssl_openssl3_lib}
+(*
 //ssl_openssl11 and ssl_openssl11_lib seam not to work under macos
 {$IFDEF DARWIN}
   {$DEFINE SSL_OPENSSL_UNIT:=ssl_openssl}
@@ -19,6 +21,7 @@ unit oswebservice;
   {$DEFINE SSL_OPENSSL_UNIT:=ssl_openssl11}
   {$DEFINE SSL_OPENSSL_LIB_UNIT:=ssl_openssl11_lib}
 {$ENDIF DARWIN}
+*)
 
 // This code is part of the opsi.org project
 
@@ -369,6 +372,8 @@ type
     //procedure productOnClient_getobject_actualclient;
     function getInstallableProducts: TStringList;
     function getOpsiModules: TStringList;
+    function getLicenseOnClientObject(const parameters: array of string;
+      var errorOccured: boolean): string;
   protected
     FServiceLastErrorInfo: TStringList;
     //FactualClient: string;
@@ -465,6 +470,7 @@ type
     function getProductIds: TStringList;
     function getLocalbootProductIds: TStringList;
     function getNetbootProductIds: TStringList;
+    function demandLicenseKey(const parameters: array of string; var errorOccured: boolean):string;
     {$IFNDEF SYNAPSE}
     function decreaseSslProtocol: boolean;
     {$ENDIF SYNAPSE}
@@ -1282,7 +1288,8 @@ begin
     HTTPSender.Protocol := '1.1';
     //HTTPSender.Sock.PreferIP4:= False; //might be switched to false if IPv6 is standard
     //HTTPSender.Sock.Family:= SF_IP6; //do not set this if IPv4 addresses are still in use
-    HTTPSender.Sock.CreateWithSSL(TSSLOpenSSL);
+    //HTTPSender.Sock.CreateWithSSL(TSSLOpenSSL);
+    HTTPSender.Sock.CreateWithSSL(TSSLOpenSSL3);
     HTTPSender.Sock.Connect(ip, port);
     //LogDatei.log('IP: ' + ip + ' Resolved: ' + Httpsender.Sock.GetRemoteSinIP, LLDebug);
     if SSL_OPENSSL_LIB_UNIT.InitSSLInterface then
@@ -1360,7 +1367,7 @@ begin
     IdHTTP.Request.Username := Fusername;
     IdHTTP.Request.Password := Fpassword;
     IdHTTP.Request.UserAgent := agent;
-    //LogDatei.DependentAdd('createSocket--->6', LLdebug2);
+    //Logdatei.Log('createSocket--->6', LLdebug2);
     try
       if ip <> '' then
       begin
@@ -1665,7 +1672,7 @@ begin
         if FSessionId <> '' then
           // not the first call and we log
           if logging then
-            //LogDatei.DependentAdd (DateTimeToStr(now) + ' JSON service request ' + Furl , LLnotice);
+            //Logdatei.Log (DateTimeToStr(now) + ' JSON service request ' + Furl , LLnotice);
             LogDatei.log_prog('JSON service request ' + Furl + ' ' +
               omc.FOpsiMethodName, LLinfo);
         if omc.Timeout > 0 then
@@ -2016,7 +2023,7 @@ begin
             FSessionId := copy(cookieVal, 1, posColon - 1)
           else
             FSessionId := '';
-          //LogDatei.DependentAdd('JSON retrieveJSONObject: after cookie', LLDebug2);
+          //Logdatei.Log('JSON retrieveJSONObject: after cookie', LLDebug2);
         end;
       except
         on E: Exception do
@@ -3484,10 +3491,9 @@ end;
 function TJsonThroughHTTPS.getSubListResult(const omc: TOpsiMethodCall;
   subkey: string): TStringList;
 var
-  jO, jO1, jO2: ISuperObject;
+  jO, jO1: ISuperObject;
   jA, jA1: TSuperArray;
   i: integer;
-  testresult: string;
 begin
   try
     Result := TStringList.Create;
@@ -3495,7 +3501,7 @@ begin
     if jO = nil then
     begin
       LogDatei.log_prog('Got no JSON object from web service', LLWarning);
-      Result.text :=  'Error';
+      Result.Text := 'Error';
       exit;
     end;
     // we have something like
@@ -3506,46 +3512,52 @@ begin
       jA := jO.A['result'];
       if jA.Length > 0 then
       begin
-        testresult := jA.S[0];
         // get this single object
         jO1 := jA.O[0];
         // get from this object the value for the key: subkey as array
         jA1 := jO1.A[subkey];
-    (*
-    if jA1.Length > 0 then
-    begin
-      testresult := jA1.S[0];
-      LogDatei.log('ja1 as json: '+testresult, LLDebug2);
-    end;
-     *)
-        if jA1 <> nil then
+        if (jA1 <> nil) then
         begin
-          //testresult := jA.
-          for i := 0 to jA1.Length - 1 do
+          if jA1.Length > 0 then
           begin
-            testresult := jA1.S[i];
-            Result.append(jA1.S[i]);
+            for i := 0 to jA1.Length - 1 do
+            begin
+              Result.append(jA1.S[i]);
+            end;
+          end
+          else
+          begin
+            LogDatei.log('getSubListResult: Key: "' + subkey + '"' +
+              ' has empty value. Received object: ' + jO.AsString, LLDebug2);
+            Result.Text := 'Empty value';
           end;
+        end
+        else
+        begin
+          LogDatei.log('Error in getSubListResult: Result has no key "' +
+            subkey + '". Received object: ' + jO.AsString, LLError);
+          Result.Text := 'Error';
         end;
       end
       else
       begin
-        Logdatei.log('getSubListResult: received object: ' +
-          jO.AsString + ' has empty "result"', LLInfo);
+        LogDatei.log('getSubListResult: JSON-Object has empty "result". Received object: '
+          + jO.AsString, LLDebug2);
         Result.Text := 'Empty result';
       end;
     end
     else
     begin
-      Logdatei.log('Error in getSubListResult: received object: ' +
-        jO.AsString + ' has no key "result"', LLError);
+      LogDatei.log(
+        'Error in getSubListResult: JSON-Object has no key "result". Received object: ' +
+        jO.AsString, LLError);
       Result.Text := 'Error';
     end;
   except
     on E: Exception do
     begin
-      Logdatei.log_prog('Exception in getSubListResult, system message: "' +
-        E.Message + ' with received object: ' + jO.AsString + '"', LLError);
+      LogDatei.log_prog('Exception in getSubListResult, system message: "' +
+        E.Message + '" Received object: ' + jO.AsString, LLError);
       Result.Text := 'Error';
     end
   end;
@@ -3884,6 +3896,18 @@ begin
   Result := FOpsiModules;
   *)
   omc.Free;
+end;
+
+function TOpsi4Data.getLicenseOnClientObject(const parameters: array of string; var errorOccured: boolean):string;
+var
+  omc: TOpsiMethodCall;
+begin
+  omc := TOpsiMethodCall.Create('licenseOnClient_getOrCreateObject', parameters);
+  try
+    Result := CheckAndRetrieveString(omc, errorOccured);
+  finally
+    FreeAndNil(omc);
+  end;
 end;
 
 
@@ -4974,8 +4998,9 @@ begin
       end;
 
 
-      if (Result.Text = '') then
+      if (Result[0] = 'Empty value') then
       begin
+        Result.Text := '';
         LogDatei.log('Got empty property value from service', LLWarning);
       end
       else
@@ -5325,6 +5350,15 @@ begin
     testresult := SO('"' + testresult + '"').AsJSon(False, False);
     Result.add(testresult);
   end;
+end;
+
+function TOpsi4Data.demandLicenseKey(const parameters: array of string;
+  var errorOccured: boolean): string;
+var
+  JSONString: string;
+begin
+  JSONString := getLicenseOnClientObject(parameters, errorOccured);
+  jsonAsObjectGetValueByKey(JSONString, 'licenseKey', Result);
 end;
 
 
@@ -5686,7 +5720,6 @@ var
   installationStatusS, actionResultS, actionRequestS, targetConfigurationS,
   lastActionS: string;
   parastr: string;
-  versionstr: string;
 
 begin
   //if FInstallableProducts.IndexOf(actualProduct) = -1 then exit;
@@ -5697,58 +5730,42 @@ begin
     lastActionS := actionRequest4toString(lastAction);
     installationStatusS := installationStatusToString(installationStatus);
 
-    //FProductOnClient_aktobject.put('actionProgress',stateS);
-    parastr := FProductOnClient_aktobject.asJson(False, False);
-    //FProductOnClient_aktobject :=
     FProductOnClient_aktobject.S['actionProgress'] := actionProgressS;
-    parastr := FProductOnClient_aktobject.asJson(False, False);
-    //FProductOnClient_aktobject :=
     FProductOnClient_aktobject.S['actionResult'] := actionResultS;
-    parastr := FProductOnClient_aktobject.asJson(False, False);
-    //FProductOnClient_aktobject :=
     FProductOnClient_aktobject.S['actionRequest'] := actionRequestS;
-    parastr := FProductOnClient_aktobject.asJson(False, False);
     if lastAction <> tac4Custom then
-      //FProductOnClient_aktobject :=
       FProductOnClient_aktobject.S['targetConfiguration'] := targetConfigurationS;
     parastr := FProductOnClient_aktobject.asJson(False, False);
     if lastAction <> tac4Custom then
     begin
       if (Productvars <> nil) and (Productvars.values['productVersion'] <> '') then
       begin
-        versionstr := Productvars.Values['productVersion'];
-        //FProductOnClient_aktobject :=
+        if Assigned(LogDatei) then
+           LogDatei.log('productVersion: ' + Productvars.Values['productVersion'] + ' (TOPsi4Data.ProductOnClient_update)', LLDebug);
         FProductOnClient_aktobject.S['productVersion'] :=
           Productvars.Values['productVersion'];
-        //        if FProductOnClient_aktobject.isNull('productVersion') then
-        //          FProductOnClient_aktobject := FProductOnClient_aktobject.put('productVersion',nil);
-        parastr := FProductOnClient_aktobject.asJson(False, False);
-        //FProductOnClient_aktobject :=
+        //if FProductOnClient_aktobject.isNull('productVersion') then
+        //  FProductOnClient_aktobject := FProductOnClient_aktobject.put('productVersion',nil);
         FProductOnClient_aktobject.S['productVersion'] :=
           Productvars.Values['productVersion'];
-        parastr := FProductOnClient_aktobject.asJson(False, False);
       end;
     end;
     if lastAction <> tac4Custom then
     begin
       if (Productvars <> nil) and (Productvars.values['packageVersion'] <> '') then
       begin
-        versionstr := Productvars.Values['packageVersion'];
-        //        if FProductOnClient_aktobject.isNull('packageVersion') then
-        //          FProductOnClient_aktobject := FProductOnClient_aktobject.put('packageVersion',nil);
-        //        parastr := FProductOnClient_aktobject.toString;
-        //FProductOnClient_aktobject :=
+        //if FProductOnClient_aktobject.isNull('packageVersion') then
+        //  FProductOnClient_aktobject := FProductOnClient_aktobject.put('packageVersion',nil);
         FProductOnClient_aktobject.S['packageVersion'] :=
           Productvars.Values['packageVersion'];
-        parastr := FProductOnClient_aktobject.asJson(False, False);
       end;
     end;
-    //FProductOnClient_aktobject :=
     FProductOnClient_aktobject.S['lastAction'] := lastActionS;
     if lastAction <> tac4Custom then
-      //FProductOnClient_aktobject :=
       FProductOnClient_aktobject.S['installationStatus'] := installationStatusS;
     parastr := FProductOnClient_aktobject.asJson(False, False);
+    LogDatei.log('Opsi4Data.ProductOnClient_update, params (JSON): ' +
+      parastr, LLDebug2);
     omc := TOpsiMethodCall.Create('productOnClient_updateObject', [parastr]);
     jO := FjsonExecutioner.retrieveJSONObject(omc);
     omc.Free;

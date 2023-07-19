@@ -1033,14 +1033,14 @@ var
     LogDatei.LogProduktId := False;
     SaveProductname := Topsi4data(opsidata).getActualProductId;
     LogDatei.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~',
-      BaseLevel);
+      LLinfo);
     if errorfound then
       LogDatei.log('Error in the conditions for the sequence of products, ' +
         ' the sorted list of maximum length is:',
-        BaseLevel)
+        LLinfo)
     else
       LogDatei.log('Resolved sequence of products (' + DateTimeToStr(Now) + '): ',
-        BaseLevel);
+        LLinfo);
 
     i := 0;
     while i < numberOfCorrectItems do
@@ -1054,12 +1054,12 @@ var
       begin
         Zeile := 'Product ' + IntToStr(i) + ' ' + #9 + Produkte.Strings[i] +
           ' : ' + opsidata.actionToString(requestedAction);
-        LogDatei.log(Zeile, BaseLevel);
+        LogDatei.log(Zeile, LLinfo);
       end;
 
       Inc(i);
     end;
-    LogDatei.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~', BaseLevel);
+    LogDatei.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~', LLinfo);
 
     opsidata.setActualProductName(SaveProductname);
   end;
@@ -1361,24 +1361,7 @@ begin
       end;
 
       if PerformShutdown = tsrRegisterForShutdown then
-      begin
         WriteEntry(WinstRegFinalShutdownVar, trdInteger, IntToStr(RegCallShutdown));
-        //LogDatei.log('Written RegCallShutdown', BaseLevel)
-      end
-      else
-      begin
-        // we tried to ensure that we have a correct registry entry:
-        // if it does not exist it is created with value 0
-        // but it seems not to work
-        //try
-        //  val := ReadInteger (WinstRegFinalShutdownVar);
-        //  LogDatei.log('Read RegCallShutdown: ' + Inttostr(val), BaseLevel)
-        //except
-        // LogDatei.log('Not read RegCallShutdown', BaseLevel);
-
-        // WriteEntry(WinstRegFinalShutdownVar, trdInteger, IntToStr (RegNoCallShutdown));
-        //end
-      end;
 
       LogDatei.log('BuildPC: handle reboot options: registry log continue .....',
         LLDebug3);
@@ -1664,19 +1647,19 @@ begin
   Produkte := TOpsi4data(OpsiData).getMapOfLoginscripts2Run(allLoginScripts);
 
 
-  LogDatei.log('Computername:' + computername, baselevel);
+  LogDatei.log('Computername:' + computername, LLinfo);
 
   if computername <> ValueOfEnvVar('computername') then
     LogDatei.log('Computername according to Environment Variable :' +
       ValueOfEnvVar('computername'),
-      baseLevel);
+      LLinfo);
 
   if opsiserviceURL <> '' then
     LogDatei.log('opsi service URL ' + opsiserviceurl,
-      baseLevel);
+      LLinfo);
 
   LogDatei.log('Depot path:  ' + depotdrive + depotdir, LLinfo);
-  LogDatei.log('', BaseLevel);
+  LogDatei.log('', LLinfo);
   {$IFDEF GUI}
   FBatchOberflaeche.SetMessageText(rsProductCheck, mInfo);
   //setInfoLabel(rsProductCheck);
@@ -1694,7 +1677,7 @@ begin
 
       opsidata.setActualProductName(Produkt);
       if trim(Produkt) = '' then
-        LogDatei.log('product ' + IntToStr(i - 1) + ' is "" ', BaseLevel);
+        LogDatei.log('product ' + IntToStr(i - 1) + ' is "" ', LLinfo);
 
       extremeErrorLevel := Level_not_initialized;
 
@@ -1762,19 +1745,19 @@ begin
   Produkte := scriptlist;
 
 
-  LogDatei.log('Computername:' + computername, baselevel);
+  LogDatei.log('Computername:' + computername, LLinfo);
 
   if computername <> ValueOfEnvVar('computername') then
     LogDatei.log('Computername according to Environment Variable :' +
       ValueOfEnvVar('computername'),
-      baseLevel);
+      LLinfo);
 
   if opsiserviceURL <> '' then
     LogDatei.log('opsi service URL ' + opsiserviceurl,
-      baseLevel);
+      LLinfo);
 
   LogDatei.log('Depot path:  ' + depotdrive + depotdir, LLinfo);
-  LogDatei.log('', BaseLevel);
+  LogDatei.log('', LLinfo);
   {$IFDEF GUI}
   FBatchOberflaeche.SetMessageText(rsProductCheck, mInfo);
   //setInfoLabel(rsProductCheck);
@@ -1793,7 +1776,7 @@ begin
 
       opsidata.setActualProductName(Produkt);
       if trim(Produkt) = '' then
-        LogDatei.log('product ' + IntToStr(i - 1) + ' is "" ', BaseLevel);
+        LogDatei.log('product ' + IntToStr(i - 1) + ' is "" ', LLinfo);
 
       extremeErrorLevel := Level_not_initialized;
 
@@ -2869,7 +2852,8 @@ begin
                   if (i <= ParamListe.Count) then
                   begin
                     opsiserviceClientId := ParamListe.Strings[i - 1];
-                    computername := ParamListe.Strings[i - 1];
+                    if opsiserviceUser = '' then opsiserviceUser := opsiserviceClientId;
+                    computername := opsiserviceClientId;
                     if (length(computername) = 0) or
                       (computername[1] = ParamDelim) then
                     begin

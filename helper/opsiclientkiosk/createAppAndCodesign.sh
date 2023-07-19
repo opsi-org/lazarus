@@ -16,7 +16,7 @@ Help()
 # Set these values:
 DEVELOPER_ID="Developer ID Application: uib gmbh (5H88T32F7P)"
 APPLE_ID_USER=macos@uib.de
-APP_SPECIFIC_PASSWORD=
+APP_SPECIFIC_PASSWORD=$1
 DEVELOPMENT_MODE=false
 
 # Process the input options. Add options as needed.

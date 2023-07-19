@@ -143,17 +143,6 @@ begin
   AcceptorSocket.SSL.verifyCert := True;
 end;
 
-//procedure TOpsiHTTPSAcceptingThread.InitSSLOpsi;
-//var
-//  ClientdConf:TIniFile;
-//begin
-
-//  AcceptorSocket.SSL.Username:= SSLUsername;//'vmmacdev1onmm1.uib.local';
-//  AcceptorSocket.SSL.Password:= ClientdConf.ReadString('global','opsi_host_key','');//'aead8f8c57a92e14ac820bf8d3df1805'; //'linux123';
-//  //AcceptorSocket.SSL.Username:= 'adminuser';//'vmmacdev1onmm1.uib.local';
-//  //AcceptorSocket.SSL.Password:= 'linux123';//'aead8f8c57a92e14ac820bf8d3df1805'; //'linux123';
-//  FreeAndNil(ClientdConf);
-//end;
 
 procedure TOpsiHTTPSAcceptingThread.CreateTestJSONRequestInputBody;
 // This function is only for testing

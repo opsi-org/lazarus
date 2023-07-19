@@ -289,7 +289,7 @@ begin
     except
       on E: Exception do
       begin
-        LogDatei.DependentAdd('Exception in getLinProcessList, system message: "' +
+        Logdatei.Log('Exception in getLinProcessList, system message: "' +
           E.Message + '"',
           LLError);
       end
@@ -355,7 +355,7 @@ begin
     except
       on E: Exception do
       begin
-        LogDatei.DependentAdd('Exception in getLinProcessList, system message: "' +
+        Logdatei.Log('Exception in getLinProcessList, system message: "' +
           E.Message + '"',
           LLError);
       end
@@ -465,36 +465,31 @@ end;
 function getLinuxReleaseInfoFromLSBRelease(var ReleaseInfo: TStringList): boolean;
 var
   ResultString: string;
-  Cmd, Report: string;
-  {$IFDEF OPSISCRIPT}
-  OutLines: TXStringlist;
-  {$ELSE OPSISCRIPT}
+  Output: string;
   OutLines: TStringList;
-  {$ENDIF OPSISCRIPT}
   LineParts: TStringList;
-  ExitCode: longint;
   i: integer;
 begin
-  {$IFDEF OPSISCRIPT}
-  OutLines := TXStringList.Create;
-  {$ELSE OPSISCRIPT}
   OutLines := TStringList.Create;
-  {$ENDIF OPSISCRIPT}
   LineParts := TStringList.Create;
   Result := False;
-  Cmd := 'lsb_release --all';
   try
-    if RunCommandAndCaptureOut(Cmd, True, OutLines, Report, SW_HIDE, ExitCode) then
+    if RunCommand('lsb_release', ['--all'], Output,
+      [poWaitOnExit, poUsePipes, poStderrToOutPut], swoShow) then
     begin
       Result := True;
       LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 6;
       LogDatei.log('', LLDebug2);
       LogDatei.log('output:', LLDebug2);
       LogDatei.log('--------------', LLDebug2);
+      StringSplit(Output, #10, OutLines);
       for i := 0 to OutLines.Count - 1 do
       begin
         LogDatei.log(OutLines.Strings[i], LLDebug2);
-        if (pos(':', OutLines.Strings[i]) > 0) then //if LSB module is not available on Debian "lsb_release --all" command still works but gives as first line "No LSB modules are available."
+        (* We are only interested in the key/value pairs (separated by ':').
+           If LSB module is not available on Debian "lsb_release --all", the command still works but gives as first line "No LSB modules are available.".
+           The last line of the RunCommand Output is usually empty. *)
+        if (pos(':', OutLines.Strings[i]) > 0) then
         begin
           LineParts.Clear;
           StringSplit(OutLines.Strings[i], ':', LineParts);
@@ -508,7 +503,8 @@ begin
     end
     else
     begin
-      LogDatei.log('Command "lsb_release" does not work: ' + Report + 'Exitcode: ' + IntToStr(ExitCode), LLInfo);
+      if Output = '' then Output := 'Probably lsb_release does not exist on the system.';
+      LogDatei.log('Command "lsb_release" does not work: ' + Output, LLInfo);
     end;
   finally
     FreeAndNil(LineParts);
@@ -549,8 +545,8 @@ end;
 
 function getLinuxReleaseInfo:TStringList;
 var
-  SubRelease: TStringList;
   Mapping: TStringList;
+  Release: string;
 begin
   //todo : install lsb-release if not there
   Result := TStringList.Create;
@@ -566,17 +562,15 @@ begin
       LogDatei.log('Error (getLinuxReleaseInfo): Could not get release info.', LLError);
     end;
   end;
-  //get SubRelease (only Suse);
+  (*
+  For SUSE distributions the subrelease (=patchlevel) is relevant because packages
+  might be only compatible with a specific patchlevel.
+  The subrelease is not relevant for other Linux distributions like Debian/Ubuntu or RedHat.
+  *)
   if (pos('suse', lowercase(Result.Values['ID'])) > 0) then
   begin
-    Mapping.Clear;
-    Mapping.Add('SubRelease=PATCHLEVEL');
-    SubRelease := TStringList.Create;
-    if getLinuxReleaseInfoFromFile('/etc/SuSE-release', Mapping, SubRelease) then
-    begin
-      Result.Add(SubRelease.Text);
-    end;
-    FreeAndNil(SubRelease);
+    Release := Result.Values['Release'];
+    Result.Add('SubRelease=' + Copy(Release, Pos('.', Release) + 1));
   end
   else
   begin
@@ -689,7 +683,7 @@ begin
         HostEntry.Addr.s_bytes[1]]);
     end
     else
-      Logdatei.DependentAddError('gethostbyname error ' +
+      Logdatei.Log('gethostbyname error ' +
         IntToStr(wsagetlasterror), LLError);
   except
     WSAErr := 'Error resolving Host';
@@ -1128,7 +1122,7 @@ begin
   if LogDatei <> nil then
   begin
     LogDatei.LogSIndentLevel := 0;
-    LogDatei.DependentAdd('============   ' + ExtractFileNameOnly(ParamStr(0)) +
+    Logdatei.Log('============   ' + ExtractFileNameOnly(ParamStr(0)) +
       ' shutdown regularly and direct. Time ' + FormatDateTime(
       'yyyy-mm-dd  hh:mm:ss ', now) + '.', LLessential);
 

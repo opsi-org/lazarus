@@ -10,7 +10,6 @@
         <CompatibilityMode Value="True"/>
       </Flags>
       <SessionStorage Value="InIDEConfig"/>
-      <Scaled Value="True"/>
       <ResourceType Value="res"/>
       <UseXPManifest Value="True"/>
       <XPManifest>
@@ -26,10 +25,10 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="12"/>
-      <RevisionNr Value="9"/>
-      <StringTable Comments="Compiled with Lazarus 2.2.0 / FPC 3.2.2" CompanyName="uib gmbh" FileDescription="opsi-script" InternalName="opsi-script" LegalCopyright="AGPL v3" LegalTrademarks="opsi, opsi.org, open pc server integration" OriginalFilename="opsi-script" ProductName="opsi" ProductVersion="4.2"/>
+      <RevisionNr Value="10"/>
+      <StringTable Comments="Compiled with Lazarus 2.2.6 / FPC 3.2.2" CompanyName="uib gmbh" FileDescription="opsi-script" InternalName="opsi-script" LegalCopyright="AGPL v3" LegalTrademarks="opsi, opsi.org, open pc server integration" OriginalFilename="opsi-script" ProductName="opsi" ProductVersion="4.2"/>
     </VersionInfo>
-    <BuildModes Count="16">
+    <BuildModes Count="18">
       <Item1 Name="default" Default="True"/>
       <Item2 Name="Debug">
         <CompilerOptions>
@@ -118,7 +117,6 @@
             </Debugging>
             <LinkSmart Value="True"/>
             <Options>
-              <PassLinkerOptions Value="True"/>
               <LinkerOptions Value="-sectcreate __TEXT __info_plist Info-osgui.plist"/>
             </Options>
           </Linking>
@@ -432,7 +430,6 @@
             </Debugging>
             <LinkSmart Value="True"/>
             <Options>
-              <PassLinkerOptions Value="True"/>
               <LinkerOptions Value="-sectcreate __TEXT __info_plist Info-os.plist"/>
             </Options>
           </Linking>
@@ -553,6 +550,9 @@
             </Optimizations>
           </CodeGeneration>
           <Linking>
+            <Debugging>
+              <UseHeaptrc Value="True"/>
+            </Debugging>
             <LinkSmart Value="True"/>
             <Options>
               <LinkerOptions Value="-sectcreate __TEXT __info_plist Info-os.plist"/>
@@ -847,6 +847,121 @@
           </Other>
         </CompilerOptions>
       </Item16>
+      <Item17 Name="Release_mac_gui_info_plist">
+        <CompilerOptions>
+          <Version Value="11"/>
+          <PathDelim Value="\"/>
+          <Target>
+            <Filename Value="compiler_out\binarys\$(TargetCPU)-$(TargetOS)\opsi-script-gui"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="$(ProjOutDir)"/>
+            <OtherUnitFiles Value="..\common;..\external_libraries\dcpcrypt\Ciphers;..\external_libraries\dcpcrypt\Hashes;..\external_libraries\misc;..\external_libraries\uSMBIOS;..\external_libraries\dcpcrypt;..\external_libraries\modified\misc;..\external_libraries\fpTOML\sources;..\external_libraries\synapse;..\external_libraries\HashLib4Pascal\HashLib\src\Base;..\external_libraries\HashLib4Pascal\HashLib\src\Interfaces;..\external_libraries\HashLib4Pascal\HashLib\src\Utils;..\external_libraries\HashLib4Pascal\HashLib\src\KDF;..\external_libraries\HashLib4Pascal\HashLib\src\Nullable;..\external_libraries\HashLib4Pascal\HashLib\src\NullDigest;..\external_libraries\HashLib4Pascal\HashLib\src\Checksum;..\external_libraries\HashLib4Pascal\HashLib\src\Hash32;..\external_libraries\HashLib4Pascal\HashLib\src\Hash64;..\external_libraries\HashLib4Pascal\HashLib\src\Hash128;..\external_libraries\HashLib4Pascal\HashLib\src\Crypto;..\external_libraries\HashLib4Pascal\HashLib\src\Crypto\Blake2BParams;..\external_libraries\HashLib4Pascal\HashLib\src\Interfaces\IBlake2BParams;..\external_libraries\HashLib4Pascal\HashLib\src\Interfaces\IBlake2SParams;..\external_libraries\HashLib4Pascal\HashLib\src\Crypto\Blake2SParams"/>
+            <UnitOutputDirectory Value="compiler_out\units\$(TargetCPU)-$(TargetOS)"/>
+          </SearchPaths>
+          <Parsing>
+            <SyntaxOptions>
+              <SyntaxMode Value="Delphi"/>
+              <AllowLabel Value="False"/>
+            </SyntaxOptions>
+          </Parsing>
+          <CodeGeneration>
+            <SmartLinkUnit Value="True"/>
+            <TargetCPU Value="x86_64"/>
+            <Optimizations>
+              <OptimizationLevel Value="3"/>
+            </Optimizations>
+          </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <GenerateDebugInfo Value="False"/>
+              <DebugInfoType Value="dsDwarf3"/>
+              <StripSymbols Value="True"/>
+            </Debugging>
+            <LinkSmart Value="True"/>
+            <Options>
+              <PassLinkerOptions Value="True"/>
+              <LinkerOptions Value="-sectcreate __TEXT __info_plist Info-osgui.plist"/>
+            </Options>
+          </Linking>
+          <Other>
+            <Verbosity>
+              <ShowHintsForUnusedUnitsInMainSrc Value="True"/>
+            </Verbosity>
+            <CompilerMessages>
+              <IgnoredMessages idx5058="True" idx5027="True"/>
+            </CompilerMessages>
+            <CustomOptions Value="-dOPSIWINST
+-dOPSISCRIPT
+-dGUI
+-dSYNAPSE
+-dSSLPATH
+-dAPP_BUNDLE"/>
+          </Other>
+        </CompilerOptions>
+      </Item17>
+      <Item18 Name="Release_mac_nogui_info_plist">
+        <CompilerOptions>
+          <Version Value="11"/>
+          <PathDelim Value="\"/>
+          <Target>
+            <Filename Value="compiler_out\binarys\$(TargetCPU)-$(TargetOS)\opsi-script"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="$(ProjOutDir)"/>
+            <OtherUnitFiles Value="..\common;..\external_libraries\dcpcrypt\Ciphers;..\external_libraries\dcpcrypt\Hashes;..\external_libraries\misc;..\external_libraries\uSMBIOS;..\external_libraries\dcpcrypt;..\external_libraries\modified\misc;..\external_libraries\fpTOML\sources;..\external_libraries\synapse;..\external_libraries\HashLib4Pascal\HashLib\src\Base;..\external_libraries\HashLib4Pascal\HashLib\src\Interfaces;..\external_libraries\HashLib4Pascal\HashLib\src\Utils;..\external_libraries\HashLib4Pascal\HashLib\src\KDF;..\external_libraries\HashLib4Pascal\HashLib\src\Nullable;..\external_libraries\HashLib4Pascal\HashLib\src\NullDigest;..\external_libraries\HashLib4Pascal\HashLib\src\Checksum;..\external_libraries\HashLib4Pascal\HashLib\src\Hash32;..\external_libraries\HashLib4Pascal\HashLib\src\Hash64;..\external_libraries\HashLib4Pascal\HashLib\src\Hash128;..\external_libraries\HashLib4Pascal\HashLib\src\Crypto;..\external_libraries\HashLib4Pascal\HashLib\src\Crypto\Blake2BParams;..\external_libraries\HashLib4Pascal\HashLib\src\Interfaces\IBlake2BParams;..\external_libraries\HashLib4Pascal\HashLib\src\Interfaces\IBlake2SParams;..\external_libraries\HashLib4Pascal\HashLib\src\Crypto\Blake2SParams"/>
+            <UnitOutputDirectory Value="compiler_out\units\$(TargetCPU)-$(TargetOS)"/>
+          </SearchPaths>
+          <Parsing>
+            <SyntaxOptions>
+              <SyntaxMode Value="Delphi"/>
+              <AllowLabel Value="False"/>
+            </SyntaxOptions>
+          </Parsing>
+          <CodeGeneration>
+            <SmartLinkUnit Value="True"/>
+            <TargetCPU Value="x86_64"/>
+            <TargetOS Value="darwin"/>
+            <Optimizations>
+              <OptimizationLevel Value="3"/>
+            </Optimizations>
+          </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <GenerateDebugInfo Value="False"/>
+              <DebugInfoType Value="dsDwarf3"/>
+              <StripSymbols Value="True"/>
+            </Debugging>
+            <LinkSmart Value="True"/>
+            <Options>
+              <PassLinkerOptions Value="True"/>
+              <LinkerOptions Value="-sectcreate __TEXT __info_plist Info-os.plist"/>
+            </Options>
+          </Linking>
+          <Other>
+            <Verbosity>
+              <ShowHintsForUnusedUnitsInMainSrc Value="True"/>
+            </Verbosity>
+            <CompilerMessages>
+              <IgnoredMessages idx5058="True" idx5027="True"/>
+            </CompilerMessages>
+            <CustomOptions Value="-dOPSIWINST
+-dOPSISCRIPT
+-dSYNAPSE
+-dSSLPATH
+-dAPP_BUNDLE"/>
+            <OtherDefines Count="7">
+              <Define0 Value="OPSIWINST"/>
+              <Define1 Value="OPSISCRIPT"/>
+              <Define2 Value="GUI"/>
+              <Define3 Value="OSDEBUG"/>
+              <Define4 Value="SYNAPSE"/>
+              <Define5 Value="APP_BUNDLE"/>
+              <Define6 Value="SSLPATH"/>
+            </OtherDefines>
+          </Other>
+        </CompilerOptions>
+      </Item18>
     </BuildModes>
     <PublishOptions>
       <Version Value="2"/>

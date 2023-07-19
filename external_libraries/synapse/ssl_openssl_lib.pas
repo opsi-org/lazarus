@@ -1,5 +1,5 @@
 {==============================================================================|
-| Project : Ararat Synapse                                       | 003.008.000 |
+| Project : Ararat Synapse                                       | 003.009.000 |
 |==============================================================================|
 | Content: SSL support by OpenSSL                                              |
 |==============================================================================|
@@ -35,10 +35,12 @@
 | The Initial Developer of the Original Code is Lukas Gebauer (Czech Republic).|
 | Portions created by Lukas Gebauer are Copyright (c)2002-2017.                |
 | Portions created by Petr Fejfar are Copyright (c)2011-2012.                  |
+| Portions created by Pepak are Copyright (c)2018.                             |
 | All Rights Reserved.                                                         |
 |==============================================================================|
 | Contributor(s):                                                              |
 |   Tomas Hajny (OS2 support)                                                  |
+|   Pepak (multiversion support)                                               |
 |==============================================================================|
 | History: see HISTORY.HTM from distribution package                           |
 |          (Found at URL: http://www.ararat.cz/synapse/)                       |
@@ -49,8 +51,6 @@ Special thanks to Gregor Ibic <gregor.ibic@intelicom.si>
  (Intelicom d.o.o., http://www.intelicom.si)
  for good inspiration about begin with SSL programming.
 }
-
-{$DEFINE SSLPATH} //use opsi specific paths to ssl libraries
 
 {$IFDEF FPC}
   {$MODE DELPHI}
@@ -82,7 +82,6 @@ unit ssl_openssl_lib;
 interface
 
 uses
-  osSSLPaths, //opsi ssl paths
 {$IFDEF CIL}
   System.Runtime.InteropServices,
   System.Text,
@@ -93,14 +92,13 @@ uses
   {$IFDEF FPC}
    {$IFDEF UNIX}
   BaseUnix,
-  FileUtil, // opsi do 20210201
    {$ENDIF UNIX}
   {$ELSE}
    Libc,
   {$ENDIF}
   SysUtils;
 {$ELSE}
-  FileUtil, // opsi
+  SysUtils,
   Windows;
 {$ENDIF}
 
@@ -139,6 +137,58 @@ var
   DLLSSLName2: string = 'libssl32.dll';
   DLLUtilName: string = 'libeay32.dll';
   {$ENDIF}
+{$IFDEF MSWINDOWS}
+const
+  LibCount = 5;
+  SSLLibNames: array[0..LibCount-1] of string = (
+    // OpenSSL v3.0
+    {$IFDEF WIN64}
+    'libssl-3-x64.dll',
+    {$ELSE}
+    'libssl-3.dll',
+    {$ENDIF}
+    // OpenSSL v1.1.x
+    {$IFDEF WIN64}
+    'libssl-1_1-x64.dll',
+    {$ELSE}
+    'libssl-1_1.dll',
+    {$ENDIF}
+    // OpenSSL v1.0.2 distinct names for x64 and x86
+    {$IFDEF WIN64}
+    'ssleay32-x64.dll',
+    {$ELSE}
+    'ssleay32-x86.dll',
+    {$ENDIF}
+    // OpenSSL v1.0.2
+    'ssleay32.dll',
+    // OpenSSL (ancient)
+    'libssl32.dll'
+  );
+  CryptoLibNames: array[0..LibCount-1] of string = (
+    // OpenSSL v3.0
+    {$IFDEF WIN64}
+    'libcrypto-3-x64.dll',
+    {$ELSE}
+    'libcrypto-3.dll',
+    {$ENDIF}
+    // OpenSSL v1.1.x
+    {$IFDEF WIN64}
+    'libcrypto-1_1-x64.dll',
+    {$ELSE}
+    'libcrypto-1_1.dll',
+    {$ENDIF}
+    // OpenSSL v1.0.2 distinct names for x64 and x86
+    {$IFDEF WIN64}
+    'libeay32-x64.dll',
+    {$ELSE}
+    'libeay32-x86.dll',
+    {$ENDIF}
+    // OpenSSL v1.0.2
+    'libeay32.dll',
+    // OpenSSL (ancient)
+    'libeay32.dll'
+  );
+{$ENDIF}
 {$ENDIF}
 
 type
@@ -831,10 +881,6 @@ function IsSSLloaded: Boolean;
 function InitSSLInterface: Boolean;
 function DestroySSLInterface: Boolean;
 
-//set opsi specific ssl library paths
-procedure SetSSLPaths;
-
-
 var
   _X509Free: TX509Free = nil; {pf}
 
@@ -844,11 +890,7 @@ uses
 {$IFDEF OS2}
   Sockets,
 {$ENDIF OS2}
-  SyncObjs
-{$IFDEF OPSISCRIPT}
-  ,osMain
-{$ENDIF OPSISCRIPT}
-;
+  SyncObjs;
 
 {$IFNDEF CIL}
 type
@@ -1741,7 +1783,7 @@ end;
 function d2iX509bio(b: PBIO; x: PX509): PX509; {pf}
 begin
   if InitSSLInterface and Assigned(_d2iX509bio) then
-    Result := _d2iX509bio(x,b)
+    Result := _d2iX509bio(b, x)
   else
     Result := nil;
 end;
@@ -1860,17 +1902,6 @@ begin
 {$ELSE}
   Result := LoadLibrary(PChar(Value));
 {$ENDIF}
-{$IFDEF OPSISCRIPT}
-  if not Assigned(StartupMessages) then StartupMessages := TStringList.Create;
-  if (Result = NilHandle) then
-  begin
-    StartupMessages.Append('Could not load library: ' + Value);
-  end
-  else
-  begin
-    StartupMessages.Append('Load library: ' + Value);
-  end;
-{$ENDIF OPSISCRIPT}
 end;
 
 function GetProcAddr(module: HModule; const ProcName: string): SslPtr;
@@ -1882,10 +1913,20 @@ begin
 {$ENDIF}
 end;
 
+function GetLibFileName(Handle: THandle): string;
+var
+  n: integer;
+begin
+  n := MAX_PATH + 1024;
+  SetLength(Result, n);
+  n := GetModuleFilename(Handle, PChar(Result), n);
+  SetLength(Result, n);
+end;
+
 function InitSSLInterface: Boolean;
 var
   s: string;
-  x: integer;
+  i: integer;
 begin
   {pf}
   if SSLLoaded then
@@ -1893,7 +1934,7 @@ begin
       Result := TRUE;
       exit;
     end;
-  {/pf}  
+  {/pf}
   SSLCS.Enter;
   try
     if not IsSSLloaded then
@@ -1902,12 +1943,24 @@ begin
       SSLLibHandle := 1;
       SSLUtilHandle := 1;
 {$ELSE}
-    SetSSLPaths; //set opsi specific ssl library paths
-    SSLUtilHandle := LoadLib(DLLUtilName);
-    SSLLibHandle := LoadLib(DLLSSLName);
-  {$IFDEF MSWINDOWS}
-    if (SSLLibHandle = 0) then SSLLibHandle := LoadLib(DLLSSLName2);
-  {$ENDIF}
+      // Note: It's important to ensure that the libraries both come from the
+      // same directory, preferably the one of the executable. Otherwise a
+      // version mismatch could easily occur.
+      {$IFDEF MSWINDOWS}
+      for i := 0 to Pred(LibCount) do
+      begin
+        SSLUtilHandle := LoadLib(CryptoLibNames[i]);
+        if SSLUtilHandle <> 0 then
+        begin
+          s := ExtractFilePath(GetLibFileName(SSLUtilHandle));
+          SSLLibHandle := LoadLib(s + SSLLibNames[i]);
+          Break;
+        end;
+      end;
+      {$ELSE}
+      SSLUtilHandle := LoadLib(DLLUtilName);
+      SSLLibHandle := LoadLib(DLLSSLName);
+      {$ENDIF}
 {$ENDIF}
       if (SSLLibHandle <> 0) and (SSLUtilHandle <> 0) then
       begin
@@ -2023,14 +2076,8 @@ begin
         OPENSSLaddallalgorithms;
         RandScreen;
 {$ELSE}
-        SetLength(s, 1024);
-        x := GetModuleFilename(SSLLibHandle,PChar(s),Length(s));
-        SetLength(s, x);
-        SSLLibFile := s;
-        SetLength(s, 1024);
-        x := GetModuleFilename(SSLUtilHandle,PChar(s),Length(s));
-        SetLength(s, x);
-        SSLUtilFile := s;
+        SSLLibFile := GetLibFileName(SSLLibHandle);
+        SSLUtilFile := GetLibFileName(SSLUtilHandle);
         //init library
         if assigned(_SslLibraryInit) then
           _SslLibraryInit;
@@ -2221,27 +2268,6 @@ function IsSSLloaded: Boolean;
 begin
   Result := SSLLoaded;
 end;
-
-procedure SetSSLPaths; //opsi
-begin
-  // Specify here the path to the ssl libraries
-  {$IFDEF SSLPATH}
-    {$IFDEF WINDOWS}
-      DLLSSLName := GetSSLPath('ssleay32.dll'); //ProgramDirectory + 'ssleay32.dll'; //'libssl-1_1.dll';
-      DLLUtilName := GetSSLPath('libeay32.dll'); //ProgramDirectory  + 'libeay32.dll'; // 'libcrypto-1_1.dll';
-    {$ENDIF WINDOWS}
-    {$IFDEF LINUX}
-      DLLSSLName := GetSSLPath('libssl.so'); //ProgramDirectory + 'libssl.so';
-      DLLUtilName := GetSSLPath('libcrypto.so'); //ProgramDirectory  + 'libcrypto.so';
-    {$ENDIF LINUX}
-    {$IFDEF DARWIN}
-      DLLSSLName := GetSSLPath('libssl.dylib'); //ProgramDirectory + 'libssl.dylib';
-      DLLUtilName := GetSSLPath('libcrypto.dylib');//ProgramDirectory  + 'libcrypto.dylib';
-    {$ENDIF DARWIN}
-  {$ENDIF SSLPATH}
-end;
-
-
 
 initialization
 begin

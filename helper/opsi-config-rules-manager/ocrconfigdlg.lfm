@@ -1,0 +1,114 @@
+object FOSDConfigdlg: TFOSDConfigdlg
+  Left = 793
+  Height = 625
+  Top = 221
+  Width = 534
+  Caption = 'opsi-setup-detector Configuration'
+  ClientHeight = 625
+  ClientWidth = 534
+  OnActivate = FormActivate
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  Position = poScreenCenter
+  LCLVersion = '2.2.4.0'
+  object TIPropertyGrid1: TTIPropertyGrid
+    Left = 0
+    Height = 409
+    Top = 101
+    Width = 534
+    Align = alClient
+    CheckboxForBoolean = False
+    DefaultValueFont.Color = clWindowText
+    Filter = [tkInteger, tkChar, tkEnumeration, tkFloat, tkSet, tkMethod, tkSString, tkLString, tkAString, tkWString, tkVariant, tkArray, tkRecord, tkInterface, tkClass, tkObject, tkWChar, tkBool, tkInt64, tkQWord, tkDynArray, tkInterfaceRaw, tkProcVar, tkUString, tkUChar, tkHelper, tkFile, tkClassRef, tkPointer]
+    Indent = 16
+    NameFont.Color = clWindowText
+    OnClick = TIPropertyGrid1Click
+    OnExit = TIPropertyGrid1Exit
+    OnKeyUp = TIPropertyGrid1KeyUp
+    PreferredSplitterX = 300
+    SplitterX = 300
+    ValueFont.Color = clMaroon
+  end
+  object FlowPanel1: TFlowPanel
+    Left = 0
+    Height = 101
+    Top = 0
+    Width = 534
+    Align = alTop
+    ControlList = <    
+      item
+        Control = LabelCfgDlgHead
+        WrapAfter = waAuto
+        Index = 0
+      end    
+      item
+        Control = BitBtn1
+        WrapAfter = waAuto
+        Index = 1
+      end>
+    FlowLayout = tlTop
+    FlowStyle = fsLeftRightTopBottom
+    ParentFont = False
+    TabOrder = 1
+    object LabelCfgDlgHead: TLabel
+      Left = 14
+      Height = 79
+      Top = 5
+      Width = 340
+      Align = alLeft
+      AutoSize = False
+      BorderSpacing.Left = 9
+      BorderSpacing.Around = 4
+      BorderSpacing.InnerBorder = 3
+      Font.Height = -16
+      ParentColor = False
+      ParentFont = False
+      WordWrap = True
+    end
+    object BitBtn1: TBitBtn
+      Left = 378
+      Height = 34
+      Top = 21
+      Width = 98
+      Anchors = []
+      AutoSize = True
+      BorderSpacing.Around = 20
+      BorderSpacing.InnerBorder = 4
+      Caption = 'Finished'
+      Default = True
+      Kind = bkOK
+      ModalResult = 1
+      ParentFont = False
+      TabOrder = 0
+    end
+  end
+  object Panel1: TPanel
+    Left = 0
+    Height = 115
+    Top = 510
+    Width = 534
+    Align = alBottom
+    Caption = 'Panel1'
+    ClientHeight = 115
+    ClientWidth = 534
+    Color = 8454143
+    ParentColor = False
+    ParentFont = False
+    TabOrder = 2
+    object MemoConfigHint: TMemo
+      Left = 5
+      Height = 105
+      Top = 5
+      Width = 524
+      Align = alClient
+      BorderSpacing.Around = 4
+      BorderSpacing.InnerBorder = 11
+      BorderStyle = bsNone
+      Color = 8454143
+      Font.Height = -15
+      ParentFont = False
+      ReadOnly = True
+      TabOrder = 0
+    end
+  end
+end

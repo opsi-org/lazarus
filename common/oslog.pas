@@ -152,11 +152,6 @@ type
     function log_prog(const S: string; LevelOfLine: integer): boolean;
     function log_list(const list: TStrings; LevelOfLine: integer): boolean;
     function log_exception(E: Exception; LevelOfLine: integer): boolean;
-    function DependentAdd(const S: string; LevelOfLine: integer): boolean;
-    function DependentAddError(const S: string; LevelOfLine: integer): boolean;
-    function DependentAddWarning(const S: string; LevelOfLine: integer): boolean;
-    function DependentAddStringList(const list: TStrings;
-      LevelOfLine: integer): boolean;
     procedure setLogSIndentLevel(const Value: integer);
     function PartbiggerthanMB(maxsize: integer): boolean;
     procedure PartShrinkToMB(newsize: integer);
@@ -272,14 +267,6 @@ const
   LLdebug2 = 8;
   LLdebug3 = 9;
   LLconfidential = LLdebug3;
-
-  // old Levels:
-  BaseLevel = LLinfo;
-  LevelError = LLerror;
-  LevelWarnings = LLinfo;
-  LevelInfo = LLinfo;
-  LevelComplete = LLinfo;
-  LevelDebug = LLdebug;
 
 
   // ExtremeErrorLevels:
@@ -601,9 +588,9 @@ begin
     begin
       LogDatei.Appendmode := True;
       LogDatei.initiate(LogDateiName, False);
-      LogDatei.DependentAdd('', LLessential);
-      LogDatei.DependentAdd('', LLessential);
-      LogDatei.DependentAdd('======= APPEND   ' + DateTimeToStr(Now), LLessential);
+      Logdatei.Log('', LLessential);
+      Logdatei.Log('', LLessential);
+      Logdatei.Log('======= APPEND   ' + DateTimeToStr(Now), LLessential);
     end
     else
     begin
@@ -1011,9 +998,9 @@ begin
           '" could not be created as logfile. Exception "' + E.Message + '"';
     end;
 
-    DependentAdd('--', LLessential);
-    DependentAdd('--', LLessential);
-    DependentAdd(PartFileName, LLessential);
+    Log('--', LLessential);
+    Log('--', LLessential);
+    Log(PartFileName, LLessential);
   end;
 end;
 
@@ -1043,6 +1030,7 @@ begin
       FileClose(LogPartFileF);
 
   FreeAndNil(FNoLogFiles);
+  FreeAndNil(FConfidentialStrings);
   inherited Destroy;
 end;
 
@@ -1110,15 +1098,15 @@ end;
 procedure TLogInfo.PartOpenForReading;
 begin
   PartCopyToRead;
-  //DependentAdd('->1',LLNotice);
+  //Log('->1',LLNotice);
   assignfile(LogPartReadFile, FPartReadFileName);
-  //DependentAdd('->2',LLNotice);
+  //Log('->2',LLNotice);
   try
     reset(LogPartReadFile);
   except
     on E: Exception do
     begin
-      DependentAdd('wilog: PartOpenForReading: "' + E.Message + '" ==> retry',
+      Log('wilog: PartOpenForReading: "' + E.Message + '" ==> retry',
         LLError);
       try
         Sleep(500);
@@ -1126,14 +1114,14 @@ begin
       except
         on E: Exception do
         begin
-          DependentAdd('wilog: PartOpenForReading: "' + E.Message +
+          Log('wilog: PartOpenForReading: "' + E.Message +
             '" --> giving up',
             LLError);
         end;
       end;
     end;
   end;
-  DependentAdd('read file opend', LLInfo);
+  Log('read file opend', LLInfo);
 end;
 
 procedure TLogInfo.PartCloseFromReading;
@@ -1169,7 +1157,7 @@ begin
     files.alldelete(FStandardPartLogPath + Pathdelim + FStandardPartLogFilename +
       '*', False, True, 7);
   except
-    //LogDatei.DependentAdd('not all files "' + TempPath + TempBatchdatei + '*"  could be deleted', LLInfo);
+    //Logdatei.Log('not all files "' + TempPath + TempBatchdatei + '*"  could be deleted', LLInfo);
   end;
   files.Free;
   {$ENDIF}
@@ -1279,16 +1267,6 @@ begin
 end;
 
 
-function TLogInfo.DependentAddError(const S: string; LevelOfLine: integer): boolean;
-begin
-  Result := DependentAdd(s, LLerror);
-end;
-
-function TLogInfo.DependentAddWarning(const S: string; LevelOfLine: integer): boolean;
-begin
-  Result := DependentAdd(s, LLwarning);
-end;
-
 function TLogInfo.getLine(var S: string): boolean;
 var
   charbuf, pstr: PChar;
@@ -1338,11 +1316,6 @@ end;
 
 
 function TLogInfo.log(const S: string; LevelOfLine: integer): boolean;
-begin
-  Result := DependentAdd(S, LevelOfLine);
-end;
-
-function TLogInfo.DependentAdd(const S: string; LevelOfLine: integer): boolean;
 var
   PasS: string;
   st: string;
@@ -1436,7 +1409,7 @@ begin
     except
       on E: Exception do
       begin
-        DependentAdd('oslog: DependentAdd: process message and Loglevel:"' +
+        Log('oslog: Log: process message and Loglevel:"' +
           E.Message + '"',
           LLError);
       end
@@ -1474,7 +1447,7 @@ begin
     except
       on E: Exception do
       begin
-        DependentAdd('oslog: DependentAdd: Activity "' + E.Message + '"',
+        Log('oslog: Log: Activity "' + E.Message + '"',
           LLError);
       end
     end;
@@ -1509,7 +1482,7 @@ begin
       except
         on E: Exception do
         begin
-          DependentAdd('oslog: DependentAdd: Format : got exception: "' +
+          Log('oslog: Log: Format : got exception: "' +
             E.Message + '" while preparing log message: ' + PasS,
             LLError);
         end
@@ -1621,7 +1594,7 @@ begin
       except
         on E: Exception do
         begin
-          DependentAdd('oslog: DependentAdd: write: got exception: "' +
+          Log('oslog: Log: write: got exception: "' +
             E.Message + '" while writeing log message: ' + PasS,
             LLError);
         end
@@ -1651,18 +1624,14 @@ begin
   except
     on E: Exception do
     begin
-      DependentAdd('oslog: DependentAdd: master:"' + E.Message + '"',
+      Log('oslog: Log: master:"' + E.Message + '"',
         LLError);
     end
   end;
 end;
 
-function TLogInfo.log_list(const list: TStrings; LevelOfLine: integer): boolean;
-begin
-  Result := DependentAddStringList(list, levelOfLine);
-end;
 
-function TLogInfo.DependentAddStringList(const list: TStrings;
+function TLogInfo.log_list(const list: TStrings;
   LevelOfLine: integer): boolean;
 var
   i: integer;
@@ -1673,13 +1642,13 @@ begin
   begin
     while (i < list.Count) and Result do
     begin
-      Result := dependentAdd(format('(string %3d)', [i]) + list[i], levelOfLine);
+      Result := Log(format('(string %3d)', [i]) + list[i], levelOfLine);
       Inc(i);
     end;
   end
   else
   begin
-    DependentAddError('Error writing string list to log: stringlist = nil', LLError);
+    Log('Error writing string list to log: stringlist = nil', LLError);
     Result := False;
   end;
 end;
@@ -1703,26 +1672,28 @@ procedure TLogInfo.includelogtail(fname: string; logtailLinecount: integer;
   sourceEncoding: string);
 var
   includelogStrList: TStringList;
-  //supportedEncodings: TStringList;
-  aktline, includeLogLineStart, includelogLinecount, i: integer;
+  aktline, includeLogLineStart, includelogLinecount: integer;
   bool: boolean;
   str: string;
 begin
   try
-    includelogStrList := TStringList.Create;
-    //supportedEncodings := TStringList.Create;
+    Fname := ExpandFileName(Fname);
+    if lowercase(sourceEncoding) = 'unicode' then
+    begin
+      includelogStrList := loadUnicodeTextFile(Fname, bool, str);
+    end
+    else
+    begin
+    {$IFDEF UNIX}
+      includelogStrList := TStringList.Create;
+      includelogStrList.LoadFromFile(FName);
+      includelogStrList.Text :=
+        reencode(includelogStrList.Text, sourceEncoding, sourceEncoding);
+    {$ELSE}
+      includelogStrList := loadTextFileWithEncoding(Fname, sourceEncoding);
+    {$ENDIF}
+    end;
     try
-      Fname := ExpandFileName(Fname);
-      if lowercase(sourceEncoding) = 'unicode' then
-      begin
-        includelogStrList.Assign(loadUnicodeTextFile(Fname, bool, str));
-      end
-      else
-      begin
-        includelogStrList.LoadFromFile(FName);
-        includelogStrList.Text :=
-          reencode(includelogStrList.Text, sourceEncoding, sourceEncoding);
-      end;
       includelogLinecount := includelogStrList.Count;
       if logtailLinecount > 0 then
       begin
@@ -1731,12 +1702,12 @@ begin
           includeLogLineStart := includelogLinecount - logtailLinecount - 1
         else
           includeLogLineStart := 0;
-        DependentAdd('Start including tail of LogFile "' + Fname +
+        Log('Start including tail of LogFile "' + Fname +
           ' with encoding: ' + sourceEncoding + '"', LLDebug);
-        DependentAdd('################################################################',
+        Log('################################################################',
           LLDebug);
         for aktline := includeLogLineStart to includelogLinecount - 1 do
-          DependentAdd('-->: ' + includelogStrList.Strings[aktline], LLDebug);
+          Log('-->: ' + includelogStrList.Strings[aktline], LLDebug);
       end
       else
       begin
@@ -1747,28 +1718,27 @@ begin
         if includelogLinecount < logtailLinecount then
           logtailLinecount := includelogLinecount;
         includeLogLineStart := 0;
-        DependentAdd('Start including head of LogFile "' + Fname +
+        Log('Start including head of LogFile "' + Fname +
           ' with encoding: ' + sourceEncoding + '"', LLDebug);
-        DependentAdd('################################################################',
+        Log('################################################################',
           LLDebug);
         for aktline := includeLogLineStart to logtailLinecount - 1 do
-          DependentAdd('-->: ' + includelogStrList.Strings[aktline], LLDebug);
+          Log('-->: ' + includelogStrList.Strings[aktline], LLDebug);
       end;
-      DependentAdd('################################################################',
+      Log('################################################################',
         LLDebug);
-      DependentAdd('End including LogFile "' + Fname + '"', LLDebug);
+      Log('End including LogFile "' + Fname + '"', LLDebug);
+      finally
+        if assigned(includelogStrList) then FreeAndNil(includelogStrList);
+      end;
     except
       on E: Exception do
       begin
-        DependentAdd('IncludeLogFile "' + Fname + '"', LLwarning);
-        DependentAdd(' Failed to include log file, system message: "' + E.Message + '"',
+        Log('IncludeLogFile "' + Fname + '"', LLwarning);
+        Log(' Failed to include log file, system message: "' + E.Message + '"',
           LLwarning);
       end
     end;
-  finally
-    includelogStrList.Free;
-    //supportedEncodings.Free;
-  end;
 end;
 
 function TLogInfo.PartbiggerthanMB(maxsize: integer): boolean;
@@ -1868,14 +1838,14 @@ begin
       except
         on E: Exception do
         begin
-          DependentAdd('wilog: PartCopyToRead: "' + E.Message + '"',
+          Log('wilog: PartCopyToRead: "' + E.Message + '"',
             LLError);
         end
       end;
     finally
       FileClose(LogPartReadFileF);
       PartReopen;
-      DependentAdd('read file created', LLInfo);
+      Log('read file created', LLInfo);
     end;
   end;
 end;

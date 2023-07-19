@@ -5,7 +5,9 @@ unit OpsiLinuxInstaller_QueryData;
 interface
 
 uses
-  Classes, SysUtils, DistributionInfo;
+  Classes, SysUtils,
+  osfunclin,
+  DistributionInfo;
 
 
 type
@@ -26,7 +28,9 @@ implementation
 
 constructor TOpsiLinuxInstallerData.Create;
 begin
-  FDistrInfo := TDistributionInfo.Create;
+  // Following line takes time and is therefore executed only once at the
+  // beginning of oqi when Data is created.
+  FDistrInfo := TDistributionInfo.Create(getLinuxDistroName, getLinuxDistroRelease);
   // TODO: Set initial values of query properties
 end;
 
