@@ -111,6 +111,7 @@ end;
 procedure TFNewDepDlg.FormShow(Sender: TObject);
 var
   resourcedir : string;
+  tmpimage: TPicture;
 begin
   label2.Caption := rsDepDlgProductId;
   //ComboBoxReqType.Enabled := True;
