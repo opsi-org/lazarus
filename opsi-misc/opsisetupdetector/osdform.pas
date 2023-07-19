@@ -254,14 +254,14 @@ type
     Panel13: TPanel;
     SpeedButtonHelpMain: TSpeedButton;
     SpeedButtonHelpAnalyze: TSpeedButton;
-    SpeedButtonHelpSetup: TSpeedButton;
+    SpeedButtonHelpSetup1: TSpeedButton;
     SpeedButtonHelpProd1: TSpeedButton;
     SpeedButtonHelpProd2: TSpeedButton;
     SpeedButtonHelpIcon: TSpeedButton;
     SpeedButtonHelpCreate: TSpeedButton;
-    SpeedButtonHelpSetup1: TSpeedButton;
     SpeedButtonHelpSetup2: TSpeedButton;
-    SpeedButtonHelpSartOSIndep: TSpeedButton;
+    SpeedButtonHelpSetup3: TSpeedButton;
+    SpeedButtonHelpStartOSIndep: TSpeedButton;
     SpeedButtonHelpStartWin: TSpeedButton;
     SpeedButtonHelpStartLin: TSpeedButton;
     SpeedButtonHelpStartMac: TSpeedButton;
@@ -474,8 +474,8 @@ type
     procedure SpeedButtonHelpMainClick(Sender: TObject);
     procedure SpeedButtonHelpProd1Click(Sender: TObject);
     procedure SpeedButtonHelpProd2Click(Sender: TObject);
-    procedure SpeedButtonHelpSartOSIndepClick(Sender: TObject);
-    procedure SpeedButtonHelpSetupClick(Sender: TObject);
+    procedure SpeedButtonHelpStartOSIndepClick(Sender: TObject);
+    procedure SpeedButtonHelpSetup1Click(Sender: TObject);
     procedure SpeedButtonHelpStartLinClick(Sender: TObject);
     procedure SpeedButtonHelpStartMacClick(Sender: TObject);
     procedure SpeedButtonHelpStartMultiClick(Sender: TObject);
@@ -3375,6 +3375,25 @@ begin
     'analyzepack4.xpm');
   BtSingleAnalyzeAndCreateMulti.Glyph.Assign(tmpimage.Bitmap);
 
+  // Help icons at linux has to be loaded as xpm file
+  tmpimage.LoadFromFile(resourcedir + PathDelim + 'images' + PathDelim +
+    'help-circle20.xpm');
+  SpeedButtonHelpMain.Glyph.Assign(tmpimage.Bitmap);
+  SpeedButtonHelpStartOSIndep.Glyph.Assign(tmpimage.Bitmap);
+  SpeedButtonHelpStartWin.Glyph.Assign(tmpimage.Bitmap);
+  SpeedButtonHelpStartLin.Glyph.Assign(tmpimage.Bitmap);
+  SpeedButtonHelpStartMac.Glyph.Assign(tmpimage.Bitmap);
+  SpeedButtonHelpStartMulti.Glyph.Assign(tmpimage.Bitmap);
+  SpeedButtonHelpAnalyze.Glyph.Assign(tmpimage.Bitmap);
+  SpeedButtonHelpSetup2.Glyph.Assign(tmpimage.Bitmap);
+  SpeedButtonHelpSetup2.Glyph.Assign(tmpimage.Bitmap);
+  SpeedButtonHelpSetup3.Glyph.Assign(tmpimage.Bitmap);
+  SpeedButtonHelpProd1.Glyph.Assign(tmpimage.Bitmap);
+  SpeedButtonHelpProd2.Glyph.Assign(tmpimage.Bitmap);
+  SpeedButtonHelpIcon.Glyph.Assign(tmpimage.Bitmap);
+  SpeedButtonHelpCreate.Glyph.Assign(tmpimage.Bitmap);
+
+
   FreeAndNil(tmpimage);
   {$ENDIF UNIX}
   PaintPreview(DefaultIcon);
@@ -3489,7 +3508,7 @@ begin
   OpenURL(myUrl);
 end;
 
-procedure TResultform1.SpeedButtonHelpSartOSIndepClick(Sender: TObject);
+procedure TResultform1.SpeedButtonHelpStartOSIndepClick(Sender: TObject);
 var
   myUrl : string;
 begin
@@ -3500,7 +3519,7 @@ begin
   OpenURL(myUrl);
 end;
 
-procedure TResultform1.SpeedButtonHelpSetupClick(Sender: TObject);
+procedure TResultform1.SpeedButtonHelpSetup1Click(Sender: TObject);
 var
   myUrl : string;
 begin

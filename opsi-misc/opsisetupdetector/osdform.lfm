@@ -165,11 +165,11 @@ object resultForm1: TresultForm1
       Height = 655
       Top = 1
       Width = 1137
-      ActivePage = TabSheetStart
+      ActivePage = TabSheetCreate
       Align = alClient
       Images = ImageList1
       ParentFont = False
-      TabIndex = 0
+      TabIndex = 8
       TabOrder = 0
       OnChange = PageControl1Change
       object TabSheetStart: TTabSheet
@@ -246,7 +246,7 @@ object resultForm1: TresultForm1
                   Index = 1
                 end              
                 item
-                  Control = SpeedButtonHelpSartOSIndep
+                  Control = SpeedButtonHelpStartOSIndep
                   WrapAfter = waAuto
                   Index = 2
                 end>
@@ -694,7 +694,7 @@ object resultForm1: TresultForm1
                 ParentColor = False
                 ParentFont = False
               end
-              object SpeedButtonHelpSartOSIndep: TSpeedButton
+              object SpeedButtonHelpStartOSIndep: TSpeedButton
                 Left = 470
                 Height = 22
                 Hint = 'Show Help'
@@ -759,7 +759,7 @@ object resultForm1: TresultForm1
                   000600000056000000A6000000D8000000F4000000F4000000D8000000A60000
                   0055000000060000000000000000000000000000000000000000
                 }
-                OnClick = SpeedButtonHelpSartOSIndepClick
+                OnClick = SpeedButtonHelpStartOSIndepClick
                 ShowHint = True
                 ParentShowHint = False
               end
@@ -5856,7 +5856,7 @@ object resultForm1: TresultForm1
               Index = 3
             end          
             item
-              Control = SpeedButtonHelpSetup
+              Control = SpeedButtonHelpSetup1
               WrapAfter = waAuto
               Index = 4
             end          
@@ -5932,7 +5932,7 @@ object resultForm1: TresultForm1
             PropertyNameAsCaption = False
             TabOrder = 1
           end
-          object SpeedButtonHelpSetup: TSpeedButton
+          object SpeedButtonHelpSetup1: TSpeedButton
             Left = 679
             Height = 22
             Hint = 'Show Help'
@@ -5997,7 +5997,7 @@ object resultForm1: TresultForm1
               000600000056000000A6000000D8000000F4000000F4000000D8000000A60000
               0055000000060000000000000000000000000000000000000000
             }
-            OnClick = SpeedButtonHelpSetupClick
+            OnClick = SpeedButtonHelpSetup1Click
             ShowHint = True
             ParentShowHint = False
           end
@@ -7044,7 +7044,7 @@ object resultForm1: TresultForm1
               Index = 3
             end          
             item
-              Control = SpeedButtonHelpSetup1
+              Control = SpeedButtonHelpSetup2
               WrapAfter = waAuto
               Index = 4
             end          
@@ -7120,7 +7120,7 @@ object resultForm1: TresultForm1
             PropertyNameAsCaption = False
             TabOrder = 1
           end
-          object SpeedButtonHelpSetup1: TSpeedButton
+          object SpeedButtonHelpSetup2: TSpeedButton
             Left = 679
             Height = 22
             Hint = 'Show Help'
@@ -7185,7 +7185,7 @@ object resultForm1: TresultForm1
               000600000056000000A6000000D8000000F4000000F4000000D8000000A60000
               0055000000060000000000000000000000000000000000000000
             }
-            OnClick = SpeedButtonHelpSetupClick
+            OnClick = SpeedButtonHelpSetup1Click
             ShowHint = True
             ParentShowHint = False
           end
@@ -8232,7 +8232,7 @@ object resultForm1: TresultForm1
               Index = 3
             end          
             item
-              Control = SpeedButtonHelpSetup2
+              Control = SpeedButtonHelpSetup3
               WrapAfter = waAuto
               Index = 4
             end          
@@ -8308,7 +8308,7 @@ object resultForm1: TresultForm1
             PropertyNameAsCaption = False
             TabOrder = 1
           end
-          object SpeedButtonHelpSetup2: TSpeedButton
+          object SpeedButtonHelpSetup3: TSpeedButton
             Left = 679
             Height = 22
             Hint = 'Show Help'
@@ -8373,7 +8373,7 @@ object resultForm1: TresultForm1
               000600000056000000A6000000D8000000F4000000F4000000D8000000A60000
               0055000000060000000000000000000000000000000000000000
             }
-            OnClick = SpeedButtonHelpSetupClick
+            OnClick = SpeedButtonHelpSetup1Click
             ShowHint = True
             ParentShowHint = False
           end
@@ -10493,10 +10493,10 @@ object resultForm1: TresultForm1
                 TIOptions = [tgoStartIndexAtOne, tgoShowOnlyProperties]
                 ColWidths = (
                   64
-                  147
-                  147
-                  147
-                  148
+                  151
+                  151
+                  151
+                  153
                 )
               end
               object PanelDepBtns: TPanel
@@ -10919,10 +10919,10 @@ object resultForm1: TresultForm1
                 TIOptions = [tgoStartIndexAtOne, tgoShowOnlyProperties]
                 ColWidths = (
                   64
-                  260
-                  260
-                  260
-                  262
+                  264
+                  264
+                  264
+                  267
                 )
               end
             end

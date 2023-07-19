@@ -109,9 +109,21 @@ begin
 end;
 
 procedure TFNewDepDlg.FormShow(Sender: TObject);
+var
+  resourcedir : string;
 begin
   label2.Caption := rsDepDlgProductId;
   //ComboBoxReqType.Enabled := True;
+  {$IFDEF UNIX}
+  // the first path is in the development environment
+  resourcedir := ExtractFileDir(Application.ExeName);
+  {$IFDEF DARWIN}
+    resourcedir := ExtractFileDir(Application.ExeName) + PathDelim + '../Resources';
+  {$ENDIF DARWIN}
+  tmpimage.LoadFromFile(resourcedir + PathDelim + 'images' + PathDelim +
+    'help-circle20.xpm');
+  SpeedButtonHelpDependecies.Glyph.Assign(tmpimage.Bitmap);
+  {$ENDIF UNIX}
 end;
 
 procedure TFNewDepDlg.ComboBoxActStateChange(Sender: TObject);

@@ -1,11 +1,11 @@
 object FNewDepDlg: TFNewDepDlg
   Left = 541
-  Height = 420
+  Height = 461
   Top = 215
-  Width = 444
+  Width = 563
   Caption = 'opsi-setup-detector: Dependency Editor'
-  ClientHeight = 420
-  ClientWidth = 444
+  ClientHeight = 461
+  ClientWidth = 563
   OnActivate = FormActivate
   OnShow = FormShow
   Position = poScreenCenter
@@ -13,11 +13,11 @@ object FNewDepDlg: TFNewDepDlg
   object Panel1: TPanel
     Left = 0
     Height = 50
-    Top = 370
-    Width = 444
+    Top = 411
+    Width = 563
     Align = alBottom
     ClientHeight = 50
-    ClientWidth = 444
+    ClientWidth = 563
     ParentFont = False
     TabOrder = 0
     object BitBtn1: TBitBtn
@@ -36,7 +36,7 @@ object FNewDepDlg: TFNewDepDlg
       TabOrder = 0
     end
     object BitBtn2: TBitBtn
-      Left = 335
+      Left = 454
       Height = 38
       Top = 6
       Width = 96
@@ -57,17 +57,17 @@ object FNewDepDlg: TFNewDepDlg
     Left = 0
     Height = 127
     Top = 0
-    Width = 444
+    Width = 563
     Align = alTop
     ClientHeight = 127
-    ClientWidth = 444
+    ClientWidth = 563
     ParentFont = False
     TabOrder = 1
     object Label1: TLabel
       Left = 8
       Height = 81
       Top = 8
-      Width = 402
+      Width = 489
       Align = alClient
       Alignment = taCenter
       AutoSize = False
@@ -81,7 +81,7 @@ object FNewDepDlg: TFNewDepDlg
       Left = 12
       Height = 15
       Top = 100
-      Width = 420
+      Width = 539
       Align = alBottom
       Alignment = taCenter
       BorderSpacing.Around = 11
@@ -91,11 +91,11 @@ object FNewDepDlg: TFNewDepDlg
       ParentFont = False
     end
     object SpeedButtonHelpDependecies: TSpeedButton
-      Left = 417
+      Left = 504
       Height = 88
       Hint = 'Show Help'
       Top = 1
-      Width = 26
+      Width = 58
       Align = alRight
       Anchors = [akTop, akLeft, akBottom]
       Flat = True
@@ -160,9 +160,9 @@ object FNewDepDlg: TFNewDepDlg
   end
   object FlowPanel1: TFlowPanel
     Left = 0
-    Height = 243
+    Height = 284
     Top = 127
-    Width = 444
+    Width = 563
     Align = alClient
     ControlList = <    
       item
@@ -192,7 +192,7 @@ object FNewDepDlg: TFNewDepDlg
     object GroupBox1: TGroupBox
       Left = 6
       Height = 63
-      Top = 64
+      Top = 85
       Width = 417
       Anchors = []
       BorderSpacing.Around = 5
@@ -225,28 +225,29 @@ object FNewDepDlg: TFNewDepDlg
     end
     object FlowPanel2: TFlowPanel
       Left = 1
-      Height = 58
+      Height = 79
       Top = 1
-      Width = 438
+      Width = 559
+      Align = alClient
       Anchors = []
       BevelOuter = bvNone
       ControlList = <      
         item
-          Control = ComboBoxproductIds
+          Control = Label2
           WrapAfter = waAuto
           Index = 0
         end      
         item
-          Control = Label2
+          Control = ComboBoxproductIds
           WrapAfter = waAuto
           Index = 1
         end>
-      FlowLayout = tlTop
-      FlowStyle = fsRightLeftTopBottom
+      FlowLayout = tlCenter
+      FlowStyle = fsLeftRightTopBottom
       ParentFont = False
       TabOrder = 1
       object Label2: TLabel
-        Left = 53
+        Left = 5
         Height = 30
         Top = 5
         Width = 136
@@ -257,9 +258,9 @@ object FNewDepDlg: TFNewDepDlg
         ParentFont = False
       end
       object ComboBoxproductIds: TComboBox
-        Left = 194
+        Left = 146
         Height = 23
-        Top = 11
+        Top = 14
         Width = 244
         Anchors = []
         AutoComplete = True
@@ -272,7 +273,7 @@ object FNewDepDlg: TFNewDepDlg
     object FlowPanel3: TFlowPanel
       Left = 1
       Height = 43
-      Top = 132
+      Top = 153
       Width = 422
       Anchors = []
       BevelOuter = bvNone
@@ -320,7 +321,7 @@ object FNewDepDlg: TFNewDepDlg
     object FlowPanel4: TFlowPanel
       Left = 1
       Height = 43
-      Top = 175
+      Top = 196
       Width = 422
       Anchors = []
       BevelOuter = bvNone
