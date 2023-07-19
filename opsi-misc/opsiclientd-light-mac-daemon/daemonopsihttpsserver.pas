@@ -90,8 +90,8 @@ var
   Clientdconf: TIniFile;
 begin
   ClientdConf := TInifile.Create('/etc/opsi-client-agent/opsiclientd.conf');
-  SSLUsername := ClientdConf.ReadString('global', 'host_id', '');//'vmmacdev1onmm1.uib.local';
-  SSLPassword := ClientdConf.ReadString('global', 'opsi_host_key', '');//'aead8f8c57a92e14ac820bf8d3df1805'; //'linux123';
+  SSLUsername := ClientdConf.ReadString('global', 'host_id', '');
+  SSLPassword := ClientdConf.ReadString('global', 'opsi_host_key', '');
   LogDatei.LogLevel := StrToInt(ClientdConf.ReadString('global', 'log_level', ''));
   FreeAndNil(ClientdConf);
 end;
