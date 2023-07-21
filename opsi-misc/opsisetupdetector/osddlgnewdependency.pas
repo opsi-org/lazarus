@@ -116,14 +116,16 @@ begin
   label2.Caption := rsDepDlgProductId;
   //ComboBoxReqType.Enabled := True;
   {$IFDEF UNIX}
+  tmpimage := TPicture.Create;
   // the first path is in the development environment
   resourcedir := ExtractFileDir(Application.ExeName);
   {$IFDEF DARWIN}
     resourcedir := ExtractFileDir(Application.ExeName) + PathDelim + '../Resources';
   {$ENDIF DARWIN}
   tmpimage.LoadFromFile(resourcedir + PathDelim + 'images' + PathDelim +
-    'help-circle20.xpm');
+    'help-circle20.png');
   SpeedButtonHelpDependecies.Glyph.Assign(tmpimage.Bitmap);
+  FreeAndNil(tmpimage);
   {$ENDIF UNIX}
 end;
 

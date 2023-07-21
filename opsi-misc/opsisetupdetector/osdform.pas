@@ -3308,7 +3308,6 @@ var
   filename: string;
   resourcedir, templatePath: string;
 begin
-  tmpimage := TPicture.Create;
   loadDefaultIcon := True;
   Application.OnIdle := @ApplicationEventIdle;
   // TabSheetIcons presets
@@ -3355,6 +3354,8 @@ begin
     else
       LogDatei.log('Could not find template.png ', LLError);
   end;
+  tmpimage := TPicture.Create;
+
   tmpimage.LoadFromFile(resourcedir + PathDelim + 'images' + PathDelim +
     'analyzepack4.xpm');
   BtSingleAnalyzeAndCreateWin.Glyph.Assign(tmpimage.Bitmap);
@@ -3377,7 +3378,7 @@ begin
 
   // Help icons at linux has to be loaded as xpm file
   tmpimage.LoadFromFile(resourcedir + PathDelim + 'images' + PathDelim +
-    'help-circle20.xpm');
+    'help-circle20.png');
   SpeedButtonHelpMain.Glyph.Assign(tmpimage.Bitmap);
   SpeedButtonHelpStartOSIndep.Glyph.Assign(tmpimage.Bitmap);
   SpeedButtonHelpStartWin.Glyph.Assign(tmpimage.Bitmap);
