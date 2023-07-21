@@ -93,10 +93,26 @@ begin
 end;
 
 procedure TFOSDConfigdlg.FormCreate(Sender: TObject);
+var
+  resourcedir: string;
+  tmpimage: TPicture;
 begin
   // Create Config Hints
   myconfigurationhints := TStringList.Create;
   DataModule1.SetFontName(TControl(Sender), myFont);
+  DataModule1.SetFontName(TControl(Sender), myFont);
+  {$IFDEF UNIX}
+  tmpimage := TPicture.Create;
+  // the first path is in the development environment
+  resourcedir := ExtractFileDir(Application.ExeName);
+  {$IFDEF DARWIN}
+    resourcedir := ExtractFileDir(Application.ExeName) + PathDelim + '../Resources';
+  {$ENDIF DARWIN}
+  tmpimage.LoadFromFile(resourcedir + PathDelim + 'images' + PathDelim +
+    'help-circle20.png');
+  SpeedButtonHelpConfig.Glyph.Assign(tmpimage.Bitmap);
+  FreeAndNil(tmpimage);
+  {$ENDIF UNIX}
 end;
 
 procedure TFOSDConfigdlg.FormDestroy(Sender: TObject);
@@ -106,12 +122,14 @@ end;
 
 procedure TFOSDConfigdlg.SpeedButtonHelpConfigClick(Sender: TObject);
 var
-  myUrl : string;
+  myUrl: string;
 begin
   if LowerCase(osdsettings.mylang) = 'de' then
-    myUrl := opsidocs_base_url+'opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-use-start'
+    myUrl := opsidocs_base_url +
+      'opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-use-start'
   else
-    myUrl := opsidocs_base_url+'opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-use-start';
+    myUrl := opsidocs_base_url +
+      'opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-use-start';
   OpenURL(myUrl);
 end;
 

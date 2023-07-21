@@ -204,8 +204,23 @@ begin
 end;
 
 procedure TFNewPropDlg.FormCreate(Sender: TObject);
+var
+  resourcedir : string;
+  tmpimage: TPicture;
 begin
   DataModule1.SetFontName(TControl(Sender), myFont);
+  {$IFDEF UNIX}
+  tmpimage := TPicture.Create;
+  // the first path is in the development environment
+  resourcedir := ExtractFileDir(Application.ExeName);
+  {$IFDEF DARWIN}
+    resourcedir := ExtractFileDir(Application.ExeName) + PathDelim + '../Resources';
+  {$ENDIF DARWIN}
+  tmpimage.LoadFromFile(resourcedir + PathDelim + 'images' + PathDelim +
+    'help-circle20.png');
+  SpeedButtonHelpProperties.Glyph.Assign(tmpimage.Bitmap);
+  FreeAndNil(tmpimage);
+  {$ENDIF UNIX}
 end;
 
 procedure TFNewPropDlg.FormShow(Sender: TObject);
