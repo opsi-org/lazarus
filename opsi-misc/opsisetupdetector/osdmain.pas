@@ -421,6 +421,10 @@ begin
           FNewDepDlg.LabelConnect.Font.Color := clGreen;
           resultForm1.StatusBar1.Panels.Items[1].Text :=
             'Connected to opsi server: ' + myconfiguration.Service_URL;
+          FNewDepDlg.Repaint;
+          procmess;
+          LogDatei.log('Service connection initialized to :' +
+            myconfiguration.Service_URL + ' version: ' + opsiserviceversion, LLinfo);
           localservicedataConnected := true;
           // fetch produtIds from service
           strlist.Text := localservicedata.getLocalbootProductIds.Text;
