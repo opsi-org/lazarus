@@ -72,9 +72,9 @@ object FOSDConfigdlg: TFOSDConfigdlg
     end
     object BitBtn1: TBitBtn
       Left = 378
-      Height = 42
+      Height = 34
       Top = 21
-      Width = 95
+      Width = 98
       Anchors = []
       AutoSize = True
       BorderSpacing.Around = 20
@@ -87,7 +87,7 @@ object FOSDConfigdlg: TFOSDConfigdlg
       TabOrder = 0
     end
     object SpeedButtonHelpConfig: TSpeedButton
-      Left = 493
+      Left = 496
       Height = 32
       Hint = 'Show Help'
       Top = 1

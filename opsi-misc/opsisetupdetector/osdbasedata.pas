@@ -263,7 +263,7 @@ requirementType: before
     FRequType: TPDtype;
   published
     property Required_Type: TPDtype read FRequType write FRequType;
-    property action: string read FAction write FAction;
+    property Action: string read FAction write FAction;
     property Required_ProductId: string read FRequProductId write FRequProductId;
     property Required_State: TPInstallationState read FRequState write FRequState;
     property Required_Action: TPActionRequest read FRequAction write FRequAction;
@@ -470,7 +470,8 @@ default: ["xenial_bionic"]
     FLastProjectFileDir : string;  // last dir from wich we opend a project file
     FLastSetupFileDir : string;  // last dir from wich we opend a setup file
     FLasticonFileDir : string;  // last dir from wich we opend a icon file
-    Fcontrol_in_toml_format : boolean;
+    Fcontrol_in_toml_format : boolean; // since opsi 4.3 control files in toml format
+    Fdependencies_for_all_actionrequests : boolean; // since opsi 4.3 dependecies are allowed for all action requests
     procedure SetLibraryLines(const AValue: TStrings);
     procedure SetPreInstallLines(const AValue: TStrings);
     procedure SetPostInstallLines(const AValue: TStrings);
@@ -516,6 +517,9 @@ default: ["xenial_bionic"]
     property LastSetupFileDir: string read FLastSetupFileDir write FLastSetupFileDir;
     property LasticonFileDir: string read FLasticonFileDir write FLasticonFileDir;
     property control_in_toml_format: boolean read Fcontrol_in_toml_format write Fcontrol_in_toml_format;
+    property dependencies_for_all_actionrequests: boolean read Fdependencies_for_all_actionrequests
+      write Fdependencies_for_all_actionrequests;
+
 
 
     procedure writeconfig;
@@ -636,6 +640,10 @@ resourcestring
     'Create control file in (opsi 4.3) toml format ?. ' + LineEnding +
     'If true, you need opsi 4.3 (or up) ' + LineEnding +
     'and the toml file is the main control file that should be maintained.';
+  rsDependencies_for_all_actionrequests =
+    'Allow dependencies for all action request ?. ' + LineEnding +
+    'If true, you need opsi 4.3 (or up) ' + LineEnding +
+    'Be careful when creating dependencies for other action requests than "setup"';
 
 
 implementation
@@ -1437,6 +1445,7 @@ begin
   FTemplateChannel := default;
   FpreferSilent := False; // Unattended
   Fcontrol_in_toml_format := False; // opsi 4.2
+  Fdependencies_for_all_actionrequests := False; // opsi 4.2
   {$IFDEF UNIX}
   FLasticonFileDir := '/usr/share/opsi-setup-detector/icons';
   {$ENDIF UNIX}

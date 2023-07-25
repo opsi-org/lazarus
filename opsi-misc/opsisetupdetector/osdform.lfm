@@ -10478,12 +10478,14 @@ object resultForm1: TresultForm1
                 ParentColor = False
                 ParentFont = False
                 PropertyOrder.Strings = (
+                  'Action'
                   'Required_ProductId'
                   'Required_State'
                   'Required_Action'
                   'Required_Type'
                 )
                 ShowOnlyProperties.Strings = (
+                  'Action'
                   'Required_ProductId'
                   'Required_State'
                   'Required_Action'

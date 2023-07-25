@@ -142,9 +142,13 @@ opsi-setup-detector (4.2.2.0-1) stable; urgency=low
    * setup tabs: more space for the info link
    * fix opsi-logviewer call for linux and mac
    * new 'rebuild' button on create tab
-   * new config 'control_in_toml_format'
+   * new config 'control_in_toml_format' if true create control in toml  (4.3) (default= false)
    * reset password from input dialog to empty in order to ask again on reconnect
    * migrate to synapse r270 for SSLv3
+   * localize connection info
+   * new config 'dependencies_for_all_actionrequests'
+      if true allow dependencies for all ection requests (4.3) (default= false)
+   * fix: dependency dialog sort list of possible products in combobox
 
    todo:
 

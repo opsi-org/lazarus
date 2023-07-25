@@ -27,18 +27,22 @@ type
   TFNewDepDlg = class(TForm)
     BitBtn1: TBitBtn;
     BitBtn2: TBitBtn;
-    ComboBoxproductIds: TComboBox;
     ComboBoxActState: TComboBox;
+    ComboBoxDepActionrequest: TComboBox;
+    ComboBoxproductIds: TComboBox;
     ComboBoxReqType: TComboBox;
     FlowPanel1: TFlowPanel;
     FlowPanel2: TFlowPanel;
     FlowPanel3: TFlowPanel;
     FlowPanel4: TFlowPanel;
+    FlowPanel5: TFlowPanel;
+    FlowPanel6: TFlowPanel;
     GroupBox1: TGroupBox;
     Label1: TLabel;
-    Label2: TLabel;
+    LabelDepActionrequest: TLabel;
     Label3: TLabel;
     Label4: TLabel;
+    Label5: TLabel;
     LabelConnect: TLabel;
     Panel1: TPanel;
     Panel2: TPanel;
@@ -64,6 +68,7 @@ var
 resourcestring
   // new for 4.1.0.2 ******************************************************************
   rsDepDlgProductId = 'productId' + LineEnding + 'of the dependent product';
+  rsDepDlgAction = 'create dependency' + LineEnding + 'for which action request';
 
 implementation
 uses
@@ -110,17 +115,29 @@ end;
 
 procedure TFNewDepDlg.FormShow(Sender: TObject);
 var
-  resourcedir : string;
+  resourcedir: string;
   tmpimage: TPicture;
 begin
-  label2.Caption := rsDepDlgProductId;
+  LabelDepActionrequest.Caption := rsDepDlgProductId;
+  LabelDepActionrequest.Caption := rsDepDlgAction;
+  if myconfiguration.dependencies_for_all_actionrequests and
+    (not (osdsettings.runmode = createMeta)) then
+  begin
+    ComboBoxDepActionrequest.Enabled := True;
+    LabelDepActionrequest.Enabled := True;
+  end
+  else
+  begin
+    ComboBoxDepActionrequest.Enabled := False;
+    LabelDepActionrequest.Enabled := False;
+  end;
   //ComboBoxReqType.Enabled := True;
   {$IFDEF UNIX}
   tmpimage := TPicture.Create;
   // the first path is in the development environment
   resourcedir := ExtractFileDir(Application.ExeName);
   {$IFDEF DARWIN}
-    resourcedir := ExtractFileDir(Application.ExeName) + PathDelim + '../Resources';
+  resourcedir := ExtractFileDir(Application.ExeName) + PathDelim + '../Resources';
   {$ENDIF DARWIN}
   tmpimage.LoadFromFile(resourcedir + PathDelim + 'images' + PathDelim +
     'help-circle20.png');
@@ -145,8 +162,8 @@ end;
 
 procedure TFNewDepDlg.FormActivate(Sender: TObject);
 begin
-  SetDefaultLang(osdsettings.mylang, osdsettings.mylocaledir);
-  Repaint;
+  //SetDefaultLang(osdsettings.mylang, osdsettings.mylocaledir);
+  //Repaint;
 end;
 
 

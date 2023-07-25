@@ -499,7 +499,6 @@ type
     procedure TIEditSetup1UnProgramEditingDone(Sender: TObject);
     procedure TIEditSetup2UnProgramEditingDone(Sender: TObject);
     procedure TIEditSetup3UnProgramEditingDone(Sender: TObject);
-    procedure TIGridDepPropertiesCreated(Sender: TObject);
     procedure TimerFirstconfigTimer(Sender: TObject);
     procedure TIRadioGroupBuildModeClick(Sender: TObject);
     procedure TIS1UrlClick(Sender: TObject);
@@ -647,6 +646,8 @@ resourcestring
   rsMacSelectionRememberMe = 'Do not show this Message again';
   rsServiceConnectionFailed =
     'Could not connect to the opsi-web-service. Check URL, user and password';
+  rsServiceConnected = 'Connected to opsi server';
+  rsServiceNotConnected = 'Not connected to opsi server';
   rsCreateWithUserProductAdvice =
     'Use Property "Debug = true" to disable ' + 'mouse and keyboard blocking.' +
     LineEnding +
@@ -1773,6 +1774,8 @@ begin
     //add
     mydep := TPDependency(osdbasedata.aktProduct.dependencies.add);
     mydep.init;
+    // Action request
+    mydep.action:= FNewDepDlg.ComboBoxDepActionrequest.Text;
     // required productId
     mydep.Required_ProductId := FNewDepDlg.ComboBoxproductIds.Text;
     // required State & action
@@ -3753,19 +3756,12 @@ end;
 procedure TResultform1.TIEditSetup2UnProgramEditingDone(Sender: TObject);
 begin
   updateUninstaller(aktProduct.SetupFiles[1]);
-
 end;
 
 procedure TResultform1.TIEditSetup3UnProgramEditingDone(Sender: TObject);
 begin
   updateUninstaller(aktProduct.SetupFiles[2]);
 end;
-
-procedure TResultform1.TIGridDepPropertiesCreated(Sender: TObject);
-begin
-
-end;
-
 
 procedure TResultform1.genRttiEditChange(Sender: TObject);
 var

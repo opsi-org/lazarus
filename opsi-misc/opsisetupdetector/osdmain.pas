@@ -417,10 +417,10 @@ begin
           LogDatei.log('Service connection initialized to :' +
             myconfiguration.Service_URL + ' version: ' + opsiserviceversion, LLinfo);
           {$IFDEF OSDGUI}
-          FNewDepDlg.LabelConnect.Caption := 'Connected to opsi server';
+          FNewDepDlg.LabelConnect.Caption := rsServiceConnected;
           FNewDepDlg.LabelConnect.Font.Color := clGreen;
           resultForm1.StatusBar1.Panels.Items[1].Text :=
-            'Connected to opsi server: ' + myconfiguration.Service_URL;
+             rsServiceConnected +': ' + myconfiguration.Service_URL;
           FNewDepDlg.Repaint;
           procmess;
           LogDatei.log('Service connection initialized to :' +
@@ -428,6 +428,7 @@ begin
           localservicedataConnected := true;
           // fetch produtIds from service
           strlist.Text := localservicedata.getLocalbootProductIds.Text;
+          strlist.Sort;
           for i := 0 to strlist.Count - 1 do
             FNewDepDlg.ComboBoxproductIds.Items.Add(
               opsiunquotestr2(strlist.strings[i], '""'));
@@ -441,9 +442,9 @@ begin
           {$IFDEF OSDGUI}
           MessageDlg('opsi-setup-detctor', rsServiceConnectionFailed,
             mtError, [mbOK], '');
-          FNewDepDlg.LabelConnect.Caption := 'Not connected to opsi server';
+          FNewDepDlg.LabelConnect.Caption := rsServiceNotConnected;
           FNewDepDlg.LabelConnect.Font.Color := clRed;
-          resultForm1.StatusBar1.Panels.Items[1].Text := 'Not connected to opsi server';
+          resultForm1.StatusBar1.Panels.Items[1].Text := rsServiceNotConnected;
           {$ENDIF OSDGUI}
           // reset password from input dialog to empty in order to ask again on reconnect
           if myconfiguration.Service_pass = '' then passwordToUse := '';
@@ -454,9 +455,9 @@ begin
         // service data missing
         LogDatei.log('Service connection not possible: Url or user missing.', LLwarning);
         {$IFDEF OSDGUI}
-        FNewDepDlg.LabelConnect.Caption := 'Not connected to opsi server';
+        FNewDepDlg.LabelConnect.Caption := rsServiceNotConnected;
         FNewDepDlg.LabelConnect.Font.Color := clRed;
-        resultForm1.StatusBar1.Panels.Items[1].Text := 'Not connected to opsi server';
+        resultForm1.StatusBar1.Panels.Items[1].Text := rsServiceNotConnected;
         {$ENDIF OSDGUI}
         if localservicedata <> nil then
           FreeAndNil(localservicedata);

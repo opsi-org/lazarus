@@ -1,7 +1,7 @@
 object FNewDepDlg: TFNewDepDlg
-  Left = 541
+  Left = 763
   Height = 461
-  Top = 215
+  Top = 428
   Width = 563
   Caption = 'opsi-setup-detector: Dependency Editor'
   ClientHeight = 461
@@ -36,10 +36,10 @@ object FNewDepDlg: TFNewDepDlg
       TabOrder = 0
     end
     object BitBtn2: TBitBtn
-      Left = 432
+      Left = 454
       Height = 38
       Top = 6
-      Width = 118
+      Width = 96
       Align = alRight
       AutoSize = True
       BorderSpacing.Right = 7
@@ -65,7 +65,7 @@ object FNewDepDlg: TFNewDepDlg
     TabOrder = 1
     object Label1: TLabel
       Left = 8
-      Height = 77
+      Height = 81
       Top = 8
       Width = 489
       Align = alClient
@@ -79,8 +79,8 @@ object FNewDepDlg: TFNewDepDlg
     end
     object LabelConnect: TLabel
       Left = 12
-      Height = 19
-      Top = 96
+      Height = 15
+      Top = 100
       Width = 539
       Align = alBottom
       Alignment = taCenter
@@ -92,7 +92,7 @@ object FNewDepDlg: TFNewDepDlg
     end
     object SpeedButtonHelpDependecies: TSpeedButton
       Left = 504
-      Height = 84
+      Height = 88
       Hint = 'Show Help'
       Top = 1
       Width = 58
@@ -192,20 +192,20 @@ object FNewDepDlg: TFNewDepDlg
     object GroupBox1: TGroupBox
       Left = 6
       Height = 63
-      Top = 85
+      Top = 109
       Width = 417
       Anchors = []
       BorderSpacing.Around = 5
       Caption = 'Require Mode'
       ClientHeight = 43
-      ClientWidth = 415
+      ClientWidth = 413
       ParentFont = False
       TabOrder = 0
       object RadioButtonAction: TRadioButton
         Left = 22
-        Height = 21
+        Height = 19
         Top = 8
-        Width = 63
+        Width = 55
         Caption = 'Action'
         OnChange = RadioButtonActionChange
         ParentFont = False
@@ -213,9 +213,9 @@ object FNewDepDlg: TFNewDepDlg
       end
       object RadioButtonState: TRadioButton
         Left = 145
-        Height = 21
+        Height = 19
         Top = 8
-        Width = 56
+        Width = 46
         Caption = 'State'
         Checked = True
         ParentFont = False
@@ -225,7 +225,7 @@ object FNewDepDlg: TFNewDepDlg
     end
     object FlowPanel2: TFlowPanel
       Left = 1
-      Height = 79
+      Height = 103
       Top = 1
       Width = 559
       Align = alClient
@@ -233,12 +233,12 @@ object FNewDepDlg: TFNewDepDlg
       BevelOuter = bvNone
       ControlList = <      
         item
-          Control = Label2
+          Control = FlowPanel5
           WrapAfter = waAuto
           Index = 0
         end      
         item
-          Control = ComboBoxproductIds
+          Control = FlowPanel6
           WrapAfter = waAuto
           Index = 1
         end>
@@ -246,34 +246,113 @@ object FNewDepDlg: TFNewDepDlg
       FlowStyle = fsLeftRightTopBottom
       ParentFont = False
       TabOrder = 1
-      object Label2: TLabel
-        Left = 5
-        Height = 38
-        Top = 5
-        Width = 160
+      object FlowPanel5: TFlowPanel
+        Left = 0
+        Height = 48
+        Top = 0
+        Width = 538
         Anchors = []
-        BorderSpacing.Around = 5
-        Caption = 'productid'#10'of the dependent product'
-        ParentColor = False
-        ParentFont = False
-      end
-      object ComboBoxproductIds: TComboBox
-        Left = 170
-        Height = 30
-        Top = 14
-        Width = 244
-        Anchors = []
-        AutoComplete = True
-        AutoCompleteText = [cbactEnabled, cbactEndOfLineComplete, cbactSearchAscending]
-        BorderSpacing.Top = 11
-        ItemHeight = 0
+        Caption = 'FlowPanel5'
+        ControlList = <        
+          item
+            Control = LabelDepActionrequest
+            WrapAfter = waAuto
+            Index = 0
+          end        
+          item
+            Control = ComboBoxDepActionrequest
+            WrapAfter = waAuto
+            Index = 1
+          end>
+        FlowLayout = tlTop
+        FlowStyle = fsLeftRightTopBottom
         TabOrder = 0
+        object LabelDepActionrequest: TLabel
+          Left = 6
+          Height = 30
+          Top = 6
+          Width = 128
+          Anchors = []
+          BorderSpacing.Around = 5
+          Caption = 'Dependency'#13#10'for which action request'
+          ParentColor = False
+          ParentFont = False
+        end
+        object ComboBoxDepActionrequest: TComboBox
+          Left = 149
+          Height = 23
+          Top = 12
+          Width = 244
+          Anchors = []
+          AutoComplete = True
+          AutoCompleteText = [cbactEnabled, cbactEndOfLineComplete, cbactSearchAscending]
+          BorderSpacing.Left = 10
+          BorderSpacing.Top = 11
+          ItemHeight = 15
+          ItemIndex = 0
+          Items.Strings = (
+            'setup'
+            'uninstall'
+            'update'
+            'always'
+            'custom'
+            'once'
+          )
+          TabOrder = 0
+          Text = 'setup'
+        end
+      end
+      object FlowPanel6: TFlowPanel
+        Left = 0
+        Height = 48
+        Top = 48
+        Width = 538
+        Anchors = []
+        Caption = 'FlowPanel6'
+        ControlList = <        
+          item
+            Control = Label5
+            WrapAfter = waAuto
+            Index = 0
+          end        
+          item
+            Control = ComboBoxproductIds
+            WrapAfter = waAuto
+            Index = 1
+          end>
+        FlowLayout = tlTop
+        FlowStyle = fsLeftRightTopBottom
+        TabOrder = 1
+        object Label5: TLabel
+          Left = 6
+          Height = 30
+          Top = 6
+          Width = 136
+          Anchors = []
+          BorderSpacing.Around = 5
+          Caption = 'productid'#10'of the dependent product'
+          ParentColor = False
+          ParentFont = False
+        end
+        object ComboBoxproductIds: TComboBox
+          Left = 157
+          Height = 23
+          Top = 12
+          Width = 244
+          Anchors = []
+          AutoComplete = True
+          AutoCompleteText = [cbactEnabled, cbactEndOfLineComplete, cbactSearchAscending]
+          BorderSpacing.Left = 10
+          BorderSpacing.Top = 11
+          ItemHeight = 15
+          TabOrder = 0
+        end
       end
     end
     object FlowPanel3: TFlowPanel
       Left = 1
       Height = 43
-      Top = 153
+      Top = 177
       Width = 422
       Anchors = []
       BevelOuter = bvNone
@@ -294,23 +373,23 @@ object FNewDepDlg: TFNewDepDlg
       TabOrder = 2
       object ComboBoxActState: TComboBox
         Left = 201
-        Height = 30
+        Height = 23
         Top = 5
         Width = 209
         Anchors = []
         BorderSpacing.Right = 7
         BorderSpacing.Around = 5
-        ItemHeight = 0
+        ItemHeight = 15
         OnChange = ComboBoxActStateChange
         ParentFont = False
         TabOrder = 0
         Text = 'ComboBoxActState'
       end
       object Label3: TLabel
-        Left = 101
-        Height = 19
+        Left = 113
+        Height = 15
         Top = 5
-        Width = 90
+        Width = 78
         Anchors = []
         BorderSpacing.Around = 5
         Caption = 'Action or State'
@@ -321,7 +400,7 @@ object FNewDepDlg: TFNewDepDlg
     object FlowPanel4: TFlowPanel
       Left = 1
       Height = 43
-      Top = 196
+      Top = 220
       Width = 422
       Anchors = []
       BevelOuter = bvNone
@@ -342,13 +421,13 @@ object FNewDepDlg: TFNewDepDlg
       TabOrder = 3
       object ComboBoxReqType: TComboBox
         Left = 201
-        Height = 30
+        Height = 23
         Top = 5
         Width = 209
         Anchors = []
         BorderSpacing.Right = 7
         BorderSpacing.Around = 5
-        ItemHeight = 0
+        ItemHeight = 15
         ItemIndex = 0
         Items.Strings = (
           ''
@@ -359,10 +438,10 @@ object FNewDepDlg: TFNewDepDlg
         TabOrder = 0
       end
       object Label4: TLabel
-        Left = 77
-        Height = 19
+        Left = 96
+        Height = 15
         Top = 5
-        Width = 114
+        Width = 95
         Anchors = []
         BorderSpacing.Around = 5
         Caption = 'Requirement Type'
