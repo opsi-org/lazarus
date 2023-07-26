@@ -252,7 +252,6 @@ object FNewDepDlg: TFNewDepDlg
         Top = 0
         Width = 538
         Anchors = []
-        Caption = 'FlowPanel5'
         ControlList = <        
           item
             Control = LabelDepActionrequest
@@ -308,7 +307,6 @@ object FNewDepDlg: TFNewDepDlg
         Top = 48
         Width = 538
         Anchors = []
-        Caption = 'FlowPanel6'
         ControlList = <        
           item
             Control = Label5
