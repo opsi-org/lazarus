@@ -1129,12 +1129,12 @@ begin
       mydep := TPDependency(aktProduct.dependencies.Items[i]);
       textlist.Add('');
       textlist.Add('[ProductDependency]');
-      textlist.Add('action: setup');
+      textlist.Add('action: ' + mydep.Action);
       textlist.Add('requiredProduct: ' + mydep.Required_ProductId);
       case mydep.Required_State of
         noState: ;
         installed: textlist.Add('requiredStatus: installed');
-        not_installed: textlist.Add('requiredStatus: not installed');
+        not_installed: textlist.Add('requiredStatus: not_installed');
         unknown: textlist.Add('requiredStatus: unknown');
       end;
       case mydep.Required_Action of
@@ -1230,12 +1230,12 @@ begin
         mydep := TPDependency(aktProduct.dependencies.Items[i]);
         textlist.Add('');
         textlist.Add('[[ProductDependency]]');
-        textlist.Add('action = "setup"');
+        textlist.Add('action = "' + mydep.Action + '"');
         textlist.Add('requiredProduct = "' + mydep.Required_ProductId + '"');
         case mydep.Required_State of
           noState: ;
           installed: textlist.Add('requiredStatus = "installed"');
-          not_installed: textlist.Add('requiredStatus = "not installed"');
+          not_installed: textlist.Add('requiredStatus = "not_installed"');
           unknown: textlist.Add('requiredStatus = "unknown"');
         end;
         case mydep.Required_Action of

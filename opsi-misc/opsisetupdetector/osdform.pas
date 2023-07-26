@@ -1030,10 +1030,16 @@ var
   ErrorMessage: string;
   PathOpsiLogViewer: string;
   paramstring : string;
+  basepath : string;
 begin
   {$IFDEF WINDOWS}
+  basepath := 'C:\Program Files (x86)';
+  if not DirectoryExists(basepath) then basepath := 'C:\Program Files';
   PathOpsiLogViewer :=
-    'C:\Program Files (x86)\opsi.org\opsi-logviewer\opsi-logviewer.exe';
+    basepath +'\opsi.org\configed\opsi-logviewer.exe';
+  if not FileExists(PathOpsiLogViewer) then
+  PathOpsiLogViewer :=
+    basepath +'\opsi.org\opsi-logviewer\opsi-logviewer.exe';
   paramstring := LogDatei.FileName;
   {$ENDIF WINDOWS}
   {$IFDEF LINUX}
