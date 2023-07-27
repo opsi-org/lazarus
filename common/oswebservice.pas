@@ -1278,7 +1278,6 @@ begin
     HTTPSender.Protocol := '1.1';
     //HTTPSender.Sock.PreferIP4:= False; //might be switched to false if IPv6 is standard
     //HTTPSender.Sock.Family:= SF_IP6; //do not set this if IPv4 addresses are still in use
-    //HTTPSender.Sock.CreateWithSSL(TSSLOpenSSL);
     HTTPSender.Sock.CreateWithSSL(TSSLOpenSSL3);
     HTTPSender.Sock.Connect(ip, port);
     //LogDatei.log('IP: ' + ip + ' Resolved: ' + Httpsender.Sock.GetRemoteSinIP, LLDebug);
