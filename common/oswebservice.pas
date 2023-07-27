@@ -12,16 +12,6 @@ unit oswebservice;
 {$DEFINE SYNAPSE}
 {$DEFINE SSL_OPENSSL_UNIT:=ssl_openssl3}
 {$DEFINE SSL_OPENSSL_LIB_UNIT:=ssl_openssl3_lib}
-(*
-//ssl_openssl11 and ssl_openssl11_lib seam not to work under macos
-{$IFDEF DARWIN}
-  {$DEFINE SSL_OPENSSL_UNIT:=ssl_openssl}
-  {$DEFINE SSL_OPENSSL_LIB_UNIT:=ssl_openssl_lib}
-{$ELSE}
-  {$DEFINE SSL_OPENSSL_UNIT:=ssl_openssl11}
-  {$DEFINE SSL_OPENSSL_LIB_UNIT:=ssl_openssl11_lib}
-{$ENDIF DARWIN}
-*)
 
 // This code is part of the opsi.org project
 
