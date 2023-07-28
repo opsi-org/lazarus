@@ -35,7 +35,7 @@ type
     FlowPanel2: TFlowPanel;
     FlowPanel3: TFlowPanel;
     FlowPanel4: TFlowPanel;
-    FlowPanel5: TFlowPanel;
+    FlowPanelBaseActionRequest: TFlowPanel;
     FlowPanel6: TFlowPanel;
     GroupBox1: TGroupBox;
     Label1: TLabel;
@@ -125,11 +125,13 @@ begin
   begin
     ComboBoxDepActionrequest.Enabled := True;
     LabelDepActionrequest.Enabled := True;
+    FlowPanelBaseActionRequest.Enabled := True;
   end
   else
   begin
     ComboBoxDepActionrequest.Enabled := False;
     LabelDepActionrequest.Enabled := False;
+    FlowPanelBaseActionRequest.Enabled := False;
   end;
   //ComboBoxReqType.Enabled := True;
   {$IFDEF UNIX}
