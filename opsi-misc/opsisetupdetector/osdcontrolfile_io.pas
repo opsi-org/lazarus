@@ -9,6 +9,9 @@ uses
   inifiles,
   oslog,
   osjson,
+  //ostoml,
+  toml,
+  TOMLParser,
   osdbasedata;
 
 procedure readControlFile42(filename: string);
@@ -54,11 +57,13 @@ var
     tmpstr: string;
   begin
     tmpstr := trim(mystrings.Values[key]);
-    LogDatei.log('in section: ' + section + ' with key: ' + key + ' got: ' + tmpstr, LLdebug);
+    LogDatei.log('in section: ' + section + ' with key: ' + key +
+      ' got: ' + tmpstr, LLdebug);
     Result := tmpstr;
   end;
 
 begin
+  logdatei.log('readPreOpsi4.3ControlFile from: ' + filename, LLDebug);
   AssignFile(myfile, filename);
   Reset(myfile);
   mystrings := TStringList.Create;
@@ -202,7 +207,87 @@ begin
 end;
 
 procedure readControlFileToml(filename: string);
+var
+  mytoml: string;
+  mytables: TStringList;
+  mylist: TStringList;
+  i: integer;
+  tmpstr: string;
+  doc: TTOMLDocument;
+  Value: TTOMLData;
+
+  function getAndLogValue(section, key: string): string;
+  var
+    tmpstr: string;
+    tomlkeypath: string;
+  begin
+    Value := doc[section][key];
+    tmpstr := trim(string(Value));
+    LogDatei.log('in section: ' + section + ' with key: ' + key +
+      ' got: ' + tmpstr, LLdebug);
+    Result := tmpstr;
+  end;
+
+
 begin
+
+  logdatei.log('readTomlControlFile from: ' + filename, LLDebug);
+  mylist:= TStringList.Create;
+  mylist.LoadFromFile(filename);
+  doc := GetTOML(mylist.Text);
+  (*
+  Value := doc['Package']['version'];
+  LogDatei.log('in section: package with key: version got: ' + string(value), LLdebug);
+  *)
+           (*
+  mytoml := ReadTOMLFile(filename);
+  //mytables := TStringlist.Create;
+  *)
+  tmpstr := getAndLogValue('Package', 'version');
+  aktProduct.productdata.packageversion := StrToInt(tmpstr);
+  tmpstr := getAndLogValue('Product', 'type');
+  aktProduct.Productdata.Producttype := tmpstr;
+  tmpstr := getAndLogValue('Product', 'id');
+  aktProduct.Productdata.ProductId := tmpstr;
+  tmpstr := getAndLogValue('Product', 'name');
+  aktProduct.Productdata.ProductName := tmpstr;
+  tmpstr := getAndLogValue('Product', 'version');
+  aktProduct.Productdata.Productversion := tmpstr;
+  tmpstr := getAndLogValue('Product', 'priority');
+  aktProduct.Productdata.priority := StrToInt(tmpstr);
+  tmpstr := getAndLogValue('Product', 'licenseRequired');
+  aktProduct.Productdata.licenserequired := StrToBool(tmpstr);
+  tmpstr := getAndLogValue('Product', 'setupScript');
+  aktProduct.Productdata.setupscript := tmpstr;
+  tmpstr := getAndLogValue('Product', 'uninstallScript');
+  aktProduct.Productdata.uninstallscript := tmpstr;
+  tmpstr := getAndLogValue('Product', 'updateScript');
+  aktProduct.Productdata.updatescript := tmpstr;
+  tmpstr := getAndLogValue('Product', 'alwaysScript');
+  aktProduct.Productdata.alwaysScript := tmpstr;
+  tmpstr := getAndLogValue('Product', 'onceScript');
+  aktProduct.Productdata.oncescript := tmpstr;
+  tmpstr := getAndLogValue('Product', 'customScript');
+  aktProduct.Productdata.customscript := tmpstr;
+  tmpstr := getAndLogValue('Product', 'userLoginScript');
+  aktProduct.Productdata.userLoginscript := tmpstr;
+
+  doc.Free;
+  (*
+
+
+  mytables := GetTOMLTableNames(mytoml);
+  for i := 0 to mytables.Count - 1 do
+  begin
+    tmpstr := lowercase(trim(mytables[i]));
+    if tmpstr = 'Productdependency' then
+    begin
+    end;
+    if tmpstr = 'Productproperty' then
+    begin
+    end;
+  end;
+  *)
 
 end;
 

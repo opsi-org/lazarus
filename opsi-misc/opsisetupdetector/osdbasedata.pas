@@ -1443,7 +1443,7 @@ begin
       logdatei.log('readControlFile from: ' + myfilename, LLDebug);
     if FileExists(myfilename) then
     begin
-      if lowercase(myfilename) = 'control.toml' then
+      if lowercase(ExtractFileName(myfilename)) = 'control.toml' then
       begin
         readControlFileToml(myfilename);
       end
