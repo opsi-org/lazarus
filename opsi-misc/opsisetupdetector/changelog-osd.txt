@@ -149,6 +149,7 @@ opsi-setup-detector (4.2.2.0-1) stable; urgency=low
    * new config 'dependencies_for_all_actionrequests'
       if true allow dependencies for all ection requests (4.3) (default= false)
    * fix: dependency dialog sort list of possible products in combobox
+   * new: Import project from existing contol file
 
    todo:
 

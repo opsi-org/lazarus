@@ -12440,7 +12440,7 @@ object resultForm1: TresultForm1
     OnClose = OpenDialog1Close
     OnCanClose = OpenDialog1CanClose
     DefaultExt = '.*.msi'
-    Filter = 'Setup|*.exe;*.msi;*.mst|EXE|*.exe|MSI|*.msi|MST|*.mst|MacOS|*.dmg;*.pkg;*.app;*.zip|Linux|*.deb;*.rpm;*.tgz;*.tar.gz|Any File|*.*|OSD Project file|*.osd'
+    Filter = 'Setup|*.exe;*.msi;*.mst|EXE|*.exe|MSI|*.msi|MST|*.mst|MacOS|*.dmg;*.pkg;*.app;*.zip|Linux|*.deb;*.rpm;*.tgz;*.tar.gz|Any File|*.*|OSD Project file|*.osd|control|control;control.toml'
     FilterIndex = 2
     Options = [ofAllowMultiSelect, ofPathMustExist, ofEnableSizing, ofViewDetail]
     OnFolderChange = OpenDialog1FolderChange
@@ -12449,7 +12449,7 @@ object resultForm1: TresultForm1
     Top = 6
   end
   object MainMenu1: TMainMenu
-    Left = 567
+    Left = 568
     Top = 6
     object MenuItemFile: TMenuItem
       Caption = '&File'
@@ -12464,6 +12464,10 @@ object resultForm1: TresultForm1
       object MenuItemSaveProj: TMenuItem
         Caption = 'Save Project File'
         OnClick = MenuItemSaveProjClick
+      end
+      object MenuItemOpenControl: TMenuItem
+        Caption = 'Open control file'
+        OnClick = MenuItemOpenControlClick
       end
       object FileExit: TMenuItem
         Caption = '&Exit'

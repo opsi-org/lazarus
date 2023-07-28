@@ -32,7 +32,7 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
   osjson,
   oswebservice,
   oscrypt,
-osdmain;
+osdmain, osdcontrolfile_io;
 
 
 (*

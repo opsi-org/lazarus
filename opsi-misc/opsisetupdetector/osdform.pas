@@ -234,6 +234,7 @@ type
     MemoDefault: TMemo;
     MenuHelpOpen: TMenuItem;
     MenuHelpLog: TMenuItem;
+    MenuItemOpenControl: TMenuItem;
     MenuItemOpenProj: TMenuItem;
     MenuItemSaveProj: TMenuItem;
     MenuItemLangFr: TMenuItem;
@@ -437,6 +438,7 @@ type
     procedure FormMouseLeave(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure MenuHelpLogClick(Sender: TObject);
+    procedure MenuItemOpenControlClick(Sender: TObject);
     procedure MenuItemOpenProjClick(Sender: TObject);
     procedure MenuItemSaveProjClick(Sender: TObject);
     procedure MenuItemLangClick(Sender: TObject);
@@ -1072,6 +1074,31 @@ begin
     LogDatei.log(ErrorMessage, LLInfo);
     ShowMessage(ErrorMessage);
   end;
+end;
+
+procedure TResultform1.MenuItemOpenControlClick(Sender: TObject);
+begin
+  OpenDialog1.FilterIndex := 9;   // control file
+  if DirectoryExists(myconfiguration.LastProjectFileDir) then
+    OpenDialog1.InitialDir := myconfiguration.LastProjectFileDir
+  else if DirectoryExists(myconfiguration.workbench_Path) then
+    OpenDialog1.InitialDir := myconfiguration.workbench_Path;
+  if OpenDialog1.Execute then
+  begin
+    myconfiguration.LastProjectFileDir := ExtractFileDir(OpenDialog1.FileName);
+    LogDatei.log('Start import control file from: ' + OpenDialog1.FileName, LLnotice);
+    initaktproduct;
+    resultform1.updateGUI;
+    aktProduct.readControlFile(OpenDialog1.FileName);
+    TIGridDep.ListObject := osdbasedata.aktproduct.dependencies;
+    TIGridDep.ReloadTIList;
+    TIGridDep.Update;
+    TIGridProp.ListObject := osdbasedata.aktproduct.properties;
+    TIGridProp.ReloadTIList;
+    TIGridProp.Update;
+    LogDatei.log('Finished import control file from: ' + OpenDialog1.FileName, LLnotice);
+  end;
+
 end;
 
 procedure TResultform1.MenuItemOpenProjClick(Sender: TObject);

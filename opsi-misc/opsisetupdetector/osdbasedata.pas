@@ -48,18 +48,18 @@ type
     Fstartupfinished: boolean;
     Fmylocaledir: string;
     Fmylang: string;
-    Fmyexitcode : integer;
+    Fmyexitcode: integer;
     FCreateModeCreateOnly: boolean;
     FCreateModeBuildPackage: boolean;
     FCreateModePackageBuilder: boolean;
     FBuildModebuildOnly: boolean;
     FBuildModebuildInstall: boolean;
-    FBuildMode : TStrings;
-    FBuildModeIndex :integer;
-    FBuildModeValue : string;
-    FCreateMode  : TStrings;
-    FCreateModeIndex :integer;
-    FCreateModeValue : string;
+    FBuildMode: TStrings;
+    FBuildModeIndex: integer;
+    FBuildModeValue: string;
+    FCreateMode: TStrings;
+    FCreateModeIndex: integer;
+    FCreateModeValue: string;
     procedure SetBuildMode(const AValue: TStrings);
     procedure SetBuildModeValue(const AValue: string);
     procedure SetBuildModeIndex(const AValue: integer);
@@ -92,7 +92,8 @@ type
     amSelectable);
 
   // marker for add installers
-  TKnownInstaller = (stInstall4J, stPortableApps, stLinRPM, stLinDeb, stMacZip, stMacDmg, stMacPKG, stMacApp,
+  TKnownInstaller = (stInstall4J, stPortableApps, stLinRPM, stLinDeb,
+    stMacZip, stMacDmg, stMacPKG, stMacApp,
     stSFXcab, stBoxStub, stAdvancedMSI, stInstallShield,
     stInstallShieldMSI,
     stMsi, stNsis, st7zip, st7zipsfx, stInstallAware, stMSGenericInstaller,
@@ -216,7 +217,8 @@ type
     property uninstallCommandLine: string read FuninstallCommandLine
       write FuninstallCommandLine;
     property uninstallProg: string read FuninstallProg write SetUninstallProg;
-    property uninstallDirectory: string read FuninstallDirectory write SetUninstallDirectory;
+    property uninstallDirectory: string read FuninstallDirectory
+      write SetUninstallDirectory;
     property targetProg: string read FtargetProg write SetTargetProg;
     property uninstallCheck: TStrings read FuninstallCheck write SetUninstallCheck;
     property uninstall_waitforprocess: string
@@ -375,8 +377,12 @@ default: ["xenial_bionic"]
     Fproducttype: string;
     Fsetupscript: string;
     Funinstallscript: string;
-    Fdelsubscript: string;
     Fupdatescript: string;
+    Falwaysscript: string;
+    Foncescript: string;
+    Fcustomscript: string;
+    FuserLoginscript: string;
+    Fdelsubscript: string;
     Flicenserequired: boolean;
     FproductImageFullFileName: string;
     FtargetOSset: TTargetOSset;
@@ -402,8 +408,12 @@ default: ["xenial_bionic"]
     property producttype: string read Fproducttype write Fproducttype;
     property setupscript: string read Fsetupscript write Fsetupscript;
     property uninstallscript: string read Funinstallscript write Funinstallscript;
-    property delsubscript: string read Fdelsubscript write Fdelsubscript;
     property updatescript: string read Fupdatescript write Fupdatescript;
+    property alwaysscript: string read Falwaysscript write Falwaysscript;
+    property oncescript: string read Foncescript write Foncescript;
+    property customscript: string read Fcustomscript write Fcustomscript;
+    property userLoginscript: string read FuserLoginscript write FuserLoginscript;
+    property delsubscript: string read Fdelsubscript write Fdelsubscript;
     property licenserequired: boolean read Flicenserequired write Flicenserequired;
     property productImageFullFileName: string
       read FproductImageFullFileName write FproductImageFullFileName;
@@ -434,6 +444,7 @@ default: ["xenial_bionic"]
     { public declarations }
     constructor Create;
     procedure readProjectFile(filename: string);
+    procedure readControlFile(filename: string);
     procedure writeProjectFileToPath(path: string);
     procedure writeProjectFileToFile(myfilename: string);
   end;
@@ -444,7 +455,8 @@ default: ["xenial_bionic"]
     { help to detect and handle changes of config file structure }
     Fworkbench_Path: string;   // local path to the (mounted) workbench share
     Fconfig_filled: boolean;   // is the initial configuration done ?
-    FregisterInFilemanager: boolean; // create context menue entry in file manage to call osd
+    FregisterInFilemanager: boolean;
+    // create context menue entry in file manage to call osd
     Femail_address: string;
     FFullName: string;
     Fimport_libraries: TStrings;
@@ -467,11 +479,12 @@ default: ["xenial_bionic"]
     FService_pass: string;
     FUseService: boolean;
     FTemplateChannel: TTemplateChannels;
-    FLastProjectFileDir : string;  // last dir from wich we opend a project file
-    FLastSetupFileDir : string;  // last dir from wich we opend a setup file
-    FLasticonFileDir : string;  // last dir from wich we opend a icon file
-    Fcontrol_in_toml_format : boolean; // since opsi 4.3 control files in toml format
-    Fdependencies_for_all_actionrequests : boolean; // since opsi 4.3 dependecies are allowed for all action requests
+    FLastProjectFileDir: string;  // last dir from wich we opend a project file
+    FLastSetupFileDir: string;  // last dir from wich we opend a setup file
+    FLasticonFileDir: string;  // last dir from wich we opend a icon file
+    Fcontrol_in_toml_format: boolean; // since opsi 4.3 control files in toml format
+    Fdependencies_for_all_actionrequests: boolean;
+    // since opsi 4.3 dependecies are allowed for all action requests
     procedure SetLibraryLines(const AValue: TStrings);
     procedure SetPreInstallLines(const AValue: TStrings);
     procedure SetPostInstallLines(const AValue: TStrings);
@@ -513,12 +526,14 @@ default: ["xenial_bionic"]
     property Service_pass: string read FService_pass write FService_pass;
     property templateChannel: TtemplateChannels
       read FTemplateChannel write FTemplateChannel;
-    property LastProjectFileDir: string read FLastProjectFileDir write FLastProjectFileDir;
+    property LastProjectFileDir: string read FLastProjectFileDir
+      write FLastProjectFileDir;
     property LastSetupFileDir: string read FLastSetupFileDir write FLastSetupFileDir;
     property LasticonFileDir: string read FLasticonFileDir write FLasticonFileDir;
-    property control_in_toml_format: boolean read Fcontrol_in_toml_format write Fcontrol_in_toml_format;
-    property dependencies_for_all_actionrequests: boolean read Fdependencies_for_all_actionrequests
-      write Fdependencies_for_all_actionrequests;
+    property control_in_toml_format: boolean
+      read Fcontrol_in_toml_format write Fcontrol_in_toml_format;
+    property dependencies_for_all_actionrequests: boolean
+      read Fdependencies_for_all_actionrequests write Fdependencies_for_all_actionrequests;
 
 
 
@@ -566,10 +581,10 @@ var
   forceTargetOS: TTargetOS = osWin; // by cli parameter
   globimportMode: boolean = False;
   defaultIconFullFileName: string;
-  opsitmp : string;
+  opsitmp: string;
   localservicedata: TOpsi4Data = nil;
   //localservicedataInitalized : boolean = false;
-  localservicedataConnected : boolean = false;
+  localservicedataConnected: boolean = False;
   passwordToUse: string;
   opsiserviceversion: string;
 
@@ -606,9 +621,10 @@ resourcestring
   rspathToOpsiPackageBuilder =
     'Path to the OpsiPackageBuilder. OpsiPackageBuilder is used to build the opsi packages via ssh. see: https://forum.opsi.org/viewtopic.php?f=22&t=7573';
   rsCreateRadioIndex = 'selects the Create mode Radiobutton.';
-  rsCreateRadioFiles               = 'create opsi product files';
-  rsCreateRadioFilesBuild          = 'create opsi product files and  build package';
-  rsCreateRadioFilesPackageBuilder = 'create opsi product files and start the interactive PackageBuilder';
+  rsCreateRadioFiles = 'create opsi product files';
+  rsCreateRadioFilesBuild = 'create opsi product files and  build package';
+  rsCreateRadioFilesPackageBuilder =
+    'create opsi product files and start the interactive PackageBuilder';
 
   rsBuildRadioIndex = 'selects the Build mode Radiobutton.';
   rsBuildRadioBuild = 'build';
@@ -648,72 +664,73 @@ resourcestring
 
 implementation
 
-{$IFDEF OSDGUI}
 uses
-  osdform;
-{$ENDIF OSDGUI}
+  osdcontrolfile_io
+{$IFDEF OSDGUI}
+  , osdform
+{$ENDIF OSDGUI}  ;
 
 var
   FileVerInfo: TFileVersionInfo;
 
-  // TOSDSettings ************************************
-  constructor TOSDSettings.Create;
-  begin
-    startupfinished:=false;
-    myexitcode := 0;
-    opsitmp := '';
-    FBuildMode := TStringList.Create;
-    FBuildMode.Add(rsBuildRadioBuild);
-    FBuildMode.Add(rsBuildRadioBuildInstall);
-    FCreateMode := TStringList.Create;
-    FCreateMode.Add(rsCreateRadioFiles);
-    FCreateMode.Add(rsCreateRadioFilesBuild);
-    FCreateMode.Add(rsCreateRadioFilesPackageBuilder);
-    FCreateModeIndex:= 0;
-    FBuildModeIndex:= 0;
-    FCreateModeValue := CreateMode.Strings[FCreateModeIndex];
-    FBuildModeValue:= BuildMode.Strings[FBuildModeIndex];
-  end;
+// TOSDSettings ************************************
+constructor TOSDSettings.Create;
+begin
+  startupfinished := False;
+  myexitcode := 0;
+  opsitmp := '';
+  FBuildMode := TStringList.Create;
+  FBuildMode.Add(rsBuildRadioBuild);
+  FBuildMode.Add(rsBuildRadioBuildInstall);
+  FCreateMode := TStringList.Create;
+  FCreateMode.Add(rsCreateRadioFiles);
+  FCreateMode.Add(rsCreateRadioFilesBuild);
+  FCreateMode.Add(rsCreateRadioFilesPackageBuilder);
+  FCreateModeIndex := 0;
+  FBuildModeIndex := 0;
+  FCreateModeValue := CreateMode.Strings[FCreateModeIndex];
+  FBuildModeValue := BuildMode.Strings[FBuildModeIndex];
+end;
 
-  destructor TOSDSettings.Destroy;
-  begin
-    FreeAndNil(FBuildMode);
-    FreeAndNil(FCreateMode);
-  end;
+destructor TOSDSettings.Destroy;
+begin
+  FreeAndNil(FBuildMode);
+  FreeAndNil(FCreateMode);
+end;
 
-  procedure TOSDSettings.SetBuildMode(const AValue: TStrings);
-  begin
-    FBuildMode.Assign(AValue);
-  end;
+procedure TOSDSettings.SetBuildMode(const AValue: TStrings);
+begin
+  FBuildMode.Assign(AValue);
+end;
 
-  procedure TOSDSettings.SetCreateMode(const AValue: TStrings);
-  begin
-    FCreateMode.Assign(AValue);
-  end;
+procedure TOSDSettings.SetCreateMode(const AValue: TStrings);
+begin
+  FCreateMode.Assign(AValue);
+end;
 
-  procedure TOSDSettings.SetBuildModeValue (const AValue: String);
-  begin
-    FBuildModeValue := AValue;
-    FBuildModeIndex:= BuildMode.IndexOf(AValue);
-  end;
+procedure TOSDSettings.SetBuildModeValue(const AValue: string);
+begin
+  FBuildModeValue := AValue;
+  FBuildModeIndex := BuildMode.IndexOf(AValue);
+end;
 
-  procedure TOSDSettings.SetCreateModeValue (const AValue: String);
-  begin
-    FCreateModeValue := AValue;
-    FCreateModeIndex:= CreateMode.IndexOf(AValue);
-  end;
+procedure TOSDSettings.SetCreateModeValue(const AValue: string);
+begin
+  FCreateModeValue := AValue;
+  FCreateModeIndex := CreateMode.IndexOf(AValue);
+end;
 
-  procedure TOSDSettings.SetBuildModeIndex (const AValue: integer);
-  begin
-    FCreateModeIndex := AValue;
-    FBuildModeValue:= BuildMode.Strings[AValue];
-  end;
+procedure TOSDSettings.SetBuildModeIndex(const AValue: integer);
+begin
+  FCreateModeIndex := AValue;
+  FBuildModeValue := BuildMode.Strings[AValue];
+end;
 
-  procedure TOSDSettings.SetCreateModeIndex (const AValue: integer);
-  begin
-    FCreateModeIndex:= AValue;
-    FCreateModeValue := CreateMode.Strings[AValue];
-  end;
+procedure TOSDSettings.SetCreateModeIndex(const AValue: integer);
+begin
+  FCreateModeIndex := AValue;
+  FCreateModeValue := CreateMode.Strings[AValue];
+end;
 
 // TInstallerData ************************************
 
@@ -1332,7 +1349,7 @@ begin
     myfilename := filename;
     myfilename := ExpandFileName(myfilename);
     if Assigned(logdatei) then
-      logdatei.log('readconfig from: ' + myfilename, LLDebug);
+      logdatei.log('readProjectFile from: ' + myfilename, LLDebug);
     if FileExists(myfilename) then
     begin
       AssignFile(pfile, myfilename);
@@ -1370,6 +1387,7 @@ begin
                 DeStreamer.JSONToObject(JSONObjString, aktproperty);
 
               end;
+              if Assigned(aktproperty) then FreeAndNil(aktproperty);
             end;
           end;
         deactivateImportMode;
@@ -1381,9 +1399,9 @@ begin
         CloseFile(pfile);
       end;
       if Assigned(logdatei) then
-        logdatei.log('read config: ' + JSONString, LLDebug)
+        logdatei.log('readProjectFile: ' + JSONString, LLDebug)
       else
-        ShowMessage('read config: ' + JSONString);
+        ShowMessage('readProjectFile: ' + JSONString);
     end
     else
     begin
@@ -1391,7 +1409,7 @@ begin
         logdatei.log('Project file not found: ' + myfilename, LLError);
     end;
     if Assigned(logdatei) then
-      logdatei.log('Finished readconfig', LLDebug2);
+      logdatei.log('Finished readProjectFile', LLDebug2);
 
   except
     on E: Exception do
@@ -1408,6 +1426,54 @@ begin
   end;
 end;
 
+
+procedure TopsiProduct.readControlFile(filename: string);
+var
+  myfilename: string;
+  cfile: TextFile;
+  line: string;
+begin
+  try
+    if Assigned(logdatei) then
+      logdatei.log('Start readControlFile', LLDebug);
+    // control file name
+    myfilename := filename;
+    myfilename := ExpandFileName(myfilename);
+    if Assigned(logdatei) then
+      logdatei.log('readControlFile from: ' + myfilename, LLDebug);
+    if FileExists(myfilename) then
+    begin
+      if lowercase(myfilename) = 'control.toml' then
+      begin
+        readControlFileToml(myfilename);
+      end
+      else // pre opsi 4.3 (non toml) style control file
+      begin
+        readControlFile42(myfilename);
+      end;
+    end
+    else
+    begin
+      if Assigned(logdatei) then
+        logdatei.log('Control file not found: ' + myfilename, LLError);
+    end;
+    if Assigned(logdatei) then
+      logdatei.log('Finished readControlFile', LLDebug2);
+
+  except
+    on E: Exception do
+      if Assigned(logdatei) then
+      begin
+        LogDatei.log('readControlFile exception. Details: ' + E.ClassName +
+          ': ' + E.Message, LLError);
+        ShowMessage('readControlFile exception. Details: ' +
+          E.ClassName + ': ' + E.Message);
+      end
+      else
+        ShowMessage('readControlFile exception. Details: ' +
+          E.ClassName + ': ' + E.Message);
+  end;
+end;
 
 
 // TProductData **********************************
@@ -1450,8 +1516,8 @@ begin
   FLasticonFileDir := '/usr/share/opsi-setup-detector/icons';
   {$ENDIF UNIX}
   {$IFDEF WINDOWS}
-   FLasticonFileDir :=
-      ExtractFileDir(Application.Params[0]) + PathDelim + 'icons';
+  FLasticonFileDir :=
+    ExtractFileDir(Application.Params[0]) + PathDelim + 'icons';
   {$ENDIF WINDOWS}
   //readconfig;
 end;
