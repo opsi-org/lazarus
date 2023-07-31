@@ -10,7 +10,7 @@ uses
   oslog,
   osjson,
   //ostoml,
-  toml,
+  TOML,
   TOMLParser,
   osdbasedata;
 
