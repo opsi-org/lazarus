@@ -206,6 +206,8 @@ begin
   if mystrings <> nil then FreeAndNil(mystrings);
 end;
 
+// inspriration from:
+// https://github.com/tamtam96/fpTOML/blob/master/tests/Examples.pas
 procedure readControlFileToml(filename: string);
 var
   mytoml: string;
@@ -214,12 +216,15 @@ var
   i: integer;
   tmpstr: string;
   doc: TTOMLDocument;
-  Value: TTOMLData;
+  myprop: TPProperty;
+  aktdependency: TPDependency;
+  table: TTOMLData;
+  tmpstrlist: TStringList;
 
   function getAndLogValue(section, key: string): string;
   var
     tmpstr: string;
-    tomlkeypath: string;
+    Value: TTOMLData;
   begin
     Value := doc[section][key];
     tmpstr := trim(string(Value));
@@ -228,11 +233,66 @@ var
     Result := tmpstr;
   end;
 
+  function getAndLogValueFromTable(indata: TTOMLData; key: string;
+  var myvalue: string): boolean;
+  var
+    tmpstr: string;
+    Value: TTOMLData;
+    table: TTOMLTable;
+    tmpvalue: TTOMLValue;
+    tmpstrlist: TStringList;
+    i: integer;
+  begin
+    Result := False;
+    myvalue := '';
+    table := TTOMLTable(indata);
+    if table.Contains(key, TTOMLData) then
+    begin
+      Value := table.Find(key);
+      // is it a scalar data type (String, Number, boolean)
+      // boolean is also TTOMLNumber
+      if Value.ClassNameIs('TTOMLValue') or Value.ClassNameIs('TTOMLNumber') then
+        tmpstr := trim(string(Value))
+      else if Value.ClassNameIs('TTOMLArray') then
+      begin
+        if TTOMLArray(Value).Count > 0 then
+        begin
+          // is it a single boolean in a array (default at boolean property)
+          tmpvalue := TTOMLValue(TTOMLArray(Value)[0]);
+          if tmpvalue.TypeString = 'Boolean' then
+            tmpstr := string(tmpvalue)
+          else
+          begin
+            tmpstrlist := TStringList.Create;
+            for i := 0 to TTOMLArray(Value).Count - 1 do
+            begin
+              tmpvalue := TTomlvalue(Value.Items[i]);
+              if tmpvalue.TypeString = 'Dynamic string' then
+              begin
+                tmpstr := string(tmpvalue);
+                tmpstrlist.Add(tmpstr);
+              end;
+            end;
+            tmpstr := tmpstrlist.Text;
+          end;
+        end;
+      end;
+      LogDatei.log('in section: ' + table.Name + ' with key: ' + key +
+        ' got: ' + tmpstr, LLdebug);
+      myvalue := tmpstr;
+      Result := True;
+    end
+    else
+    begin
+      LogDatei.log('in section: ' + table.Name + ' key: ' + key +
+        ' not found.', LLdebug);
+    end;
+  end;
 
 begin
 
   logdatei.log('readTomlControlFile from: ' + filename, LLDebug);
-  mylist:= TStringList.Create;
+  mylist := TStringList.Create;
   mylist.LoadFromFile(filename);
   doc := GetTOML(mylist.Text);
   (*
@@ -272,23 +332,91 @@ begin
   tmpstr := getAndLogValue('Product', 'userLoginScript');
   aktProduct.Productdata.userLoginscript := tmpstr;
 
-  doc.Free;
-  (*
+  tmpstr := getAndLogValue('Product', 'description');
+  aktProduct.Productdata.description := tmpstr;
+  tmpstr := getAndLogValue('Product', 'advice');
+  aktProduct.Productdata.advice := tmpstr;
 
-
-  mytables := GetTOMLTableNames(mytoml);
-  for i := 0 to mytables.Count - 1 do
+  // ProductDependency
+  for table in doc['ProductDependency'] do
   begin
-    tmpstr := lowercase(trim(mytables[i]));
-    if tmpstr = 'Productdependency' then
+    aktdependency := TPDependency(osdbasedata.aktProduct.dependencies.add);
+    aktdependency.init;
+    if getAndLogValueFromTable(table, 'action', tmpstr) then
+      aktdependency.action := tmpstr;
+    if getAndLogValueFromTable(table, 'requiredProduct', tmpstr) then
+      aktdependency.Required_ProductId := tmpstr;
+
+    if getAndLogValueFromTable(table, 'requiredStatus', tmpstr) then
+      case tmpstr of
+        '': aktdependency.Required_State := noState;
+        'installed': aktdependency.Required_State := installed;
+        'not_installed': aktdependency.Required_State := not_installed;
+        'unknown': aktdependency.Required_State := unknown;
+      end;
+
+    if getAndLogValueFromTable(table, 'requiredAction', tmpstr) then
+      case tmpstr of
+        '': aktdependency.Required_Action := noRequest;
+        'setup': aktdependency.Required_Action := setup;
+        'uninstall': aktdependency.Required_Action := uninstall;
+        'update': aktdependency.Required_Action := TPActionRequest.update;
+      end;
+
+    // requirement Type
+    if getAndLogValueFromTable(table, 'requirementType', tmpstr) then
+      case tmpstr of
+        '': aktdependency.Required_Type := doNotMatter;
+        'before': aktdependency.Required_Type := before;
+        'after': aktdependency.Required_Type := after;
+      end;
+  end;
+
+  for table in doc['ProductProperty'] do
+  begin
+    myprop := TPProperty(osdbasedata.aktProduct.properties.add);
+    myprop.init;
+    if getAndLogValueFromTable(table, 'name', tmpstr) then
+      myprop.Property_Name := tmpstr;
+    if getAndLogValueFromTable(table, 'description', tmpstr) then
+      myprop.description := tmpstr;
+
+    if getAndLogValueFromTable(table, 'multivalue', tmpstr) then
+      myprop.multivalue := StrToBool(tmpstr); //multivalue
+    if getAndLogValueFromTable(table, 'editable', tmpstr) then
+      myprop.editable := StrToBool(tmpstr);  //editable
+
+    getAndLogValueFromTable(table, 'type', tmpstr);
+    if tmpstr = 'bool' then
     begin
-    end;
-    if tmpstr = 'Productproperty' then
+      myprop.Property_Type := bool;
+      if getAndLogValueFromTable(table, 'default', tmpstr) then
+        myprop.boolDefault := StrToBool(tmpstr);
+      tmpstrlist := TStringList.Create;
+      myprop.SetDefaultLines(TStrings(tmpstrlist));
+      myprop.SetValueLines(TStrings(tmpstrlist));
+      FreeAndNil(tmpstrlist);
+    end
+    else
     begin
+      tmpstrlist := TStringList.Create;
+      myprop.Property_Type := unicode;  //type
+      // always call : we need tmpstr to initialize the stringlist
+      getAndLogValueFromTable(table, 'values', tmpstr);
+      //osjson.jsonAsArrayToStringList(tmpstr, tmpstrlist);
+      tmpstrlist.Text := tmpstr;
+      myprop.SetValueLines(TStrings(tmpstrlist));
+
+      // always call : we need tmpstr to initialize the stringlist
+      getAndLogValueFromTable(table, 'default', tmpstr);
+      //osjson.jsonAsArrayToStringList(tmpstr, tmpstrlist);
+      tmpstrlist.Text := tmpstr;
+      myprop.SetDefaultLines(TStrings(tmpstrlist));
+      FreeAndNil(tmpstrlist);
     end;
   end;
-  *)
 
+  doc.Free;
 end;
 
 end.
