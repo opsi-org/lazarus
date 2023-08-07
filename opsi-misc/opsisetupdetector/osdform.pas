@@ -57,6 +57,7 @@ type
   { TResultform1 }
 
   TResultform1 = class(TForm)
+    BitBtnImportControl: TBitBtn;
     BitBtnRebuild: TBitBtn;
     BitBtnAddDep: TBitBtn;
     BitBtnChooseInstDir2: TBitBtn;
@@ -401,6 +402,7 @@ type
     procedure BitBtnDelPropClick(Sender: TObject);
     procedure BitBtnEditDepClick(Sender: TObject);
     procedure BitBtnEditPropClick(Sender: TObject);
+    procedure BitBtnImportControlClick(Sender: TObject);
     procedure BitBtnOpenFile1Click(Sender: TObject);
     procedure BitBtnOpenFileClick(Sender: TObject);
     procedure BitBtnOpenMst1Click(Sender: TObject);
@@ -1086,7 +1088,7 @@ begin
   if OpenDialog1.Execute then
   begin
     myconfiguration.LastProjectFileDir := ExtractFileDir(OpenDialog1.FileName);
-    LogDatei.log('Start import control file from: ' + OpenDialog1.FileName, LLnotice);
+    LogDatei.log('Start open control file as new project from: ' + OpenDialog1.FileName, LLnotice);
     initaktproduct;
     resultform1.updateGUI;
     aktProduct.readControlFile(OpenDialog1.FileName);
@@ -1096,9 +1098,8 @@ begin
     TIGridProp.ListObject := osdbasedata.aktproduct.properties;
     TIGridProp.ReloadTIList;
     TIGridProp.Update;
-    LogDatei.log('Finished import control file from: ' + OpenDialog1.FileName, LLnotice);
+    LogDatei.log('Finished open control file as new project from: ' + OpenDialog1.FileName, LLnotice);
   end;
-
 end;
 
 procedure TResultform1.MenuItemOpenProjClick(Sender: TObject);
@@ -2229,6 +2230,32 @@ begin
     MessageDlg(rsPropEditErrorHead,
       rsPropEditErrorNoSelect,
       mtError, [mbOK], '');
+  end;
+end;
+
+procedure TResultform1.BitBtnImportControlClick(Sender: TObject);
+begin
+    OpenDialog1.FilterIndex := 9;   // control file
+  if DirectoryExists(myconfiguration.LastProjectFileDir) then
+    OpenDialog1.InitialDir := myconfiguration.LastProjectFileDir
+  else if DirectoryExists(myconfiguration.workbench_Path) then
+    OpenDialog1.InitialDir := myconfiguration.workbench_Path;
+  if OpenDialog1.Execute then
+  begin
+    myconfiguration.LastProjectFileDir := ExtractFileDir(OpenDialog1.FileName);
+    LogDatei.log('Start import control file to existing data from: ' + OpenDialog1.FileName, LLnotice);
+    // do not init product data structure here
+    // we just want to add the data to the existing data structure
+    //initaktproduct;
+    resultform1.updateGUI;
+    aktProduct.readControlFile(OpenDialog1.FileName);
+    TIGridDep.ListObject := osdbasedata.aktproduct.dependencies;
+    TIGridDep.ReloadTIList;
+    TIGridDep.Update;
+    TIGridProp.ListObject := osdbasedata.aktproduct.properties;
+    TIGridProp.ReloadTIList;
+    TIGridProp.Update;
+    LogDatei.log('Finished import control file to existing data from: ' + OpenDialog1.FileName, LLnotice);
   end;
 end;
 

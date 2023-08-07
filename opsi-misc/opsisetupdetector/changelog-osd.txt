@@ -109,6 +109,13 @@ CompanyNameIgor PavlovBFileDescription7z Setup SFX*FileVersion9.200InternalName7
 todo:
    *
 
+opsi-setup-detector (4.2.2.1-1)
+
+  * new Button 'Import control File' on 'productconfiguration 1' tab to
+    add the data of a existing control file to the running project
+
+-- Detlef Oertel <d.oertel@uib.de>  Mon,  07 Aug 2023 : 15:00:00
+
 opsi-setup-detector (4.2.2.0-1) stable; urgency=low
 
    * remove old unused code
@@ -151,8 +158,6 @@ opsi-setup-detector (4.2.2.0-1) stable; urgency=low
    * fix: dependency dialog sort list of possible products in combobox
    * new: Import project from existing contol file
    * new: Import project from existing contol.toml file (via fpTOML library)
-
-   todo:
 
 
 -- Detlef Oertel <d.oertel@uib.de>  Wed,  29 Mar 2023 : 15:00:00 +0200
