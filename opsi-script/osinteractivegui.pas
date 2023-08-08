@@ -1101,7 +1101,7 @@ begin
     'C:\Program Files (x86)\opsi.org\configed\opsi-logviewer.exe';
   {$ENDIF WINDOWS}
   {$IFDEF LINUX}
-  PathOpsiLogViewer := '/usr/share/opsi-logviewer/logviewer'; // '/usr/bin/logviewer'
+  PathOpsiLogViewer := '/usr/share/opsi-configed/java/jre/bin/java -jar "configed.jar" --logviewer ';
   {$ENDIF LINUX}
   {$IFDEF DARWIN}
   PathOpsiLogViewer := '/Applications/opsi-logviewer.app/Contents/MacOS/opsi-logviewer';
