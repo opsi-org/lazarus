@@ -1082,6 +1082,7 @@ procedure TCentralForm.BitBtnViewLogfileClick(Sender: TObject);
 var
   ErrorMessage: string;
   PathOpsiLogViewer: string;
+  Params: string;
 begin
   {$IFDEF WIN32}
   (*
@@ -1099,18 +1100,22 @@ begin
   {$IFDEF WINDOWS}
   PathOpsiLogViewer :=
     'C:\Program Files (x86)\opsi.org\configed\opsi-logviewer.exe';
+  Params := Edit2.Text;
   {$ENDIF WINDOWS}
   {$IFDEF LINUX}
-  PathOpsiLogViewer := '/usr/share/opsi-configed/java/jre/bin/java -jar "configed.jar" --logviewer ';
+  PathOpsiLogViewer := '/usr/share/opsi-configed/java/jre/bin/java';
+  Params := '-jar "configed.jar" --logviewer ' + Edit2.Text;
+  ShowMessage('Not working on linux. Please start the opsi-logviewer manually.');
   {$ENDIF LINUX}
   {$IFDEF DARWIN}
   PathOpsiLogViewer := '/Applications/opsi-logviewer.app/Contents/MacOS/opsi-logviewer';
+  Params := Edit2.Text;
   {$ENDIF DARWIN}
   if FileExists(PathOpsiLogViewer) then
   begin
-    if ExecuteProcess(PathOpsiLogViewer, Edit2.Text) <> 0 then
+    if ExecuteProcess(PathOpsiLogViewer, Params) <> 0 then
     begin
-      ErrorMessage := rsErrorLoadingLogViewer;
+      ErrorMessage := rsErrorLoadingLogViewer + ' with parameter(s): ' + Params;
       LogDatei.log(ErrorMessage, LLInfo);
       ShowMessage(ErrorMessage);
     end;
