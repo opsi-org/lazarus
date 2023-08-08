@@ -1045,11 +1045,15 @@ var
     i := 0;
     while i < numberOfCorrectItems do
     begin
+      LogDatei.log_prog(IntToStr(i)+' productId ' + produkte.strings[i],
+        LLinfo);
       // set productname to get action via opsidata
       opsidata.setActualProductName(produkte.strings[i]);
 
       requestedAction := opsidata.getProductAction;
-
+      LogDatei.log_prog(IntToStr(i)+' productId ' + produkte.strings[i]+
+      ' : ' + opsidata.actionToString(requestedAction),
+        LLinfo);
       if errorfound or (requestedAction <> tacNull) then
       begin
         Zeile := 'Product ' + IntToStr(i) + ' ' + #9 + Produkte.Strings[i] +
@@ -1116,7 +1120,7 @@ var
 
       opsidata.saveOpsiConf;
       // reload the new productlist
-      Produkte := OpsiData.getListOfProducts;
+      Produkte := OpsiData.getListOfProductIDs;
       if runprocessproducts then
       begin
         scriptlist.Delimiter := ',';
@@ -1165,7 +1169,7 @@ begin
     FlagReloadProductList := False;
     OpsiData.setActualClient(computername);
     if Produkte <> nil then Produkte.Free;
-    Produkte := OpsiData.getListOfProducts;
+    Produkte := OpsiData.getListOfProductIDs;
     if runprocessproducts then
     begin
       scriptlist.Delimiter := ',';

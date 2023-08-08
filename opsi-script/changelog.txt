@@ -4,7 +4,19 @@ mac getIpByName liefert name von IPnum
 
 opsi-script (4.12.11.0) unreleased; urgency=medium
 
- * [change] oswebservice.pas: update synapse to support openssl version 3
+ * [change] oswebservice.pas: update synapse to support openssl version 3 (j.werner, d.oertel, !173, #4809)
+ * [new] oswebservice.pas: new functions to get an ordered product sequence from service:
+         function TOpsi4Data.getOpsiVersion: string;
+           get opsiversion from backend_info
+         function TOpsi4Data.getOpsiServiceMethods(allow_depricated : boolean) : TStringlist;
+           get available API methods from service
+         function TOpsi4Data.isMethodProvided(method : string): boolean;
+           checks if the specific method is available
+         function TOpsi4Data.GetSortedProductOnClientListFromService: TStringList;
+         procedure TOpsi4Data.SetProductOnClientData(const ProductOnClientData: TStringList);
+           set the TOpsi4Data fields FProductStates, FProductActionRequests and SortedProductIDsWhereActionIsSet
+         (j.werner, d.oertel, !172)
+ * [new] osparser.pas: Give also detailed opsi service version (from getOpsiVersion) at log header  (d.oertel !172)
 
 -- j.werner <j.werner@uib.de> 20 July 2023
 
