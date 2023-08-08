@@ -1098,7 +1098,7 @@ begin
   {$ENDIF WIN32}
   {$IFDEF WINDOWS}
   PathOpsiLogViewer :=
-    'C:\Program Files (x86)\opsi.org\opsi-logviewer\opsi-logviewer.exe';
+    'C:\Program Files (x86)\opsi.org\configed\opsi-logviewer.exe';
   {$ENDIF WINDOWS}
   {$IFDEF LINUX}
   PathOpsiLogViewer := '/usr/share/opsi-logviewer/logviewer'; // '/usr/bin/logviewer'
