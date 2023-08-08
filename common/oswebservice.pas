@@ -302,7 +302,7 @@ type
     function getProductState: TProductState; virtual; abstract;
     function getProductAction: TAction; virtual; abstract;
     function getProductActionRequest: TActionRequest; virtual; abstract;
-    function getListOfProducts: TStringList; virtual; abstract;
+    function getListOfProductIDs: TStringList; virtual; abstract;
     function getProductScriptPath(actionType: TAction): string;
       virtual; abstract;
     function getInstallationPriority: integer; virtual; abstract;
@@ -341,6 +341,7 @@ type
     FPostRequirements: TStringList;
     FProductStates: TStringList;
     FProductActionRequests: TStringList;
+    FSortedProductIDsWhereActionIsSet: TStringList;
     FInstallableProducts: TStringList;
     ProductVars: TStringList;
     FOpsiModules: ISuperObject;
@@ -364,6 +365,8 @@ type
     function getOpsiModules: TStringList;
     function getLicenseOnClientObject(const parameters: array of string;
       var errorOccured: boolean): string;
+    procedure SetProductOnClientData(const ProductOnClientData: TStringList);
+    function GetSortedProductOnClientListFromService: TStringList;
   protected
     FServiceLastErrorInfo: TStringList;
     //FactualClient: string;
@@ -406,7 +409,7 @@ type
     function getProductproperties: TStringList; override;
     function getBeforeRequirements: TStringList; override;
     function getAfterRequirements: TStringList; override;
-    function getListOfProducts: TStringList; override;
+    function getListOfProductIDs: TStringList; override;
     function getProductPropertyList(myproperty: string;
       defaultlist: TStringList; var usedefault: boolean): TStringList; overload;
     function getProductPropertyList(myproperty: string;
@@ -489,6 +492,11 @@ type
       actionResult: TActionResult4; actionRequest: TActionRequest4;
       targetConfiguration: TTargetConfiguration4; lastAction: TActionRequest4;
       installationStatus: TProductstate4);
+    function getOpsiVersion: string;  // get opsiversion from backend_info
+    // get list of methods via service:
+    function getOpsiServiceMethods(allow_deprecated : boolean) : TStringlist;
+    // is a given method well known:
+    function isMethodProvided(Method : string): boolean;
     { properties }
     //property sslProtocol: TIdSSLVersion read FSslProtocol write FSslProtocol;
     property serviceUrl: string read FServiceURL;
@@ -3899,6 +3907,50 @@ begin
   end;
 end;
 
+procedure TOpsi4Data.SetProductOnClientData(const ProductOnClientData: TStringList);
+var
+  ProductEntry: ISuperObject;
+  i: integer; //count variable
+begin
+  try
+    if not Assigned(FProductActionRequests) then
+      FProductActionRequests := TStringList.Create;
+    if not Assigned(FProductStates) then
+      FProductStates := TStringList.Create;
+    FSortedProductIDsWhereActionIsSet := TStringList.Create;
+    if (ProductOnClientData <> nil) then
+    begin
+      for i := 0 to ProductOnClientData.Count - 1 do
+      begin
+        ProductEntry := SO(ProductOnClientData.Strings[i]);
+        LogDatei.log_prog('found ProductOnClient entry with productId: ' +
+          ProductEntry.S['productId'] + ' with pos: ' + IntToStr(i) + ' / ' +
+          IntToStr(ProductOnClientData.Count - 1), LLDebug2);
+        //Set FProductActionRequests
+        FProductActionRequests.add(ProductEntry.S['productId'] + '=' +
+          ProductEntry.S['actionRequest']);
+        LogDatei.log_prog('action entry : ' + ProductEntry.S['productId'] + '=' +
+          ProductEntry.S['actionRequest'], LLDebug2);
+        //Set FProductStates
+        FProductStates.Add(ProductEntry.S['productId'] + '=' +
+          ProductEntry.S['installationStatus']);
+        LogDatei.log_prog('state entry : ' + ProductEntry.S['productId'] + '=' +
+          productEntry.S['installationStatus'], LLDebug2);
+        //Add Product ID to result list if action request is set for this product.
+        if ProductEntry.S['actionRequest'] <> 'none' then
+        begin
+          FSortedProductIDsWhereActionIsSet.Add(ProductEntry.S['productId']);
+          LogDatei.log_prog('FSortedProductIDsWhereActionIsSet:added Id : ' +
+            ProductEntry.S['productId'], LLnotice);
+        end;
+      end;
+    end;
+  except
+    on E: Exception do
+      LogDatei.log('Exception in SetProductOnClientData: ' + E.Message, LLerror);
+  end;
+end;
+
 
 function TOpsi4Data.withLicenceManagement: boolean;
 var
@@ -3965,6 +4017,99 @@ begin
   end;
 end;
 *)
+
+function TOpsi4Data.getOpsiVersion: string;
+var
+  omc: TOpsiMethodCall;
+begin
+  Result := '';
+  try
+    omc := TOpsiMethodCall.Create('backend_info', []);
+    try
+      try
+        FOpsiInformation := FjsonExecutioner.retrieveJsonObject(omc);
+      finally
+        omc.Free;
+      end;
+      if (FOpsiInformation <> nil) and (FOpsiInformation.O['result'] <>
+        nil) then
+      begin
+        Result := FOpsiInformation.O['result'].S['opsiVersion'];
+        Result := AnsiDequotedStr(trim(Result), '"');
+      end
+      else
+        LogDatei.log('Could not get backend_info from service. No json object retrieved', LLerror);
+    except
+      on E: Exception do
+        LogDatei.log('Exception while getting backend_info from service: ' + E.Message, LLerror);
+    end;
+  except
+    on E: Exception do
+      LogDatei.log('Exception in getOpsiVersion: ' + E.Message, LLerror);
+  end;
+end;
+
+function TOpsi4Data.getOpsiServiceMethods(allow_deprecated : boolean) : TStringlist;
+var
+  omc: TOpsiMethodCall;
+  i : integer; //count variable
+  OpsiServiceMethods : TSuperArray;
+  isDeprecated : boolean = false;
+begin
+  Result := TStringlist.create;
+  // method backend_getInterface exist since opsi 4.0.6 (or earlier)
+  // but the key 'deprecated' exists since opsi 4.2
+  try
+    omc := TOpsiMethodCall.Create('backend_getInterface', []);
+    try
+      FOpsiInformation := FjsonExecutioner.retrieveJsonObject(omc);
+    finally
+      omc.Free;
+    end;
+    try
+      if (FOpsiInformation <> nil) and (FOpsiInformation.O['result'] <>
+          nil) then
+        begin
+          OpsiServiceMethods := FOpsiInformation.O['result'].AsArray;
+          for i := 0 to OpsiServiceMethods.Length -1 do
+          begin
+            // do we have the deprecated key (opsi >= 4.2) ?
+            if jsonAsObjectHasKey(OpsiServiceMethods[i].AsString,'deprecated') then
+              isDeprecated := OpsiServiceMethods[i].B['deprecated']
+            else isDeprecated := false; // default to false
+            if (not isDeprecated) or allow_deprecated then
+               result.Add(OpsiServiceMethods[i].S['name']);
+          end;
+        end
+        else
+          LogDatei.log('Could not get backend_getInterface from service. No json object or result retrieved', LLerror);
+      except
+        on E: Exception do
+          LogDatei.log('Exception while getting backend_getInterface from service: ' + E.Message, LLerror);
+      end;
+  except
+    on E: Exception do
+      LogDatei.log('Exception in getOpsiServiceMethods: ' + E.Message, LLerror);
+  end;
+end;
+
+function TOpsi4Data.isMethodProvided(Method : string): boolean;
+var
+  OpsiServiceMethods : TStringlist;
+begin
+  Result := False; //if method is not provided or an exception occurs the result is false
+  try
+    OpsiServiceMethods := getOpsiServiceMethods(True);
+    try
+      if OpsiServiceMethods.IndexOf(Method) > 0 then Result := True;
+    finally
+      FreeAndNil(OpsiServiceMethods);
+    end;
+  except
+    on E: Exception do
+      LogDatei.log('Exception in isMethodProvided: ' + E.Message, LLerror);
+  end;
+end;
 
 function TOpsi4Data.isConnected: boolean;
 var
@@ -4870,45 +5015,85 @@ begin
   end;
 end;
 
-
-function TOpsi4Data.getListOfProducts: TStringList;
+function TOpsi4Data.GetSortedProductOnClientListFromService: TStringList;
 var
-  productmaps: TStringList;
-  i: integer;
-
+  omc: TOpsiMethodCall;
 begin
-  Result := TStringList.Create;
-  FProductActionRequests := TStringList.Create;
-
+  Result := nil;
+  // use opsi 4.3 method
   try
-    begin
-      productmaps := getMapOfProductActionRequests;
-      //productmaps.SaveToFile('productmaps.txt'); //included for testing
-      //LogDatei.log('--- ProductMaps ---',LLDebug);
-      //LogDatei.log(productmaps.Text,LLDebug);
-      {$IFDEF OPSISCRIPT}
-      if configReverseProductOrderByUninstall then
-        reverseProductOrderByUninstall(productmaps);
-      {$ENDIF OPSISCRIPT}
-      //productmaps.SaveToFile('productmaps_sorted.txt'); //included for testing
-      FProductActionRequests.AddStrings(productmaps);
-      //productmaps := productonClients_getObjects__actionrequests;
-      for i := 0 to productmaps.Count - 1 do
-      begin
-        Result.add(productmaps.Names[i]);
-        LogDatei.log('Product : ' + productmaps.Names[i], LLDebug2);
-        testresult := Result.Text;
-      end;
-      FSortByServer := True;
-      LogDatei.log('Product sequence calculated by opsi-server', LLDebug2);
-    end
+    omc := TOpsiMethodCall.Create('productOnClient_getObjectsWithSequence',
+      ['', '{"clientId": "' + actualClient + '", "productType": "LocalbootProduct"}']);
+    try
+      Result := FjsonExecutioner.getListResult(omc);
+    finally
+      omc.Free;
+    end;
   except
-    FSortByServer := False;
-    //result := FInstallableProducts;
-    LogDatei.log('Product sequence calculated by opsi-script', LLWarning);
+    on E: Exception do
+      LogDatei.log('Exception in GetSortedProductOnClientListFromService: ' + E.Message, LLerror);
   end;
 end;
 
+
+function TOpsi4Data.getListOfProductIDs: TStringList;
+var
+  productmaps: TStringList;
+  i : integer; //count variable
+  SortedProductOnClientList: TStringList;
+begin
+  Result := nil;
+  LogDatei.log('getListOfProducts:getOpsiVersion : ' + getOpsiVersion, LLDebug);
+  // is opsi 4.3 method for product sequence provided ?
+  if isMethodProvided('productOnClient_getObjectsWithSequence') then
+  begin
+    try
+      SortedProductOnClientList := GetSortedProductOnClientListFromService;
+      try
+        SetProductOnClientData(SortedProductOnClientList);
+      finally
+        FreeAndNil(SortedProductOnClientList);
+      end;
+      Result := FSortedProductIDsWhereActionIsSet;
+      FSortByServer := True;
+    except
+      on E: Exception do
+      LogDatei.log('Exception in getListOfProdcutIDs using ops 4.3 method productOnClient_getObjectsWithSequence: ' +
+        E.Message, LLerror);
+    end;
+  end
+  else // no 4.3 method - let us use old stuff
+  begin
+    Result := TStringList.Create;
+    FProductActionRequests := TStringList.Create;
+    try
+      productmaps := getMapOfProductActionRequests;
+      try
+        {$IFDEF OPSISCRIPT}
+        if configReverseProductOrderByUninstall then
+          reverseProductOrderByUninstall(productmaps);
+        {$ENDIF OPSISCRIPT}
+        FProductActionRequests.AddStrings(productmaps);
+        for i := 0 to productmaps.Count - 1 do
+        begin
+          Result.add(productmaps.Names[i]);
+          LogDatei.log('ProductID : ' + productmaps.Names[i], LLDebug2);
+        end;
+        FSortByServer := True;
+        LogDatei.log('Product sequence calculated by opsi-server', LLDebug2);
+      finally
+        FreeAndNil(productmaps);
+      end;
+    except
+      on E: Exception do
+      begin
+        LogDatei.log('Exception in getListOfProdcutIDs: ' + E.Message
+          + ' Product sequence calculated by opsi-script', LLWarning);
+        FSortByServer := False;
+      end;
+    end;
+  end;
+end;
 
 function TOpsi4Data.getProductPropertyList(myproperty: string;
   defaultlist: TStringList; var usedefault: boolean): TStringList;

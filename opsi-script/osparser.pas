@@ -26890,8 +26890,8 @@ begin
 
     if opsidata <> nil then
     begin
-      LogDatei.log('opsi service version : ' + opsidata.getOpsiServiceVersion,
-        LLessential);
+      LogDatei.log('opsi service version : ' + opsidata.getOpsiServiceVersion
+                    + ' ('+opsidata.getOpsiVersion+')', LLessential);
       //Logdatei.log('Setup script name: '+opsidata.getProductScriptPath(tacSetup), LLessential);
     end;
 
