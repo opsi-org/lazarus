@@ -139,7 +139,7 @@ type
     LabelWinstVersion: TLabel;
     Label6: TLabel;
     Panel4: TPanel;
-    Edit2: TEdit;
+    Edit_LogFile: TEdit;
     Label4: TLabel;
     SpeedButton3: TSpeedButton;
     Button_show_gui: TSpeedButton;
@@ -712,7 +712,7 @@ begin
     Skriptdatei := Edit1.Text;
 
 
-  LogDateiName := Edit2.Text;
+  LogDateiName := Edit_LogFile.Text;
   Memo1.Lines.Clear;
   CentralForm.Refresh;
 
@@ -769,11 +769,11 @@ begin
 
   try
     {$IFDEF WINDOWS}
-    writeLogFileOptions(WinstRegHive, Edit2.Text);
+    writeLogFileOptions(WinstRegHive, Edit_LogFile.Text);
 {$ENDIF}
   except
      { try
-      writeLogFileOptions ('HKCU', Edit2.Text)
+      writeLogFileOptions ('HKCU', Edit_LogFile.Text)
     except
     end; }
   end;
@@ -834,7 +834,7 @@ begin
     Skriptdatei := Edit1.Text;
 
 
-  LogDateiName := Edit2.Text;
+  LogDateiName := Edit_LogFile.Text;
   Memo1.Lines.Clear;
   CentralForm.Refresh;
 
@@ -881,7 +881,7 @@ var
 begin
   Skriptdatei := '';
 
-  LogDateiName := Edit2.Text;
+  LogDateiName := Edit_LogFile.Text;
   LogDatei.StandardPartLogPath := ExtractFileDir(Logdateiname);
   if RadioButtonNewLogFile.Checked then
   begin
@@ -1084,32 +1084,19 @@ var
   PathOpsiLogViewer: string;
   Params: string;
 begin
-  {$IFDEF WIN32}
-  (*
-  ShowTextFile.lzRichEdit1.Clear;
-  //ShowTextFile.RichEdit1.Clear;
-  ShowTextFile.Visible := True;
-  if FileExists(LogDateiName) then
-  begin
-    ShowTextFile.reloadfromfile;
-    ShowTextFile.setcolor;
-  end;
-  {$IFDEF WINDOWS}ShowWindow(ShowTextFile.handle, SW_RESTORE);{$ENDIF}
-  *)
-  {$ENDIF WIN32}
   {$IFDEF WINDOWS}
   PathOpsiLogViewer :=
     'C:\Program Files (x86)\opsi.org\configed\opsi-logviewer.exe';
-  Params := Edit2.Text;
+  Params := Edit_LogFile.Text;
   {$ENDIF WINDOWS}
   {$IFDEF LINUX}
   PathOpsiLogViewer := '/usr/share/opsi-configed/java/jre/bin/java';
-  Params := '-jar "configed.jar" --logviewer ' + Edit2.Text;
+  Params := '-jar "configed.jar" --logviewer ' + Edit_LogFile.Text;
   ShowMessage('Not working on linux. Please start the opsi-logviewer manually.');
   {$ENDIF LINUX}
   {$IFDEF DARWIN}
   PathOpsiLogViewer := '/Applications/opsi-logviewer.app/Contents/MacOS/opsi-logviewer';
-  Params := Edit2.Text;
+  Params := Edit_LogFile.Text;
   {$ENDIF DARWIN}
   if FileExists(PathOpsiLogViewer) then
   begin
