@@ -857,19 +857,19 @@ begin
     if fileexists(myconfiguration.PathToOpsiPackageBuilder) then
     begin
       //RadioButtonPackageBuilder.Enabled := True;
-      // is not pössible via rtti
+      // is not possible via rtti
     end
     else
     begin
       //RadioButtonPackageBuilder.Enabled := False;
-      // is not pössible via rtti
+      // is not possible via rtti
     end;
     // check if we may build and install
     if fileexists(myconfiguration.PathToOpsiPackageBuilder) or
       ((myconfiguration.Service_URL <> '') and (myconfiguration.Service_user <> '')) then
     begin
       //RadioButtonBuildPackage.Enabled := True;
-      // is not pössible via rtti
+      // is not possible via rtti
       //CheckGroupBuildMode.Enabled := True;
       TIRadioGroupBuildMode.Enabled := True;
     end
@@ -881,11 +881,6 @@ begin
       //RadioButtonBuildPackage.Enabled := False;
       //CheckGroupBuildMode.Enabled := True;
     end;
-    {$IFDEF LINUX}
-    //BtSingleAnalyzeAndCreateWin.Glyph.LoadFromFile('/usr/share/opsi-setup-detector-experimental/analyze4.xpm');
-    //BtATwonalyzeAndCreate.Glyph.LoadFromFile('/usr/share/opsi-setup-detector-experimental/analyze5.xpm');
-    {$ENDIF LINUX}
-    //LabelLogInfo.Caption := 'More info in Log file: ' + LogDatei.FileName;
     EditLogInfo.Caption := 'More info in Log file: ' + LogDatei.FileName;
     Application.ProcessMessages;
   end;
@@ -1218,12 +1213,17 @@ procedure TResultform1.MenuItemKnownInstallersClick(Sender: TObject);
 var
   installerstr: string;
   installer: TKnownInstaller;
+  installerlist : TStringlist;
 begin
+  installerlist := TStringlist.Create;
   for installer := Low(TKnownInstaller) to High(TKnownInstaller) do
     if not (installer = stUnknown) then
-      installerstr := installerstr + installerToInstallerstr(installer) + LineEnding;
+      installerlist.Add(installerToInstallerstr(installer));
+      //installerstr := installerstr + installerToInstallerstr(installer) + LineEnding;
+  installerlist.Sort;
+  installerstr :=  installerlist.Text;
   ShowMessage(installerstr);
-
+  installerlist.Free;
 end;
 
 procedure TResultform1.OpenDialog1CanClose(Sender: TObject; var CanClose: boolean);
@@ -2467,11 +2467,14 @@ begin
   try
     PanelProcess.Visible := True;
     procmess;
+    callServiceOrPackageBuilder;
+    (*
     case TIRadioGroupCreateMode.ItemIndex of
       0: ; // do nothing else
       1: callServiceOrPackageBuilder;
       2: ; // do nothing else
     end;
+    *)
     procmess;
     PanelProcess.Visible := False;
     if (system.ExitCode = 0) then
@@ -3438,6 +3441,10 @@ begin
   tmpimage.LoadFromFile(resourcedir + PathDelim + 'images' + PathDelim +
     'analyzepack4.xpm');
   BtSingleAnalyzeAndCreateMulti.Glyph.Assign(tmpimage.Bitmap);
+
+  tmpimage.LoadFromFile(resourcedir + PathDelim + 'images' + PathDelim +
+    'analyzepack4.xpm');
+  BtSingleAnalyzeAndCreateWithUser.Glyph.Assign(tmpimage.Bitmap);
 
   // Help icons at linux has to be loaded as xpm file
   tmpimage.LoadFromFile(resourcedir + PathDelim + 'images' + PathDelim +

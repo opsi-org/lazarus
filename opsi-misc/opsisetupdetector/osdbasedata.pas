@@ -2016,7 +2016,7 @@ begin
 
   // marker for add installers
   knownInstallerList := TStringList.Create;
-  knownInstallerList.Add('install4j');
+  knownInstallerList.Add('Install4j');
   knownInstallerList.Add('PortableApps');
   knownInstallerList.Add('LinRPM');
   knownInstallerList.Add('LinDeb');
@@ -2497,7 +2497,7 @@ begin
   end;
   with installerArray[integer(stInstall4J)] do
   begin
-    description := 'install4j';
+    description := 'Install4j';
     silentsetup := '-q -overwrite';
     unattendedsetup := '-q -overwrite';
     silentuninstall := '-q';

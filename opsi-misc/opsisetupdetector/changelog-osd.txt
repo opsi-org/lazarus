@@ -108,6 +108,13 @@ CompanyNameIgor PavlovBFileDescription7z Setup SFX*FileVersion9.200InternalName7
 
 todo:
    *
+opsi-setup-detector (4.2.2.2-1)
+
+  * sorted installer list
+  * some more autosize on labels for international translations
+  * Btn 'rebuild' on create tab works now independent of the create mode radiobuttons
+
+-- Detlef Oertel <d.oertel@uib.de>  Mon,  14 Aug 2023 : 15:00:00
 
 opsi-setup-detector (4.2.2.1-1)
 
