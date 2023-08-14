@@ -2252,7 +2252,7 @@ begin
             FBatchOberflaeche.SetElementVisible(True, eMainForm);
           if scriptlist.Count <= 0 then
             centralform.Edit1.Text := scriptlist.strings[0];
-          centralform.Edit2.Text := LogDateiName;
+          centralform.Edit_LogFile.Text := LogDateiName;
 
           DontUpdateMemo := True;
           {$ENDIF GUI}
@@ -2602,7 +2602,7 @@ begin
           if GetContinueLogFile(LogDateiName) then
             RadioButtonAppendLogFile.Checked := True;
 
-          Edit2.Text := LogDateiName;
+          Edit_LogFile.Text := LogDateiName;
           extractTmpPathFromLogdatei(LogDateiName);
           TempPath := GetTempPath;
         end;

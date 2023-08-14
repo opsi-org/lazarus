@@ -523,8 +523,6 @@ procedure getStringlistFromJsonObject(const jO: ISuperObject; var list: TStringL
 
 resourcestring
   rsSendLog = 'Sending log file to server ...';
-  rsErrorIntConnection = 'Error while initializing opsiconnection';
-  rsNoValueFound = 'No value found! Set%sto';
 
 
 implementation

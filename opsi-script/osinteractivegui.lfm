@@ -470,13 +470,13 @@ object CentralForm: TCentralForm
       Caption = 'Logfile:'
       ParentColor = False
     end
-    object Edit2: TEdit
+    object Edit_LogFile: TEdit
       Left = 93
       Height = 26
       Top = 7
       Width = 571
       TabOrder = 0
-      Text = 'Edit2'
+      Text = 'Edit_LogFile'
     end
     object RadioGroup1: TRadioGroup
       Left = 688
