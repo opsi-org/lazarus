@@ -620,12 +620,15 @@ resourcestring
     'comment "Uninstall finished..."';
   rspathToOpsiPackageBuilder =
     'Path to the OpsiPackageBuilder. OpsiPackageBuilder is used to build the opsi packages via ssh. see: https://forum.opsi.org/viewtopic.php?f=22&t=7573';
+
+  rsCreateRadioGroupTitle = 'Create Mode';
   rsCreateRadioIndex = 'selects the Create mode Radiobutton.';
   rsCreateRadioFiles = 'create opsi product files';
   rsCreateRadioFilesBuild = 'create opsi product files and  build package';
   rsCreateRadioFilesPackageBuilder =
     'create opsi product files and start the interactive PackageBuilder';
 
+  rsBuildRadioGroupTitle = 'Build Mode';
   rsBuildRadioIndex = 'selects the Build mode Radiobutton.';
   rsBuildRadioBuild = 'build';
   rsBuildRadioBuildInstall = 'build and install';

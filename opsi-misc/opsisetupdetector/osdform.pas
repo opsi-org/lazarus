@@ -784,9 +784,20 @@ begin
       // initialize drop down
       TIComboBoxChannel.Items.Text := templateChannelList.Text;
 
-      TIRadioGroupCreateMode.Items.Text:= osdsettings.CreateMode.Text;
+      // reinit osd settings (changed language ?)
+      osdsettings.BuildMode.Clear;
+      osdsettings.BuildMode.Add(rsBuildRadioBuild);
+      osdsettings.BuildMode.Add(rsBuildRadioBuildInstall);
+      osdsettings.CreateMode.Clear;
+      osdsettings.CreateMode.Add(rsCreateRadioFiles);
+      osdsettings.CreateMode.Add(rsCreateRadioFilesBuild);
+      osdsettings.CreateMode.Add(rsCreateRadioFilesPackageBuilder);
+
+      TIRadioGroupCreateMode.Caption:= rsCreateRadioGroupTitle;
+      TIRadioGroupCreateMode.Items.Text := osdsettings.CreateMode.Text;
       TIRadioGroupCreateMode.Link.SetObjectAndProperty(osdsettings, 'CreateModeValue');
 
+      TIRadioGroupBuildMode.Caption:= rsBuildRadioGroupTitle;
       TIRadioGroupBuildMode.Items.Text:= osdsettings.BuildMode.Text;
       TIRadioGroupBuildMode.Link.SetObjectAndProperty(osdsettings, 'BuildModeValue');
 
@@ -1139,24 +1150,28 @@ procedure TResultform1.MenuItemLangDeClick(Sender: TObject);
 begin
   osdsettings.mylang:='de';
   SetDefaultLang('de', osdsettings.mylocaledir);
+  initGUI;
 end;
 
 procedure TResultform1.MenuItemLangEnClick(Sender: TObject);
 begin
   osdsettings.mylang:='en';
   SetDefaultLang('en', osdsettings.mylocaledir);
+  initGUI;
 end;
 
 procedure TResultform1.MenuItemLangEsClick(Sender: TObject);
 begin
   osdsettings.mylang:='en';
   SetDefaultLang('es', osdsettings.mylocaledir);
+  initGUI;
 end;
 
 procedure TResultform1.MenuItemLangFrClick(Sender: TObject);
 begin
   osdsettings.mylang:='fr';
   SetDefaultLang('fr', osdsettings.mylocaledir);
+  initGUI;
 end;
 
 procedure TResultform1.MenuItemStartClick(Sender: TObject);

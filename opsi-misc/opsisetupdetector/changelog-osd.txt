@@ -114,6 +114,7 @@ opsi-setup-detector (4.2.2.2-1)
   * some more autosize on labels for international translations
   * Btn 'rebuild' on create tab works now independent of the create mode radiobuttons
   * automatic update of config_version
+  * reinitGUI on language change
 
 -- Detlef Oertel <d.oertel@uib.de>  Mon,  14 Aug 2023 : 15:00:00
 
