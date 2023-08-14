@@ -1637,7 +1637,10 @@ begin
       Fconfig_filled := False
     else
       Fconfig_filled := True;
-    Fconfig_version := CONFVERSION;
+    //Fconfig_version := CONFVERSION;
+    // update written version only if the new version is larger
+    if CompareDotSeparatedNumbers(Fconfig_version, '<', myVersion) then
+      Fconfig_version := myVersion;
 
     FService_pass := encryptStringBlow('opsi-setup-detector' +
       FService_user, FService_pass);
