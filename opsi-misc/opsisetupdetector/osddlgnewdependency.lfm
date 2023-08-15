@@ -36,10 +36,10 @@ object FNewDepDlg: TFNewDepDlg
       TabOrder = 0
     end
     object BitBtn2: TBitBtn
-      Left = 461
+      Left = 454
       Height = 38
       Top = 6
-      Width = 89
+      Width = 96
       Align = alRight
       AutoSize = True
       BorderSpacing.Right = 7
@@ -65,22 +65,22 @@ object FNewDepDlg: TFNewDepDlg
     TabOrder = 1
     object Label1: TLabel
       Left = 8
-      Height = 80
+      Height = 81
       Top = 8
       Width = 489
       Align = alClient
       Alignment = taCenter
       AutoSize = False
       BorderSpacing.Around = 7
-      Caption = 'Please edit the dependency.'#13#10'Please note:'#13#10'You may may either provide a requested installation state, or a requested action. A combination is not allowed.'
+      Caption = 'Please edit the dependency.'#13#10'Please note:'#13#10'You may may either provide a requested installation state, or a requested action. '#13#10'A combination is not allowed.'
       ParentColor = False
       ParentFont = False
       WordWrap = True
     end
     object LabelConnect: TLabel
       Left = 12
-      Height = 16
-      Top = 99
+      Height = 15
+      Top = 100
       Width = 539
       Align = alBottom
       Alignment = taCenter
@@ -92,7 +92,7 @@ object FNewDepDlg: TFNewDepDlg
     end
     object SpeedButtonHelpDependecies: TSpeedButton
       Left = 504
-      Height = 87
+      Height = 88
       Hint = 'Show Help'
       Top = 1
       Width = 58
@@ -197,15 +197,15 @@ object FNewDepDlg: TFNewDepDlg
       Anchors = []
       BorderSpacing.Around = 5
       Caption = 'Require Mode'
-      ClientHeight = 44
-      ClientWidth = 407
+      ClientHeight = 43
+      ClientWidth = 413
       ParentFont = False
       TabOrder = 0
       object RadioButtonAction: TRadioButton
         Left = 22
-        Height = 18
+        Height = 19
         Top = 8
-        Width = 62
+        Width = 55
         Caption = 'Action'
         OnChange = RadioButtonActionChange
         ParentFont = False
@@ -213,9 +213,9 @@ object FNewDepDlg: TFNewDepDlg
       end
       object RadioButtonState: TRadioButton
         Left = 145
-        Height = 18
+        Height = 19
         Top = 8
-        Width = 56
+        Width = 46
         Caption = 'State'
         Checked = True
         ParentFont = False
@@ -268,9 +268,9 @@ object FNewDepDlg: TFNewDepDlg
         TabOrder = 0
         object LabelDepActionrequest: TLabel
           Left = 6
-          Height = 32
+          Height = 30
           Top = 6
-          Width = 146
+          Width = 128
           Anchors = []
           BorderSpacing.Around = 5
           Caption = 'Dependency'#13#10'for which action request'
@@ -278,8 +278,8 @@ object FNewDepDlg: TFNewDepDlg
           ParentFont = False
         end
         object ComboBoxDepActionrequest: TComboBox
-          Left = 167
-          Height = 20
+          Left = 149
+          Height = 23
           Top = 12
           Width = 244
           Anchors = []
@@ -287,7 +287,7 @@ object FNewDepDlg: TFNewDepDlg
           AutoCompleteText = [cbactEnabled, cbactEndOfLineComplete, cbactSearchAscending]
           BorderSpacing.Left = 10
           BorderSpacing.Top = 11
-          ItemHeight = 19
+          ItemHeight = 15
           ItemIndex = 0
           Items.Strings = (
             'setup'
@@ -323,9 +323,9 @@ object FNewDepDlg: TFNewDepDlg
         TabOrder = 1
         object Label5: TLabel
           Left = 6
-          Height = 32
+          Height = 30
           Top = 6
-          Width = 155
+          Width = 136
           Anchors = []
           BorderSpacing.Around = 5
           Caption = 'productid'#10'of the dependent product'
@@ -333,8 +333,8 @@ object FNewDepDlg: TFNewDepDlg
           ParentFont = False
         end
         object ComboBoxproductIds: TComboBox
-          Left = 176
-          Height = 20
+          Left = 157
+          Height = 23
           Top = 12
           Width = 244
           Anchors = []
@@ -342,7 +342,7 @@ object FNewDepDlg: TFNewDepDlg
           AutoCompleteText = [cbactEnabled, cbactEndOfLineComplete, cbactSearchAscending]
           BorderSpacing.Left = 10
           BorderSpacing.Top = 11
-          ItemHeight = 19
+          ItemHeight = 15
           TabOrder = 0
         end
       end
@@ -371,23 +371,23 @@ object FNewDepDlg: TFNewDepDlg
       TabOrder = 2
       object ComboBoxActState: TComboBox
         Left = 201
-        Height = 20
+        Height = 23
         Top = 5
         Width = 209
         Anchors = []
         BorderSpacing.Right = 7
         BorderSpacing.Around = 5
-        ItemHeight = 19
+        ItemHeight = 15
         OnChange = ComboBoxActStateChange
         ParentFont = False
         TabOrder = 0
         Text = 'ComboBoxActState'
       end
       object Label3: TLabel
-        Left = 101
-        Height = 16
+        Left = 113
+        Height = 15
         Top = 5
-        Width = 90
+        Width = 78
         Anchors = []
         BorderSpacing.Around = 5
         Caption = 'Action or State'
@@ -419,13 +419,13 @@ object FNewDepDlg: TFNewDepDlg
       TabOrder = 3
       object ComboBoxReqType: TComboBox
         Left = 201
-        Height = 20
+        Height = 23
         Top = 5
         Width = 209
         Anchors = []
         BorderSpacing.Right = 7
         BorderSpacing.Around = 5
-        ItemHeight = 19
+        ItemHeight = 15
         ItemIndex = 0
         Items.Strings = (
           ''
@@ -436,10 +436,10 @@ object FNewDepDlg: TFNewDepDlg
         TabOrder = 0
       end
       object Label4: TLabel
-        Left = 81
-        Height = 16
+        Left = 96
+        Height = 15
         Top = 5
-        Width = 110
+        Width = 95
         Anchors = []
         BorderSpacing.Around = 5
         Caption = 'Requirement Type'

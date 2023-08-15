@@ -1,6 +1,6 @@
 unit osddlgnewproperty;
 
-{$mode delphi}
+{$mode objfpc}{$H+}
 
 interface
 
@@ -109,6 +109,9 @@ begin
   CheckBoxPropMultiValChange(self);
   RadioButtonPropBoolChange(self);
   ListBoxPropDefVal.Selected[1] := True;
+  SetDefaultLang(osdsettings.mylang, osdsettings.mylocaledir);
+  Repaint;
+  Application.ProcessMessages;
 end;
 
 procedure TFNewPropDlg.RadioButtonPropStringChange(Sender: TObject);

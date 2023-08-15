@@ -1,6 +1,6 @@
 unit osddlgnewdependency;
 
-{$mode delphi}
+{$mode objfpc}{$H+}
 
 interface
 
