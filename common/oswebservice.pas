@@ -3655,6 +3655,22 @@ begin
   FJsonExecutioner := nil;
   FSortByServer := False;
   FCommunicationMode := -1;
+  //Set stringlists to nil, so it can be checked if they are nil
+  //DoTo: It would be much better to create the stringlists here but it is not clear
+  //if this might be problematic, thus a carefull check and larger refactoring might be necessary
+  mapOfMethodSignatures := nil;
+  allDependencies := nil;
+  FPreRequirements := nil;
+  FPostRequirements := nil;
+  FProductStates := nil;
+  FProductActionRequests := nil;
+  FSortedProductIDsWhereActionIsSet := nil;
+  FInstallableProducts := nil;
+  ProductVars := nil;
+  FProductOnClientIndex := nil;
+  mylist := nil;
+
+
   {$IFNDEF SYNAPSE}
   //FSslProtocol := sslvTLSv1_2;
   {$ENDIF SYNAPSE}
