@@ -3655,9 +3655,20 @@ begin
   FJsonExecutioner := nil;
   FSortByServer := False;
   FCommunicationMode := -1;
-  {$IFNDEF SYNAPSE}
-  //FSslProtocol := sslvTLSv1_2;
-  {$ENDIF SYNAPSE}
+  //Set stringlists to nil, so it can be checked if they are nil
+  //DoTo: It would be much better to create the stringlists here but it is not clear
+  //if this might be problematic, thus a carefull check and larger refactoring might be necessary
+  mapOfMethodSignatures := nil;
+  allDependencies := nil;
+  FPreRequirements := nil;
+  FPostRequirements := nil;
+  FProductStates := nil;
+  FProductActionRequests := nil;
+  FSortedProductIDsWhereActionIsSet := nil;
+  FInstallableProducts := nil;
+  ProductVars := nil;
+  FProductOnClientIndex := nil;
+  mylist := nil;
 end;
 
 destructor TOpsi4Data.Destroy;
@@ -3912,10 +3923,17 @@ var
 begin
   try
     if not Assigned(FProductActionRequests) then
-      FProductActionRequests := TStringList.Create;
+      FProductActionRequests := TStringList.Create
+    else
+      FProductActionRequests.Clear;
     if not Assigned(FProductStates) then
-      FProductStates := TStringList.Create;
-    FSortedProductIDsWhereActionIsSet := TStringList.Create;
+      FProductStates := TStringList.Create
+    else
+      FProductStates.Clear;
+    If not Assigned(FSortedProductIDsWhereActionIsSet) then
+      FSortedProductIDsWhereActionIsSet := TStringList.Create
+    else
+      FSortedProductIDsWhereActionIsSet.Clear;
     if (ProductOnClientData <> nil) then
     begin
       for i := 0 to ProductOnClientData.Count - 1 do
@@ -5063,7 +5081,10 @@ begin
   else // no 4.3 method - let us use old stuff
   begin
     Result := TStringList.Create;
-    FProductActionRequests := TStringList.Create;
+    if not Assigned(FProductActionRequests) then
+      FProductActionRequests := TStringList.Create
+    else
+      FProductActionRequests.Clear;
     try
       productmaps := getMapOfProductActionRequests;
       try
