@@ -5086,7 +5086,10 @@ begin
   else // no 4.3 method - let us use old stuff
   begin
     Result := TStringList.Create;
-    FProductActionRequests := TStringList.Create;
+    if not Assigned(FProductActionRequests) then
+      FProductActionRequests := TStringList.Create
+    else
+      FProductActionRequests.Clear;
     try
       productmaps := getMapOfProductActionRequests;
       try
