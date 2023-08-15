@@ -107,9 +107,9 @@ var
   myUrl : string;
 begin
   if LowerCase(osdsettings.mylang) = 'de' then
-    myUrl := opsidocs_base_url+'opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-product-configuration-dependecies'
+    myUrl := opsidocs_base_url+'opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-product-configuration-dependencies'
   else
-    myUrl := opsidocs_base_url+'opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-product-configuration-dependecies';
+    myUrl := opsidocs_base_url+'opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-product-configuration-dependencies';
   OpenURL(myUrl);
 end;
 
