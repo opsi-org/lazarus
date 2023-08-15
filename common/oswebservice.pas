@@ -3669,11 +3669,6 @@ begin
   ProductVars := nil;
   FProductOnClientIndex := nil;
   mylist := nil;
-
-
-  {$IFNDEF SYNAPSE}
-  //FSslProtocol := sslvTLSv1_2;
-  {$ENDIF SYNAPSE}
 end;
 
 destructor TOpsi4Data.Destroy;
