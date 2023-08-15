@@ -3912,10 +3912,17 @@ var
 begin
   try
     if not Assigned(FProductActionRequests) then
-      FProductActionRequests := TStringList.Create;
+      FProductActionRequests := TStringList.Create
+    else
+      FProductActionRequests.Clear;
     if not Assigned(FProductStates) then
-      FProductStates := TStringList.Create;
-    FSortedProductIDsWhereActionIsSet := TStringList.Create;
+      FProductStates := TStringList.Create
+    else
+      FProductStates.Clear;
+    If not Assigned(FSortedProductIDsWhereActionIsSet) then
+      FSortedProductIDsWhereActionIsSet := TStringList.Create
+    else
+      FSortedProductIDsWhereActionIsSet.Clear;
     if (ProductOnClientData <> nil) then
     begin
       for i := 0 to ProductOnClientData.Count - 1 do
