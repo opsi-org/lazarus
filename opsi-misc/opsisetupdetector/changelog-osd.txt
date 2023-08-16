@@ -98,6 +98,12 @@ stWixToolset,
   * marker: Install SumatraPDF
   * marker: SumatraPDF has been installed
 
+* setup factory
+  * https://setupfactory.com/
+  * https://www.indigorose.com/setup-factory/
+  * command line options: https://www.indigorose.com/webhelp/suf9/index.htm
+  * example: E:\_#_#_#_Setup-examples-by-installer\setup_factory
+
 Uebersicht:
 http://www.fredshack.com/docs/packagers.html
 https://silent-install.net/installer/start
