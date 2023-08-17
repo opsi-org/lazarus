@@ -1265,8 +1265,8 @@ begin
         textlist.Add('description = "' + myprop.description + '"');
         if myprop.Property_Type = bool then
         begin
-          textlist.Add('default = [' +
-            lowercase(BoolToStr(myprop.boolDefault, True)) + ']');
+          textlist.Add('default = [' + lowercase(
+            BoolToStr(myprop.boolDefault, True)) + ']');
         end
         else
         begin

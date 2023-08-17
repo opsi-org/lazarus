@@ -25,15 +25,18 @@ msgid ""
 "installertype manually\n"
 "and go on (ok)\n"
 "or do you want to stop (cancel) ?"
-msgstr "Voulez-vous choisir un\ntype d'installation manuellement\net continuez (ok)\nou voulez-vous arrêter (annuler) ?"
+msgstr ""
+"Voulez-vous choisir un\n"
+"type d'installation manuellement\n"
+"et continuez (ok)\n"
+"ou voulez-vous arrêter (annuler) ?"
 
 #: chooseinstallerdlg.rssorryunknown
 msgid "Sorry Unknown Installer"
 msgstr "Désolé, Installateur Inconnu"
 
 #: osdanalyzewin.swarnmultiplemsi
-msgid ""
-"Multiple (more than one) msi files found. Check the log file and directory: "
+msgid "Multiple (more than one) msi files found. Check the log file and directory: "
 msgstr "Multiple (plus qu'un) fichiers msi sont trouvés. Consultez les journaux système et répertoire:"
 
 #: osdbasedata.rsbuildradiobuild
@@ -60,7 +63,10 @@ msgid ""
 "Edit your configuration here.\n"
 "Click on a line to get help \n"
 "in the yellow field at the bottom."
-msgstr "Modifiez votre configuration ici.\nCliquez sur une ligne pour obtenir de l'aide\ndans le champ jaune en bas."
+msgstr ""
+"Modifiez votre configuration ici.\n"
+"Cliquez sur une ligne pour obtenir de l'aide\n"
+"dans le champ jaune en bas."
 
 #: osdbasedata.rsconfigversion
 msgid "Do not change. Version of the config structure."
@@ -120,16 +126,17 @@ msgid ""
 "List of opsi-script libraries that have to be imported.\n"
 "One per line. May be empty. Example:\n"
 "myinstallhelperlib.opsiscript"
-msgstr "Liste des bibliothèques opsi-script qui doivent être importées.\nUne par ligne. Peut être vide. Exemple:\nmyinstallhelperlib.opsiscript"
+msgstr ""
+"Liste des bibliothèques opsi-script qui doivent être importées.\n"
+"Une par ligne. Peut être vide. Exemple:\n"
+"myinstallhelperlib.opsiscript"
 
 #: osdbasedata.rsinternalset
 msgid "Do not change here - Internally set by a dialog."
 msgstr "Ne pas modifier ici - Défini en interne par un dialogue."
 
 #: osdbasedata.rspathtoopsipackagebuilder
-msgid ""
-"Path to the OpsiPackageBuilder. OpsiPackageBuilder is used to build the opsi"
-" packages via ssh. see: https://forum.opsi.org/viewtopic.php?f=22&t=7573"
+msgid "Path to the OpsiPackageBuilder. OpsiPackageBuilder is used to build the opsi packages via ssh. see: https://forum.opsi.org/viewtopic.php?f=22&t=7573"
 msgstr "Chemin vers OpsiPackageBuider. OpsiPackageBuider est utilisé pour construire les paquets opsi via ssh. Plus d'information : https://forum.opsi.org/viewtopic.php?f=22&t=7573"
 
 #: osdbasedata.rspostinstalllines
@@ -147,9 +154,7 @@ msgid ""
 msgstr ""
 
 #: osdbasedata.rsprefersilent
-msgid ""
-"Should really silent installs (with no output) be preferred ? Default is "
-"false = unattended is preferred."
+msgid "Should really silent installs (with no output) be preferred ? Default is false = unattended is preferred."
 msgstr ""
 
 #: osdbasedata.rspreinstalllines
@@ -157,14 +162,20 @@ msgid ""
 "List of opsi-script code lines that should be included before the installation starts. \n"
 "One per line. May be empty. Example: \n"
 "comment \"Start the installation ...\""
-msgstr "Liste des lignes de code opsi-script qui doivent être incluses avant le démarrage de l'installation.\nUne par ligne. Peut être vide. Exemple:\ncomment \"Lancer l'installation...\""
+msgstr ""
+"Liste des lignes de code opsi-script qui doivent être incluses avant le démarrage de l'installation.\n"
+"Une par ligne. Peut être vide. Exemple:\n"
+"comment \"Lancer l'installation...\""
 
 #: osdbasedata.rspreuninstalllines
 msgid ""
 "List of opsi-script code lines that should be included before the uninstallation starts.\n"
 "One per line. May be empty. Example:\n"
 "comment \"Start the uninstallation ...\""
-msgstr "Liste des lignes de code opsi-script qui doivent être incluses avant le début de la désinstallation.\nUne par ligne. Peut être vide. Exemple:\ncomment \"Lancer la désinstallation...\""
+msgstr ""
+"Liste des lignes de code opsi-script qui doivent être incluses avant le début de la désinstallation.\n"
+"Une par ligne. Peut être vide. Exemple:\n"
+"comment \"Lancer la désinstallation...\""
 
 #: osdbasedata.rspropdesktopicondescription
 msgid "Should there be a desktop icon ?"
@@ -187,9 +198,7 @@ msgid "Path to the text file that is used as Read-me template"
 msgstr "Chemin d'accès au fichier texte utilisé comme modèle Lisez-moi"
 
 #: osdbasedata.rsregisterinfilemanager
-msgid ""
-"Should this program be registered to the Filemanger (Explorer) context menu "
-"?"
+msgid "Should this program be registered to the Filemanger (Explorer) context menu ?"
 msgstr ""
 
 #: osdbasedata.rsservice_pass
@@ -210,20 +219,15 @@ msgstr "Le nom d'utilisateur utilisé pour se connecter au service Web opsi"
 
 #: osdbasedata.rsusepropdesktopicon
 msgctxt "osdbasedata.rsusepropdesktopicon"
-msgid ""
-"Should we create a \"DesktopIcon\" property and add code to handle desktop "
-"icons ?"
+msgid "Should we create a \"DesktopIcon\" property and add code to handle desktop icons ?"
 msgstr "Vous voulez créer une propriété \"DesktopIcon\" et ajouter le code pour traiter des icônes de bureau?"
 
 #: osdbasedata.rsuseproplicenseorpool
-msgid ""
-"Should we create a \"LicenseOrPool\" property and add code to handle license"
-" keys ?"
+msgid "Should we create a \"LicenseOrPool\" property and add code to handle license keys ?"
 msgstr ""
 
 #: osdbasedata.rsworkbench_mounted
-msgid ""
-"Automatically detected. Is the opsi workbench reachable at workbench_Path."
+msgid "Automatically detected. Is the opsi workbench reachable at workbench_Path."
 msgstr "Détecté automatiquement. Est ce que le opsi workbench défini dans workbench_Path est joignable."
 
 #: osdbasedata.rsworkbench_path
@@ -243,16 +247,11 @@ msgid "Yes (Backup)"
 msgstr "Oui (Sauvegarde)"
 
 #: osdcreate.rsconfirmbackuphint
-msgid ""
-"All files that are directly in the directories \"CLIENT_DATA\" and \"OPSI\" "
-"will be copied to a backup file."
+msgid "All files that are directly in the directories \"CLIENT_DATA\" and \"OPSI\" will be copied to a backup file."
 msgstr ""
 
 #: osdcreate.rsconfirmbackuporremovaltitle
-msgid ""
-"Should we use the existing directory and create a backup of the old files "
-"before creating the new ones ?  Otherwise the exiting directory will be "
-"deleted before creating a new one."
+msgid "Should we use the existing directory and create a backup of the old files before creating the new ones ?  Otherwise the exiting directory will be deleted before creating a new one."
 msgstr ""
 
 #: osdcreate.rsconfirmdeletecaption
@@ -268,11 +267,7 @@ msgid "More Information ..."
 msgstr "Plus d'informations..."
 
 #: osdcreate.rsconfirmexpandedtext
-msgid ""
-"Yes: All files that are located in the directories \"CLIENT_DATA\" and "
-"\"OPSI\" will be saved to a backup file before the new files are "
-"created\\nNo: Delete the complete directory before creating the new "
-"one.\\nAbort: Leave existing directory unchanged and abort"
+msgid "Yes: All files that are located in the directories \"CLIENT_DATA\" and \"OPSI\" will be saved to a backup file before the new files are created\\nNo: Delete the complete directory before creating the new one.\\nAbort: Leave existing directory unchanged and abort"
 msgstr ""
 
 #: osdcreate.rscouldnotcreatedirectorywarning
@@ -297,7 +292,9 @@ msgstr ""
 msgid ""
 "productId\n"
 "of the dependent product"
-msgstr "productId\ndu produit dépendant"
+msgstr ""
+"productId\n"
+"du produit dépendant"
 
 #: osddlgnewproperty.rscontainswhitespacewarning
 msgid " contains whitespace. Whitespaces are not allowed."
@@ -313,7 +310,10 @@ msgid ""
 "Default Values\n"
 "Only the selected\n"
 "Values are the defaults"
-msgstr "Les valeurs par défaut\nSeules les sélectionnés\nLes valeurs sont celles par défaut"
+msgstr ""
+"Les valeurs par défaut\n"
+"Seules les sélectionnés\n"
+"Les valeurs sont celles par défaut"
 
 #: osdform.rscheckentriesmsg
 msgid ""
@@ -353,7 +353,10 @@ msgid ""
 "Use Property \"Debug = true\" to disable mouse and keyboard blocking.\n"
 "If mouse and keyboard are accidentally blocked after the installation is finished,\n"
 "use action request \"update\" to enable mouse and keyboard again."
-msgstr "Utilisez la propriété \"Debug = true\" pour désactiver le souris et le blockage du clavier.\nSi le souris et le clavier sont blockées même si l'installation est déjà complète,\nutiliser l'action request \"update\" pour réactiver le souris et le clavier."
+msgstr ""
+"Utilisez la propriété \"Debug = true\" pour désactiver le souris et le blockage du clavier.\n"
+"Si le souris et le clavier sont blockées même si l'installation est déjà complète,\n"
+"utiliser l'action request \"update\" pour réactiver le souris et le clavier."
 
 #: osdform.rscustomizeprofilehint
 msgid "Should we add code to customize the installation in user profiles ?"
@@ -382,9 +385,7 @@ msgid "No Dependency selected."
 msgstr "Aucune dépendance sélectionnée."
 
 #: osdform.rserrorfindinglogviewer
-msgid ""
-"Please install the opsi-logviewer product. opsi-logviewer is not installed "
-"in "
+msgid "Please install the opsi-logviewer product. opsi-logviewer is not installed in "
 msgstr "Veuillez installer le produit opsi-logviewer. opsi-logviewer n'est pas installé dans"
 
 #: osdform.rserrorloadinglogviewer
@@ -397,11 +398,13 @@ msgid ""
 "You may also choose the directory via the selection button on the right (if the product is installed).\n"
 "If you there get a path like \"C:\\program Files\" or \"C:\\program Files (x86)\", \n"
 "it will be replaced by the matching opsi-script constant (e.g.\"%ProgramFiles32Dir%\")."
-msgstr "Le chemin du répertoire (sans guillemets) ou le software sera installé.\nVous pouvez également choisir le fichier via le bouton de sélection à droite (si le programme est installé).\nSi vous obtenez un chemin comme \"C:\\Programmes\" ou \"C:\\Programmes (x86)\", cela sera remplacé de la constante opsi-script correspendante (par ex. \"%ProgramFiles32Dir%\")."
+msgstr ""
+"Le chemin du répertoire (sans guillemets) ou le software sera installé.\n"
+"Vous pouvez également choisir le fichier via le bouton de sélection à droite (si le programme est installé).\n"
+"Si vous obtenez un chemin comme \"C:\\Programmes\" ou \"C:\\Programmes (x86)\", cela sera remplacé de la constante opsi-script correspendante (par ex. \"%ProgramFiles32Dir%\")."
 
 #: osdform.rsinstallfromlocalhint
-msgid ""
-"Should we add code to copy the installer locally before the installation ?"
+msgid "Should we add code to copy the installer locally before the installation ?"
 msgstr ""
 
 #: osdform.rsmac3stepselectiontext
@@ -465,9 +468,7 @@ msgid "Detailed analysis of rpm files can only be done in linux"
 msgstr ""
 
 #: osdform.rsselectappordir
-msgid ""
-"First select MacOS .app directory or a directory that contains the MacOS "
-"installer files"
+msgid "First select MacOS .app directory or a directory that contains the MacOS installer files"
 msgstr "Sélectionnez d'abord MacOS .app ou le répertoire où trouver les fichiers d'installation de MacOS"
 
 #: osdform.rsselectmacfile
@@ -479,8 +480,7 @@ msgid "Connected to opsi server"
 msgstr ""
 
 #: osdform.rsserviceconnectionfailed
-msgid ""
-"Could not connect to the opsi-web-service. Check URL, user and password"
+msgid "Could not connect to the opsi-web-service. Check URL, user and password"
 msgstr "Impossible de se connecter au service Web opsi. Vérifiez l'URL, l'utilisateur et le mot de passe"
 
 #: osdform.rsservicenotconnected
@@ -498,12 +498,14 @@ msgid ""
 "and to check before installaion if the program is running.\n"
 "Will be not detected. You have to choose it via the selection button on the right (if the product is installed).\n"
 "Unquoted file name."
-msgstr "Le programme principal du software qui doit être installé.\nSera utilisé pour créer les icônes du bureau ou des entrées du menu de démarrage et pour vérifier avant l'installation si le programme est en cours d'exécution.\nNe sera pas détecté. Vous devez choisir via le bouton de sélection à droite (si le programme est installé).\nNom du fichier sans guillemets."
+msgstr ""
+"Le programme principal du software qui doit être installé.\n"
+"Sera utilisé pour créer les icônes du bureau ou des entrées du menu de démarrage et pour vérifier avant l'installation si le programme est en cours d'exécution.\n"
+"Ne sera pas détecté. Vous devez choisir via le bouton de sélection à droite (si le programme est installé).\n"
+"Nom du fichier sans guillemets."
 
 #: osdform.rstemlatechannelhint
-msgid ""
-"Choose what kind of templates should be used. If the templates are not "
-"found, default is the fallback."
+msgid "Choose what kind of templates should be used. If the templates are not found, default is the fallback."
 msgstr ""
 
 #: osdform.rsthreeanalyzeandcreatemsgfirstsetup
@@ -538,7 +540,9 @@ msgstr "Maintenant, sélectionnez la version 64 Bit de Setup.exe."
 msgid ""
 "The unqoted path to the detected uninstall program.\n"
 "You may also choose the file via the selection button on the right (if the product is installed)."
-msgstr "Le chemin d'accès du fichier - sans guillemets - au programme de désinstallation détecté.\nVous pouvez également choisir le fichier via le bouton de sélection à droite (si le programme est installé)."
+msgstr ""
+"Le chemin d'accès du fichier - sans guillemets - au programme de désinstallation détecté.\n"
+"Vous pouvez également choisir le fichier via le bouton de sélection à droite (si le programme est installé)."
 
 #: osdform.rsweneedconfiguration
 msgid "We need some configurations first !"
@@ -629,7 +633,9 @@ msgstr "Type de prérequis"
 msgid ""
 "productid\n"
 "of the dependent product"
-msgstr "productId\ndu produit dépendant"
+msgstr ""
+"productId\n"
+"du produit dépendant"
 
 #: tfnewdepdlg.labelconnect.caption
 msgid "LabelConnect"
@@ -831,7 +837,9 @@ msgctxt "tresultform1.btatwonalyzeandcreate.hint"
 msgid ""
 "Analyze a single existing Setupfile \n"
 "and create an opsi Product"
-msgstr "Analyser un seul fichier de configuration existant\net créer un produit opsi"
+msgstr ""
+"Analyser un seul fichier de configuration existant\n"
+"et créer un produit opsi"
 
 #: tresultform1.btcreateemptytemplatelin.caption
 msgctxt "tresultform1.btcreateemptytemplatelin.caption"
@@ -984,7 +992,9 @@ msgctxt "tresultform1.btsingleanalyzeandcreatemac.hint"
 msgid ""
 "Analyze a single existing Setupfile \n"
 "and create an opsi Product"
-msgstr "Analyser certains fichiers d'installation Setupfile existants\net créer un produit opsi"
+msgstr ""
+"Analyser certains fichiers d'installation Setupfile existants\n"
+"et créer un produit opsi"
 
 #: tresultform1.btsingleanalyzeandcreatemulti.caption
 msgctxt "tresultform1.btsingleanalyzeandcreatemulti.caption"
@@ -1007,7 +1017,9 @@ msgctxt "tresultform1.btsingleanalyzeandcreatewin.hint"
 msgid ""
 "Analyze a single existing Setupfile \n"
 "and create an opsi Product"
-msgstr "Analyser certains fichiers d'installation Setupfile existants\net créer un produit opsi"
+msgstr ""
+"Analyser certains fichiers d'installation Setupfile existants\n"
+"et créer un produit opsi"
 
 #: tresultform1.btsingleanalyzeandcreatewithuser.caption
 msgid "Analyze File and Create Package 'with user'"
@@ -1018,7 +1030,10 @@ msgid ""
 "Analyze a single existing Setupfile \n"
 "and create an opsi Product \n"
 "based on 'with loggedon user'"
-msgstr "Analyser un seul fichier existant de configuration \net créer un produit opsi\nbasé sur \"avec utilisateur connecté\""
+msgstr ""
+"Analyser un seul fichier existant de configuration \n"
+"et créer un produit opsi\n"
+"basé sur \"avec utilisateur connecté\""
 
 #: tresultform1.caption
 msgid "opsi Setup Detector"
@@ -1203,7 +1218,10 @@ msgid ""
 "Dependencies\n"
 "\n"
 "(for installation)"
-msgstr "Dépendances\n\n(pour l'installation)"
+msgstr ""
+"Dépendances\n"
+"\n"
+"(pour l'installation)"
 
 #: tresultform1.label75.hint
 msgid ""
@@ -1354,8 +1372,7 @@ msgid "Icons to choose from: "
 msgstr "Icônes au choix:"
 
 #: tresultform1.labelworkbenchnotok.caption
-msgid ""
-"Path to opsi-work-bench not is reachable - Check Network Mounts or Path"
+msgid "Path to opsi-work-bench not is reachable - Check Network Mounts or Path"
 msgstr "Le chemin vers opsi-work-bench est non joignable - Vérifiez les points de montage réseau ou les chemins d'accès."
 
 #: tresultform1.labelworkbenchok.caption
@@ -1617,3 +1634,4 @@ msgstr "Mode construction"
 msgctxt "tresultform1.tiradiogroupcreatemode.caption"
 msgid "Create Mode"
 msgstr "Mode création"
+

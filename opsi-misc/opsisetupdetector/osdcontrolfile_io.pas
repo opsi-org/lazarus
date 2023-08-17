@@ -14,12 +14,64 @@ uses
   TOMLParser,
   osdbasedata;
 
-procedure readControlFile42(filename: string);
-procedure readControlFileToml(filename: string);
+type
+
+  TImportContolFilter = class
+  private
+  public
+    packageversion: boolean;
+    producttype: boolean;
+    productId: boolean;
+    productName: boolean;
+    productversion: boolean;
+    priority: boolean;
+    licenserequired: boolean;
+    setupscript: boolean;
+    uninstallscript: boolean;
+    updatescript: boolean;
+    alwaysScript: boolean;
+    oncescript: boolean;
+    customscript: boolean;
+    userLoginscript: boolean;
+    description: boolean;
+    advice: boolean;
+    { public declarations }
+    constructor Create;
+  end;
+
+
+
+
+// parameter filter = true : do not import everything
+procedure readControlFile42(filename: string; filter: boolean = False);
+procedure readControlFileToml(filename: string; filter: boolean = False);
 
 implementation
 
-procedure readControlFile42(filename: string);
+var
+  import: TImportContolFilter;
+
+constructor TImportContolFilter.Create;
+begin
+  packageversion := False;
+  producttype := True;
+  productId := True;
+  productName := True;
+  productversion := False;
+  priority := True;
+  licenserequired := True;
+  setupscript := False;
+  uninstallscript := False;
+  updatescript := False;
+  alwaysScript := False;
+  oncescript := False;
+  customscript := False;
+  userLoginscript := False;
+  description := True;
+  advice := True;
+end;
+
+procedure readControlFile42(filename: string; filter: boolean = False);
 var
   //myfile : TInifile = nil;
   myfile: TextFile;
@@ -74,36 +126,50 @@ begin
     if section = 'package' then
     begin
       tmpstr := getAndLogValue('version');
-      aktProduct.productdata.packageversion := StrToInt(tmpstr);
+      if (not filter) or import.packageversion then
+        aktProduct.productdata.packageversion := StrToInt(tmpstr);
     end
     else if section = 'product' then
     begin
       tmpstr := getAndLogValue('type');
-      aktProduct.productdata.producttype := tmpstr;
+      if (not filter) or import.producttype then
+        aktProduct.productdata.producttype := tmpstr;
       tmpstr := getAndLogValue('id');
-      aktProduct.productdata.productId := tmpstr;
+      if (not filter) or import.productId then
+        aktProduct.productdata.productId := tmpstr;
       tmpstr := getAndLogValue('name');
-      aktProduct.productdata.productName := tmpstr;
+      if (not filter) or import.productName then
+        aktProduct.productdata.productName := tmpstr;
       tmpstr := getAndLogValue('version');
-      aktProduct.productdata.productversion := tmpstr;
+      if (not filter) or import.productversion then
+        aktProduct.productdata.productversion := tmpstr;
       tmpstr := getAndLogValue('priority');
-      aktProduct.productdata.priority := StrToInt(tmpstr);
+      if (not filter) or import.priority then
+        aktProduct.productdata.priority := StrToInt(tmpstr);
       tmpstr := getAndLogValue('licenseRequired');
-      aktProduct.productdata.licenserequired := StrToBool(tmpstr);
+      if (not filter) or import.packageversion then
+        aktProduct.productdata.licenserequired := StrToBool(tmpstr);
       tmpstr := getAndLogValue('setupScript');
-      aktProduct.productdata.setupscript := tmpstr;
+      if (not filter) or import.setupscript then
+        aktProduct.productdata.setupscript := tmpstr;
       tmpstr := getAndLogValue('uninstallScript');
-      aktProduct.productdata.uninstallscript := tmpstr;
+      if (not filter) or import.uninstallscript then
+        aktProduct.productdata.uninstallscript := tmpstr;
       tmpstr := getAndLogValue('updateScript');
-      aktProduct.productdata.updatescript := tmpstr;
+      if (not filter) or import.updatescript then
+        aktProduct.productdata.updatescript := tmpstr;
       tmpstr := getAndLogValue('alwaysScript');
-      aktProduct.productdata.alwaysScript := tmpstr;
+      if (not filter) or import.alwaysScript then
+        aktProduct.productdata.alwaysScript := tmpstr;
       tmpstr := getAndLogValue('onceScript');
-      aktProduct.productdata.oncescript := tmpstr;
+      if (not filter) or import.oncescript then
+        aktProduct.productdata.oncescript := tmpstr;
       tmpstr := getAndLogValue('customScript');
-      aktProduct.productdata.customscript := tmpstr;
+      if (not filter) or import.customscript then
+        aktProduct.productdata.customscript := tmpstr;
       tmpstr := getAndLogValue('userLoginScript');
-      aktProduct.productdata.userLoginscript := tmpstr;
+      if (not filter) or import.userLoginscript then
+        aktProduct.productdata.userLoginscript := tmpstr;
 
       //description
       tmpstr := getAndLogValue('description');
@@ -114,7 +180,8 @@ begin
         tmpline := mystrings[i];
         tmpstr := tmpstr + LineEnding + tmpline;
       end;
-      aktProduct.productdata.description := tmpstr;
+      if (not filter) or import.description then
+        aktProduct.productdata.description := tmpstr;
 
       //advice
       tmpstr := getAndLogValue('advice');
@@ -125,8 +192,10 @@ begin
         tmpline := mystrings[i];
         tmpstr := tmpstr + LineEnding + tmpline;
       end;
-      aktProduct.productdata.advice := tmpstr;
+      if (not filter) or import.advice then
+        aktProduct.productdata.advice := tmpstr;
     end
+
     else if section = 'productdependency' then
     begin
       aktdependency := TPDependency(osdbasedata.aktProduct.dependencies.add);
@@ -208,7 +277,7 @@ end;
 
 // inspriration from:
 // https://github.com/tamtam96/fpTOML/blob/master/tests/Examples.pas
-procedure readControlFileToml(filename: string);
+procedure readControlFileToml(filename: string; filter: boolean = False);
 var
   mytoml: string;
   mytables: TStringList;
@@ -304,38 +373,54 @@ begin
   //mytables := TStringlist.Create;
   *)
   tmpstr := getAndLogValue('Package', 'version');
-  aktProduct.productdata.packageversion := StrToInt(tmpstr);
+  if (not filter) or import.packageversion then
+    aktProduct.productdata.packageversion := StrToInt(tmpstr);
   tmpstr := getAndLogValue('Product', 'type');
-  aktProduct.Productdata.Producttype := tmpstr;
+  if (not filter) or import.Producttype then
+    aktProduct.Productdata.Producttype := tmpstr;
   tmpstr := getAndLogValue('Product', 'id');
-  aktProduct.Productdata.ProductId := tmpstr;
+  if (not filter) or import.ProductId then
+    aktProduct.Productdata.ProductId := tmpstr;
   tmpstr := getAndLogValue('Product', 'name');
-  aktProduct.Productdata.ProductName := tmpstr;
+  if (not filter) or import.ProductName then
+    aktProduct.Productdata.ProductName := tmpstr;
   tmpstr := getAndLogValue('Product', 'version');
-  aktProduct.Productdata.Productversion := tmpstr;
+  if (not filter) or import.Productversion then
+    aktProduct.Productdata.Productversion := tmpstr;
   tmpstr := getAndLogValue('Product', 'priority');
-  aktProduct.Productdata.priority := StrToInt(tmpstr);
+  if (not filter) or import.priority then
+    aktProduct.Productdata.priority := StrToInt(tmpstr);
   tmpstr := getAndLogValue('Product', 'licenseRequired');
-  aktProduct.Productdata.licenserequired := StrToBool(tmpstr);
+  if (not filter) or import.licenserequired then
+    aktProduct.Productdata.licenserequired := StrToBool(tmpstr);
   tmpstr := getAndLogValue('Product', 'setupScript');
-  aktProduct.Productdata.setupscript := tmpstr;
+  if (not filter) or import.setupscript then
+    aktProduct.Productdata.setupscript := tmpstr;
   tmpstr := getAndLogValue('Product', 'uninstallScript');
-  aktProduct.Productdata.uninstallscript := tmpstr;
+  if (not filter) or import.uninstallscript then
+    aktProduct.Productdata.uninstallscript := tmpstr;
   tmpstr := getAndLogValue('Product', 'updateScript');
-  aktProduct.Productdata.updatescript := tmpstr;
+  if (not filter) or import.updatescript then
+    aktProduct.Productdata.updatescript := tmpstr;
   tmpstr := getAndLogValue('Product', 'alwaysScript');
-  aktProduct.Productdata.alwaysScript := tmpstr;
+  if (not filter) or import.alwaysScript then
+    aktProduct.Productdata.alwaysScript := tmpstr;
   tmpstr := getAndLogValue('Product', 'onceScript');
-  aktProduct.Productdata.oncescript := tmpstr;
+  if (not filter) or import.oncescript then
+    aktProduct.Productdata.oncescript := tmpstr;
   tmpstr := getAndLogValue('Product', 'customScript');
-  aktProduct.Productdata.customscript := tmpstr;
+  if (not filter) or import.customscript then
+    aktProduct.Productdata.customscript := tmpstr;
   tmpstr := getAndLogValue('Product', 'userLoginScript');
-  aktProduct.Productdata.userLoginscript := tmpstr;
+  if (not filter) or import.userLoginscript then
+    aktProduct.Productdata.userLoginscript := tmpstr;
 
   tmpstr := getAndLogValue('Product', 'description');
-  aktProduct.Productdata.description := tmpstr;
+  if (not filter) or import.description then
+    aktProduct.Productdata.description := tmpstr;
   tmpstr := getAndLogValue('Product', 'advice');
-  aktProduct.Productdata.advice := tmpstr;
+  if (not filter) or import.advice then
+    aktProduct.Productdata.advice := tmpstr;
 
   // ProductDependency
   for table in doc['ProductDependency'] do
@@ -419,4 +504,6 @@ begin
   doc.Free;
 end;
 
+begin
+  import := TImportContolFilter.Create;
 end.

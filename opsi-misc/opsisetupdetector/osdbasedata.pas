@@ -444,7 +444,7 @@ default: ["xenial_bionic"]
     { public declarations }
     constructor Create;
     procedure readProjectFile(filename: string);
-    procedure readControlFile(filename: string);
+    procedure readControlFile(filename: string; filter: boolean = False);
     procedure writeProjectFileToPath(path: string);
     procedure writeProjectFileToFile(myfilename: string);
   end;
@@ -693,12 +693,14 @@ begin
   FBuildModeIndex := 0;
   FCreateModeValue := CreateMode.Strings[FCreateModeIndex];
   FBuildModeValue := BuildMode.Strings[FBuildModeIndex];
+  inherited;
 end;
 
 destructor TOSDSettings.Destroy;
 begin
   FreeAndNil(FBuildMode);
   FreeAndNil(FCreateMode);
+  inherited;
 end;
 
 procedure TOSDSettings.SetBuildMode(const AValue: TStrings);
@@ -1430,7 +1432,7 @@ begin
 end;
 
 
-procedure TopsiProduct.readControlFile(filename: string);
+procedure TopsiProduct.readControlFile(filename: string; filter: boolean = False);
 var
   myfilename: string;
   cfile: TextFile;
@@ -1448,11 +1450,11 @@ begin
     begin
       if lowercase(ExtractFileName(myfilename)) = 'control.toml' then
       begin
-        readControlFileToml(myfilename);
+        readControlFileToml(myfilename, filter);
       end
       else // pre opsi 4.3 (non toml) style control file
       begin
-        readControlFile42(myfilename);
+        readControlFile42(myfilename, filter);
       end;
     end
     else

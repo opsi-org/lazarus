@@ -1097,7 +1097,7 @@ begin
     LogDatei.log('Start open control file as new project from: ' + OpenDialog1.FileName, LLnotice);
     initaktproduct;
     resultform1.updateGUI;
-    aktProduct.readControlFile(OpenDialog1.FileName);
+    aktProduct.readControlFile(OpenDialog1.FileName,false);
     TIGridDep.ListObject := osdbasedata.aktproduct.dependencies;
     TIGridDep.ReloadTIList;
     TIGridDep.Update;
@@ -2263,7 +2263,8 @@ begin
     // we just want to add the data to the existing data structure
     //initaktproduct;
     resultform1.updateGUI;
-    aktProduct.readControlFile(OpenDialog1.FileName);
+    // we do not want to import everything : filter = true
+    aktProduct.readControlFile(OpenDialog1.FileName,true);
     TIGridDep.ListObject := osdbasedata.aktproduct.dependencies;
     TIGridDep.ReloadTIList;
     TIGridDep.Update;
