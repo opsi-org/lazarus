@@ -1296,23 +1296,25 @@ begin
 
     // changelog
     textlist.Clear;
+    (*
     utcoffset := (GetLocalTimeOffset div 60) * 100 * -1;
     if utcoffset >= 0 then
       utcoffsetstr := '+';
     utcoffsetstr := utcoffsetstr + format('%4.4d', [utcoffset]);
+    *)
     textlist.Add('');
     textlist.Add('[Changelog]');
     tmpstr := aktProduct.productdata.productversion + '-' + IntToStr(
       aktProduct.productdata.packageversion);
     textlist.Add(aktProduct.productdata.productId + ' (' + tmpstr +
-      ') stable; urgency=medium');
+      ')');
     textlist.Add('');
     textlist.Add('  * initial by opsi-setup-detector - Version: ' + myVersion);
     textlist.Add('');
     textlist.Add('-- ' + myconfiguration.fullName + ' <' +
       myconfiguration.email_address + '> ' + FormatDateTime(
-      'ddd, dd mmm yyyy hh:nn:ss', LocalTimeToUniversal(now)) + ' ' + utcoffsetstr);
-    //mon, 04 Jun 12:00:00 + 0100
+      'ddd, dd mmm yyyy hh:nn:ss', LocalTimeToUniversal(now)));
+    //mon, 04 Jun 12:00:00
     textlist.SaveToFile(opsipath + pathdelim + 'changelog.txt');
 
     // readme.txt

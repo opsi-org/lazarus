@@ -119,6 +119,7 @@ opsi-setup-detector (4.2.2.3-1)
 
   * on open control file load all values (new project)
   * on import control file load only some values into the existing project
+  * changelog header and footer simpler (no utc offset, no remarks to urgency and state)
 
 -- Detlef Oertel <d.oertel@uib.de>  Thu,  17 Aug 2023 : 15:00:00
 
