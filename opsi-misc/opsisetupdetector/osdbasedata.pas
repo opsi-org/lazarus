@@ -481,7 +481,7 @@ default: ["xenial_bionic"]
     FTemplateChannel: TTemplateChannels;
     FLastProjectFileDir: string;  // last dir from wich we opend a project file
     FLastSetupFileDir: string;  // last dir from wich we opend a setup file
-    FLasticonFileDir: string;  // last dir from wich we opend a icon file
+    FLastIconFileDir: string;  // last dir from wich we opend a icon file
     Fcontrol_in_toml_format: boolean; // since opsi 4.3 control files in toml format
     Fdependencies_for_all_actionrequests: boolean;
     // since opsi 4.3 dependecies are allowed for all action requests
@@ -529,7 +529,7 @@ default: ["xenial_bionic"]
     property LastProjectFileDir: string read FLastProjectFileDir
       write FLastProjectFileDir;
     property LastSetupFileDir: string read FLastSetupFileDir write FLastSetupFileDir;
-    property LasticonFileDir: string read FLasticonFileDir write FLasticonFileDir;
+    property LastIconFileDir: string read FLastIconFileDir write FLastIconFileDir;
     property control_in_toml_format: boolean
       read Fcontrol_in_toml_format write Fcontrol_in_toml_format;
     property dependencies_for_all_actionrequests: boolean
@@ -596,7 +596,7 @@ resourcestring
     'Automatically detected. Is the opsi workbench reachable at workbench_Path.';
   rsconfig_filled = 'Automatically detected. Do we have all needed configurations';
   rsregisterInFilemanager =
-    'Should this program be registered to the Filemanger (Explorer) context menu ?';
+    'Should this program be registered to the Filemanager (Explorer) context menu ?';
   rsemail_address = 'Your email address, used for the changelog entry';
   rsfullName = 'Your full name, used for the changelog entry';
   rsimport_libraries = 'List of opsi-script libraries that have to be imported.' +
