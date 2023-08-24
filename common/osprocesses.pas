@@ -90,6 +90,7 @@ begin
 end;
 
 {$ENDIF WINDOWS}
+
 {$IFDEF UNIX}
 function getUnixProcessList: TStringList;
 var
@@ -106,7 +107,9 @@ var
   lineparts: TStringList;
   ExitCode: longint;
   i, k: integer;
-  defunct : boolean;
+  defunct: boolean;
+  getProcessListSuccess: boolean;
+  retryCounter: integer;
 begin
   try
     try
@@ -120,87 +123,113 @@ begin
       *)
       outlines := TStringList.Create;
       lineparts := TStringList.Create;
+      getProcessListSuccess := True; // init for Linux
+      retryCounter := 0;
       pscmd := 'ps -eo pid,ppid,user,comm:40,cmd:110';
       {$IFDEF DARWIN}
+      getProcessListSuccess := False; // init for darwin
       pscmd := 'ps -eco pid,ppid,user,comm';
       {$ENDIF DARWIN}
+      repeat
+        Inc(retryCounter);
       {$IFDEF OPSISCRIPT}
-      if not RunCommandAndCaptureOut(pscmd, True, TXStringlist(outlines),
-        report, SW_HIDE, ExitCode) then
+        if not RunCommandAndCaptureOut(pscmd, True, TXStringlist(outlines),
+          report, SW_HIDE, ExitCode) then
       {$ELSE OPSISCRIPT}
-        if not RunCommandAndCaptureOut(pscmd, True, outlines, report,
-          SW_HIDE, ExitCode) then
+          if not RunCommandAndCaptureOut(pscmd, True, outlines, report,
+            SW_HIDE, ExitCode) then
       {$ENDIF OPSISCRIPT}
-        begin
-          LogDatei.log('Error: ' + Report + 'Exitcode: ' + IntToStr(ExitCode), LLError);
-        end
-        else
-        begin
-          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 6;
-          LogDatei.log('', LLDebug3);
-          LogDatei.log('output:', LLDebug3);
-          LogDatei.log('--------------', LLDebug3);
-          if outlines.Count > 0 then
-            for i := 0 to outlines.Count - 1 do
+          begin
+            LogDatei.log('Error: ' + Report + 'Exitcode: ' +
+              IntToStr(ExitCode), LLError);
+          end
+          else
+          begin
+            LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 6;
+            LogDatei.log('', LLDebug3);
+            LogDatei.log('output:', LLDebug3);
+            LogDatei.log('--------------', LLDebug3);
+
+
+            if outlines.Count > 0 then
             begin
-              LogDatei.log(outlines.strings[i], LLDebug2);
-              lineparts.Clear;
-              resultstring := '';
-              userstr := '';
-              pidstr := '';
-              ppidstr := '';
-              cmdstr := '';
-              fullcmdstr := '';
-              defunct := false;
-              if pos('<defunct>',outlines.strings[i]) > 0 then
-                defunct := true;
-              stringsplitByWhiteSpace(trim(outlines.strings[i]), lineparts);
-            {$IFDEF LINUX}
-              for k := 0 to lineparts.Count - 1 do
+            {$IFDEF DARWIN}
+              getProcessListSuccess := False; // init for darwin
+              if ContainsText('launchd', outlines.strings[0]) then
               begin
-                if k = 0 then
-                  pidstr := lineparts.Strings[k]
-                else if k = 1 then
-                  ppidstr := lineparts.Strings[k]
-                else if k = 2 then
-                  userstr := lineparts.Strings[k]
-                else if k = 3 then
-                  cmdstr := lineparts.Strings[k]
-                else
-                  fullcmdstr := fullcmdstr + lineparts.Strings[k] + ' ';
-                if defunct then
-                begin
-                  // mark with brackets as defunct
-                  cmdstr := '['+cmdstr+']';
-                end;
+                getProcessListSuccess := True; // success for darwin
+                LogDatei.log('get processlist ok', LLDebug);
+              end
+              else
+              begin
+                LogDatei.log('get processlist failed - retry count: '+inttostr(retryCounter-1), LLDebug);
+                sleep(1000);
               end;
+             {$ENDIF DARWIN}
+              if getProcessListSuccess then
+                for i := 0 to outlines.Count - 1 do
+                begin
+                  LogDatei.log(outlines.strings[i], LLDebug2);
+                  lineparts.Clear;
+                  resultstring := '';
+                  userstr := '';
+                  pidstr := '';
+                  ppidstr := '';
+                  cmdstr := '';
+                  fullcmdstr := '';
+                  defunct := False;
+                  if pos('<defunct>', outlines.strings[i]) > 0 then
+                    defunct := True;
+                  stringsplitByWhiteSpace(trim(outlines.strings[i]), lineparts);
+            {$IFDEF LINUX}
+                  for k := 0 to lineparts.Count - 1 do
+                  begin
+                    if k = 0 then
+                      pidstr := lineparts.Strings[k]
+                    else if k = 1 then
+                      ppidstr := lineparts.Strings[k]
+                    else if k = 2 then
+                      userstr := lineparts.Strings[k]
+                    else if k = 3 then
+                      cmdstr := lineparts.Strings[k]
+                    else
+                      fullcmdstr := fullcmdstr + lineparts.Strings[k] + ' ';
+                    if defunct then
+                    begin
+                      // mark with brackets as defunct
+                      cmdstr := '[' + cmdstr + ']';
+                    end;
+                  end;
             {$ENDIF LINUX}
             {$IFDEF DARWIN}
-              for k := 0 to lineparts.Count - 1 do
-              begin
-                if k = 0 then
-                  pidstr := lineparts.Strings[k]
-                else if k = 1 then
-                  ppidstr := lineparts.Strings[k]
-                else if k = 2 then
-                  userstr := lineparts.Strings[k]
-                else
-                  cmdstr := cmdstr + lineparts.Strings[k] + ' ';
-              end;
-              cmdstr := trim(cmdstr);
-              fullcmdstr := cmdstr;
+                  for k := 0 to lineparts.Count - 1 do
+                  begin
+                    if k = 0 then
+                      pidstr := lineparts.Strings[k]
+                    else if k = 1 then
+                      ppidstr := lineparts.Strings[k]
+                    else if k = 2 then
+                      userstr := lineparts.Strings[k]
+                    else
+                      cmdstr := cmdstr + lineparts.Strings[k] + ' ';
+                  end;
+                  cmdstr := trim(cmdstr);
+                  fullcmdstr := cmdstr;
             {$ENDIF DARWIN}
-              resultstring := cmdstr + ';' + trim(pidstr) + ';' + trim(ppidstr) +
-                ';' + userstr + ';' + fullcmdstr;
-              LogDatei.log(resultstring, LLDebug3);
-              //resultstring := lineparts.Strings[0] + ';';
-              //resultstring := resultstring + lineparts.Strings[1] + ';';
-              //resultstring := resultstring + lineparts.Strings[2] + ';';
-              Result.Add(resultstring);
+                  resultstring :=
+                    cmdstr + ';' + trim(pidstr) + ';' + trim(ppidstr) +
+                    ';' + userstr + ';' + fullcmdstr;
+                  LogDatei.log(resultstring, LLDebug3);
+                  //resultstring := lineparts.Strings[0] + ';';
+                  //resultstring := resultstring + lineparts.Strings[1] + ';';
+                  //resultstring := resultstring + lineparts.Strings[2] + ';';
+                  Result.Add(resultstring);
+                end;
             end;
-          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
-          LogDatei.log('', LLDebug3);
-        end;
+            LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
+            LogDatei.log('', LLDebug3);
+          end;
+      until getProcessListSuccess or (retryCounter > 5);
     except
       on E: Exception do
       begin
@@ -386,16 +415,16 @@ var
     Result := 0;
     mypidstr := proc2pid.Values[searchproc];
     if mypidstr <> '' then
-    if TryStrToDWord(mypidstr, Result) then
-    begin
-      logdatei.log('getPidOfProc: valid pid for: ' + searchproc +
-        ' is: ' + mypidstr, LLDebug);
-    end
-    else
-    begin
-      Result := 0;
-      logdatei.log('Error: getPidOfProc: found pid not valid: ' + mypidstr, LLerror);
-    end;
+      if TryStrToDWord(mypidstr, Result) then
+      begin
+        logdatei.log('getPidOfProc: valid pid for: ' + searchproc +
+          ' is: ' + mypidstr, LLDebug);
+      end
+      else
+      begin
+        Result := 0;
+        logdatei.log('Error: getPidOfProc: found pid not valid: ' + mypidstr, LLerror);
+      end;
     if Result = 0 then
       logdatei.log('getPidOfProc: No pid found for: ' + searchproc, LLDebug);
   end;
@@ -409,7 +438,7 @@ var
   function isParentByPid(basepid, parentpid: dword): boolean;
   var
     aktpid: dword;
-    i :integer;
+    i: integer;
   begin
     Result := False;
     aktpid := basepid;
@@ -418,12 +447,12 @@ var
     begin
       repeat
         aktpid := getParentPid(aktpid);
-        inc(i);
+        Inc(i);
       until (aktpid <= 4) or (aktpid = parentpid) or (i > 100);
       if (i > 100) then
-      LogDatei.Log('Error while searchin for parent PID ('
-        + IntToStr(parentPid) + '). Start (base) PID was ' + IntToStr(basePID)
-        + '. Last (aktPID) PID: ' + IntToStr(aktPID), LLError);
+        LogDatei.Log('Error while searchin for parent PID (' +
+          IntToStr(parentPid) + '). Start (base) PID was ' + IntToStr(basePID) +
+          '. Last (aktPID) PID: ' + IntToStr(aktPID), LLError);
     end;
     if aktpid = parentpid then Result := True;
   end;
