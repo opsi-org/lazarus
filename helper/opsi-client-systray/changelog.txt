@@ -1,5 +1,11 @@
 
 [changelog]
+opsi_client_systray  4.2.1.0
+
+* fix macos opsiclientd detection
+
+-- Detlef Oertel <d.oertel@uib.de>  Thu, 24 Aug 2023:15:00:00
+
 opsi_client_systray  4.2.0.0
 
 * new compiled with version number 4.2.0.0
