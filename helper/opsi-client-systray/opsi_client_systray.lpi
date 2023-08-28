@@ -71,7 +71,8 @@
           </Linking>
           <Other>
             <CustomOptions Value="-dOPSI
--dOPSI_AS_USER"/>
+-dOPSI_AS_USER
+-dSSLPATH"/>
             <OtherDefines Count="2">
               <Define0 Value="OPSI"/>
               <Define1 Value="OPSI_AS_USER"/>
