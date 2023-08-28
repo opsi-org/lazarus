@@ -155,7 +155,8 @@ begin
             begin
             {$IFDEF DARWIN}
               getProcessListSuccess := False; // init for darwin
-              if ContainsText('launchd', outlines.strings[0]) then
+              LogDatei.log('first line is: '+outlines.strings[1], LLDebug);
+              if ContainsText(outlines.strings[1], 'launchd') then
               begin
                 getProcessListSuccess := True; // success for darwin
                 LogDatei.log('get processlist ok', LLDebug);
