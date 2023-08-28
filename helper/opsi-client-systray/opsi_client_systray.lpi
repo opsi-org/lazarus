@@ -141,8 +141,7 @@
           </CodeGeneration>
           <Linking>
             <Debugging>
-              <GenerateDebugInfo Value="False"/>
-              <DebugInfoType Value="dsDwarf2Set"/>
+              <DebugInfoType Value="dsDwarf3"/>
               <StripSymbols Value="True"/>
             </Debugging>
             <LinkSmart Value="True"/>
@@ -157,11 +156,11 @@
           <Other>
             <CustomOptions Value="-dOPSI
 -dOPSI_AS_USER
--dSSLPATH"/>
-            <OtherDefines Count="3">
+-dSSLPATH
+-dAPP_BUNDLE"/>
+            <OtherDefines Count="2">
               <Define0 Value="OPSI"/>
               <Define1 Value="OPSI_AS_USER"/>
-              <Define2 Value="SSLPATH"/>
             </OtherDefines>
           </Other>
         </CompilerOptions>
