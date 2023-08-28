@@ -747,8 +747,8 @@ resourcestring
   rsGetServiceUrl = 'Please enter opsi service URL:';
   rsGetUserName = 'Please enter opsi service user name:';
   rsGetPassword = 'Please enter opsi service user password:';
-  rsReadyToContinue = 'Ready to continue ?';
-  rsAbortProgram = 'Abort program ?';
+  rsReadyToContinue = 'Ready to continue?';
+  rsAbortProgram = 'Abort program?';
 
 
 implementation
