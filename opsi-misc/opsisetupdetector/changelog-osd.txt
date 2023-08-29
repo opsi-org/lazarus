@@ -104,6 +104,15 @@ stWixToolset,
   * command line options: https://www.indigorose.com/webhelp/suf9/index.htm
   * example: E:\_#_#_#_Setup-examples-by-installer\setup_factory
 
+* Advanced Installer
+  * https://www.advancedinstaller.com/
+  * command line options: https://www.advancedinstaller.com/silent-install-exe-msi-applications.html
+  * example: E:\_#_#_#_Setup-examples-by-installer\advanced_installer\Brackets-2.2.1.exe
+  * example: https://github.com/brackets-cont/brackets
+  * marker: 'Advanced Installer'
+  * marker: '/extractlzma/help/extract/exebasicui/exefullui/deletelzma/exenoui'
+
+
 Uebersicht:
 http://www.fredshack.com/docs/packagers.html
 https://silent-install.net/installer/start
