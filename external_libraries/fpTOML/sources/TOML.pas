@@ -27,8 +27,7 @@ unit TOML;
 interface
 uses
   TOMLParser,
-  TOMLTypes,
-  sysUtils;
+  TOMLTypes;
 
 type
   TTOMLStringType = TOMLTypes.TTOMLStringType;
@@ -45,18 +44,26 @@ type
   TTOMLTable = TOMLTypes.TTOMLTable;
   TTOMLDocument = TOMLTypes.TTOMLDocument;
 
-//function GetTOML(contents: TTOMLStringType): TTOMLDocument;
+function GetTOML(contents: TTOMLStringType): TTOMLDocument;
 
 { TOMLData Operators }
+
 operator Explicit (right: TTOMLData): ansistring; overload;
 operator Explicit (right: TTOMLData): shortstring; overload;
 operator Explicit (right: TTOMLData): integer; overload;
 operator Explicit (right: TTOMLData): single; overload;
 operator Explicit (right: TTOMLData): double; overload;
 
+operator := (right: variant): TTOMLData;
+
 implementation
 
 { TOMLData Operators }
+
+operator := (right: variant): TTOMLData;
+begin
+  result := TTOMLValue.Create(right);
+end;
 
 operator Explicit (right: TTOMLData): ansistring;
 begin
@@ -83,11 +90,9 @@ begin
   result := right.ToFloat;
 end;
 
-(*
 function GetTOML(contents: TTOMLStringType): TTOMLDocument;
 begin
   result := TOMLParser.GetTOML(contents);
 end;
-*)
 
 end.

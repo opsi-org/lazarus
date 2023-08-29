@@ -64,7 +64,7 @@ type
       procedure Parse; override;
   end;
 
-//function GetTOML(contents: TTOMLStringType): TTOMLDocument;
+function GetTOML(contents: TTOMLStringType): TTOMLDocument;
 
 implementation
 uses
@@ -76,7 +76,6 @@ type
 var
   parser: TTOMLScanner;
 
-(*
 function GetTOML(contents: TTOMLStringType): TTOMLDocument;
 var
   parser: TTOMLScanner;
@@ -86,10 +85,8 @@ begin
   result := parser.document;
   parser.Free;
 end;
-*)
 
 { TTOMLScanner }
-
 
 function TTOMLScanner.GetException: EScannerClass;
 begin
@@ -353,23 +350,36 @@ begin
   Consume(TToken.SquareBracketClosed);
 end;
 
+{ Parse inline tables
+  https://toml.io/en/v1.0.0-rc.1#inline-table }
+
 function TTOMLScanner.ParseInlineTable: TTOMLTable;
 begin
+  // inline tables don't allow newlines so we can override the newline behavior
+  // of the scanner by enabling newlines as tokens
+  readLineEndingsAsTokens := true;
+
   Consume(TToken.CurlyBracketOpen);
 
   // push new table to stack
   result := TTOMLTable.Create;
   containers.Add(result);
 
-  // TODO: Inline tables are intended to appear on a single line. 
-  // so we must fail on line breaks
-
   repeat
     ParsePair;
-    // TODO: trailing commas are not allowed in inline tables!
+
     if TryConsume(TToken.Comma) then
-      continue;
+      begin
+        // curly bracket found for pair
+        if TryConsume(TToken.CurlyBracketClosed) then
+          ParserError('Inline tables do not allow trailing commas.');
+        continue;
+      end;
   until TryConsume(TToken.CurlyBracketClosed);
+
+  // disable EOL tokens and clear the next one if it's found
+  readLineEndingsAsTokens := false;
+  TryConsume(TToken.EOL);
 
   result.terminated := true;
 
@@ -811,25 +821,25 @@ begin
           AdvancePattern;
           if (c = '-') or (c = '+') then
             begin
-              AdvancePattern;
-              found := false;
-              while c in ['0'..'9'] do
+            AdvancePattern;
+          found := false;
+          while c in ['0'..'9'] do
+            begin
+              found := true;
+              if c = '_' then
                 begin
-                  found := true;
-                  if c = '_' then
-                    begin
-                      if underscore then
-                        ParserError('Each underscore must be surrounded by at least one digit on each side');
-                      ReadChar;
-                      underscore := true;
-                      continue;
-                    end;
-                  AdvancePattern;
+                  if underscore then
+                    ParserError('Each underscore must be surrounded by at least one digit on each side');
+                  ReadChar;
+                  underscore := true;
+                  continue;
                 end;
-              if not found then
-                ParserError('Exponent must be followed by an integer');
-              break;
-            end
+              AdvancePattern;
+            end;
+          if not found then
+            ParserError('Exponent must be followed by an integer');
+          break;
+        end
           else
             ParserError('Exponent must be followed by "+" or "-"');
         end
