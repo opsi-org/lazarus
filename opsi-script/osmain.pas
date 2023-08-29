@@ -1806,7 +1806,7 @@ begin
         if extremeErrorLevel > levelfatal then
         begin
           //successful after setup
-          opsidata.ProductOnClient_update('',
+          opsidata.ProductOnClient_update(LogDatei.ActionProgress,
             tar4Successful,
             tac4None,
             ttc4Installed,
@@ -1816,7 +1816,7 @@ begin
         else //failed
         begin
           //failed after setup
-          opsidata.ProductOnClient_update('',
+          opsidata.ProductOnClient_update(LogDatei.ActionProgress,
             tar4Failed,
             tac4None,
             ttc4Installed,
