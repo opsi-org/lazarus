@@ -803,7 +803,7 @@ begin
   m_name := name;
   defined := false;
   map := TTOMLDataMap.Create(true);
-  map.Sorted := true;
+  //map.Sorted := true;
 end;
 
 destructor TTOMLTable.Destroy;
