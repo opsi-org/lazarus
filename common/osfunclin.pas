@@ -81,10 +81,6 @@ var
 {$ENDIF SYNAPSE}
 
 implementation
-// definition QUICKINSTALLGUI because programs (non graghical) like...
-// ...opsi_quick_install_nogui_project don't support LCLBase...
-// ...(-> Error while linking) and therefore not LResources
-//{$IFDEF QUICKINSTALLGUI}
 {$IFDEF OPSISCRIPT}
 uses
   {$IFDEF GUI}
@@ -95,7 +91,6 @@ uses
   osparser;
 
 {$ENDIF OPSISCRIPT}
-//{$ENDIF QUICKINSTALLGUI}
 
 function FileCheckDate
   (const Sourcefilename, Targetfilename: string; OverwriteIfEqual: boolean): boolean;

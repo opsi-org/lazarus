@@ -14,7 +14,6 @@ The Lazarus Projects are part of opsi(open-pc-server-integration, https://www.op
 * opsi-script (former opsi-winst). The opsi script interpreter.
 * opsi-client-systray. Systray to trigger installations on demand.
 * opsi-client-kiosk. Software kiosk allows the user on the client to chose the desired software. Trigger installations on demand 
-* opsi-quickinstall. Installation wizard for the opsi-server
 * opsi-script-beautifier. Increase the readability of opsi scripts by nicely formatting them. 
 * opsi-wmi-test. Helper tool for testing wmi commands
 * opsi-laz-gui-test. Tool to detect if the OS supports a GUI or not
