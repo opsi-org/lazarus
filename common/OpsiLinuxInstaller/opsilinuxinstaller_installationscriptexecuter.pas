@@ -112,7 +112,7 @@ begin
       FDownloadedVersion := DownloadedVersionSearch.Name;
       Delete(FDownloadedVersion, 1, Pos('_', FDownloadedVersion));
       Delete(FDownloadedVersion, 1, Pos('_', FDownloadedVersion));
-      // compare and use latest configed version
+      // compare and use latest version
       if FDownloadedVersion > FDefaultVersion then
         FCurrentVersionName := FDownloadedVersionName
       else
