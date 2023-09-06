@@ -1302,6 +1302,7 @@ begin
       utcoffsetstr := '+';
     utcoffsetstr := utcoffsetstr + format('%4.4d', [utcoffset]);
     *)
+    (* old 4.2 style:
     textlist.Add('');
     textlist.Add('[Changelog]');
     tmpstr := aktProduct.productdata.productversion + '-' + IntToStr(
@@ -1316,6 +1317,22 @@ begin
       'ddd, dd mmm yyyy hh:nn:ss', LocalTimeToUniversal(now)));
     //mon, 04 Jun 12:00:00
     textlist.SaveToFile(opsipath + pathdelim + 'changelog.txt');
+    *)
+    // new 4.3 style
+    textlist.Add('');
+    textlist.Add('# Changelog '+aktProduct.productdata.productId);
+    textlist.Add('');
+    tmpstr := aktProduct.productdata.productversion + '-' + IntToStr(
+      aktProduct.productdata.packageversion);
+    textlist.Add('## ['+tmpstr+'] - '+ FormatDateTime('yyyy-mm-dd',now));
+    textlist.Add('');
+    textlist.Add('### Added');
+    textlist.Add('- created / updated to: '+aktProduct.productdata.productId+' '+tmpstr);
+    textlist.Add('  using opsi-setup-detector - Version: ' + myVersion);
+    textlist.Add('');
+    textlist.Add('(' + myconfiguration.fullName + ' <' +
+      myconfiguration.email_address+'>)');
+    textlist.SaveToFile(opsipath + pathdelim + 'changelog.md');
 
     // readme.txt
     if (myconfiguration.Readme_txt_templ <> '') and
