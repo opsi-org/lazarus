@@ -2187,8 +2187,6 @@ begin
       end;
 
 
-
-
       if FNewPropDlg.ShowModal = mrOk then
       begin
         // modify

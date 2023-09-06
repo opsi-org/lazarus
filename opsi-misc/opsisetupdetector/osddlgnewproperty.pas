@@ -169,7 +169,6 @@ begin
       ListBoxPropDefVal.ExtendedSelect := False;
     end;
   end;
-
 end;
 
 procedure TFNewPropDlg.EditPropNameChange(Sender: TObject);
@@ -188,7 +187,6 @@ end;
 procedure TFNewPropDlg.EditPropNameEditingDone(Sender: TObject);
 var
   index, i: integer;
-  tmpstr: string;
   exists: boolean;
 begin
   if pos(' ', FNewPropDlg.EditPropName.Text) > 0 then

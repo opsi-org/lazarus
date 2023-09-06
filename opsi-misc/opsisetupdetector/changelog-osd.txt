@@ -123,6 +123,13 @@ CompanyNameIgor PavlovBFileDescription7z Setup SFX*FileVersion9.200InternalName7
 
 todo:
    *
+opsi-setup-detector (4.2.2.4-1)
+
+  * fix calling dependency dialog: dependency name alway set to 'propertyname':
+    clear EditPropName.Text in object definition, so that we have no translation string
+    which is filled in runtime to the edit field
+
+-- Detlef Oertel <d.oertel@uib.de>  Wed,  06 Sep 2023 : 15:00:00
 
 opsi-setup-detector (4.2.2.3-1)
 

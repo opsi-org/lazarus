@@ -214,7 +214,6 @@ object FNewPropDlg: TFNewPropDlg
       OnEditingDone = EditPropNameEditingDone
       ParentFont = False
       TabOrder = 0
-      Text = 'propertyname'
     end
   end
   object CheckGroupPropBool: TCheckGroup
