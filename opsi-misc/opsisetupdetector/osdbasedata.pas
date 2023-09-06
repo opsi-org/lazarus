@@ -92,7 +92,7 @@ type
     amSelectable);
 
   // marker for add installers
-  TKnownInstaller = (stInstall4J, stPortableApps, stLinRPM, stLinDeb,
+  TKnownInstaller = (stAdvancedInstaller, stInstall4J, stPortableApps, stLinRPM, stLinDeb,
     stMacZip, stMacDmg, stMacPKG, stMacApp,
     stSFXcab, stBoxStub, stAdvancedMSI, stInstallShield,
     stInstallShieldMSI,
@@ -2024,6 +2024,7 @@ begin
 
   // marker for add installers
   knownInstallerList := TStringList.Create;
+  knownInstallerList.Add('AdvancedInstaller');
   knownInstallerList.Add('Install4j');
   knownInstallerList.Add('PortableApps');
   knownInstallerList.Add('LinRPM');
@@ -2292,6 +2293,7 @@ begin
     uninstallProg := '';
     patterns.Add('WixBundle');
     patterns.Add('Wix Toolset');
+    notpatterns.Add('Advanced Installer');
     //infopatterns.Add('RunProgram="');
     installErrorHandlingLines.Add(
       'includelog "%opsiLogDir%\"+$ProductId$+".install_log.txt" "50" "utf16le"');
@@ -2517,6 +2519,23 @@ begin
     link := 'https://www.ej-technologies.com/resources/install4j/help/doc/help.pdf';
     comment := 'Installs Java based software';
     uib_exitcode_function := 'isGenericExitcodeFatal';
+    detected := @detectedbypatternwithand;
+  end;
+  with installerArray[integer(stAdvancedInstaller)] do
+  begin
+    description := 'Advanced Installer';
+    silentsetup := '/exenoui /l* "%opsiLogDir%\$ProductId$.install_log.txt" /qn ALLUSERS=1 REBOOT=ReallySuppress';
+    unattendedsetup := '/exebasicui /l* "%opsiLogDir%\$ProductId$.install_log.txt" /qb-! ALLUSERS=1 REBOOT=ReallySuppress';
+    silentuninstall := '/exenoui /qn REMOVE=all /norestart';
+    unattendeduninstall := '/exebasicui /qb-! REMOVE=all /norestart';
+    uninstall_waitforprocess := '';
+    install_waitforprocess := '';
+    uninstallProg := '<setup-file>';
+    patterns.Add('Advanced Installer');
+    patterns.Add('/extractlzma/help/extract/exebasicui/exefullui/deletelzma/exenoui');
+    link := 'https://www.advancedinstaller.com/user-guide/exe-setup-file.html';
+    comment := 'Wrapper around MSI (and others).Included files may extracted with /extract';
+    uib_exitcode_function := 'isMsiExitcodeFatal';
     detected := @detectedbypatternwithand;
   end;
   // marker for add installers

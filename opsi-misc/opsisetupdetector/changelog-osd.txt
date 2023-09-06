@@ -139,6 +139,9 @@ todo:
   and as 'changelog.md' instead of 'changelog.txt' (Detlef Oertel <d.oertel@uib.de> 2023-09-06)
 
 ### Added
+- new installer type : Advanced Installer
+  * https://www.advancedinstaller.com/
+  * https://www.advancedinstaller.com/user-guide/exe-setup-file.htm
 
 
 ## [4.2.2.3-2] - 2023-09-06

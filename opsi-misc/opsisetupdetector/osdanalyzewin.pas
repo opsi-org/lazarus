@@ -47,6 +47,7 @@ procedure get_boxstub_info(myfilename: string; var mysetup: TSetupFile);
 procedure get_sfxcab_info(myfilename: string; var mysetup: TSetupFile);
 //procedure get_bitrock_info(myfilename: string; var mysetup: TSetupFile);
 //procedure get_selfextrackting_info(myfilename: string; var mysetup: TSetupFile);
+procedure get_advancedInstaller_info(myfilename: string; var mysetup: TSetupFile);
 // marker for add installers
 procedure Analyze(FileName: string; var mysetup: TSetupFile; verbose: boolean);
 function getProductInfoFromResource(infokey: string; filename: string): string;
@@ -1017,6 +1018,25 @@ begin
   write_log_and_memo('get_sfxcab_info finished');
 end;
 
+procedure get_advancedInstaller_info(myfilename: string; var mysetup: TSetupFile);
+var
+  str1, str2: string;
+  pos1, pos2, i: integer;
+begin
+  write_log_and_memo('Analyzing advancedInstaller:');
+  mysetup.uninstallDirectory:= '"$installerSourceDir$\';
+  mysetup.uninstallProg:= mysetup.setupFileName;
+  if mysetup.preferSilent then
+    mysetup.uninstallCommandLine :=
+      '"$installerSourceDir$\' + mysetup.setupFileName + '" ' +
+      installerArray[integer(mysetup.installerId)].silentuninstall
+  else
+    mysetup.uninstallCommandLine :=
+      '"$installerSourceDir$\' + mysetup.setupFileName + '" ' +
+      installerArray[integer(mysetup.installerId)].unattendeduninstall;
+  write_log_and_memo('get_advancedInstaller_info finished');
+end;
+
 (*
 procedure get_bitrock_info(myfilename: string; var mysetup: TSetupFile);
 var
@@ -1096,6 +1116,7 @@ begin
       stWixToolset: get_wixtoolset_info(FileName, mysetup);
       stBoxStub: get_boxstub_info(FileName, mysetup);
       stSFXcab: get_sfxcab_info(FileName, mysetup);
+      stAdvancedInstaller: get_advancedInstaller_info(FileName, mysetup);
       stUnknown: LogDatei.log(
           'Unknown Installer after Analyze.', LLcritical);
       else
