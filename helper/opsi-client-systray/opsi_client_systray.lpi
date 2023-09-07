@@ -25,6 +25,7 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="2"/>
+      <RevisionNr Value="1"/>
       <StringTable CompanyName="uib gmbh / opsi.org" InternalName="opsi-client-systray" LegalCopyright="AGPLv3" LegalTrademarks="opsi, opsi.org, open pc server integration" OriginalFilename="opsi-client-systray" ProductName="opsi / opsi.org" ProductVersion="4.2.0.0"/>
     </VersionInfo>
     <BuildModes Count="4">
@@ -70,7 +71,8 @@
           </Linking>
           <Other>
             <CustomOptions Value="-dOPSI
--dOPSI_AS_USER"/>
+-dOPSI_AS_USER
+-dSSLPATH"/>
             <OtherDefines Count="2">
               <Define0 Value="OPSI"/>
               <Define1 Value="OPSI_AS_USER"/>
@@ -141,7 +143,7 @@
           <Linking>
             <Debugging>
               <GenerateDebugInfo Value="False"/>
-              <DebugInfoType Value="dsDwarf2Set"/>
+              <DebugInfoType Value="dsDwarf3"/>
               <StripSymbols Value="True"/>
             </Debugging>
             <LinkSmart Value="True"/>
@@ -156,11 +158,11 @@
           <Other>
             <CustomOptions Value="-dOPSI
 -dOPSI_AS_USER
--dSSLPATH"/>
-            <OtherDefines Count="3">
+-dSSLPATH
+-dAPP_BUNDLE"/>
+            <OtherDefines Count="2">
               <Define0 Value="OPSI"/>
               <Define1 Value="OPSI_AS_USER"/>
-              <Define2 Value="SSLPATH"/>
             </OtherDefines>
           </Other>
         </CompilerOptions>

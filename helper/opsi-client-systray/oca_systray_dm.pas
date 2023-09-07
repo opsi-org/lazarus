@@ -480,6 +480,9 @@ begin
   icofilename := ExtractFilePath(ParamStr(0)) + '../../..//opsi_client_systray_bw16.ico';
   if fileexists(icofilename) then
     tmpimage.LoadFromFile(icofilename);
+  icofilename := '/opt/opsi-client-systray/opsi_client_systray_bw16.ico';
+  if fileexists(icofilename) then
+    tmpimage.LoadFromFile(icofilename);
   TrayIcon1.Icon.Assign(tmpimage.Bitmap);
   FreeAndNil(tmpimage);
   {$ENDIF DARWIN}
