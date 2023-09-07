@@ -14,8 +14,6 @@ uses
   Windows,
   JwaWindows,
   lazutf8,
-  //  JwaWinnt,
-  //  jwawinbase,
   {$ENDIF WINDOWS}
   {$IFDEF WIN32}
   DSiWin32,
@@ -39,12 +37,6 @@ function isProcessChildOf(searchproc, parentproc: string): boolean;
 
 implementation
 
-(*
-{$IFDEF OPSISCRIPT}
-uses
-  osfunc;
-  {$ENDIF OPSISCRIPT}
-*)
 
 // Process list
 
@@ -96,13 +88,6 @@ function getUnixProcessList: TStringList;
 var
   resultstring, pidstr, ppidstr, userstr, cmdstr, fullcmdstr: string;
   pscmd, report: string;
-  (*
-  {$IFDEF OPSISCRIPT}
-  outlines: TXStringlist;
-  {$ELSE OPSISCRIPT}
-  outlines: TStringList;
-  {$ENDIF OPSISCRIPT}
-  *)
   outlines: TStringList;
   lineparts: TStringList;
   ExitCode: longint;
@@ -114,13 +99,6 @@ begin
   try
     try
       Result := TStringList.Create;
-      (*
-      {$IFDEF OPSISCRIPT}
-      outlines := TXStringList.Create;
-      {$ELSE OPSISCRIPT}
-      outlines := TStringList.Create;
-      {$ENDIF OPSISCRIPT}
-      *)
       outlines := TStringList.Create;
       lineparts := TStringList.Create;
       retryCounter := 0;
@@ -223,9 +201,6 @@ begin
                     cmdstr + ';' + trim(pidstr) + ';' + trim(ppidstr) +
                     ';' + userstr + ';' + fullcmdstr;
                   LogDatei.log(resultstring, LLDebug3);
-                  //resultstring := lineparts.Strings[0] + ';';
-                  //resultstring := resultstring + lineparts.Strings[1] + ';';
-                  //resultstring := resultstring + lineparts.Strings[2] + ';';
                   Result.Add(resultstring);
                 end;
             end;
@@ -255,18 +230,11 @@ end;
 function getProcessList: TStringList;
 begin
   {$IFDEF WINDOWS}
-  //{$IFDEF WIN32}
   Result := getWinProcessList;
-  //{$ENDIF WIN32}
   {$ENDIF WINDOWS}
   {$IFDEF UNIX}
   Result := getUnixProcessList;
   {$ENDIF UNIX}
-  (*
-  {$IFDEF DARWIN}
-  Result := getMacOSProcessList;
-  {$ENDIF DARWIN}
-  *)
 end;
 
 function ProcessIsRunning(searchproc: string): boolean;
