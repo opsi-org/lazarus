@@ -123,9 +123,11 @@ begin
       *)
       outlines := TStringList.Create;
       lineparts := TStringList.Create;
-      getProcessListSuccess := True; // init for Linux
       retryCounter := 0;
+      {$IFDEF LINUX}
+      getProcessListSuccess := True; // init for Linux
       pscmd := 'ps -eo pid,ppid,user,comm:40,cmd:110';
+      {$ENDIF LINUX}
       {$IFDEF DARWIN}
       getProcessListSuccess := False; // init for darwin
       pscmd := 'ps -eco pid,ppid,user,comm';
