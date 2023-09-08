@@ -245,6 +245,16 @@ var
           ' found: ' + LowerCase(installerArray[integer(instId)].patterns[i]), LLNotice);
       end;
     end;
+    for i := 0 to installerArray[integer(instId)].infopatterns.Count - 1 do
+    begin
+      aktpattern := LowerCase(installerArray[integer(instId)].infopatterns[i]);
+      if 0 <> pos(aktpattern, line) then
+      begin
+        mysetup.markerlist.add(installerArray[integer(instId)].infopatterns[i]);
+        LogDatei.log('Infolevel for: ' + installerToInstallerstr(instId) +
+          ' found: ' + LowerCase(installerArray[integer(instId)].infopatterns[i]), LLNotice);
+      end;
+    end;
     for i := 0 to installerArray[integer(instId)].notpatterns.Count - 1 do
     begin
       aktpattern := LowerCase(installerArray[integer(instId)].notpatterns[i]);

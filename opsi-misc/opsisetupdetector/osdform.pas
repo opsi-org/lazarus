@@ -2389,9 +2389,14 @@ begin
     mysetup.uninstallCheck.Add('if fileexists("' + uninstcheckstr + '")');
     mysetup.uninstallCheck.Add('	set $oldProgFound$ = "true"');
     mysetup.uninstallCheck.Add('endif');
-    mysetup.uninstallCommandLine :=
-      '"' + mysetup.uninstallProg + '" ' +
-      installerArray[integer(mysetup.installerId)].unattendeduninstall;
+    if mysetup.preferSilent then
+      mysetup.uninstallCommandLine :=
+        '"' + mysetup.uninstallProg + '" ' +
+        installerArray[integer(mysetup.installerId)].silentuninstall
+    else
+      mysetup.uninstallCommandLine :=
+        '"' + mysetup.uninstallProg + '" ' +
+        installerArray[integer(mysetup.installerId)].unattendeduninstall;
   end
   else
   begin

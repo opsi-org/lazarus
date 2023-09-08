@@ -111,13 +111,13 @@ type
     installerId: TKnownInstaller;
     Name: string;
     description: string;
-    patterns: TStringList;
-    infopatterns: TStringList;
-    notpatterns: TStringList;
-    silentsetup: string;
-    unattendedsetup: string;
-    silentuninstall: string;
-    unattendeduninstall: string;
+    patterns: TStringList;         // pattern that indicates this installer type (has to be there)
+    infopatterns: TStringList;     // pattern that indicates a chance for this installer type (not always there)
+    notpatterns: TStringList;      // pattern that indicates it is not this installer type (veto)
+    silentsetup: string;           // cli parameters for (really) silent setup
+    unattendedsetup: string;       // cli parameters for unattended setup
+    silentuninstall: string;       // cli parameters for (really) silent uninstall
+    unattendeduninstall: string;   // cli parameters for unattended uninstall
     uninstall_waitforprocess: string;
     install_waitforprocess: string;
     uninstallProg: string;
@@ -1875,9 +1875,11 @@ var
   pattern: string;
   numberOfPatternDetected: integer = 0;
   numberOfNotpatternDetected: integer = 0;
+  installerPatternCount: integer = 0;
 begin
   Result := False;
-  for patternindex := 0 to TInstallerData(parent).patterns.Count - 1 do
+  installerPatternCount := TInstallerData(parent).patterns.Count;
+  for patternindex := 0 to installerPatternCount - 1 do
   begin
     pattern := TInstallerData(parent).patterns[patternindex];
     if markerlist.IndexOf(LowerCase(pattern)) >= 0 then
@@ -1889,10 +1891,25 @@ begin
     if markerlist.IndexOf(LowerCase(pattern)) >= 0 then
       Inc(numberOfNotpatternDetected);
   end;
-  if numberOfPatterndetected = TInstallerData(parent).patterns.Count then
+  if numberOfPatterndetected > 0 then
   begin
-    Result := True;
-    if numberOfNotpatternDetected > 0 then Result := False;
+    LogDatei.log('Found patterns: ' + IntToStr(numberOfPatterndetected) +
+      ' for ' + TInstallerData(parent).Name, LLnotice);
+    if numberOfPatterndetected = installerPatternCount then
+    begin
+      Result := True;
+      LogDatei.log('All patterns found, needed: ' + IntToStr(
+        installerPatternCount), LLnotice);
+      if numberOfNotpatternDetected > 0 then
+      begin
+        Result := False;
+        LogDatei.log('Not patterns (Veto) found: ' + IntToStr(numberOfPatterndetected) +
+          ' for ' + TInstallerData(parent).Name, LLnotice);
+      end;
+    end
+    else
+      LogDatei.log('Not all patterns found, needed: ' + IntToStr(
+        installerPatternCount), LLnotice);
   end;
 end;
 
@@ -2269,6 +2286,7 @@ begin
     install_waitforprocess := '';
     uninstallProg := '';
     patterns.Add('layoutpromptrestartforcerestartnorestartpassivesilentsquietqhelph');
+    notpatterns.Add('Advanced Installer');
     //infopatterns.Add('RunProgram="');
     installErrorHandlingLines.Add(
       'includelog "%opsiLogDir%\"+$ProductId$+".install_log.txt" "50" "utf16le"');
@@ -2343,6 +2361,7 @@ begin
     patterns.Add('sfxcab.exe');
     //patterns.Add('Wix Toolset');
     //infopatterns.Add('RunProgram="');
+    notpatterns.Add('Advanced Installer');
     installErrorHandlingLines.Add(
       'includelog "%opsiLogDir%\"+$ProductId$+".install_log.txt" "50" "utf16le"');
     link :=
@@ -2532,7 +2551,13 @@ begin
     install_waitforprocess := '';
     uninstallProg := '<setup-file>';
     patterns.Add('Advanced Installer');
-    patterns.Add('/extractlzma/help/extract/exebasicui/exefullui/deletelzma/exenoui');
+    patterns.Add('/exebasicui');
+    patterns.Add('/exenoui');
+    patterns.Add('/extractlzma');
+    patterns.Add('/extract');
+    patterns.Add('/exefullui');
+    patterns.Add('/deletelzma');
+
     link := 'https://www.advancedinstaller.com/user-guide/exe-setup-file.html';
     comment := 'Wrapper around MSI (and others).Included files may extracted with /extract';
     uib_exitcode_function := 'isMsiExitcodeFatal';
