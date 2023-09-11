@@ -455,7 +455,7 @@ begin
   begin
     Result.pathToStore := '/usr/share/pki/trust/anchors/';
     Result.storeCommand := 'update-ca-certificates';
-    Result.masterCrt := '/etc/ssl/certs/ca-certificates.crt';
+    Result.masterCrt := '/etc/ssl/ca-bundle.pem';
   end
   else if distrotype = 'redhat' then
   begin
