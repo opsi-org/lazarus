@@ -1,5 +1,11 @@
 unit OpsiLinuxInstaller_LanguageObject;
 
+(*
+    Helper object for translating the resourcestrings.
+    The .po-files are first searched in the locale folder here in this directory in the lazarus submodule
+    and then in the locale folder of the installer project.
+*)
+
 {$mode objfpc}{$H+}
 
 interface

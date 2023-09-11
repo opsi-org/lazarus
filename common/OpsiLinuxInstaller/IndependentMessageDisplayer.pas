@@ -1,5 +1,7 @@
 unit IndependentMessageDisplayer;
 
+// Display a message on a Label (GUI), by the 'ShowMessage' function (GUI) or on the console (NOGUI).
+
 {$mode ObjFPC}{$H+}
 
 interface

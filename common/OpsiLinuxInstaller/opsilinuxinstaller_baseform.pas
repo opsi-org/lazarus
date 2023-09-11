@@ -1,5 +1,7 @@
 unit OpsiLinuxInstaller_BaseForm;
 
+// Base form for the welcome and query forms of the installer.
+
 {$mode ObjFPC}{$H+}
 
 interface

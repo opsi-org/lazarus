@@ -1,5 +1,7 @@
 unit OpsiLinuxInstaller_DistributionForm;
 
+// Parent form to ask for the linux distribution.
+
 {$mode ObjFPC}{$H+}
 
 interface
