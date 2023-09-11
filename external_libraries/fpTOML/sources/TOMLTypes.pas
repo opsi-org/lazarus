@@ -725,7 +725,14 @@ var
 begin
   data.parent := self;
 
-  if map.Find(key, index) then
+  // The behaviour of Find is undefined if the map is not sorted. For unsorted maps, use IndexOf instead.
+  // if map.Find(key, index) then
+  // d.oertel 11.9.2023
+  if map.Sorted then
+    map.Find(key, index)
+  else
+    index := map.IndexOf(key);
+  if index >= 0 then
     begin
       // replace existing item
       map.data[index] := data;
@@ -803,7 +810,10 @@ begin
   m_name := name;
   defined := false;
   map := TTOMLDataMap.Create(true);
-  //map.Sorted := true;
+  // sorting the map destroys the original structure of the file
+  // this is not a good idea, if we want to write the modifications back to file
+  // map.Sorted := true;
+  // d.oertel 11.9.2023
 end;
 
 destructor TTOMLTable.Destroy;
