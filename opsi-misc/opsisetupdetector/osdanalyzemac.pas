@@ -28,18 +28,6 @@ uses
   oscheckbinarybitness,
   osdanalyzegeneral;
 
-(*
-const
-
-  SetuProperty_Type_AdvancedMSI = 'AdvancedMSI';
-  SetupType_Inno = 'Inno';
-  SetupType_InstallShield = 'InstallShield';
-  SetupType_InstallShieldMSI = 'InstallShieldMSI';
-  SetupType_MSI = 'MSI';
-  SetupType_NSIS = 'NSIS';
-  SetupType_7zip = '7zip';
- *)
-
 procedure get_aktProduct_general_info_mac(installerId: TKnownInstaller;
   myfilename: string; var mysetup: TSetupFile);
 
@@ -50,103 +38,20 @@ procedure get_app_info(myfilename: string; var mysetup: TSetupFile);
 
 procedure AnalyzeMac(FileName: string; var mysetup: TSetupFile; verbose: boolean);
 
-(*
-procedure get_msi_info(myfilename: string; var mysetup: TSetupFile); overload;
-procedure get_msi_info(myfilename: string; var mysetup: TSetupFile;
-  uninstall_only: boolean); overload;
-procedure get_inno_info(myfilename: string; var mysetup: TSetupFile);
-procedure get_installshield_info(myfilename: string; var mysetup: TSetupFile);
-procedure get_installshieldmsi_info(myfilename: string; var mysetup: TSetupFile);
-procedure get_advancedmsi_info(myfilename: string; var mysetup: TSetupFile);
-procedure get_nsis_info(myfilename: string; var mysetup: TSetupFile);
-procedure get_installaware_info(myfilename: string; var mysetup: TSetupFile);
-procedure get_genmsinstaller_info(myfilename: string; var mysetup: TSetupFile);
-procedure get_wixtoolset_info(myfilename: string; var mysetup: TSetupFile);
-procedure get_boxstub_info(myfilename: string; var mysetup: TSetupFile);
-procedure get_sfxcab_info(myfilename: string; var mysetup: TSetupFile);
-procedure get_bitrock_info(myfilename: string; var mysetup: TSetupFile);
-procedure get_selfextrackting_info(myfilename: string; var mysetup: TSetupFile);
-// marker for add installers
-//procedure stringsgrep(myfilename: string; verbose,skipzero: boolean);
-*)
-(*
-procedure grepmsi(instring: string);
-//procedure grepmarker(instring: string);
-function analyze_binary(myfilename: string; verbose, skipzero: boolean;
-  var mysetup: TSetupFile): TKnownInstaller;
-  *)
 function getPacketIDfromFilename(str: string): string;
 function getPacketIDShort(str: string): string;
-//function ExtractVersion(str: string): string;
-//function getProductInfoFromResource(infokey: string; filename: string): string;
 
 
 implementation
 
+{$IFDEF OSDGUI}
 uses
-  osdform;
-
-(*
-
-function getProductInfoFromResource(infokey: string; filename: string): string;
-{ Allowed keys:
-  CompanyName
-  FileDescription
-  FileVersion
-  InternalName
-  LegalCopyright
-  OriginalFilename
-  ProductName
-  ProductVersion
-}
-var
-  FileVerInfo: TFileVersionInfo;
-  {$IFDEF WINDOWS}
-  VerInf: verinfo.TVersionInfo;
-  {$ENDIF WINDOWS}
-begin
-  try
-    FileVerInfo := TFileVersionInfo.Create(nil);
-    try
-      FileVerInfo.FileName := filename;
-      FileVerInfo.ReadFileInfo;
-      Result := FileVerInfo.VersionStrings.Values[infokey];
-    except
-      on E: Exception do
-      begin
-        LogDatei.log('Exception while reading fileversion2: ' +
-          E.ClassName + ': ' + E.Message, LLError);
-        Result := '';
-      end;
-      else // close the 'on else' block here;
-    end;
-  finally
-    FileVerInfo.Free;
-  end;
-  {$IFDEF WINDOWS}
-  if Result = '' then
-  begin
-    try
-      VerInf := verinfo.TVersionInfo.Create(filename);
-      if infokey = 'FileVersion' then
-        Result := trim(VerInf[CviFileVersion]);
-      if infokey = 'ProductName' then
-        Result := trim(VerInf[CviProductName]);
-      VerInf.Free;
-    except
-      on E: Exception do
-      begin
-        LogDatei.log('Exception while reading fileversion2: ' +
-          E.ClassName + ': ' + E.Message, LLError);
-        Result := '';
-      end;
-      else // close the 'on else' block here;
-    end;
-  end;
-  {$ENDIF WINDOWS}
-end;
-
-*)
+  osdform,
+  osdmain;
+{$ELSE OSDGUI}
+uses
+  osdmain;
+{$ENDIF OSDGUI}
 
 function getPacketIDfromFilename(str: string): string;
 var
@@ -245,103 +150,6 @@ begin
 end;
 
 
-
-
-(*
-function grepexe(instring: string): string;
-var
-  lowerstring: string;
-begin
-  Result := '';
-  lowerstring := lowercase(instring);
-  if (0 < pos('installshield', lowerstring)) or (0 < pos('inno', lowerstring)) or
-    (0 < pos('wise', lowerstring)) or (0 < pos('nullsoft', lowerstring)) or
-    (0 < pos('wixquery', lowerstring)) or
-    (0 < pos('product_build_number{', lowerstring)) or
-    (0 < pos('productcode{', lowerstring)) or (0 < pos('msiexec', lowerstring)) or
-    (0 < pos('extract', lowerstring)) or
-    // (0 < pos('setup', lowerstring)) or
-    (0 < pos('installer', lowerstring)) then
-    Result := instring;
-end;
-
-function grepinstr(instring: string; searchstr: string): string;
-var
-  lowerstring: string;
-begin
-  Result := '';
-  lowerstring := lowercase(instring);
-  if (0 < pos(lowercase(searchstr), lowerstring)) then
-    Result := instring;
-end;
-
-procedure analyze_binstr(instring: string; var mysetup: TSetupFile);
-var
-  lowerstring: string;
-  counter: integer;
-  aktId: TKnownInstaller;
-
-
-  procedure check_line_for_installer(line: string; instId: TKnownInstaller;
-  var mysetup: TSetupFile);
-  var
-    i: integer;
-  begin
-    for i := 0 to installerArray[integer(instId)].patterns.Count - 1 do
-    begin
-      //LogDatei.log('check: ' + line + ' for: ' + installerToInstallerstr(instId), LLDebug2);
-      if 0 <> pos(LowerCase(installerArray[integer(instId)].patterns[i]), line) then
-      begin
-        //aktProduct.markerlist.add(installerArray[integer(instId)].Name + IntToStr(i));
-        mysetup.markerlist.add(installerArray[integer(instId)].patterns[i]);
-        LogDatei.log('For: ' + installerToInstallerstr(instId) +
-          ' found: ' + LowerCase(installerArray[integer(instId)].patterns[i]), LLinfo);
-      end;
-    end;
-  end;
-
-  procedure check_line_for_infoline(line: string; instId: TKnownInstaller;
-  var mysetup: TSetupFile);
-  var
-    i: integer;
-  begin
-    for i := 0 to installerArray[integer(instId)].infopatterns.Count - 1 do
-    begin
-      //LogDatei.log('check: ' + line + ' for: ' + installerToInstallerstr(instId), LLDebug2);
-      if 0 <> pos(LowerCase(installerArray[integer(instId)].infopatterns[i]), line) then
-      begin
-        //aktProduct.markerlist.add(installerArray[integer(instId)].Name + IntToStr(i));
-        mysetup.infolist.add(line);
-        LogDatei.log('For: ' + installerToInstallerstr(instId) +
-          ' found info: ' + line, LLinfo);
-      end;
-    end;
-  end;
-
-begin
-  lowerstring := lowercase(instring);
-  for counter := 0 to knownInstallerList.Count - 1 do
-  begin
-    aktId := installerArray[counter].installerId;
-    if aktId <> stUnknown then
-    begin
-      check_line_for_installer(lowerstring, aktId, mysetup);
-      check_line_for_infoline(lowerstring, aktId, mysetup);
-    end;
-  end;
-end;
-
-*)
-
-(*
-procedure grepmsi(instring: string);
-begin
-  if (0 < pos('product_build_number{', lowercase(instring))) or
-    (0 < pos('productcode{', lowercase(instring))) then
-    mywrite(instring);
-end;
-*)
-
 procedure get_aktProduct_general_info_mac(installerId: TKnownInstaller;
   myfilename: string; var mysetup: TSetupFile);
 var
@@ -364,33 +172,16 @@ var
 
 begin
   installerstr := installerToInstallerstr(installerId);
-  Mywrite('Analyzing ' + installerstr + ' Setup: ' + myfilename);
+  write_log_and_memo('Analyzing ' + installerstr + ' Setup: ' + myfilename);
 
   mysetup.installerId := installerId;
   mysetup.link := installerArray[integer(mysetup.installerId)].Link;
   mysetup.setupFullFileName := myfilename;
-  //mysetup.setupFileNamePath := ExtractFileDir(myfilename);
   mysetup.installerSourceDir := '%scriptpath%/files' + IntToStr(mysetup.ID);
   mysetup.installCommandLine :=
     'set $installSuccess$ = install_macos_generic($installerSourceDir$ + ' +
     '"/' + mysetup.setupFileName + '") ';
   str1 := '';
-  (*
-  mysetup.isExitcodeFatalFunction :=
-    installerArray[integer(mysetup.installerId)].uib_exitcode_function;
-  mysetup.uninstallProg := installerArray[integer(mysetup.installerId)].uninstallProg;
-  mysetup.uninstall_waitforprocess :=
-    installerArray[integer(mysetup.installerId)].uninstall_waitforprocess;
-  mysetup.install_waitforprocess :=
-    installerArray[integer(mysetup.installerId)].install_waitforprocess;
-  if installerID <> stMSI then
-  begin
-    str1 := getProductInfoFromResource('FileVersion', myfilename);
-    mysetup.SoftwareVersion := str1;
-    aktProduct.productdata.productversion := trim(mysetup.SoftwareVersion);
-    str1 := getProductInfoFromResource('ProductName', myfilename);
-  end;
-  *)
   // productId and name
   if str1 <> '' then
   begin
@@ -422,9 +213,9 @@ begin
   sFileSize := FormatFloat('##0.0', fsizemb) + ' MB';
   sReqSize := FormatFloat('###0', rsizemb) + ' MB';
 
-  mywrite('Setup file size is: ' + sFileSize);
-  mywrite('Estimated required space is: ' + sReqSize);
-  mywrite('........');
+  write_log_and_memo('Setup file size is: ' + sFileSize);
+  write_log_and_memo('Estimated required space is: ' + sReqSize);
+  write_log_and_memo('........');
 
   if fsizemb < 1 then
     fsizemb := 1;
@@ -460,17 +251,15 @@ begin
   begin
     // no well known mac install file found;
     LogDatei.log('no well known mac install file found inside zip', LLerror);
-    mywrite('no well known mac install file found inside zip');
+    write_log_and_memo('no well known mac install file found inside zip');
     mysetup.installerId := stUnknown;
   end
   else
   begin
     LogDatei.log('found well known mac install ".app" directory', LLnotice);
-    //LogDatei.log('Found count: '+inttostr(namelist.Count)+' first: '+namelist.Strings[0],LLerror);
-    //LogDatei.log('Found count: '+inttostr(namelist.Count)+' first: '+namelist.Strings[1],LLerror);
     mysetup.installCommandLine :=
       'set $installSuccess$ = install_macos_zip($installerSourceDir$ + ' +
-    '"/' + mysetup.setupFileName + '") ';
+      '"/' + mysetup.setupFileName + '") ';
   end;
 end;
 
@@ -493,7 +282,7 @@ begin
   mysetup.installCommandLine :=
     'set $installSuccess$ = install_macos_app($installerSourceDir$ + ' +
     '"/' + mysetup.setupFileName + '") ';
-  mysetup.installDirectory:= '/Applications/'+ExtractFileName(myfilename);
+  mysetup.installDirectory := '/Applications/' + ExtractFileName(myfilename);
 end;
 
 
@@ -508,8 +297,6 @@ begin
   resultForm1.ProgressBarAnalyze.Position := 0;
   procmess;
   {$ENDIF OSDGUI}
-  //aktProduct.setup32FileNamePath := FileName;
-  //resultform1.clearAllTabs;
   setupType := stUnknown;
   extension := lowercase(ExtractFileExt(FileName));
   case extension of
@@ -541,18 +328,13 @@ begin
   // marker for add installers
   // stMacZip, stMacDmg, stMacPKG, stMacApp
   case setupType of
-    stMacZip: Mywrite('Found installer= ' +
-        installerToInstallerstr(setupType));
-    stMacDmg: Mywrite('Found installer= ' +
-        installerToInstallerstr(setupType));
-    stMacPKG: Mywrite('Found installer= ' +
-        installerToInstallerstr(setupType));
-    stMacApp: Mywrite('Found installer= ' +
-        installerToInstallerstr(setupType));
-    stUnknown: Mywrite('Found installer= ' +
-        installerToInstallerstr(setupType));
+    stMacZip: write_log_and_memo('Found installer= ' + installerToInstallerstr(setupType));
+    stMacDmg: write_log_and_memo('Found installer= ' + installerToInstallerstr(setupType));
+    stMacPKG: write_log_and_memo('Found installer= ' + installerToInstallerstr(setupType));
+    stMacApp: write_log_and_memo('Found installer= ' + installerToInstallerstr(setupType));
+    stUnknown: write_log_and_memo('Found installer= ' + installerToInstallerstr(setupType));
     else
-      Mywrite('Found installer= ' + installerToInstallerstr(setupType));
+      write_log_and_memo('Found installer= ' + installerToInstallerstr(setupType));
   end;
   { avoid hyphen char "-" and replace with dot "." in version }
   aktproduct.productdata.productversion :=
@@ -561,15 +343,12 @@ begin
   {$IFDEF OSDGUI}
   resultForm1.ProgressBarAnalyze.Position := 100;
   procmess;
-  {$ENDIF OSDGUI}
   if not (setupType = stUnknown) then
   begin
     sleep(2000);
     resultform1.BtAnalyzeNextStepClick(nil);
   end;
+  {$ENDIF OSDGUI}
 end;
-
-
-
 
 end.

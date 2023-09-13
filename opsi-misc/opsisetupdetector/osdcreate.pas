@@ -46,26 +46,29 @@ procedure opsiquotelist(var list1: TStringList; s2: string);
 resourcestring
   // new for 4.1.0.2 ******************************************************************
   rsDirectory = 'Directory ';
-  rsStillExitsWarningDeleteOverwrite = ' still exits. Should we make backup files ?';
+  rsStillExitsWarningDeleteOverwrite = ' still exits. Should we create backup files ?';
   rsCouldNotCreateDirectoryWarning = 'Could not create directory: ';
   rsConfirmBackupOrRemovalTitle =
-    'Should we use the existing directory and make backup files of old files, before creating the new ones ?  Otherwise the exiting directory will be deleted before creating a new one.';
+    'Should we use the existing directory and create a backup of the old files before creating the new ones ?  Otherwise the exiting directory will be deleted before creating a new one.';
   rsConfirmBackupCaption = 'Yes (Backup)';
   rsConfirmAbortCaption = 'Abort';
   rsConfirmDeleteCaption = 'No';
   rsConfirmAbortHint = 'Leave existing directory unchanged and abort';
   rsConfirmDeleteHint = 'Delete the complete directory before creating the new one.';
   rsConfirmBackupHint =
-    'All files that are directly in the directories "CLIENT_DATA" and "OPSI" will copy to an backup file.';
+    'All files that are directly in the directories "CLIENT_DATA" and "OPSI" will be copied to a backup file.';
   rsConfirmExpandButton = 'More Information ...';
   rsConfirmExpandedText =
-    'Yes: All files that are directly in the directories "CLIENT_DATA" and "OPSI" will be saved to an backup file before the new files are created' + LineEnding + 'No: Delete the complete directory before creating the new one.' + LineEnding + 'Abort: Leave existing directory unchanged and abort';
+    'Yes: All files that are located in the directories "CLIENT_DATA" and "OPSI" will be saved to a backup file before the new files are created\nNo: Delete the complete directory before creating the new one.\nAbort: Leave existing directory unchanged and abort';
 
 
 implementation
 
 uses
-  osdform;
+{$IFDEF OSDGUI}
+  osdform,
+{$ENDIF OSDGUI}
+  osdmain;
 
 var
   patchlist: TStringList;
@@ -122,7 +125,7 @@ var
 begin
   if FileExists(infile) then
   begin
-    mywrite('creating: ' + outfile + ' from: ' + infile);
+    write_log_and_memo('creating: ' + outfile + ' from: ' + infile);
     if not DirectoryExists(ExtractFileDir(outfile)) then
       ForceDirectories(ExtractFileDir(outfile));
 
@@ -162,12 +165,14 @@ begin
       CloseFile(outfileHandle);
     except
       on E: EInOutError do
-        logdatei.log('patchScript file error: ' + E.ClassName + '/' + E.Message, LLError);
+        logdatei.log('patchScript file error: ' + E.ClassName + '/' +
+          E.Message, LLError);
     end;
   {$I-}//end use exceptions
   end
   else
-    logdatei.log('patchScript file warning: infile for: ' + ExtractFileName(outfile) + ' not found', LLwarning);
+    logdatei.log('patchScript file warning: infile for: ' +
+      ExtractFileName(outfile) + ' not found', LLwarning);
 end;
 
 procedure patchThisList(var targetlist: TStringList);
@@ -267,7 +272,6 @@ var
     mylist: TStringList;
   begin
     mylist := TStringList.Create;
-    //myfilepath := templatePath + Pathdelim + 'win' + Pathdelim + myfilename;
     myfilepath := getFilePath(myfilename);
     if FileExists(myfilepath) then
     begin
@@ -338,13 +342,6 @@ begin
         str := str + 'DefVar $LicenseError$' + LineEnding;
         str := str + 'DefVar $LicenseHandledByScript$ = "true"' + LineEnding;
       end
-(*
-      else if (proptmpstr = LowerCase('DesktopIcon')) then
-        str := str + 'DefVar $DesktopIcon$' + LineEnding
-
-      else if (proptmpstr = ('install_architecture')) then
-        str := str + 'DefVar $install_architecture$' + LineEnding
-      *)
       else
         str := str + 'DefVar $' + proptmpstr + '$' + LineEnding;
     end;
@@ -422,20 +419,10 @@ begin
     str := myconfiguration.preInstallLines.Text;
     if str <> '' then
       preinstalllist.Add(myconfiguration.preInstallLines.Text + LineEnding);
-    (*
-      str := 'comment "Start Pre Install hook :"' + LineEnding +
-        myconfiguration.preInstallLines.Text;
-    patchlist.add('#@preInstallLines*#=' + str);
-    *)
 
     str := myconfiguration.postInstallLines.Text;
     if str <> '' then
       postinstalllist.Add(myconfiguration.postInstallLines.Text + LineEnding);
-    (*
-      str := 'comment "Start Post UnInstall hook :"' + LineEnding +
-        myconfiguration.postInstallLines.Text;
-    patchlist.add('#@postInstallLines*#=' + str);
-    *)
 
     str := myconfiguration.preUninstallLines.Text;
     if str <> '' then
@@ -446,11 +433,6 @@ begin
     str := myconfiguration.postUnInstallLines.Text;
     if str <> '' then
       postUnInstallList.Add(myconfiguration.postUnInstallLines.Text + LineEnding);
-    (*
-      str := 'comment "Start Post UnInstall hook :"' + LineEnding +
-        myconfiguration.postUnInstallLines.Text;
-    patchlist.add('#@postUninstallLines*#=' + str);
-    *)
 
     str := '';
     if aktProduct.properties.propExists('DesktopIcon') then
@@ -464,54 +446,8 @@ begin
     end;
     patchlist.add('#@DelsubHandleDesktopIcon*#=' + str);
 
-      (*
-      filepath := templatePath + Pathdelim + 'win' + Pathdelim +
-        'SetupHandleDesktopIcon.opsiscript';
-      strlist.Clear;
-      if FileExists(filepath) then
-        strlist.LoadFromFile(filepath)
-      else
-        LogDatei.log('Error: File not found: ' + filepath, LLerror);
-      ;
-      str := 'comment "Start Desktop Icon Handling :"' + LineEnding + strlist.Text;
-
-    end;
-    //patchlist.add('#@SetupHandleDesktopIcon*#=' + str);
-
-    str := '';
-
-    if aktProduct.properties.propExists('DesktopIcon') then
-    begin
-      //strlist.LoadFromFile(templatePath + Pathdelim + 'DelsubHandleDesktopIcon.opsiscript');
-      str := 'comment "Start Desktop Icon Handling :"' + LineEnding +
-        'Linkfolder_remove_desktop_icon';
-    end;
-
-    //patchlist.add('#@DelsubHandleDesktopIcon*#=' + str);
-
-    str := '';
-    if aktProduct.properties.propExists('DesktopIcon') then
-    begin
-      strlist.LoadFromFile(templatePath + Pathdelim + 'win' + Pathdelim +
-        'SetupDesktopIconSection.opsiscript');
-      str := strlist.Text;
-    end;
-    patchlist.add('#@SetupDesktopiconSectionLines*#=' + str);
-
-    str := '';
-    if aktProduct.properties.propExists('DesktopIcon') then
-    begin
-      strlist.LoadFromFile(templatePath + Pathdelim + 'win' + Pathdelim +
-        'DelsubDesktopIconSection.opsiscript');
-      str := strlist.Text;
-    end;
-    patchlist.add('#@DelsubDesktopiconSectionLines*#=' + str);
-    *)
-
-
     str := '';
     patchlist.add('#@Profileconfigurationlines*#=' + str);
-
 
     str := '';
     patchlist.add('#@LicenseInstallLines*#=' + str);
@@ -721,8 +657,6 @@ begin
   if (osdsettings.runmode = analyzeCreateWithUser) then
     pre_id := 'with-user';
 
-  //templatePath := templatePath + Pathdelim + pre_id;
-
   try
     try
       patchlist := TStringList.Create;
@@ -802,17 +736,6 @@ begin
           for i := 0 to infilelist.Count - 1 do
           begin
             infilename := getFilePath(infilelist.Strings[i]);
-            (*
-            infilename := templatePath + PathDelim + templateChannelDir +
-              Pathdelim + pre_id + PathDelim + infilelist.Strings[i];
-            if not FileExists(infilename) then
-            begin
-              infilename := templatePath + PathDelim + 'default' +
-                Pathdelim + pre_id + PathDelim + infilelist.Strings[i];
-              logdatei.log('File: ' + infilelist.Strings[i] +
-                ' not found at template channel: ' + templateChannelDir +
-                ' - fall back to default', LLinfo);
-            end; *)
             outfilename := clientpath + PathDelim + infilelist.Strings[i];
             outfilename := StringReplace(outfilename, 'msi', '', []);
             patchScript(infilename, outfilename);
@@ -827,14 +750,17 @@ begin
           singleAnalyzeCreate:
           begin
             infilelist.Add('declarations.opsiinc');
+            infilelist.Add('sections.opsiinc');
           end;
           twoAnalyzeCreate_1, twoAnalyzeCreate_2:
           begin
             infilelist.Add('declarations.opsiinc');
+            infilelist.Add('sections.opsiinc');
           end;
           createTemplate:
           begin
             infilelist.Add('declarations.opsiinc');
+            infilelist.Add('sections.opsiinc');
           end;
           createMeta:
           begin
@@ -898,10 +824,10 @@ begin
         // add existing libraries '*.opsilib'
         // create list of existing *.opsilib files in channel
         channelLibraryFilelist :=
-           FindAllFiles(templatePath + PathDelim + templateChannelDir + Pathdelim + pre_id,
-                        '*.opsilib',false);
+          FindAllFiles(templatePath + PathDelim + templateChannelDir +
+          Pathdelim + pre_id, '*.opsilib', False);
         // copy library files to client path
-        for i := 0 to channelLibraryFilelist.Count -1 do
+        for i := 0 to channelLibraryFilelist.Count - 1 do
         begin
           infilename := channelLibraryFilelist.Strings[i];
           outfilename := ExtractFileName(infilename);
@@ -990,51 +916,8 @@ begin
           patchScript(infilename, outfilename);
         end;
 
-
-      (*
-      // define_vars_multi
-      // none at windows template or createMeta
-      if not (((osdsettings.runmode = createTemplate) and
-        (osWin in aktProduct.productdata.targetOSset)) or
-        (osdsettings.runmode = createMeta) or
-        // none at analyzeCreateWithUser
-        (osdsettings.runmode = analyzeCreateWithUser) or
-        // none at template channel training
-        (aktProduct.productdata.channelDir = 'training') or
-        // none at template channel structured
-        (aktProduct.productdata.channelDir = 'structured')) then
-      begin
-        //infilename := genericTemplatePath + Pathdelim + 'define_vars_multi.opsiscript';
-        infilename := templatePath + PathDelim + templateChannelDir +
-              Pathdelim + pre_id + PathDelim + 'declarations.opsiinc';
-            if not FileExists(infilename) then
-            begin
-              infilename := templatePath + PathDelim + 'default' +
-                Pathdelim + pre_id + PathDelim + infilelist.Strings[i];
-              logdatei.log('File: ' + infilename +
-                ' not found at template channel: ' + templateChannelDir +
-                ' - fall back to default', LLinfo);
-            end;
-        outfilename := clientpath + PathDelim + 'define_vars_multi.opsiscript';
-        patchScript(infilename, outfilename);
-      end;
-      *)
-
-    (*
-    // setup script
-    infilename := templatePath + Pathdelim + insetup;
-    outfilename := clientpath + PathDelim + aktProduct.productdata.setupscript;
-    patchScript(infilename, outfilename);
-    // delsub script
-    infilename := templatePath + Pathdelim + indelsub;
-    outfilename := clientpath + PathDelim + aktProduct.productdata.delsubscript;
-    patchScript(infilename, outfilename);
-    // uninstall script
-    infilename := templatePath + Pathdelim + inuninstall;
-    outfilename := clientpath + PathDelim + aktProduct.productdata.uninstallscript;
-    patchScript(infilename, outfilename);    *)
-
       subdir := '';
+      // at 'with user' we need osd-lib also at the 'localsetup' dir
       if osdsettings.runmode = analyzeCreateWithUser then
         subdir := pathdelim + 'localsetup';
       // No need to copy installer for templates or Meta
@@ -1094,6 +977,13 @@ begin
         outfilename := clientpath + subdir + PathDelim + 'osd-lib.opsiscript';
         copyfile(infilename, outfilename, [cffOverwriteFile,
           cffCreateDestDirectory, cffPreserveTime], True);
+        // at 'with user' we need osd-lib also at the base dir (without subdir)
+        if osdsettings.runmode = analyzeCreateWithUser then
+        begin
+          outfilename := clientpath + PathDelim + 'osd-lib.opsiscript';
+          copyfile(infilename, outfilename, [cffOverwriteFile,
+            cffCreateDestDirectory, cffPreserveTime], True);
+        end;
 
         // OS specific install lib
 
@@ -1203,6 +1093,8 @@ begin
   try
     helplist := TStringList.Create;
     textlist := TStringList.Create;
+
+    // create control file (pre 4.3 not_toml style)
     textlist.Add('[Package]');
     textlist.Add('version: ' + IntToStr(aktProduct.productdata.packageversion));
     textlist.Add('depends: ');
@@ -1215,7 +1107,7 @@ begin
     textlist.Add('advice: ' + aktProduct.productdata.advice);
     textlist.Add('version: ' + aktProduct.productdata.productversion);
     textlist.Add('priority: ' + IntToStr(aktProduct.productdata.priority));
-    textlist.Add('licenseRequired: ');
+    textlist.Add('licenseRequired: False');
     textlist.Add('productClasses: ');
     textlist.Add('setupScript: ' + aktProduct.productdata.setupscript);
     // No uninstall for Meta
@@ -1237,12 +1129,12 @@ begin
       mydep := TPDependency(aktProduct.dependencies.Items[i]);
       textlist.Add('');
       textlist.Add('[ProductDependency]');
-      textlist.Add('action: setup');
+      textlist.Add('action: ' + mydep.Action);
       textlist.Add('requiredProduct: ' + mydep.Required_ProductId);
       case mydep.Required_State of
         noState: ;
         installed: textlist.Add('requiredStatus: installed');
-        not_installed: textlist.Add('requiredStatus: not installed');
+        not_installed: textlist.Add('requiredStatus: not_installed');
         unknown: textlist.Add('requiredStatus: unknown');
       end;
       case mydep.Required_Action of
@@ -1283,38 +1175,164 @@ begin
         if stringListToJsonArray(helplist, tmpstr) then
           textlist.Add('values: ' + tmpstr)
         else
-          LogDatei.log('Failed to write property values entry for property: '+myprop.Property_Name,LLerror);
+          LogDatei.log('Failed to write property values entry for property: ' +
+            myprop.Property_Name, LLerror);
         helplist.Text := myprop.GetDefaultLines.Text;
         opsiquotelist(helplist, '"');
         if stringListToJsonArray(helplist, tmpstr) then
           textlist.Add('default: ' + tmpstr)
         else
-          LogDatei.log('Failed to write property default entry for property: '+myprop.Property_Name,LLerror);
+          LogDatei.log('Failed to write property default entry for property: ' +
+            myprop.Property_Name, LLerror);
       end;
     end;
     textlist.SaveToFile(opsipath + pathdelim + 'control');
-    //FreeAndNil(textlist);
+    // END: create control file (pre 4.3 not_toml style)
+
+    if myconfiguration.control_in_toml_format then
+    begin
+      // create control file (4.3 toml style)
+      textlist.Clear;
+      textlist.Add('[Package]');
+      textlist.Add('version = "' +
+        IntToStr(aktProduct.productdata.packageversion) + '"');
+      textlist.Add('depends = []');
+      textlist.Add('');
+      textlist.Add('[Product]');
+      textlist.Add('type = "' + aktProduct.productdata.producttype + '"');
+      textlist.Add('id = "' + aktProduct.productdata.productId + '"');
+      textlist.Add('name = "' + aktProduct.productdata.productName + '"');
+      textlist.Add('description = """' + aktProduct.productdata.description + '"""');
+      textlist.Add('advice = """' + aktProduct.productdata.advice + '"""');
+      textlist.Add('version = "' + aktProduct.productdata.productversion + '"');
+      textlist.Add('priority = ' + IntToStr(aktProduct.productdata.priority));
+      textlist.Add('licenseRequired = false');
+      textlist.Add('productClasses = []');
+      textlist.Add('setupScript = "' + aktProduct.productdata.setupscript + '"');
+      // No uninstall for Meta
+      if not (osdsettings.runmode in [createMeta]) then
+        textlist.Add('uninstallScript = "' +
+          aktProduct.productdata.uninstallscript + '"');
+      textlist.Add('updateScript = "' + aktProduct.productdata.updatescript + '"');
+      textlist.Add('alwaysScript = ""');
+      textlist.Add('onceScript = ""');
+      textlist.Add('customScript = ""');
+      if aktProduct.productdata.customizeProfile then
+        textlist.Add('userLoginScript = "' + aktProduct.productdata.setupscript + '"')
+      else
+        textlist.Add('userLoginScript = ""');
+      // the next line avoids a bug in  opsi-makepackage 4.3.0.36 [python-opsi=4.3.0.14]
+      textlist.Add('windowsSoftwareIds = []');
+
+      //dependencies
+      for i := 0 to aktProduct.dependencies.Count - 1 do
+      begin
+        mydep := TPDependency(aktProduct.dependencies.Items[i]);
+        textlist.Add('');
+        textlist.Add('[[ProductDependency]]');
+        textlist.Add('action = "' + mydep.Action + '"');
+        textlist.Add('requiredProduct = "' + mydep.Required_ProductId + '"');
+        case mydep.Required_State of
+          noState: ;
+          installed: textlist.Add('requiredStatus = "installed"');
+          not_installed: textlist.Add('requiredStatus = "not_installed"');
+          unknown: textlist.Add('requiredStatus = "unknown"');
+        end;
+        case mydep.Required_Action of
+          noRequest: ;
+          setup: textlist.Add('requiredAction = "setup"');
+          uninstall: textlist.Add('requiredAction = "uninstall"');
+          TPActionRequest.update: textlist.Add('requiredAction = "update"');
+        end;
+        case mydep.Required_Type of
+          doNotMatter: textlist.Add('requirementType = ""');
+          before: textlist.Add('requirementType = "before"');
+          after: textlist.Add('requirementType = "after"');
+        end;
+      end;
+
+      //ProductProperties
+      for i := 0 to aktProduct.properties.Count - 1 do
+      begin
+        myprop := TPProperty(aktProduct.properties.Items[i]);
+        textlist.Add('');
+        textlist.Add('[[ProductProperty]]');
+        case myprop.Property_Type of
+          bool: textlist.Add('type = "bool"');
+          unicode: textlist.Add('type = "unicode"');
+        end;
+        textlist.Add('name = "' + myprop.Property_Name + '"');
+        textlist.Add('description = "' + myprop.description + '"');
+        if myprop.Property_Type = bool then
+        begin
+          textlist.Add('default = [' + lowercase(
+            BoolToStr(myprop.boolDefault, True)) + ']');
+        end
+        else
+        begin
+          textlist.Add('multivalue = ' + lowercase(BoolToStr(myprop.multivalue, True)));
+          textlist.Add('editable = ' + lowercase(BoolToStr(myprop.editable, True)));
+          helplist.Text := myprop.GetValueLines.Text;
+          opsiquotelist(helplist, '"');
+          if stringListToJsonArray(helplist, tmpstr) then
+            textlist.Add('values = ' + tmpstr)
+          else
+            LogDatei.log('Failed to write property values entry for property: ' +
+              myprop.Property_Name, LLerror);
+          helplist.Text := myprop.GetDefaultLines.Text;
+          opsiquotelist(helplist, '"');
+          if stringListToJsonArray(helplist, tmpstr) then
+            textlist.Add('default = ' + tmpstr)
+          else
+            LogDatei.log('Failed to write property default entry for property: ' +
+              myprop.Property_Name, LLerror);
+        end;
+      end;
+      textlist.SaveToFile(opsipath + pathdelim + 'control.toml');
+      // END: create control file (4.3 toml style)
+    end;
+
+
 
     // changelog
     textlist.Clear;
+    (*
     utcoffset := (GetLocalTimeOffset div 60) * 100 * -1;
     if utcoffset >= 0 then
       utcoffsetstr := '+';
     utcoffsetstr := utcoffsetstr + format('%4.4d', [utcoffset]);
+    *)
+    (* old 4.2 style:
     textlist.Add('');
     textlist.Add('[Changelog]');
     tmpstr := aktProduct.productdata.productversion + '-' + IntToStr(
       aktProduct.productdata.packageversion);
     textlist.Add(aktProduct.productdata.productId + ' (' + tmpstr +
-      ') stable; urgency=medium');
+      ')');
     textlist.Add('');
     textlist.Add('  * initial by opsi-setup-detector - Version: ' + myVersion);
     textlist.Add('');
     textlist.Add('-- ' + myconfiguration.fullName + ' <' +
       myconfiguration.email_address + '> ' + FormatDateTime(
-      'ddd, dd mmm yyyy hh:nn:ss', LocalTimeToUniversal(now)) + ' ' + utcoffsetstr);
-    //mon, 04 Jun 12:00:00 + 0100
+      'ddd, dd mmm yyyy hh:nn:ss', LocalTimeToUniversal(now)));
+    //mon, 04 Jun 12:00:00
     textlist.SaveToFile(opsipath + pathdelim + 'changelog.txt');
+    *)
+    // new 4.3 style
+    textlist.Add('');
+    textlist.Add('# Changelog '+aktProduct.productdata.productId);
+    textlist.Add('');
+    tmpstr := aktProduct.productdata.productversion + '-' + IntToStr(
+      aktProduct.productdata.packageversion);
+    textlist.Add('## ['+tmpstr+'] - '+ FormatDateTime('yyyy-mm-dd',now));
+    textlist.Add('');
+    textlist.Add('### Added');
+    textlist.Add('- created / updated to: '+aktProduct.productdata.productId+' '+tmpstr);
+    textlist.Add('  using opsi-setup-detector - Version: ' + myVersion);
+    textlist.Add('');
+    textlist.Add('(' + myconfiguration.fullName + ' <' +
+      myconfiguration.email_address+'>)');
+    textlist.SaveToFile(opsipath + pathdelim + 'changelog.md');
 
     // readme.txt
     if (myconfiguration.Readme_txt_templ <> '') and
@@ -1360,44 +1378,9 @@ function bakupOldProductDir: boolean;
     backupfiles := TStringList.Create;
     // Del really old files
     FindAllFiles(backupfiles, mydir, '*.*', False);
-    Application.ProcessMessages;
+    procmess;
     for i := 0 to backupfiles.Count - 1 do
       MakeBakFiles(backupfiles.Strings[i], 3);
-    (*
-    Result := True;
-    backupfiles := TStringList.Create;
-    // Del really old files
-    FindAllFiles(backupfiles, mydir, '*.3', False);
-    Application.ProcessMessages;
-    for i := 0 to backupfiles.Count - 1 do
-      if not DeleteFileUTF8(backupfiles.Strings[i]) then
-        Result := False;
-    Application.ProcessMessages;
-    // backup old files
-    for k := 2 downto 1 do
-    begin
-      FindAllFiles(backupfiles, mydir, '*.' + IntToStr(k), False);
-      for i := 0 to backupfiles.Count - 1 do
-      begin
-        fname := backupfiles.Strings[i];
-        fbakname := ExtractFileNameWithoutExt(fname) + '.' + IntToStr(k + 1);
-        if not CopyFile(fname, fbakname, [cffOverwriteFile, cffPreserveTime]) then
-          Result := False;
-        Application.ProcessMessages;
-      end;
-      //Application.ProcessMessages;
-    end;
-    // backup last files
-    FindAllFiles(backupfiles, mydir, '*', False);
-    for i := 0 to backupfiles.Count - 1 do
-    begin
-      fname := backupfiles.Strings[i];
-      fbakname := fname + '.1';
-      if not CopyFile(fname, fbakname, [cffOverwriteFile, cffPreserveTime]) then
-        Result := False;
-      Application.ProcessMessages;
-    end;
-    *)
   end;
 
 begin
@@ -1411,13 +1394,13 @@ end;
 function delOldProductDir: boolean;
 begin
   Result := True;
-  Application.ProcessMessages;
+  procmess;
   if not DeleteDirectory(clientpath, False) then
     Result := False;
-  Application.ProcessMessages;
+  procmess;
   if not DeleteDirectory(opsipath, False) then
     Result := False;
-  Application.ProcessMessages;
+  procmess;
 end;
 
 function createProductdirectory: boolean;
@@ -1432,8 +1415,9 @@ begin
   goon := True;
   if DirectoryExists(prodpath) then
   begin
-    if showgui then
+    if osdsettings.showgui then
     begin
+      {$IFDEF OSDGUI}
       LogDatei.log('Target directory exists. Ask what to do.', LLinfo);
       task := '';
       // https://specials.rejbrand.se/TTaskDialog/
@@ -1489,6 +1473,7 @@ begin
         finally
           Free;
         end;
+      {$ENDIF OSDGUI}
     end
     else
     begin
@@ -1526,7 +1511,7 @@ begin
       begin
         Logdatei.log('Could not create directory: ' + prodpath, LLCritical);
         system.ExitCode := 1;
-        if showgui then
+        if osdsettings.showgui then
           MessageDlg('opsi-setup-detector', rsCouldNotCreateDirectoryWarning +
             prodpath, mtError, [mbOK], '');
         goon := False;
@@ -1538,7 +1523,7 @@ begin
       begin
         Logdatei.log('Could not create directory: ' + clientpath, LLCritical);
         system.ExitCode := 1;
-        if showgui then
+        if osdsettings.showgui then
           MessageDlg('opsi-setup-detector', rsCouldNotCreateDirectoryWarning +
             clientpath, mtError, [mbOK], '');
         goon := False;
@@ -1550,7 +1535,7 @@ begin
       begin
         Logdatei.log('Could not create directory: ' + opsipath, LLCritical);
         system.ExitCode := 1;
-        if showgui then
+        if osdsettings.showgui then
           MessageDlg('opsi-setup-detector', rsCouldNotCreateDirectoryWarning +
             opsipath, mtError, [mbOK], '');
         goon := False;
@@ -1558,7 +1543,7 @@ begin
     end;
   end;
   Result := goon;
-  Application.ProcessMessages;
+  procmess;
 end;
 
 
@@ -1576,7 +1561,7 @@ begin
   end
   else
     Logdatei.log('createProductdirectory done', LLnotice);
-  Application.ProcessMessages;
+  procmess;
   if not (goon and createOpsiFiles) then
   begin
     Logdatei.log('createOpsiFiles failed', LLCritical);
@@ -1585,7 +1570,7 @@ begin
   end
   else
     Logdatei.log('createOpsiFiles done', LLnotice);
-  Application.ProcessMessages;
+  procmess;
   if not (goon and createClientFiles) then
   begin
     Logdatei.log('createClientFiles failed', LLCritical);
@@ -1594,7 +1579,7 @@ begin
   end
   else
     Logdatei.log('createClientFiles done', LLnotice);
-  Application.ProcessMessages;
+  procmess;
   Result := goon;
 end;
 
@@ -1634,6 +1619,7 @@ var
   paramlist: TStringList;
 
 begin
+  {$IFDEF OSDGUI}
   logdatei.log('Start callOpsiPackageBuilder', LLDebug2);
   buildCallparams := TStringList.Create;
   OpsiBuilderProcess := process.TProcess.Create(nil);
@@ -1648,32 +1634,31 @@ begin
     ParamStr := ParamStr + DirectorySeparator;
   ParamStr := ParamStr + aktProduct.productdata.productId;
   paramlist.Add(ParamStr);
-  if resultForm1.RadioButtonPackageBuilder.Checked = True then
+  // call packagebuilder interactive
+  if osdsettings.CreateModeIndex = 2 then
   begin
     OpsiBuilderProcess.ShowWindow := swoShowNormal;
   end
   else  // build
-  if resultForm1.RadioButtonBuildPackage.Checked = True then
+  // call packagebuilder silent in commandline build mode
+  if osdsettings.CreateModeIndex = 1 then
   begin
-    //ParamStr := ParamStr + ' --quiet';
     paramlist.Add('--quiet');
-    if resultForm1.radioBuildModebuildOnly.Checked = True then
+    // build mode : build only
+    if osdsettings.BuildModeIndex = 0 then
     begin
       paramlist.Add('--build=rebuild');
-      //ParamStr := ParamStr + ' ' + ' --build=rebuild';
     end;
-    if resultForm1.radioBuildModebuildInstall.Checked = True then
+    // build mode : build + install
+    if osdsettings.BuildModeIndex = 1 then
     begin
       paramlist.Add('--build=rebuild');
       paramlist.Add('--install');
-      //ParamStr := ParamStr + ' --build=rebuild --install';
     end;
     OpsiBuilderProcess.ShowWindow := swoMinimize;
   end;
-  //buildCallparams.Add(ParamStr);
 
   LogDatei.log('Try to call opsi packagebuilder', LLnotice);
-  //OpsiBuilderProcess.CommandLine := buildCallbinary + ParamStr;
   OpsiBuilderProcess.Executable := buildCallbinary;
   OpsiBuilderProcess.Parameters.Assign(paramlist);
   OpsiBuilderProcess.Options := OpsiBuilderProcess.Options + [poWaitOnExit];
@@ -1683,7 +1668,8 @@ begin
   // execute opsiPacketBuilder
   try
     OpsiBuilderProcess.Execute;
-    if resultForm1.RadioButtonBuildPackage.Checked = True then
+    // call packagebuilder silent in commandline build mode
+    if osdsettings.CreateModeIndex = 1 then
     begin
       resultForm1.PanelProcess.Visible := True;
       resultForm1.processStatement.Caption := 'invoke opsi package builder ...';
@@ -1699,7 +1685,7 @@ begin
       errorstate := True;
       LogDatei.log('Exception while calling ' + buildCallbinary +
         ' Message: ' + E.message, LLerror);
-      if showgui then
+      if osdsettings.showgui then
         ShowMessage(sErrOpsiPackageBuilderStart);
     end;
   end;
@@ -1715,13 +1701,14 @@ begin
     begin
       LogDatei.log('Error while calling ' + buildCallbinary +
         ' with exitcode: ' + IntToStr(OpsiBuilderProcess.ExitStatus), LLerror);
-      if showgui then
+      if osdsettings.showgui then
         ShowMessage(sErrOpsiPackageBuilderStart);
     end;
   end;
   logdatei.log('Here comes the OpsiPackageBuilder log', LLnotice);
   logdatei.includelogtail('c:\opsi.org\applog\opb-call.log', 50, 'utf8');
   logdatei.log('Finished callOpsiPackageBuilder', LLinfo);
+  {$ENDIF OSDGUI}
 end;   // execute OPSIPackageBuilder
 
 procedure buildWithOpsiService;
@@ -1737,8 +1724,7 @@ var
     setlength(params, 1);
     params[0] := param;
     omc := TOpsiMethodCall.Create(method, params);
-    serviceresult := osdform.localservicedata.CheckAndRetrieveString(omc,
-      errorOccured);
+    serviceresult := localservicedata.CheckAndRetrieveString(omc, errorOccured);
     if Assigned(omc) then
       FreeAndNil(omc);
     if errorOccured then
@@ -1754,9 +1740,11 @@ var
 
 begin
   LogDatei.log('Try to call opsi service', LLnotice);
+  {$IFDEF OSDGUI}
   resultForm1.PanelProcess.Visible := True;
   resultForm1.processStatement.Caption := 'invoke opsi service ...';
   procmess;
+  {$ENDIF OSDGUI}
   //packagedir := '/var/lib/opsi/workbench/';
   // packagedir may be relative to workbench
   packagedir := '';
@@ -1765,7 +1753,8 @@ begin
   packagefile := packagefile + '_' + aktProduct.productdata.productversion;
   packagefile := packagefile + '-' + IntToStr(aktProduct.productdata.packageversion);
   packagefile := packagefile + '.opsi';
-  if resultForm1.radioBuildModebuildOnly.Checked = True then
+  //if resultForm1.radioBuildModebuildOnly.Checked = True then
+  if osdsettings.BuildModeIndex = 0 then
   begin
     if servicecall('workbench_buildPackage', packagedir) then
       LogDatei.log('Package ' + packagefile + ' successful build', LLnotice)
@@ -1776,7 +1765,8 @@ begin
     end;
   end;
 
-  if resultForm1.radioBuildModebuildInstall.Checked = True then
+  //if resultForm1.radioBuildModebuildInstall.Checked = True then
+  if osdsettings.BuildModeIndex = 1 then
   begin
 
     if servicecall('workbench_installPackage', packagedir) then
@@ -1788,7 +1778,9 @@ begin
     end;
 
   end;
+  {$IFDEF OSDGUI}
   resultForm1.PanelProcess.Visible := False;
+  {$ENDIF OSDGUI}
 end;
 
 
@@ -1798,7 +1790,7 @@ var
 begin
   if startOpsiServiceConnection then
   begin
-    if CompareDotSeparatedNumbers(osdform.opsiserviceversion, '<', '4.2.0.311') then
+    if CompareDotSeparatedNumbers(opsiserviceversion, '<', '4.2.0.311') then
       callOpB := True;
   end
   else

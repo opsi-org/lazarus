@@ -41,7 +41,6 @@ resourcestring
      'and go on (ok)' + LineEnding +
      'or do you want to stop (cancel) ?';
 
-
 implementation
 
 {$R *.lfm}

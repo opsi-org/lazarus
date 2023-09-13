@@ -19,9 +19,14 @@ WinRAR Installer,
 WinZip Installer,
 Wise Installer
 stWixToolset,
+
 * install4j (install4j, ej-technologies : perpustakaan-light)
   * https://www.ej-technologies.com/resources/install4j/help/doc/help.pdf
   * https://www.ej-technologies.com/products/install4j/overview.html
+  * beispiel ElsterAuthenticator_windows_55_0_0_x64.exe
+  * marker: install4j
+
+
 * QT Installer Framework (Avidemux 4.7.3, msys2)
   * https://chocolatey.org/packages/msys2-installer
   * https://doc.qt.io/qtinstallerframework/
@@ -73,6 +78,41 @@ stWixToolset,
   * see also: https://www.nuget.org/
   * see also: https://de.wikipedia.org/wiki/NuGet
 
+* SAP front-end installer self-extractor tool
+  * beispiel sap-analysis-for-office
+  * marker: "SAP front-end installer self-extractor tool"
+  * info https://help.sap.com/doc/2e5792a2569b403da415080f35f8bbf6/770.00/en-US/sap_frontend_inst_guide.pdf
+
+* portableapps.com
+  * komprimierte, portabe applikationen, kein (!) installer, keine Silent Parameter
+  * oft mit NSIS Mitteln gepackt und deshalb als NSIS erkannt
+  * lzma komprimiertes self-extracting executable
+  * lässt sich mit 7zip entpacken
+  * https://www.birtles.org.uk/programming/LZMA.442b.7z LZMA für Pascal)
+  * marker: portableApps.com
+  * marker: paf.exe
+  * info: https://portableapps.com/
+
+* sumatraPdf
+  * info: https://www.sumatrapdfreader.org/docs/Installer-cmd-line-arguments
+  * marker: Install SumatraPDF
+  * marker: SumatraPDF has been installed
+
+* setup factory
+  * https://setupfactory.com/
+  * https://www.indigorose.com/setup-factory/
+  * command line options: https://www.indigorose.com/webhelp/suf9/index.htm
+  * example: E:\_#_#_#_Setup-examples-by-installer\setup_factory
+
+* Advanced Installer
+  * https://www.advancedinstaller.com/
+  * command line options: https://www.advancedinstaller.com/silent-install-exe-msi-applications.html
+  * example: E:\_#_#_#_Setup-examples-by-installer\advanced_installer\Brackets-2.2.1.exe
+  * example: https://github.com/brackets-cont/brackets
+  * marker: 'Advanced Installer'
+  * marker: '/extractlzma/help/extract/exebasicui/exefullui/deletelzma/exenoui'
+
+
 Uebersicht:
 http://www.fredshack.com/docs/packagers.html
 https://silent-install.net/installer/start
@@ -83,6 +123,113 @@ CompanyNameIgor PavlovBFileDescription7z Setup SFX*FileVersion9.200InternalName7
 
 todo:
    *
+
+# Changelog opsi-setup-detector
+
+## [4.2.2.4-1] - 2023-09-06
+
+### Fixed
+- fix calling dependency dialog: dependency name alway set to 'propertyname':
+  clear EditPropName.Text in object definition, so that we have no translation string
+  which is filled in runtime to the edit field (Detlef Oertel <d.oertel@uib.de> 2023-09-06)
+
+### Changed
+- Create changelog now in opsi 4.3 style according to the actual opsi standards
+  and https://keepachangelog.com/en/1.1.0/
+  and as 'changelog.md' instead of 'changelog.txt' (Detlef Oertel <d.oertel@uib.de> 2023-09-06)
+
+### Added
+- new installer type : Advanced Installer
+  * https://www.advancedinstaller.com/
+  * https://www.advancedinstaller.com/user-guide/exe-setup-file.htm
+
+
+## [4.2.2.3-2] - 2023-09-06
+
+### Changed
+
+  - modified language files to fix:
+    fix calling dependency dialog: dependency name alway set to 'propertyname'
+
+(Detlef Oertel <d.oertel@uib.de>)
+
+opsi-setup-detector (4.2.2.3-1)
+
+  * on open control file load all values (new project)
+  * on import control file load only some values into the existing project
+  * changelog header and footer simpler (no utc offset, no remarks to urgency and state)
+
+-- Detlef Oertel <d.oertel@uib.de>  Thu,  17 Aug 2023 : 15:00:00
+
+opsi-setup-detector (4.2.2.2-1)
+
+  * sorted installer list
+  * some more autosize on labels for international translations
+  * Btn 'rebuild' on create tab works now independent of the create mode radiobuttons
+  * automatic update of config_version
+  * reinitGUI on language change
+
+-- Detlef Oertel <d.oertel@uib.de>  Mon,  14 Aug 2023 : 15:00:00
+
+opsi-setup-detector (4.2.2.1-1)
+
+  * new Button 'Import control File' on 'productconfiguration 1' tab to
+    add the data of a existing control file to the running project
+
+-- Detlef Oertel <d.oertel@uib.de>  Mon,  07 Aug 2023 : 15:00:00
+
+opsi-setup-detector (4.2.2.0-1) stable; urgency=low
+
+   * remove old unused code
+   * remove old unused resource strings
+   * fix corrected english resource strings (thanks to m.knauer)
+   * fix pattern installshieldMSI:
+        pattern 'issetup.dll' seems not to be there always : infopattern
+   * new osdbasedata: TinstallerData : notpatterns
+     patterns that indicate 'this is not this installer type'
+   * new cli parameter: -c / --template-channel
+   * new Help menu: 'Open help' via default bowser
+   * new Help menu: 'Open log file' via opsi-logviewer (if installed)
+   * new Helpicon: help-circle20.png from  https://feathericons.com/
+   * new package icon: package16.png from  https://feathericons.com/
+   * new rebuild icon: refreshcw20.png from  https://feathericons.com/
+   * new Help Icons (help-circle20) on every tab with context sensitive help
+   * new Help Icons (help-circle20) on dialogs: config, property, dependency with context sensitive help
+   * new detection: PortableApps.com
+   * new detection: install4j
+   * fix: control file: licenseRequired: False ; fixes #4828
+   * fix: trim service_url before use ; fixes #4825
+   * feature: inno: read uninstall directory from iss file ; fixes #4622
+   * updated translation files: de / es / en
+   * call online help from docs.opsi.org with context
+   * fix osdanalyzewin: get_inno_info  code based installdir
+   * feature: osd configuration: auto-detect path to packageBuilder; fixes: #4844
+   * new: osdcreate: create control file also in 4.3 toml style
+   * feature: store and use last dir from which we opend a project file
+   * feature: store and use last dir from which we opend a setup file
+   * feature: store and use last dir from which we opend a icon file
+   * setup tabs: more space for the info link
+   * fix opsi-logviewer call for linux and mac and for congiged based logviewer
+   * new 'rebuild' button on create tab
+   * new config 'control_in_toml_format' if true create control in toml  (4.3) (default= false)
+   * reset password from input dialog to empty in order to ask again on reconnect
+   * migrate to synapse r270 for SSLv3
+   * localize connection info
+   * new config 'dependencies_for_all_actionrequests'
+      if true allow dependencies for all ection requests (4.3) (default= false)
+   * fix: dependency dialog sort list of possible products in combobox
+   * new: Import project from existing contol file
+   * new: Import project from existing contol.toml file (via fpTOML library)
+
+
+-- Detlef Oertel <d.oertel@uib.de>  Wed,  29 Mar 2023 : 15:00:00 +0200
+
+opsi-setup-detector (4.2.1.18-1) stable; urgency=low
+
+   * Fix: 'with user':
+     osdcreate: at 'with user' we need osd-lib also at the base dir (without subdir)
+
+-- Detlef Oertel <d.oertel@uib.de>  Mon,  17 Jul 2023 : 15:00:00 +0200
 
 opsi-setup-detector (4.2.1.17-1) stable; urgency=low
 

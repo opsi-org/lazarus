@@ -21,7 +21,7 @@ type
 
 var
   DataModule1: TDataModule1;
-  myFont : string;
+  myFont: string;
 
 implementation
 
@@ -73,12 +73,10 @@ end;
 
 initialization
 
-myFont := 'Arial';
+  myFont := 'Arial';
 {$IFDEF LINUX}
-//myFont := 'Liberation Sans Narrow';
-myFont := 'Liberation Sans';
+  //myFont := 'Liberation Sans Narrow';
+  myFont := 'Liberation Sans';
 {$ENDIF LINUX}
 
-
 end.
-

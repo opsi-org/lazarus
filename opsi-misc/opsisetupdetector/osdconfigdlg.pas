@@ -8,6 +8,7 @@ uses
   Classes, SysUtils, FileUtil, RTTIGrids, Forms, Controls, Graphics, Dialogs,
   ExtCtrls, StdCtrls, Buttons, osdbasedata, PropEdits,
   osddatamod,
+  LclIntf,
   lcltranslator;
 
 type
@@ -20,10 +21,12 @@ type
     LabelCfgDlgHead: TLabel;
     MemoConfigHint: TMemo;
     Panel1: TPanel;
+    SpeedButtonHelpConfig: TSpeedButton;
     TIPropertyGrid1: TTIPropertyGrid;
     procedure FormActivate(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure SpeedButtonHelpConfigClick(Sender: TObject);
     procedure TIPropertyGrid1Click(Sender: TObject);
     procedure TIPropertyGrid1Exit(Sender: TObject);
     procedure TIPropertyGrid1KeyDown(Sender: TObject; var Key: word;
@@ -42,40 +45,11 @@ var
   FOSDConfigdlg: TFOSDConfigdlg;
   myconfigurationhints: TStringList;
 
-(*
-resourcestring
-
-  // new for 4.1.0.2 ******************************************************************
-  rsworkbench_Path = 'Path to the opsi_workbench';
-  //rsPreInstallLines = 'opsi-script code, that will be included before the start of the installation.';
-  rsworkbench_mounted = 'Automatically detected. Is the opsi workbench reachable at workbench_Path.';
-  rsconfig_filled = 'Automatically detected. Do we have all needed configurations';
-  rsregisterInFilemanager = 'Should this program be registred to the Filemanger (Explorer) context menu ?';
-  rsemail_address = 'Your email address, used for the changelog entry';
-  rsfullName = 'Your full name, used for the changelog entry';
-  rsimport_libraries = 'List of opsi-script libraries that have to be imported.' +
-    LineEnding + 'One per line. May be empty. Example:' + LineEnding +
-    'myinstallhelperlib.opsiscript';
-  rspreInstallLines = 'List of opsi-script code lines that should be included before the installation starts. '
-     + LineEnding + 'One per line. May be empty. Example: ' + LineEnding
-     + 'comment "Start the installation ..."';
-  rspostInstallLines = 'List of opsi-script code lines that should be included after the installation finished.'
-    + LineEnding + 'One per line. May be empty. Example:' + LineEnding +
-    'comment "Installation finished..."';
-  rspreUninstallLines = 'List of opsi-script code lines that should be included before the uninstallation starts.'
-    + LineEnding + 'One per line. May be empty. Example:' + LineEnding +
-    'comment "Start the uninstallation ..."';
-  rspostUninstallLines = 'List of opsi-script code lines that should be included after the uninstallation finished.'
-    + LineEnding + 'One per line. May be empty. Example:' + LineEnding +
-    'comment "Uninstall finished..."';
-  rspathToOpsiPackageBuilder = 'Path to the OpsiPackageBuilder. OpsiPackageBuilder is used to build the opsi packages via ssh. see: https://forum.opsi.org/viewtopic.php?f=22&t=7573';
-  rscreateRadioIndex = 'selects the Create mode Radiobutton.';
-  rscreateQuiet = 'Selects the Build mode Checkbox quiet.';
-  rscreateBuild = 'Selects the Build mode Checkbox build.';
-  rscreateInstall = 'Selects the Build mode Checkbox install.';
-*)
 
 implementation
+
+uses
+  osdform;
 
 {$R *.lfm}
 
@@ -86,10 +60,8 @@ begin
   LabelCfgDlgHead.Caption := rsCnfdTitle;
   TIPropertyGrid1.TIObject := myconfiguration;
   TIPropertyGrid1.CheckboxForBoolean := True;
-  //TIPropertyGrid1.PropertyEditorHook;
   myconfigurationhints.Clear;
   myconfigurationhints.Add('workbench_Path=' + rsworkbench_Path);
-  //myconfigurationhints.Add('preInstallLines = '+rsPreInstallLines);
   myconfigurationhints.Add('workbench_mounted=' + rsworkbench_mounted);
   myconfigurationhints.Add('config_filled=' + rsconfig_filled);
   myconfigurationhints.Add('registerInFilemanager=' + rsRegisterInFilemanager);
@@ -115,27 +87,53 @@ begin
   myconfigurationhints.Add('Service_user=' + rsService_user);
   myconfigurationhints.Add('Service_pass=' + rsService_pass);
   myconfigurationhints.Add('preferSilent=' + rsPreferSilent);
+  myconfigurationhints.Add('control_in_toml_format=' + rsControl_in_toml_format);
+  myconfigurationhints.Add('dependencies_for_all_actionrequests=' +
+    rsDependencies_for_all_actionrequests);
 
-  //myconfigurationhints.Add('UseService=' + rsUseService);
-  (*
-  myconfigurationhints.Add('CreateQuiet='+rsCreateQuiet);
-  myconfigurationhints.Add('CreateBuild='+rsCreateBuild);
-  myconfigurationhints.Add('CreateInstall='+rsCreateInstall);
-  *)
+  SetDefaultLang(osdsettings.mylang, osdsettings.mylocaledir);
   Repaint;
 end;
 
 procedure TFOSDConfigdlg.FormCreate(Sender: TObject);
+var
+  resourcedir: string;
+  tmpimage: TPicture;
 begin
   // Create Config Hints
   myconfigurationhints := TStringList.Create;
   DataModule1.SetFontName(TControl(Sender), myFont);
-  //LabelCfgDlgHead.Caption := rsCnfdTitle;
+  DataModule1.SetFontName(TControl(Sender), myFont);
+  {$IFDEF UNIX}
+  tmpimage := TPicture.Create;
+  // the first path is in the development environment
+  resourcedir := ExtractFileDir(Application.ExeName);
+  {$IFDEF DARWIN}
+    resourcedir := ExtractFileDir(Application.ExeName) + PathDelim + '../Resources';
+  {$ENDIF DARWIN}
+  tmpimage.LoadFromFile(resourcedir + PathDelim + 'images' + PathDelim +
+    'help-circle20.png');
+  SpeedButtonHelpConfig.Glyph.Assign(tmpimage.Bitmap);
+  FreeAndNil(tmpimage);
+  {$ENDIF UNIX}
 end;
 
 procedure TFOSDConfigdlg.FormDestroy(Sender: TObject);
 begin
   FreeAndNil(myconfigurationhints);
+end;
+
+procedure TFOSDConfigdlg.SpeedButtonHelpConfigClick(Sender: TObject);
+var
+  myUrl: string;
+begin
+  if LowerCase(osdsettings.mylang) = 'de' then
+    myUrl := opsidocs_base_url +
+      'opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-use-start'
+  else
+    myUrl := opsidocs_base_url +
+      'opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-use-start';
+  OpenURL(myUrl);
 end;
 
 procedure TFOSDConfigdlg.TIPropertyGrid1Click(Sender: TObject);
@@ -198,8 +196,5 @@ initialization
     TFileNamePropertyEditor);
   RegisterPropertyEditor(TypeInfo(string), TConfiguration, 'Service_pass',
     TPasswordStringPropertyEditor);
-
-  // RegisterPropertyEditor(TypeInfo(TPProperties), TConfiguration, 'Properties',
-  //   TCollectionPropertyEditor);
 
 end.

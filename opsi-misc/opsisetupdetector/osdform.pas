@@ -1,7 +1,6 @@
 unit osdform;
 
  {$mode objfpc}{$H+}
-//{$MODE DELPHI}{$H+}
 
 
 interface
@@ -21,27 +20,19 @@ uses
   Buttons,
   ComCtrls,
   Menus,
-  //Registry,
-  //Strings,
   StrUtils,
-  //Process,
   typinfo,
   {$IFNDEF WINDOWS}
   CustApp,
   {$ENDIF WINDOWS}
-  //fileinfo,
-  //osdhelper,
   osdanalyzewin,
   osdanalyzelin,
   osdanalyzemac,
-  //winpeimagereader,
   lcltranslator,
-  //defaulttranslator,
   EditBtn,
-  //Spin,
-  //JSONPropStorage,
   Grids,
-  PairSplitter, ColorBox,
+  PairSplitter,
+  ColorBox,
   oslog,
   osdbasedata, osdconfigdlg, osdcreate, fpjsonrtti, osddlgnewdependency,
   osddlgnewproperty, osparserhelper,
@@ -49,8 +40,8 @@ uses
   osdcheckentriesdlg,
   Contnrs,
   osmessagedialog,
-  oswebservice;
-//openfiledirdlg;
+  oswebservice,
+  osdmain;
 
 type
   TIconDisplay = class(TPersistent)
@@ -61,9 +52,13 @@ type
   public
   end;
 
+
+
   { TResultform1 }
 
   TResultform1 = class(TForm)
+    BitBtnImportControl: TBitBtn;
+    BitBtnRebuild: TBitBtn;
     BitBtnAddDep: TBitBtn;
     BitBtnChooseInstDir2: TBitBtn;
     BitBtnChooseInstDir3: TBitBtn;
@@ -109,7 +104,6 @@ type
     BtSingleAnalyzeAndCreateWithUser: TBitBtn;
     CheckBoxDefaultIcon: TCheckBox;
     CheckBoxNoIcon: TCheckBox;
-    CheckGroupBuildMode: TCheckGroup;
     EditLogInfo: TEdit;
     FlowPanel1: TFlowPanel;
     FlowPanel10: TFlowPanel;
@@ -123,15 +117,18 @@ type
     FlowPanel18: TFlowPanel;
     FlowPanel19: TFlowPanel;
     FlowPanel2: TFlowPanel;
+    FlowPanel20: TFlowPanel;
     FlowPanel21: TFlowPanel;
     FlowPanel22: TFlowPanel;
     FlowPanel23: TFlowPanel;
     FlowPanel24: TFlowPanel;
     FlowPanel25: TFlowPanel;
+    FlowPanel26: TFlowPanel;
     FlowPanel3: TFlowPanel;
     FlowPanel4: TFlowPanel;
     FlowPanel6: TFlowPanel;
     FlowPanel8: TFlowPanel;
+    FlowPanel9: TFlowPanel;
     FlowPanelLinuxTitle: TFlowPanel;
     FlowPanelCustomDir: TFlowPanel;
     FlowPanelLinuxTitle2: TFlowPanel;
@@ -172,14 +169,16 @@ type
     Label100: TLabel;
     Label101: TLabel;
     Label102: TLabel;
+    Label103: TLabel;
+    Label104: TLabel;
     Label2: TLabel;
     Label3: TLabel;
     Label4: TLabel;
     Label5: TLabel;
     Label56: TLabel;
     Label6: TLabel;
+    Label63: TLabel;
     Label86: TLabel;
-    Label87: TLabel;
     Label88: TLabel;
     Label89: TLabel;
     Label90: TLabel;
@@ -199,8 +198,6 @@ type
     LabelIconName: TLabel;
     LabelIconDir: TLabel;
     LabelIconPreview: TLabel;
-    Label63: TLabel;
-    Label69: TLabel;
     Label57: TLabel;
     Label58: TLabel;
     Label59: TLabel;
@@ -236,6 +233,9 @@ type
     LabelWorkbenchOK: TLabel;
     LabelWorkbenchNotOK: TLabel;
     MemoDefault: TMemo;
+    MenuHelpOpen: TMenuItem;
+    MenuHelpLog: TMenuItem;
+    MenuItemOpenControl: TMenuItem;
     MenuItemOpenProj: TMenuItem;
     MenuItemSaveProj: TMenuItem;
     MenuItemLangFr: TMenuItem;
@@ -254,6 +254,20 @@ type
     Panel11: TPanel;
     Panel12: TPanel;
     Panel13: TPanel;
+    SpeedButtonHelpMain: TSpeedButton;
+    SpeedButtonHelpAnalyze: TSpeedButton;
+    SpeedButtonHelpSetup1: TSpeedButton;
+    SpeedButtonHelpProd1: TSpeedButton;
+    SpeedButtonHelpProd2: TSpeedButton;
+    SpeedButtonHelpIcon: TSpeedButton;
+    SpeedButtonHelpCreate: TSpeedButton;
+    SpeedButtonHelpSetup2: TSpeedButton;
+    SpeedButtonHelpSetup3: TSpeedButton;
+    SpeedButtonHelpStartOSIndep: TSpeedButton;
+    SpeedButtonHelpStartWin: TSpeedButton;
+    SpeedButtonHelpStartLin: TSpeedButton;
+    SpeedButtonHelpStartMac: TSpeedButton;
+    SpeedButtonHelpStartMulti: TSpeedButton;
     TaskPanelMulti: TPanel;
     TaskPanelMac: TPanel;
     PanelDepBtns: TPanel;
@@ -274,12 +288,6 @@ type
     processStatement: TLabel;
     ProgressBar1: TProgressBar;
     ProgressBarAnalyze: TProgressBar;
-    radioBuildModebuildOnly: TRadioButton;
-    radioBuildModebuildInstall: TRadioButton;
-    RadioButtonBuildPackage: TRadioButton;
-    RadioButtonCreateOnly: TRadioButton;
-    RadioButtonPackageBuilder: TRadioButton;
-    RadioGroup1: TRadioGroup;
     SaveDialogProj: TSaveDialog;
     SBtnExit: TSpeedButton;
     ScrollBox1: TScrollBox;
@@ -296,7 +304,6 @@ type
     TabSheetProduct: TTabSheet;
     TabSheetSetup1: TTabSheet;
     FileExit: TMenuItem;
-    //FileCreateLogfile: TMenuItem;
     MenuItemAbout: TMenuItem;
     MenuItemFile: TMenuItem;
     MainMenu1: TMainMenu;
@@ -368,8 +375,10 @@ type
     TIMemoAdvice: TTIMemo;
     TIMemoDesc: TTIMemo;
     TimerFirstconfig: TTimer;
-    TIS1Url: TTILabel;
+    TIRadioGroupCreateMode: TTIRadioGroup;
+    TIRadioGroupBuildMode: TTIRadioGroup;
     TILabelInstaller1: TTILabel;
+    TIS1Url: TTILabel;
     TIS2Url: TTILabel;
     TIS3Url: TTILabel;
     TISpinEditPrio: TTISpinEdit;
@@ -393,10 +402,12 @@ type
     procedure BitBtnDelPropClick(Sender: TObject);
     procedure BitBtnEditDepClick(Sender: TObject);
     procedure BitBtnEditPropClick(Sender: TObject);
+    procedure BitBtnImportControlClick(Sender: TObject);
     procedure BitBtnOpenFile1Click(Sender: TObject);
     procedure BitBtnOpenFileClick(Sender: TObject);
     procedure BitBtnOpenMst1Click(Sender: TObject);
     procedure BitBtnOpenMst2Click(Sender: TObject);
+    procedure BitBtnRebuildClick(Sender: TObject);
     procedure BitBtnRecheckWorkbenchClick(Sender: TObject);
     procedure BitBtnWorkBenchPathClick(Sender: TObject);
     procedure BtAnalyzeNextStepClick(Sender: TObject);
@@ -428,6 +439,8 @@ type
     procedure FormDeactivate(Sender: TObject);
     procedure FormMouseLeave(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure MenuHelpLogClick(Sender: TObject);
+    procedure MenuItemOpenControlClick(Sender: TObject);
     procedure MenuItemOpenProjClick(Sender: TObject);
     procedure MenuItemSaveProjClick(Sender: TObject);
     procedure MenuItemLangClick(Sender: TObject);
@@ -457,10 +470,20 @@ type
     procedure Panel1Click(Sender: TObject);
     procedure ProductIDChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
-    procedure RadioButtonBuildModeChange(Sender: TObject);
 
-    //procedure SBtnOpenClick(Sender: TObject);
     procedure SBtnExitClick(Sender: TObject);
+    procedure SpeedButtonHelpAnalyzeClick(Sender: TObject);
+    procedure SpeedButtonHelpCreateClick(Sender: TObject);
+    procedure SpeedButtonHelpIconClick(Sender: TObject);
+    procedure SpeedButtonHelpMainClick(Sender: TObject);
+    procedure SpeedButtonHelpProd1Click(Sender: TObject);
+    procedure SpeedButtonHelpProd2Click(Sender: TObject);
+    procedure SpeedButtonHelpStartOSIndepClick(Sender: TObject);
+    procedure SpeedButtonHelpSetup1Click(Sender: TObject);
+    procedure SpeedButtonHelpStartLinClick(Sender: TObject);
+    procedure SpeedButtonHelpStartMacClick(Sender: TObject);
+    procedure SpeedButtonHelpStartMultiClick(Sender: TObject);
+    procedure SpeedButtonHelpStartWinClick(Sender: TObject);
     procedure TabSheetCreateShow(Sender: TObject);
     procedure TabSheetIconsShow(Sender: TObject);
     procedure TabSheetStartExit(Sender: TObject);
@@ -480,23 +503,20 @@ type
     procedure TIEditSetup1UnProgramEditingDone(Sender: TObject);
     procedure TIEditSetup2UnProgramEditingDone(Sender: TObject);
     procedure TIEditSetup3UnProgramEditingDone(Sender: TObject);
-    procedure TIGridDepPropertiesCreated(Sender: TObject);
     procedure TimerFirstconfigTimer(Sender: TObject);
+    procedure TIRadioGroupBuildModeClick(Sender: TObject);
     procedure TIS1UrlClick(Sender: TObject);
     procedure TIS1UrlMouseEnter(Sender: TObject);
     procedure TIS1UrlMouseLeave(Sender: TObject);
     procedure TISpinEditPrioChange(Sender: TObject);
     procedure TITrackBarPrioChange(Sender: TObject);
-    procedure fetchDepPropFromForm;
     procedure ApplicationEventIdle(Sender: TObject; var Done: boolean);
     procedure genRttiEditChange(Sender: TObject);
-    //procedure makeProperties;
 
     procedure IconDisplayOnMouseEnter(Sender: TObject);
     procedure PaintPreview(Image: TImage);
     procedure IconDisplayOnClick(Sender: TObject);
     procedure showCheckEntriesWarning;
-    //procedure SetFontName(Control: TControl; Name: string);
     function showCompleteDirDlg: boolean;
     procedure showMacOS2StepSelectionDLG;
     procedure updateGUI;
@@ -505,7 +525,7 @@ type
     procedure OpenMSTFile(var mysetup: TSetupFile);
     procedure chooseInstallDir(var mysetup: TSetupFile);
     procedure chooseUninstaller(var mysetup: TSetupFile);
-    procedure updateUninstaller(var mysetup: TSetupFile);
+
     procedure SetTICheckBoxesMST(Installer: TKnownInstaller);
     procedure chooseTargetProgram(var mysetup: TSetupFile);
   public
@@ -520,40 +540,34 @@ type
     numberIcons, indexSelectedIcon: integer;
     loadDefaultIcon: boolean;
     procedure memoadd(line: string);
+    procedure updateUninstaller(var mysetup: TSetupFile);
   end;
 
 
-procedure main1;
-procedure main2;
-procedure mywrite(line: string); overload;
-procedure mywrite(line: string; loglevel: integer); overload;
 procedure checkWorkbench;
-procedure procmess;
-function startOpsiServiceConnection: boolean;
+procedure initGUI;
+
+const
+  // base_url while development
+  //opsidocs_base_url = 'https://bonifax/opsidoc/antora/';
+  opsidocs_base_url = 'https://docs.opsi.org/';
 
 
 var
   resultForm1: TresultForm1;
-  optionlist: TStringList;
   myexitcode: integer;
   Result: integer;
-  myExeDir: string;
-  myfilename, myerror: string;
-  //myVersion: string;
   MSIfilename, MSTfilename, SetupFilename: string;
-  showgui: boolean;
   configDir: string;
   configFileName: string;
   packetBaseDir: string;
   productid: string;
-  //patchlist: TStringList;
   fConfig: Text;
   setupTypestr: string;
   markerEmbeddedMSI: boolean = False;
   markerInstallShield: boolean = False;
   opsidir: string;   // opsi.org (set in main)
   opsitmp: string;   // %TEMP%/opsitmp  (set in main)
-  //Logfile: string;   // name of logfile (set in main)
 
   //*****************************************
   test: boolean = False;
@@ -565,62 +579,26 @@ var
   showInstallShieldMSI: boolean = True;
   showAdvancedMSI: boolean = True;
   //*****************************************
-  //myobject : TMyClass;
   firstshowconfigdone: boolean = False;
-  startupfinished: boolean = False;
-  mylocaledir: string;
-  localservicedata: TOpsi4Data = nil;
   productIds: TStringList;
-  passwordToUse: string;
-  //myFont : string;
-  opsiserviceversion: string;
 
 
 resourcestring
 
-  sMBoxHeader = 'opsi setup detector';
-  sHelpHeader = 'opsi setup detector Help';
-  // dialogs
-  sAskCreatePacket = 'Create packet %0:s?';
-  sHelpFile = 'languages\Help.de.html';
-  sLogfileInfo = 'Logfile created: %s';
-  // Error messages
-  //sErrFldInstDirEmpty = 'Error: Field Install Directory is empty!';
-  sErrFldMsiProductCodeEmpty =
-    'Error: Field MSI Product Code is empty!' + Lineending +
-    'The MSI Product Code is needed for correct Uninstall process.' +
-    Lineending +
-    'Please install this Product and check for the MSI Product Code and write it to the delsub script';
+  // old before 4.1.0.2 ******************************************************************
   sErrProductIdEmpty = 'Error: Field opsi Product ID is empty!';
   sErrProductVersionEmpty = 'Error: Field Product Version is empty!';
-  //sErrFldSetupEmpty = 'Error: No setup file selected!';
-  //sErrMSINotFound = 'Error: MSI file does not exist!';
-  sErrMSTNotFound =
-    'Error: MST file does not exist in the MSI-directory!';
   sErrOpsiPackageBuilderStart = 'Error invoking opsi package builder';
-  //sErrOpsiPackageBuilderErrCode =
-  //  'Error invoking OPSI Package Builder (error code=%0:d). Please remove quiet option to check for further information.';
   sErrPacketBaseDirNotFound =
-    'Error: The Path to opsi-work-bench is empty or not valid!';
-  //sErrProductVersionInvalid = 'Error: for Product Version only numbers allowed !';
-  //sErrSelectInstallType =
-  //  'First select setup type tab (MSI, Inno Setup ...) and fill out form';
-  //sErrSetupFileNotFound = 'Error: Setup file does not exist!';
-  //sErrPacketDirExists = 'Error: opsi packet folder %s already exists!';
-  sErrExtractMSIfailed = 'Error: extracting MSI from %s failed!';
+    'Error: The path to the opsi_workbench is empty or not valid!';
   sInfoFinished = 'Create opsi package finished.';
   sInfoFailedBuild = 'Opsi package files created but build / install package failed';
   sInfoFailedCreate = 'Create opsi package files failed';
-  //sWarnInstDirEmptyNoDeinstall =
-  //  'Warning: Install Directory is empty, deinstall script cannot be patched!';
-
-  //sErrProductIdEmpty = 'We need a productId.';
-  //sErrProductVersionEmpty = 'We need a productVersion.';
   sWarnInstalldirUnknown = 'Error: Field Install Directory is empty or not valid!' +
     Lineending + 'For this Installer the Installdir could not be detected.' +
-    Lineending + 'The Installdir is needed for correct Uninstall process.' +
+    Lineending + 'The Installdir is needed for the uninstallation process.' +
     Lineending +
-    'Please install this Product and check for the Installdir and write it to the setup and the uninstall script';
+    'Please install this product manually and determine the Installdir. Then add it to the setup and the uninstall script';
 
   // new for 4.1.0.2 ******************************************************************
   rsNotImplemented = 'Not implemented right now.';
@@ -651,49 +629,57 @@ resourcestring
   rsCopyFileOnlyCap = 'Only selected file';
   //    'Should we copy not only the setup file. but the complete directory ?';
   rsSelectAppOrDir =
-    'First select MacOS .app or Directory where to find MacOS Installer files';
-  rsSelectMacFile = 'Now select MacOS installer file.';
-  rsRpmAnalyze = 'Analyze of RPM files';
-  rsRPMAnalyzeNotLinux = 'Detailed anlyze of deb files can only be done at linux';
-  rsDebAnalyze = 'Analyze of DEB files';
-  rsDebAnalyzeNotLinux = 'Detailed anlyze of deb files can only be done at linux';
+    'First select MacOS .app directory or a directory that contains the MacOS installer files';
+  rsSelectMacFile = 'Now select the MacOS installer file.';
+  rsRpmAnalyze = 'Analysis of RPM files';
+  rsRPMAnalyzeNotLinux = 'Detailed analysis of rpm files can only be done in linux';
+  rsDebAnalyze = 'Analysis of DEB files';
+  rsDebAnalyzeNotLinux = 'Detailed analysis of deb files can only be done in linux';
   rscheckEntriesTitle = 'Please keep in mind:';
   rscheckEntriesMsg =
-    'The following data are automatically detected.' + Lineending +
-    'You have to check every data field if this data are correct or plausible.' +
-    Lineending + 'For some data you may have to install the program once ' +
-    Lineending + 'and than get the needed data from the completed installation.';
+    'The following data fields are automatically detected.' +
+    Lineending + 'You have to check every data field to verify the data is correct or plausible.'
+    + Lineending + 'For some data fields you may have to install the program once manually'
+    + Lineending + 'and then retrieve the needed data from the completed installation.';
   rscheckEntriesRememberMe = 'Do not show this Message again';
-  rsMac3stepSelectionText = 'To select a MacOS installer we have a two Steps' +
-    LineEnding + 'Firststep is Dialog to select a Directory where to find the installer '
-    + LineEnding + 'or the "installer.app" Directory' + LineEnding +
-    'Second step (if needed) is a Dialog to select a installer file';
+  rsMac3stepSelectionText = 'To select a MacOS installer there are two Steps' +
+    LineEnding + 'The first step is a dialog to select a directory that contains the installer '
+    + LineEnding + 'or the "installer.app" directory' + LineEnding +
+    'The second step (if needed) is a dialog to select an installer file';
   rsMac3stepSelectionTitle = 'Attention: Two Step Selection Dialog';
   rsMacSelectionRememberMe = 'Do not show this Message again';
   rsServiceConnectionFailed =
     'Could not connect to the opsi-web-service. Check URL, user and password';
+  rsServiceConnected = 'Connected to opsi server';
+  rsServiceNotConnected = 'Not connected to opsi server';
   rsCreateWithUserProductAdvice =
     'Use Property "Debug = true" to disable ' + 'mouse and keyboard blocking.' +
     LineEnding +
     'If mouse and keyboard are accidentally blocked after the installation is finished,'
     +
     LineEnding + 'use action request "update" to enable mouse and keyboard again.';
+  rsErrorLoadingLogViewer = 'An error occured while loading opsi-logviewer';
+  rsErrorFindingLogViewer =
+      'Please install the opsi-logviewer product. opsi-logviewer is not installed in ';
+  rsRebuildFinished = 'Rebuild opsi package finished.';
+  rsRebuildFailedBuild = 'Rebuild opsi package: build / install package failed';
+
+
   // Hints
   rsTemlateChannelHint =
-    'Choose what kind of templates should be used. If templates are not found, is default the fallback.';
+    'Choose what kind of templates should be used. If the templates are not found, default is the fallback.';
   rsSupportCustomDirectoryHint = 'Should we add code to support "custom" directories ?';
   rsInstallFromLocalHint =
-    'Should we add code to copy installer to local before installation ?';
+    'Should we add code to copy the installer locally before the installation ?';
   rsCustomizeProfileHint =
     'Should we add code to customize the installation in user profiles ?';
   rsInstalldirHint =
     'The (unquoted) directory path where the software will be installed.' +
     LineEnding +
     'You may also choose the directory via the selection button on the right (if the product is installed).'
-    +
-    LineEnding +
-    'If you there get a path like "C:\program Files" or "C:\program Files (x86)", '
     + LineEnding +
+    'If you there get a path like "C:\program Files" or "C:\program Files (x86)", ' +
+    LineEnding +
     'it will be replaced by the matching opsi-script constant (e.g."%ProgramFiles32Dir%").';
   rsTargetProgHint =
     'The main program of the software that has to be installed.' +
@@ -701,8 +687,7 @@ resourcestring
     LineEnding + 'and to check before installaion if the program is running.' +
     LineEnding +
     'Will be not detected. You have to choose it via the selection button on the right (if the product is installed).'
-    +
-    LineEnding + 'Unquoted file name.';
+    + LineEnding + 'Unquoted file name.';
   rsUninstallProgHint =
     'The unqoted path to the detected uninstall program.' + LineEnding +
     'You may also choose the file via the selection button on the right (if the product is installed).';
@@ -711,98 +696,6 @@ resourcestring
 implementation
 
 {$R *.lfm}
-//{$R manifest.rc}
-
-
-procedure procmess;
-begin
-  Application.ProcessMessages;
-end;
-
-procedure mywrite(line: string);
-begin
-  mywrite(line, LLNotice);
-end;
-
-procedure mywrite(line: string; loglevel: integer);
-begin
-  if showgui then
-  begin
-    resultform1.memoadd(line);
-  end;
-  (*
-  else
-    writeln(line);
-    *)
-  LogDatei.log(line, loglevel);
-end;
-
-
-
-procedure WriteHelp;
-var
-  progname: string;
-  helplist: TStringList;
-begin
-  progname := ExtractFileName(ParamStr(0));
-  if showgui then
-  begin
-    helplist := TStringList.Create;
-    helplist.Append(ParamStr(0));
-    helplist.Append(progname);
-    helplist.Append('Version ' + myVersion);
-    helplist.Append(myerror);
-    helplist.Append('Usage:');
-    helplist.Append(progname + '[Options]');
-    helplist.Append('Options:');
-    helplist.Append(' --help -> write this help and exit');
-    helplist.Append('  -h -> write this help and exit');
-    helplist.Append(' --filename=<path\filename> -> file to analyze)');
-    helplist.Append(' --f <path\filename> -> file to analyze)');
-    helplist.Append(' --nogui -> do not show interactive output window)');
-    helplist.Append(' --n -> do not show interactive output window)');
-    helplist.Append(
-      ' --targetOS=<os> -> Analyze for target where <os> is on of (win,lin,mac)');
-    helplist.Append(' --t <os> -> Analyze for target where <os> is on of (win,lin,mac)');
-    helplist.Append(' --productID=<id> -> Create product with productID <id>');
-    helplist.Append(' --p <id> -> Create product with productID <id>');
-    helplist.Append(
-      ' --mode=<mode> -> Define tho run mode <mode> (default=singleAnalyzeCreate)');
-    helplist.Append(' --m <mode> -> Define tho run mode <mode> (default=singleAnalyzeCreate)');
-    helplist.Append(
-      '     possible modes are: singleAnalyzeCreate, createTemplate');
-    ShowMessage(helplist.Text);
-    FreeAndNil(helplist);
-  end
-  else
-  begin
-    writeln(ParamStr(0));
-    writeln(progname);
-    writeln('Version ' + myVersion);
-    writeln(myerror);
-    writeln('Usage:');
-    writeln(progname + '[Options]');
-    writeln('Options:');
-    writeln(' --help -> write this help and exit');
-    writeln('  -h -> write this help and exit');
-    writeln(' --filename=<path\filename> -> file to analyze)');
-    writeln(' --f <path\filename> -> file to analyze)');
-    writeln(' --nogui -> do not show interactive output window)');
-    writeln(' --n -> do not show interactive output window)');
-    writeln(' --targetOS=<os> -> Analyze for target where <os> is on of (win,lin,mac)');
-    writeln(' --t <os> -> Analyze for target where <os> is on of (win,lin,mac)');
-    writeln(' --productID=<id> -> Create product with productID <id>');
-    writeln(' --p <id> -> Create product with productID <id>');
-    writeln(' --mode=<mode> -> Define tho run mode <mode> (default=singleAnalyzeCreate)');
-    writeln(' --m <mode> -> Define tho run mode <mode> (default=singleAnalyzeCreate)');
-    writeln('     possible modes are: singleAnalyzeCreate, createTemplate');
-  end;
-
-  Application.Terminate;
-  halt(-1);
-  Exit;
-end;
-
 
 procedure initGUI;
 
@@ -816,13 +709,9 @@ begin
       TILabelInstaller1.Link.SetObjectAndProperty(SetupFiles[0], 'installerid');
       TILabelInstaller2.Link.SetObjectAndProperty(SetupFiles[1], 'installerid');
       TILabelInstaller3.Link.SetObjectAndProperty(SetupFiles[2], 'installerid');
-      //TIComboBoxInstaller1.Link.SetObjectAndProperty(SetupFiles[0], 'installerid');
-      //TIComboBoxInstaller2.Link.SetObjectAndProperty(SetupFiles[1], 'installerid');
       TIEditSetupfile1.Link.SetObjectAndProperty(SetupFiles[0], 'setupFullFileName');
       TIEditSetupFile2.Link.SetObjectAndProperty(SetupFiles[1], 'setupFullFileName');
       TIEditSetupFile3.Link.SetObjectAndProperty(SetupFiles[2], 'setupFullFileName');
-      //TIComboBoxArch1.Link.SetObjectAndProperty(SetupFiles[0], 'architecture');
-      //TIComboBoxArch2.Link.SetObjectAndProperty(SetupFiles[1], 'architecture');
       TIEditMstFile1.Link.SetObjectAndProperty(SetupFiles[0], 'mstFullFileName');
       TIEditMstFile2.Link.SetObjectAndProperty(SetupFiles[1], 'mstFullFileName');
       TIEditMstFile3.Link.SetObjectAndProperty(SetupFiles[2], 'mstFullFileName');
@@ -875,8 +764,6 @@ begin
       TIEditProdName.Link.SetObjectAndProperty(productdata, 'productName');
       TIMemoAdvice.Link.SetObjectAndProperty(productdata, 'advice');
       TIMemoDesc.Link.SetObjectAndProperty(productdata, 'description');
-      //TICheckBoxlicenseRequired.Link.SetObjectAndProperty(productdata, 'licenserequired');
-      //TIGridDep.ListObject := dependencies;
       TITrackBarPrio.Link.SetObjectAndProperty(productdata, 'priority');
       TISpinEditPrio.Link.SetObjectAndProperty(productdata, 'priority');
       // definition of class TProductData in unit osdbasedata line ~256
@@ -896,9 +783,23 @@ begin
       TIComboBoxChannel.Link.SetObjectAndProperty(productdata, 'channelDir');
       // initialize drop down
       TIComboBoxChannel.Items.Text := templateChannelList.Text;
-      //TIComboBoxChannel.ItemIndex:= 1;
-      //TIComboBoxChannel.Caption:= templChannelStrings[myconfiguration.templateChannel];
-      //TIComboBoxChannel.Caption:= templChannelStrings[TTemplateChannels(0)];
+
+      // reinit osd settings (changed language ?)
+      osdsettings.BuildMode.Clear;
+      osdsettings.BuildMode.Add(rsBuildRadioBuild);
+      osdsettings.BuildMode.Add(rsBuildRadioBuildInstall);
+      osdsettings.CreateMode.Clear;
+      osdsettings.CreateMode.Add(rsCreateRadioFiles);
+      osdsettings.CreateMode.Add(rsCreateRadioFilesBuild);
+      osdsettings.CreateMode.Add(rsCreateRadioFilesPackageBuilder);
+
+      TIRadioGroupCreateMode.Caption:= rsCreateRadioGroupTitle;
+      TIRadioGroupCreateMode.Items.Text := osdsettings.CreateMode.Text;
+      TIRadioGroupCreateMode.Link.SetObjectAndProperty(osdsettings, 'CreateModeValue');
+
+      TIRadioGroupBuildMode.Caption:= rsBuildRadioGroupTitle;
+      TIRadioGroupBuildMode.Items.Text:= osdsettings.BuildMode.Text;
+      TIRadioGroupBuildMode.Link.SetObjectAndProperty(osdsettings, 'BuildModeValue');
 
       // the hints ...
       TIComboBoxChannel.Hint := rsTemlateChannelHint;
@@ -930,12 +831,13 @@ begin
       TIEditSetup1TargetProgram.ShowHint := True;
       TIEditSetup2TargetProgram.ShowHint := True;
       TIEditSetup3TargetProgram.ShowHint := True;
-      TICheckBoxS1Silent.ShowHint:= True;
-      TICheckBoxS2Silent.ShowHint:= True;
-      TICheckBoxS3Silent.ShowHint:= True;
+      TICheckBoxS1Silent.ShowHint := True;
+      TICheckBoxS2Silent.ShowHint := True;
+      TICheckBoxS3Silent.ShowHint := True;
 
     end;
     TIEditworkbenchpath.Link.SetObjectAndProperty(myconfiguration, 'workbench_path');
+    (*
     case myconfiguration.CreateRadioIndex of
       0: RadioButtonCreateOnly.Checked := True;
       1: RadioButtonBuildPackage.Checked := True;
@@ -945,11 +847,12 @@ begin
       0: radioBuildModebuildOnly.Checked := True;
       1: radioBuildModebuildInstall.Checked := True;
     end;
-    (*
-    CheckBoxQuiet.Checked := myconfiguration.CreateQuiet;
-    CheckBoxBuild.Checked := myconfiguration.CreateBuild;
-    CheckBoxInstall.Checked := myconfiguration.CreateInstall;
     *)
+    // copy create and build radio button settings from configuration to
+    // osdseetings and so also to GUI
+    osdsettings.CreateModeIndex := myconfiguration.CreateRadioIndex;
+    osdsettings.BuildModeIndex := myconfiguration.BuildRadioIndex;
+
     Visible := True;
     TabSheetStart.ImageIndex := 0;
     TabSheetAnalyze.ImageIndex := 1;
@@ -964,107 +867,35 @@ begin
     // check if we may call package builder
     if fileexists(myconfiguration.PathToOpsiPackageBuilder) then
     begin
-      RadioButtonPackageBuilder.Enabled := True;
+      //RadioButtonPackageBuilder.Enabled := True;
+      // is not possible via rtti
     end
     else
     begin
-      RadioButtonPackageBuilder.Enabled := False;
+      //RadioButtonPackageBuilder.Enabled := False;
+      // is not possible via rtti
     end;
     // check if we may build and install
     if fileexists(myconfiguration.PathToOpsiPackageBuilder) or
       ((myconfiguration.Service_URL <> '') and (myconfiguration.Service_user <> '')) then
     begin
-      RadioButtonBuildPackage.Enabled := True;
-      CheckGroupBuildMode.Enabled := True;
+      //RadioButtonBuildPackage.Enabled := True;
+      // is not possible via rtti
+      //CheckGroupBuildMode.Enabled := True;
+      TIRadioGroupBuildMode.Enabled := True;
     end
     else
     begin
-      RadioButtonBuildPackage.Enabled := False;
-      CheckGroupBuildMode.Enabled := True;
+      TIRadioGroupCreateMode.ItemIndex := 0;
+      TIRadioGroupCreateMode.Enabled := False;
+      TIRadioGroupBuildMode.Enabled := False;
+      //RadioButtonBuildPackage.Enabled := False;
+      //CheckGroupBuildMode.Enabled := True;
     end;
-    {$IFDEF LINUX}
-    //BtSingleAnalyzeAndCreateWin.Glyph.LoadFromFile('/usr/share/opsi-setup-detector-experimental/analyze4.xpm');
-    //BtATwonalyzeAndCreate.Glyph.LoadFromFile('/usr/share/opsi-setup-detector-experimental/analyze5.xpm');
-    {$ENDIF LINUX}
-    //LabelLogInfo.Caption := 'More info in Log file: ' + LogDatei.FileName;
     EditLogInfo.Caption := 'More info in Log file: ' + LogDatei.FileName;
     Application.ProcessMessages;
   end;
   LogDatei.log('Finished initGUI ... ', LLInfo);
-end;
-
-function startOpsiServiceConnection: boolean;
-var
-  i: integer;
-  //passwordToUse: string; is a global var
-  strlist: TStringList;
-  sessionid: string;
-begin
-  if localservicedata = nil then
-  begin
-    try
-      strlist := TStringList.Create;
-      localservicedata := TOpsi4Data.Create;
-      if (myconfiguration.Service_URL <> '') and
-        (myconfiguration.Service_user <> '') then
-      begin
-        if passwordToUse = '' then
-          passwordToUse := myconfiguration.Service_pass;
-        if passwordToUse = '' then
-          passwordToUse :=
-            PasswordBox('service: ' + myconfiguration.Service_URL +
-            ' user: ' + myconfiguration.Service_user, 'Password for opsi web service');
-        Screen.Cursor := crHourGlass;
-        procmess;
-        localservicedata.initOpsiConf(myconfiguration.Service_URL,
-          myconfiguration.Service_user,
-          passwordToUse);
-        opsiserviceversion := oswebservice.getOpsiServerVersion(
-          myconfiguration.Service_URL, myconfiguration.Service_user,
-          passwordToUse, sessionid);
-        if localservicedata.isConnected then
-        begin
-          LogDatei.log('Service connection initialized to :' +
-            myconfiguration.Service_URL + ' version: ' + opsiserviceversion, LLinfo);
-          FNewDepDlg.LabelConnect.Caption := 'Connected to opsi server';
-          FNewDepDlg.LabelConnect.Font.Color := clGreen;
-          resultForm1.StatusBar1.Panels.Items[1].Text :=
-            'Connected to opsi server: ' + myconfiguration.Service_URL;
-          // fetch produtIds from service
-          strlist.Text := localservicedata.getLocalbootProductIds.Text;
-          for i := 0 to strlist.Count - 1 do
-            FNewDepDlg.ComboBoxproductIds.Items.Add(
-              opsiunquotestr2(strlist.strings[i], '""'));
-        end
-        else
-        begin
-          // service not connected
-          MessageDlg('opsi-setup-detctor', rsServiceConnectionFailed,
-            mtError, [mbOK], '');
-          LogDatei.log('Service connection not possible: Url, user or password wrong.',
-            LLwarning);
-          FNewDepDlg.LabelConnect.Caption := 'Not connected to opsi server';
-          FNewDepDlg.LabelConnect.Font.Color := clRed;
-          resultForm1.StatusBar1.Panels.Items[1].Text := 'Not connected to opsi server';
-          FreeAndNil(localservicedata);
-        end;
-      end
-      else
-      begin
-        // service data missing
-        LogDatei.log('Service connection not possible: Url or user missing.', LLwarning);
-        FNewDepDlg.LabelConnect.Caption := 'Not connected to opsi server';
-        FNewDepDlg.LabelConnect.Font.Color := clRed;
-        resultForm1.StatusBar1.Panels.Items[1].Text := 'Not connected to opsi server';
-        FreeAndNil(localservicedata);
-      end;
-    finally
-
-      FreeAndNil(strlist);
-      Screen.Cursor := crDefault;
-      ;
-    end;
-  end;
 end;
 
 procedure TResultform1.updateGUI;
@@ -1085,12 +916,8 @@ procedure TResultform1.FormDestroy(Sender: TObject);
 begin
   TIEditSetupfile1.Link.TIObject := nil;
   TIEditSetupFile2.Link.TIObject := nil;
-  //TIComboBoxInstaller1.Link.TIObject := nil;
   TILabelInstaller1.Link.TIObject := nil;
   TILabelInstaller2.Link.TIObject := nil;
-  //TIComboBoxInstaller2.Link.TIObject := nil;
-  //TIComboBoxArch1.Link.TIObject := nil;
-  //TIComboBoxArch2.Link.TIObject := nil;
   TIEditMstFile1.Link.TIObject := nil;
   TIEditMstFile2.Link.TIObject := nil;
   TIEditMsiId1.Link.TIObject := nil;
@@ -1114,464 +941,6 @@ begin
 end;
 
 
-function checkAktProduct: boolean;
-begin
-  Result := True;
-  if not Assigned(osdbasedata.aktProduct.SetupFiles[0]) then
-  begin
-    LogDatei.log('Error: setupfile1 not initalized', LLCritical);
-    system.ExitCode := 1;
-    Result := False;
-  end;
-  if not Assigned(osdbasedata.aktProduct.SetupFiles[1]) then
-  begin
-    LogDatei.log('Error: setupfile2 not initalized', LLCritical);
-    system.ExitCode := 1;
-    Result := False;
-  end;
-  if not Assigned(osdbasedata.aktProduct.productdata) then
-  begin
-    LogDatei.log('Error: productdata not initalized', LLCritical);
-    system.ExitCode := 1;
-    Result := False;
-  end;
-  if Result = False then
-  begin
-    LogDatei.Close;
-    Application.Terminate;
-  end;
-end;
-
-
-{$IFDEF WINDOWS}
-function GetSystemDefaultLocale(const typeOfValue: DWord): string;
-  // possible values: cf. "Locale Types" in windows.pas
-var
-  buffer: PChar;
-  size: word = 0;
-  usedsize: word = 0;
-
-begin
-  Result := '';
-  size := 101;
-  Buffer := StrAlloc(101);
-  usedsize := GetLocaleInfo(LOCALE_SYSTEM_DEFAULT, typeOfValue, buffer, size);
-  if usedsize <> 0 then
-    Result := StrPas(Buffer);
-end;
-
-{$ENDIF WINDOWS}
-
-procedure main1;
-var
-  //ErrorMsg: string;
-  //FileVerInfo: TFileVersionInfo;
-  lfilename: string;
-begin
-  //startupfinished := true; //avoid calling main on every show event
-  (*
-  FileVerInfo := TFileVersionInfo.Create(nil);
-  try
-    FileVerInfo.FileName := ParamStr(0);
-    FileVerInfo.ReadFileInfo;
-    myVersion := FileVerInfo.VersionStrings.Values['FileVersion'];
-  finally
-    FileVerInfo.Free;
-  end;
-  *)
-  (*
-  // Initialize logging
-  LogDatei := TLogInfo.Create;
-  lfilename := ExtractFileName(Application.ExeName);
-  lfilename := ExtractFileNameOnly(lfilename);
-  LogDatei.FileName := lfilename;
-  LogDatei.StandardLogFileext := '.log';
-  LogDatei.StandardLogFilename := lfilename;
-  LogDatei.WritePartLog := False;
-  LogDatei.CreateTheLogfile(lfilename + '.log', True);
-  LogDatei.log('Log for: ' + Application.exename + ' opend at : ' +
-    DateTimeToStr(now), LLEssential);
-  LogDatei.log('opsi-setup-detector Version: ' + myVersion, LLEssential);
-  LogDatei.LogLevel := 8;
-  *)
-end;
-
-procedure main2;
-var
-  ErrorMsg: string;
-  i: integer;
-  mylang: string;
-  myparamstring: string;
-  myparamcount: integer;
-  allowedOS: TStringList;
-  tmpstr: string;
-  anaoutfile: Text;
-begin
-  startupfinished := True; //avoid calling main on every show event
-
-  // initialize language
-  mylocaledir := '';
-  {$IFDEF DARWIN}
-  mylocaledir := ExtractFileDir(Application.ExeName) + PathDelim +
-    '../Resources/locale';
-  {$ENDIF DARWIN}
-  {$IFDEF LINUX}
-  mylocaledir := ExtractFileDir(Application.ExeName) + PathDelim + 'locale';
-  if not DirectoryExists(mylocaledir) then
-    mylocaledir := '';
-  {$ENDIF LINUX}
-  mylang := GetDefaultLang;
-  SetDefaultLang(mylang, mylocaledir);
-
-    {$IFDEF WINDOWS}
-  // initate console while windows gui
-  // https://stackoverflow.com/questions/20134421/can-a-windows-gui-program-written-in-lazarus-create-a-console-and-write-to-it-at
-  //AllocConsole;      // in Windows unit
-  //IsConsole := True; // in System unit
-  //SysInitStdIO;      // in System unit
-  // Now you can do Writeln, DebugLn,
-  {$ENDIF WINDOWS}
-
-  //check parameters
-  myparamcount := ParamCount;
-  myparamcount := Application.ParamCount;
-  //writeln('paramcount = '+inttostr(myparamcount));
-  myparamstring := '';
-  for i := 1 to myparamcount do
-    myparamstring := myparamstring + ' ' + Application.Params[i];
-  LogDatei.log('Called as: ' + myparamstring, LLEssential);
-  myExeDir := ExtractFileDir(ParamStr(0));
-  myexitcode := 0;
-  myerror := '';
-  showgui := True;
-  osdsettings.runmode := gmUnknown;
-  opsitmp := GetTempDir(False) + 'opsitmp' + PathDelim;
-  optionlist := TStringList.Create;
-  optionlist.Append('help');
-  optionlist.Append('filename::');
-  optionlist.Append('nogui');
-  optionlist.Append('lang::');
-  optionlist.Append('targetOS::');
-  optionlist.Append('productId::');
-  optionlist.Append('mode::');
-
-  // quick check parameters
-  ErrorMsg := Application.CheckOptions('hfnltpm', optionlist);
-  if ErrorMsg <> '' then
-  begin
-    LogDatei.log('Exception while handling parameters.', LLcritical);
-    ErrorMsg := ErrorMsg + ' with params: ' + myparamstring;
-    LogDatei.log(ErrorMsg, LLcritical);
-    system.ExitCode := 1;
-    Application.ShowException(Exception.Create(ErrorMsg));
-    Application.Terminate;
-    Exit;
-  end;
-
-  initaktproduct;
-  if not checkAktProduct then
-  begin
-    Application.ShowException(Exception.Create('aktproduct not initialized'));
-    Application.Terminate;
-    Exit;
-  end;
-
-  // parse parameters
-  if Application.HasOption('h', 'help') then
-  begin
-    WriteHelp;
-    Application.Terminate;
-    Exit;
-  end;
-
-
-
-  if Application.HasOption('l', 'lang') then
-  begin
-    LogDatei.log('Found Parameter lang', LLInfo);
-    mylang := Application.GetOptionValue('l', 'lang');
-    SetDefaultLang(mylang, mylocaledir);
-    LogDatei.log('Found Parameter lang: ' + mylang, LLInfo);
-    LogDatei.log('Active lang: ' + mylang, LLInfo);
-  end
-  else
-  begin
-    mylang := GetDefaultLang;
-    {$IFDEF WINDOWS}
-    if Mylang = '' then
-      mylang := LowerCase(copy(GetSystemDefaultLocale(LOCALE_SABBREVLANGNAME), 1, 2));
-    {$ENDIF WINDOWS}
-    SetDefaultLang(mylang, mylocaledir);
-    LogDatei.log('Detected default lang: ' + mylang, LLInfo);
-    LogDatei.log('Detected default lang: ' + GetDefaultLang, LLInfo);
-  end;
-
-
-  if Application.HasOption('n', 'nogui') then
-  begin
-    showgui := False;
-     {$IFDEF WINDOWS}
-    // initate console while windows gui
-    // https://stackoverflow.com/questions/20134421/can-a-windows-gui-program-written-in-lazarus-create-a-console-and-write-to-it-at
-    //AllocConsole;      // in Windows unit
-    //IsConsole := True; // in System unit
-    //SysInitStdIO;      // in System unit
-    // Now you can do Writeln, DebugLn,
-  {$ENDIF WINDOWS}
-  end;
-
-  if showgui then
-  begin
-    //FOSDConfigdlg := TFOSDConfigdlg.Create(resultForm1);
-  end;
-
-  if Application.HasOption('t', 'targetOS') then
-  begin
-    tmpstr := lowercase(trim(Application.GetOptionValue('t', 'targetOS')));
-    allowedOS := TStringList.Create;
-    allowedOS.CommaText := 'win,lin,mac';
-    if allowedOS.IndexOf(tmpstr) = -1 then
-    begin
-      myerror := 'Error: Given targetOS: ' + tmpstr +
-        ' is not valid. Should be on of win,lin,mac';
-      system.ExitCode := 1;
-      {$IFNDEF WINDOWS}
-      writeln(myerror);
-      {$ENDIF WINDOWS}
-      LogDatei.log(myerror, LLCritical);
-      WriteHelp;
-      Application.Terminate;
-      Exit;
-    end;
-    try
-      forceTargetOS := TTargetOS(GetEnumValue(TypeInfo(TTargetOS), 'os' + tmpstr))
-    except
-      myerror := 'Error: Failed to convert: ' + tmpstr + ' to targetOS.';
-      {$IFNDEF WINDOWS}
-      writeln(myerror);
-      {$ENDIF WINDOWS}
-      LogDatei.log(myerror, LLCritical);
-      system.ExitCode := 1;
-      WriteHelp;
-      Application.Terminate;
-      Exit;
-    end;
-    LogDatei.log('Will use as targetOS: ' + GetEnumName(
-      TypeInfo(TTargetOS), Ord(forceTargetOS)), LLInfo);
-    FreeAndNil(allowedOS);
-  end;
-
-
-  if Application.HasOption('m', 'mode') then
-  begin
-    tmpstr := trim(Application.GetOptionValue('m', 'mode'));
-    try
-      osdsettings.runmode := TRunMode(GetEnumValue(TypeInfo(TRunMode), tmpstr));
-      LogDatei.log('Will use as mode: ' + GetEnumName(TypeInfo(TRunMode),
-        Ord(osdsettings.runmode)), LLInfo);
-    except
-      myerror := 'Error: Given mode: ' + tmpstr +
-        ' is not valid. Should be on of singleAnalyzeCreate, createTemplate';
-      {$IFNDEF WINDOWS}
-      writeln(myerror);
-      {$ENDIF WINDOWS}
-      LogDatei.log(myerror, LLCritical);
-      system.ExitCode := 1;
-      WriteHelp;
-      Application.Terminate;
-      Exit;
-    end;
-  end;
-
-  initaktproduct;
-  //makeProperties;
-  resultform1.updateGUI;
-
-  if Application.HasOption('p', 'productId') then
-  begin
-    forceProductId := trim(Application.GetOptionValue('p', 'productId'));
-    LogDatei.log('Will use as productId: ' + forceProductId, LLInfo);
-    forceProductId := cleanOpsiId(forceProductId);
-    LogDatei.log('Will use as productId: ' + forceProductId, LLInfo);
-  end;
-
-  if Application.HasOption('f', 'filename') then
-  begin
-    myfilename := trim(Application.GetOptionValue('f', 'filename'));
-    if not FileExists(myfilename) then
-    begin
-      myerror := 'Error: Given filename: ' + myfilename + ' does not exist.';
-      LogDatei.log(myerror, LLCritical);
-      system.ExitCode := 1;
-      WriteHelp;
-      Application.Terminate;
-      Exit;
-    end;
-    LogDatei.log('Got command line parameter filename with existing: ' +
-      myfilename, LLInfo);
-    if osdsettings.runmode = gmUnknown then
-      osdsettings.runmode := analyzeOnly;
-    LogDatei.log('Will use as mode: ' + GetEnumName(TypeInfo(TRunMode),
-      Ord(osdsettings.runmode)), LLInfo);
-    LogDatei.log('Will use as targetOS: ' + GetEnumName(
-      TypeInfo(TTargetOS), Ord(forceTargetOS)), LLInfo);
-    LogDatei.log('Will use as productId: ' + forceProductId, LLInfo);
-    if showgui then
-    begin
-      LogDatei.log('Start GUI mode: ', LLInfo);
-      initGUI;
-      with resultform1 do
-      begin
-        Show;
-        //osdsettings.runmode := singleAnalyzeCreate;
-        setRunMode;
-        resultform1.MemoAnalyze.Clear;
-        PageControl1.ActivePage := TabSheetAnalyze;
-        LogDatei.log('Wait for GUI  ', LLInfo);
-        repeat
-          Application.ProcessMessages;
-          sleep(100);
-        until (resultform1.Showing = True) and startupfinished;
-      end;
-      LogDatei.log('Start Analyze in GUI mode: ', LLInfo);
-      Analyze(myfilename, aktProduct.SetupFiles[0], True);
-    end
-    else
-    begin
-      LogDatei.log('Start NOGUI mode: ', LLnotice);
-      case osdsettings.runmode of
-
-        analyzeOnly:
-        begin
-          LogDatei.log('Start Analyze in NOGUI mode: ', LLInfo);
-          case forceTargetOS of
-            osWin: Analyze(myfilename, aktProduct.SetupFiles[0], False);
-            osLin: AnalyzeLin(myfilename, aktProduct.SetupFiles[0], False);
-            osMac: AnalyzeMac(myfilename, aktProduct.SetupFiles[0], False);
-          end;
-        end;
-        singleAnalyzeCreate, analyzeCreateWithUser:
-        begin
-          LogDatei.log('Start Analyze + Create in NOGUI mode: ', LLnotice);
-          initaktproduct;
-          aktProduct.SetupFiles[0].copyCompleteDir := False;
-          makeProperties;
-          resultform1.updateGUI;
-          aktProduct.SetupFiles[0].active := True;
-          case forceTargetOS of
-            osWin:
-            begin
-              aktProduct.productdata.targetOSset := [osWin];
-              aktProduct.SetupFiles[0].targetOS := osWin;
-              Analyze(myfilename, aktProduct.SetupFiles[0], False);
-            end;
-            osLin:
-            begin
-              aktProduct.productdata.targetOSset := [osLin];
-              aktProduct.SetupFiles[0].targetOS := osLin;
-              AnalyzeLin(myfilename, aktProduct.SetupFiles[0], False);
-            end;
-            osMac:
-            begin
-              aktProduct.productdata.targetOSset := [osMac];
-              aktProduct.SetupFiles[0].targetOS := osMac;
-              AnalyzeMac(myfilename, aktProduct.SetupFiles[0], False);
-            end;
-          end;
-        end;
-        createTemplate:
-        begin
-          LogDatei.log('Start createTemplate in NOGUI mode: ', LLnotice);
-          case forceTargetOS of
-            osWin:
-            begin
-              aktProduct.productdata.targetOSset := [osWin];
-              aktProduct.SetupFiles[0].targetOS := osWin;
-            end;
-            osLin:
-            begin
-              aktProduct.productdata.targetOSset := [osLin];
-              aktProduct.SetupFiles[0].targetOS := osLin;
-            end;
-            osMac:
-            begin
-              aktProduct.productdata.targetOSset := [osMac];
-              aktProduct.SetupFiles[0].targetOS := osMac;
-            end;
-          end;
-        end;
-      end;
-      // write osd-analyze-result.txt
-      AssignFile(anaoutfile, 'c:\opsi.org\applog\osd-analyze-result.txt');
-      Rewrite(anaoutfile);
-      writeln(anaoutfile, 'installertype=' + installerToInstallerstr(
-        aktProduct.SetupFiles[0].installerId));
-      writeln(anaoutfile, 'SoftwareVersion=' +
-        aktProduct.SetupFiles[0].SoftwareVersion);
-      writeln(anaoutfile, 'installCommandLine=' +
-        aktProduct.SetupFiles[0].installCommandLine);
-      writeln(anaoutfile, '');
-      writeln(anaoutfile, '');
-      writeln(anaoutfile, '');
-      writeln(anaoutfile, '');
-      writeln(anaoutfile, '');
-      writeln(anaoutfile, '');
-      CloseFile(anaoutfile);
-      if forceProductId <> '' then
-        aktProduct.productdata.productId := forceProductId;
-      if osdsettings.runmode <> analyzeOnly then
-      begin
-        LogDatei.log('Start createProductStructure in NOGUI mode: ', LLnotice);
-        createProductStructure;
-      end;
-
-      //analyze_binary(myfilename, False, False, aktProduct.SetupFiles[0]);
-      //if (not resultForm1.RadioButtonCreateOnly.Checked) then
-      //if False then
-      if (osdsettings.runmode <> analyzeOnly) and (not resultForm1.RadioButtonCreateOnly.Checked) then
-      begin
-        LogDatei.log('Start callServiceOrPackageBuilder in NOGUI mode: ', LLnotice);
-        LogDatei.log('Start callServiceOrPackageBuilder with build + install: ',
-          LLnotice);
-        //resultForm1.radioBuildModebuildInstall.Checked := True;
-        //resultForm1.RadioButtonBuildPackage.Checked := True;
-        callServiceOrPackageBuilder;
-      end;
-      //LogDatei.log('Finished and terminate regular in NOGUI mode. ', LLnotice);
-      //Application.Terminate;
-    end;
-  end
-  else
-  begin
-    if showgui then
-    begin
-      LogDatei.log('Start GUI mode: ', LLInfo);
-      initGUI;
-    end
-    else
-    begin
-      myerror := 'Error: No filename given but nogui';
-      LogDatei.log(myerror, LLCritical);
-      system.ExitCode := 1;
-      WriteHelp;
-      Application.Terminate;
-      Exit;
-    end;
-  end;
-
-  // stop program loop
-  if not showgui then
-  begin
-    //resultForm1.Destroy;
-    LogDatei.log('Finished and terminate regular in NOGUI mode. ', LLnotice);
-    freebasedata;
-    Application.Terminate;
-  end;
-  LogDatei.log('Finished main2 ', LLInfo);
-end;
-
-
-
 { TResultform1 }
 
 procedure TResultform1.setRunMode;
@@ -1587,8 +956,6 @@ begin
       TabSheetProduct.Enabled := False;
       TabSheetProduct2.Enabled := False;
       TabSheetCreate.Enabled := False;
-      //BtAnalyzeNextStep.Caption:='Next Step';
-      //BtAnalyzeNextStep.Glyph.LoadFromResourceName();
       BtSetup1NextStep.Enabled := False;
     end;
     singleAnalyzeCreate, analyzeCreateWithUser:
@@ -1600,8 +967,6 @@ begin
       TabSheetProduct.Enabled := True;
       TabSheetProduct2.Enabled := True;
       TabSheetCreate.Enabled := True;
-      //BtAnalyzeNextStep.Caption:='Next Step';
-      //BtAnalyzeNextStep.Glyph.LoadFromResourceName();
       BtSetup1NextStep.Enabled := True;
     end;
     twoAnalyzeCreate_1, twoAnalyzeCreate_2:
@@ -1666,20 +1031,95 @@ end;
 
 procedure TResultform1.FormShow(Sender: TObject);
 begin
-  if not startupfinished then
-    main2;
+  if not osdsettings.startupfinished then
+    main;
+end;
+
+procedure TResultform1.MenuHelpLogClick(Sender: TObject);
+var
+  ErrorMessage: string;
+  PathOpsiLogViewer: string;
+  paramstring : string;
+  basepath : string;
+begin
+  {$IFDEF WINDOWS}
+  basepath := 'C:\Program Files (x86)';
+  if not DirectoryExists(basepath) then basepath := 'C:\Program Files';
+  PathOpsiLogViewer :=
+    basepath +'\opsi.org\configed\opsi-logviewer.exe';
+  if not FileExists(PathOpsiLogViewer) then
+  PathOpsiLogViewer :=
+    basepath +'\opsi.org\opsi-logviewer\opsi-logviewer.exe';
+  paramstring := LogDatei.FileName;
+  {$ENDIF WINDOWS}
+  {$IFDEF LINUX}
+  // call of logviewer at linux (N.Otto 3.7.2023):
+  // /usr/share/opsi-configed/java/jre/bin/java -jar "/usr/share/opsi-configed/configed.jar" --logviewer
+  PathOpsiLogViewer := '/usr/share/opsi-configed/java/jre/bin/java';
+  paramstring := ' -jar "/usr/share/opsi-configed/configed.jar" --logviewer -f '+LogDatei.FileName;
+  (*
+  PathOpsiLogViewer := '/usr/share/opsi-logviewer/logviewer'; // '/usr/bin/logviewer'
+  paramstring := ' -f '+LogDatei.FileName;
+  *)
+  {$ENDIF LINUX}
+  {$IFDEF DARWIN}
+  PathOpsiLogViewer := '/Applications/opsi-logviewer.app/Contents/MacOS/opsi-logviewer';
+  paramstring := ' -f '+LogDatei.FileName;
+  //ShowMessage('Logview is temporary not working. Please use the opsi-logviewer product.');
+  {$ENDIF DARWIN}
+  if FileExists(PathOpsiLogViewer) then
+  begin
+    if ExecuteProcess(PathOpsiLogViewer, paramstring) <> 0 then
+    begin
+      ErrorMessage := rsErrorLoadingLogViewer;
+      LogDatei.log(ErrorMessage, LLInfo);
+      ShowMessage(ErrorMessage);
+    end;
+  end
+  else
+  begin
+    ErrorMessage := rsErrorFindingLogViewer + PathOpsiLogViewer;
+    LogDatei.log(ErrorMessage, LLInfo);
+    ShowMessage(ErrorMessage);
+  end;
+end;
+
+procedure TResultform1.MenuItemOpenControlClick(Sender: TObject);
+begin
+  OpenDialog1.FilterIndex := 9;   // control file
+  if DirectoryExists(myconfiguration.LastProjectFileDir) then
+    OpenDialog1.InitialDir := myconfiguration.LastProjectFileDir
+  else if DirectoryExists(myconfiguration.workbench_Path) then
+    OpenDialog1.InitialDir := myconfiguration.workbench_Path;
+  if OpenDialog1.Execute then
+  begin
+    myconfiguration.LastProjectFileDir := ExtractFileDir(OpenDialog1.FileName);
+    LogDatei.log('Start open control file as new project from: ' + OpenDialog1.FileName, LLnotice);
+    initaktproduct;
+    resultform1.updateGUI;
+    aktProduct.readControlFile(OpenDialog1.FileName,false);
+    TIGridDep.ListObject := osdbasedata.aktproduct.dependencies;
+    TIGridDep.ReloadTIList;
+    TIGridDep.Update;
+    TIGridProp.ListObject := osdbasedata.aktproduct.properties;
+    TIGridProp.ReloadTIList;
+    TIGridProp.Update;
+    LogDatei.log('Finished open control file as new project from: ' + OpenDialog1.FileName, LLnotice);
+  end;
 end;
 
 procedure TResultform1.MenuItemOpenProjClick(Sender: TObject);
 begin
   OpenDialog1.FilterIndex := 8;   // project file
-  if DirectoryExists(myconfiguration.workbench_Path) then
+  if DirectoryExists(myconfiguration.LastProjectFileDir) then
+    OpenDialog1.InitialDir := myconfiguration.LastProjectFileDir
+  else if DirectoryExists(myconfiguration.workbench_Path) then
     OpenDialog1.InitialDir := myconfiguration.workbench_Path;
   if OpenDialog1.Execute then
   begin
+    myconfiguration.LastProjectFileDir := ExtractFileDir(OpenDialog1.FileName);
     LogDatei.log('Start import Project file from: ' + OpenDialog1.FileName, LLnotice);
     initaktproduct;
-    //makeProperties;
     resultform1.updateGUI;
     aktProduct.readProjectFile(OpenDialog1.FileName);
     TIGridDep.ListObject := osdbasedata.aktproduct.dependencies;
@@ -1708,22 +1148,30 @@ end;
 
 procedure TResultform1.MenuItemLangDeClick(Sender: TObject);
 begin
-  SetDefaultLang('de', mylocaledir);
+  osdsettings.mylang:='de';
+  SetDefaultLang('de', osdsettings.mylocaledir);
+  initGUI;
 end;
 
 procedure TResultform1.MenuItemLangEnClick(Sender: TObject);
 begin
-  SetDefaultLang('en', mylocaledir);
+  osdsettings.mylang:='en';
+  SetDefaultLang('en', osdsettings.mylocaledir);
+  initGUI;
 end;
 
 procedure TResultform1.MenuItemLangEsClick(Sender: TObject);
 begin
-  SetDefaultLang('es', mylocaledir);
+  osdsettings.mylang:='en';
+  SetDefaultLang('es', osdsettings.mylocaledir);
+  initGUI;
 end;
 
 procedure TResultform1.MenuItemLangFrClick(Sender: TObject);
 begin
-  SetDefaultLang('fr', mylocaledir);
+  osdsettings.mylang:='fr';
+  SetDefaultLang('fr', osdsettings.mylocaledir);
+  initGUI;
 end;
 
 procedure TResultform1.MenuItemStartClick(Sender: TObject);
@@ -1739,7 +1187,6 @@ begin
   logdatei.log('Start MenuItemConfigClick', LLDebug2);
   FOSDConfigdlg.ShowModal;
   logdatei.log('After configdialog: create jsonstr', LLDebug2);
-  //FOSDConfigdlg.Hide;
   Streamer := TJSONStreamer.Create(nil);
   try
     Streamer.Options := Streamer.Options + [jsoTStringsAsArray];
@@ -1752,16 +1199,27 @@ begin
   if fileexists(myconfiguration.PathToOpsiPackageBuilder) then
   begin
     logdatei.log('After configdialog: packagebuilder exists', LLDebug2);
-    RadioButtonBuildPackage.Enabled := True;
-    RadioButtonPackageBuilder.Enabled := True;
-    CheckGroupBuildMode.Enabled := True;
+    //RadioButtonBuildPackage.Enabled := True;
+    // is not pössible via rtti
+    //RadioButtonPackageBuilder.Enabled := True;
+    // is not pössible via rtti
+    //CheckGroupBuildMode.Enabled := True;
+
+    // enable build
+    TIRadioGroupBuildMode.Enabled := True;
   end
   else
   begin
     logdatei.log('After configdialog: packagebuilder not found', LLDebug2);
-    RadioButtonBuildPackage.Enabled := False;
-    RadioButtonPackageBuilder.Enabled := False;
-    CheckGroupBuildMode.Enabled := False;
+    //RadioButtonBuildPackage.Enabled := False;
+    // is not possible via rtti
+    //RadioButtonPackageBuilder.Enabled := False;
+    // is not pössible via rtti
+    //CheckGroupBuildMode.Enabled := False;
+
+    // disable build if also no service data
+    if ((myconfiguration.Service_URL = '') or (myconfiguration.Service_user = ''))  then
+    TIRadioGroupBuildMode.Enabled := False;
   end;
   logdatei.log('Finished MenuItemConfigClick', LLDebug2);
 end;
@@ -1770,12 +1228,17 @@ procedure TResultform1.MenuItemKnownInstallersClick(Sender: TObject);
 var
   installerstr: string;
   installer: TKnownInstaller;
+  installerlist : TStringlist;
 begin
+  installerlist := TStringlist.Create;
   for installer := Low(TKnownInstaller) to High(TKnownInstaller) do
     if not (installer = stUnknown) then
-      installerstr := installerstr + installerToInstallerstr(installer) + LineEnding;
+      installerlist.Add(installerToInstallerstr(installer));
+      //installerstr := installerstr + installerToInstallerstr(installer) + LineEnding;
+  installerlist.Sort;
+  installerstr :=  installerlist.Text;
   ShowMessage(installerstr);
-
+  installerlist.Free;
 end;
 
 procedure TResultform1.OpenDialog1CanClose(Sender: TObject; var CanClose: boolean);
@@ -1812,32 +1275,24 @@ end;
 
 procedure TResultform1.BtSingleAnalyzeAndCreateWinClick(Sender: TObject);
 var
-  i: integer;
   localTOSset: TTargetOSset;
 begin
   openDialog1.FilterIndex := 1;   // setup
+  if DirectoryExists(myconfiguration.LastSetupFileDir) then
+    OpenDialog1.InitialDir := myconfiguration.LastSetupFileDir;
   if OpenDialog1.Execute then
   begin
+    myconfiguration.LastSetupFileDir := ExtractFileDir(OpenDialog1.FileName);
     osdsettings.runmode := singleAnalyzeCreate;
     setRunMode;
     PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
     Application.ProcessMessages;
     initaktproduct;
-    //aktProduct.targetOS := osWin;
     localTOSset := aktProduct.productdata.targetOSset;
     Include(localTOSset, osWin);
     aktProduct.productdata.targetOSset := localTOSset;
     aktProduct.SetupFiles[0].targetOS := osWin;
-    //TIProgressBarAnalyze_progress.Link.SetObjectAndProperty(aktProduct.SetupFiles[0], 'analyze_progress');
-    //TIProgressBarAnalyze_progress.Loaded;
     MemoAnalyze.Clear;
-    //StringGridDep.Clean([gzNormal, gzFixedRows]);
-    //StringGridDep.RowCount := 1;
-    (*
-    if MessageDlg(sMBoxHeader, rsCopyCompleteDir, mtConfirmation,
-      [mbNo, mbYes], 0, mbNo) = mrYes then
-      aktProduct.SetupFiles[0].copyCompleteDir := True;
-      *)
     aktProduct.SetupFiles[0].copyCompleteDir := showCompleteDirDlg;
     makeProperties;
     resultform1.updateGUI;
@@ -1978,6 +1433,8 @@ begin
     SelectDirectoryDialog1.InitialDir :=
       ExtractFileDir(Application.Params[0]) + PathDelim + 'icons';
     {$ENDIF WINDOWS}
+    if DirectoryExists(myconfiguration.LasticonFileDir) then
+    SelectDirectoryDialog1.InitialDir := myconfiguration.LasticonFileDir;
     selectDirectory := SelectDirectoryDialog1.Execute;
   except
     on E: Exception do
@@ -1990,6 +1447,7 @@ begin
   // fill dynIconFlowPanel and store the icon display infos in IconList
   if selectDirectory then
   begin
+    myconfiguration.LasticonFileDir := ExtractFileDir(SelectDirectoryDialog1.FileName);
     iconDirectory := SelectDirectoryDialog1.FileName + PathDelim;
     LogDatei.log('Open Icon dir: ' + iconDirectory, LLnotice);
     // get all files from the selected directory
@@ -2078,32 +1536,24 @@ end;
 
 procedure TResultform1.BtSingleAnalyzeAndCreateWithUserClick(Sender: TObject);
 var
-  i: integer;
   localTOSset: TTargetOSset;
 begin
   openDialog1.FilterIndex := 1;   // setup
+  if DirectoryExists(myconfiguration.LastSetupFileDir) then
+    OpenDialog1.InitialDir := myconfiguration.LastSetupFileDir;
   if OpenDialog1.Execute then
   begin
+    myconfiguration.LastSetupFileDir := ExtractFileDir(OpenDialog1.FileName);
     osdsettings.runmode := analyzeCreateWithUser;
     setRunMode;
     PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
     Application.ProcessMessages;
     initaktproduct;
-    //aktProduct.targetOS := osWin;
     localTOSset := aktProduct.productdata.targetOSset;
     Include(localTOSset, osWin);
     aktProduct.productdata.targetOSset := localTOSset;
     aktProduct.SetupFiles[0].targetOS := osWin;
-    //TIProgressBarAnalyze_progress.Link.SetObjectAndProperty(aktProduct.SetupFiles[0], 'analyze_progress');
-    //TIProgressBarAnalyze_progress.Loaded;
     MemoAnalyze.Clear;
-    //StringGridDep.Clean([gzNormal, gzFixedRows]);
-    //StringGridDep.RowCount := 1;
-    (*
-    if MessageDlg(sMBoxHeader, rsCopyCompleteDir, mtConfirmation,
-      [mbNo, mbYes], 0, mbNo) = mrYes then
-      aktProduct.SetupFiles[0].copyCompleteDir := True;
-      *)
     aktProduct.SetupFiles[0].copyCompleteDir := showCompleteDirDlg;
     makeProperties;
     resultform1.updateGUI;
@@ -2123,7 +1573,6 @@ end;
 procedure TResultform1.CheckBoxDefaultIconChange(Sender: TObject);
 var
   DefaultIcon: TImage;
-  //defaultIconFullFileName: string;
 begin
   if CheckBoxDefaultIcon.Checked = True then
   begin
@@ -2132,20 +1581,6 @@ begin
     LabelNameSelIcon.Caption := rsDefaultIcon;
     LabelIconDir.Visible := False;
     TILabelDirSelIcon.Visible := False;
-    (*
-    { set productImageFullFileName to full file name of the default icon }
-    {$IFDEF WINDOWS}
-    defaultIconFullFileName :=
-      ExtractFileDir(Application.Params[0]) + PathDelim + 'template-files' +
-      PathDelim + 'template.png';
-    {$ENDIF WINDOWS}
-    {$IFDEF UNIX}
-    defaultIconFullFileName := '/usr/share/opsi-setup-detector' +
-      PathDelim + 'template-files' + PathDelim + 'template.png';
-    {$ENDIF UNIX}
-    osdbasedata.aktProduct.productdata.productImageFullFileName :=
-      defaultIconFullFileName;
-      *)
 
     osdbasedata.aktProduct.productdata.productImageFullFileName :=
       defaultIconFullFileName;
@@ -2202,53 +1637,27 @@ end;
 
 procedure TResultform1.BtATwonalyzeAndCreateClick(Sender: TObject);
 var
-  myprop: TStringList;
-  index: integer;
-  i: integer;
   localTOSset: TTargetOSset;
 begin
   MessageDlg(rsTwonalyzeAndCreateMsgHead, rsTwonalyzeAndCreateMsgFirstSetup,
     mtInformation, [mbOK], '');
   OpenDialog1.FilterIndex := 1;   // setup
+  if DirectoryExists(myconfiguration.LastSetupFileDir) then
+    OpenDialog1.InitialDir := myconfiguration.LastSetupFileDir;
   if OpenDialog1.Execute then
   begin
+    myconfiguration.LastSetupFileDir := ExtractFileDir(OpenDialog1.FileName);
     osdsettings.runmode := twoAnalyzeCreate_1;
     setRunMode;
-    (*
-    if MessageDlg(sMBoxHeader, rsCopyCompleteDir, mtConfirmation,
-      [mbYes, mbNo], 0, mbNo) = mrYes then
-      aktProduct.SetupFiles[0].copyCompleteDir := True;   *)
     aktProduct.SetupFiles[0].copyCompleteDir := showCompleteDirDlg;
     PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
     MemoAnalyze.Clear;
-    //StringGridDep.Clean([gzNormal, gzFixedRows]);
-    //StringGridDep.RowCount := 1;
-    //if StringGridProp.RowCount > 1 then
-    //  for i := StringGridProp.RowCount-1 downto 1 do StringGridProp.DeleteRow(i);
     Application.ProcessMessages;
     initaktproduct;
-    //aktProduct.targetOS := osWin;
     localTOSset := aktProduct.productdata.targetOSset;
     Include(localTOSset, osWin);
     aktProduct.productdata.targetOSset := localTOSset;
     aktProduct.SetupFiles[0].targetOS := osWin;
-    (* moved to makeProperties
-    // start add property
-    index := StringGridProp.RowCount;
-    Inc(index);
-    StringGridProp.RowCount := index;
-    myprop := TStringList.Create;
-    myprop.Add(IntToStr(index - 1));
-    myprop.Add('install_architecture');
-    myprop.Add('Which architecture (32 / 64 Bit) has to be installed?');
-    myprop.Add('unicode');  //type
-    myprop.Add('False');      //multivalue
-    myprop.Add('False');      //editable
-    myprop.Add('["32 only","64 only","system specific","both"]');      //possible values
-    myprop.Add('["system specific"]');      //default values
-    StringGridProp.Rows[index - 1].AddStrings(myprop);
-    myprop.Free;
-    *)
     // start add property
     makeProperties;
     resultform1.updateGUI;
@@ -2264,8 +1673,6 @@ begin
     osdsettings.runmode := createMultiTemplate;
     setRunMode;
     MemoAnalyze.Clear;
-    //StringGridDep.Clean([gzNormal, gzFixedRows]);
-    //StringGridDep.RowCount := 1;
     PageControl1.ActivePage := resultForm1.TabSheetProduct;
     Application.ProcessMessages;
     initaktproduct;
@@ -2287,11 +1694,6 @@ var
 begin
   if myconfiguration.ShowCheckEntryWarning then
   begin
-    (*
-    FCheckenties.ShowModal;
-    myconfiguration.ShowCheckEntryWarning :=
-      not FCheckenties.CheckBoxDoNotShowCheckEntries.Checked;
-    *)
     // https://specials.rejbrand.se/TTaskDialog/
     with TTaskDialog.Create(self) do
       try
@@ -2385,9 +1787,7 @@ end;
 
 procedure TResultform1.BitBtnAddDepClick(Sender: TObject);
 var
-  //mydep: TStringList;
   mydep: TPDependency;
-  index: integer;
 begin
   startOpsiServiceConnection;
   FNewDepDlg.ComboBoxActState.Text := '';
@@ -2399,11 +1799,11 @@ begin
   begin
     // set required mode to 'state'
     FNewDepDlg.RadioButtonState.Checked := True;
-    FNewDepDlg.RadioButtonAction.Checked:= False;
+    FNewDepDlg.RadioButtonAction.Checked := False;
     // fill combobox 'Action or State'
     FNewDepDlg.RadioButtonActionChange(Sender);
     // set Requirement type to empty
-    FNewDepDlg.ComboBoxReqType.Text:= '';
+    FNewDepDlg.ComboBoxReqType.Text := '';
     // deny requirement types before / after
     FNewDepDlg.ComboBoxReqType.Enabled := False;
     // allow  action setup for nested meta products
@@ -2412,7 +1812,6 @@ begin
   end
   else
   begin
-    //FNewDepDlg.GroupBox1.Enabled := True;
     FNewDepDlg.ComboBoxActState.Enabled := True;
     FNewDepDlg.ComboBoxReqType.Enabled := True;
   end;
@@ -2424,13 +1823,14 @@ begin
     //add
     mydep := TPDependency(osdbasedata.aktProduct.dependencies.add);
     mydep.init;
+    // Action request
+    mydep.action:= FNewDepDlg.ComboBoxDepActionrequest.Text;
     // required productId
     mydep.Required_ProductId := FNewDepDlg.ComboBoxproductIds.Text;
     // required State & action
     if FNewDepDlg.RadioButtonAction.Checked then
     begin
       mydep.Required_State := noState;
-      //mydep.Add(FNewDepDlg.ComboBoxActState.Text);
       case FNewDepDlg.ComboBoxActState.Text of
         '': mydep.Required_Action := noRequest;
         'setup': mydep.Required_Action := setup;
@@ -2440,7 +1840,6 @@ begin
     end
     else
     begin
-      //mydep.Add(FNewDepDlg.ComboBoxActState.Text);
       case FNewDepDlg.ComboBoxActState.Text of
         '': mydep.Required_State := noState;
         'installed': mydep.Required_State := installed;
@@ -2459,34 +1858,6 @@ begin
     TIGridDep.ListObject := osdbasedata.aktproduct.dependencies;
     TIGridDep.ReloadTIList;
     TIGridDep.Update;
-    (*
-    // add
-    index := StringGridDep.RowCount;
-    Inc(index);
-    StringGridDep.RowCount := index;
-    mydep := TStringList.Create;
-    mydep.Add(IntToStr(index - 1));
-    mydep.Add(FNewDepDlg.Editproductid.Text);
-    if FNewDepDlg.RadioButtonAction.Checked then
-    begin
-      mydep.Add('');
-      mydep.Add(FNewDepDlg.ComboBoxActState.Text);
-    end
-    else
-    begin
-      mydep.Add(FNewDepDlg.ComboBoxActState.Text);
-      mydep.Add('');
-    end;
-    mydep.Add(FNewDepDlg.ComboBoxReqType.Text);
-    //StringGridDep.Rows[index - 1].AddStrings(mydep);
-    StringGridDep.Rows[index - 1].SetStrings(mydep);
-    StringGridDep.Repaint;
-    procmess;
-    FreeAndNil(mydep);
-    fetchDepPropFromForm;
-    TIGridDep.ListObject := osdbasedata.aktproduct.dependencies;
-    TIGridDep.Update;
-    *)
   end
   else
   begin
@@ -2497,33 +1868,20 @@ end;
 procedure TResultform1.BitBtnAddPropClick(Sender: TObject);
 // add property
 var
-  //myprop: TStringList;
   myprop: TPProperty;
-  index: integer;
   i: integer;
   tmpstrlist: TStringList;
-  tmpstr: string;
   exists: boolean;
-  //valid : boolean;
 begin
   FNewPropDlg.initFields;
   FNewPropDlg.RadioButtonPropBool.Checked := True;
   FNewPropDlg.RadioButtonPropStringChange(Sender);
-  //FNewPropDlg.EditPropName.SetFocus;
   procmess;
   if FNewPropDlg.ShowModal = mrOk then
   begin
     // add
     with osdbasedata.aktProduct do
     begin
-      (*
-    index := properties.Count;
-    tmpstr := lowercase(FNewPropDlg.EditPropName.Text);
-    exists := False;
-    for i := 0 to index - 1 do
-      if lowercase(tmpstr) = lowercase(properties.Items[i].Property_Name) then
-        exists := True;
-        *)
       exists := properties.propExists(FNewPropDlg.EditPropName.Text);
       if exists then
         MessageDlg(rsPropEditErrorHead,
@@ -2548,12 +1906,6 @@ begin
           myprop.SetDefaultLines(TStrings(tmpstrlist));
           myprop.SetValueLines(TStrings(tmpstrlist));
           FreeAndNil(tmpstrlist);
-        (*
-        myprop.multivalue:= false;
-        myprop.editable:= false;
-        myprop.SetValueLines(FNewPropDlg.ListBoxPropPosVal.Items);
-        myprop.SetDefaultLines(FNewPropDlg.ListBoxPropDefVal.s
-        *)
         end
         else
         begin
@@ -2565,86 +1917,11 @@ begin
               tmpstrlist.Add(FNewPropDlg.ListBoxPropDefVal.Items[i]);
           myprop.SetDefaultLines(TStrings(tmpstrlist));
           FreeAndNil(tmpstrlist);
-        (*
-        myprop.multivalue:= FNewPropDlg.CheckBoxPropMultiVal.Checked; //multivalue
-        myprop.editable:= FNewPropDlg.CheckBoxPropEdit.Checked;  //editable
-        myprop.SetValueLines(FNewPropDlg.ListBoxPropPosVal.Items);
-        myprop.SetDefaultLines(FNewPropDlg.ListBoxPropDefVal.Items);
-        *)
         end;
         myprop.multivalue := FNewPropDlg.CheckBoxPropMultiVal.Checked; //multivalue
         myprop.editable := FNewPropDlg.CheckBoxPropEdit.Checked;  //editable
-        (*
-        myprop.SetValueLines(FNewPropDlg.ListBoxPropPosVal.Items);
-        tmpstrlist := TStringList.Create;
-        for i := 0 to FNewPropDlg.ListBoxPropDefVal.Count - 1 do
-          if FNewPropDlg.ListBoxPropDefVal.Selected[i] then
-            tmpstrlist.Add(FNewPropDlg.ListBoxPropDefVal.Items[i]);
-        myprop.SetDefaultLines(TStrings(tmpstrlist));
-        FreeAndNil(tmpstrlist);
-        *)
       end;
     end;
-    (*
-    index := StringGridProp.RowCount;
-    tmpstr := lowercase(FNewPropDlg.EditPropName.Text);
-    exists := False;
-    for i := 0 to index - 1 do
-      if lowercase(tmpstr) = lowercase(StringGridProp.Cells[1, i]) then
-        exists := True;
-    if exists then
-      MessageDlg(rsPropEditErrorHead,
-        rsPropEditErrorDoubleMsgStart + FNewPropDlg.EditPropName.Text +
-        rsPropEditErrorDoubleMsgFinish,
-        mtError, [mbOK], '')
-    else
-    begin
-      Inc(index);
-      StringGridProp.RowCount := index;
-      myprop := TStringList.Create;
-      myprop.Add(IntToStr(index - 1));
-      myprop.Add(FNewPropDlg.EditPropName.Text);
-      myprop.Add(FNewPropDlg.MemoDesc.Text);
-      if FNewPropDlg.RadioButtonPropBool.Checked then
-      begin
-        myprop.Add('bool');  //type
-        myprop.Add('False');      //multivalue
-        myprop.Add('False');      //editable
-        myprop.Add('[]');      //possible values
-        myprop.Add(FNewPropDlg.ListBoxPropDefVal.Items[
-          FNewPropDlg.ListBoxPropDefVal.ItemIndex]);   //default values
-      end
-      else
-      begin
-        myprop.Add('unicode');  //type
-        if FNewPropDlg.CheckBoxPropMultiVal.Checked then
-          myprop.Add('True')      //multivalue
-        else
-          myprop.Add('False');      //multivalue
-        if FNewPropDlg.CheckBoxPropEdit.Checked then
-          myprop.Add('True')      //editable
-        else
-          myprop.Add('False');      //editable
-        tmpliststr := '[';
-        for i := 0 to FNewPropDlg.ListBoxPropPosVal.Count - 1 do
-          tmpliststr := tmpliststr + '"' + FNewPropDlg.ListBoxPropPosVal.Items[i] + '",';
-        // remove trailing comma
-        RemoveTrailingChars(tmpliststr, [',']);
-        tmpliststr := tmpliststr + ']';
-        myprop.Add(tmpliststr);      //possible values
-        tmpliststr := '[';
-        for i := 0 to FNewPropDlg.ListBoxPropDefVal.Count - 1 do
-          if FNewPropDlg.ListBoxPropDefVal.Selected[i] then
-            tmpliststr := tmpliststr + '"' +
-              FNewPropDlg.ListBoxPropDefVal.Items[i] + '",';
-        // remove trailing comma
-        RemoveTrailingChars(tmpliststr, [',']);
-        tmpliststr := tmpliststr + ']';
-        myprop.Add(tmpliststr);      //default values
-      end;
-      StringGridProp.Rows[index - 1].SetStrings(myprop);
-    end;
-    *)
     TIGridProp.ListObject := osdbasedata.aktproduct.properties;
     TIGridProp.ReloadTIList;
     TIGridProp.Update;
@@ -2653,7 +1930,6 @@ begin
   begin
     // cancel add
   end;
-  //fetchDepPropFromForm;
 end;
 
 procedure TResultform1.BitBtnChooseInstDir1Click(Sender: TObject);
@@ -2729,7 +2005,6 @@ end;
 procedure TResultform1.BitBtnDelPropClick(Sender: TObject);
 var
   index, Count: integer;
-  propname: string;
 begin
   // delete property
   if TIGridProp.SelectedRangeCount > 0 then
@@ -2835,24 +2110,6 @@ begin
         TIGridDep.ListObject := osdbasedata.aktproduct.dependencies;
         TIGridDep.ReloadTIList;
         TIGridDep.Update;
-      (*
-      // modify
-      StringGridDep.Cells[1, y] := FNewDepDlg.Editproductid.Text;
-      if FNewDepDlg.RadioButtonAction.Checked then
-      begin
-        StringGridDep.Cells[2, y] := '';
-        StringGridDep.Cells[3, y] := FNewDepDlg.ComboBoxActState.Text;
-      end
-      else
-      begin
-        StringGridDep.Cells[2, y] := FNewDepDlg.ComboBoxActState.Text;
-        StringGridDep.Cells[3, y] := '';
-      end;
-      StringGridDep.Cells[4, y] := FNewDepDlg.ComboBoxReqType.Text;
-      fetchDepPropFromForm;
-      TIGridDep.ListObject := osdbasedata.aktproduct.dependencies;
-      TIGridDep.Update;
-      *)
       end
       else
       begin
@@ -2872,13 +2129,8 @@ end;
 procedure TResultform1.BitBtnEditPropClick(Sender: TObject);
 // edit property
 var
-  //myprop: TStringList;
-  //index: integer;
   i, k: integer;
-  tmpliststr: string;
   tmpstr: string;
-  errorstr: string;
-  remaining: string;
   y: integer;
   myprop: TPProperty;
   tmpstrlist: TStringList;
@@ -2908,13 +2160,11 @@ begin
         begin
           FNewPropDlg.ListBoxPropDefVal.Selected[1] := False;
           FNewPropDlg.ListBoxPropDefVal.Selected[0] := True;
-          //FNewPropDlg.ListBoxPropDefVal.ItemIndex := 0
         end
         else
         begin
           FNewPropDlg.ListBoxPropDefVal.Selected[0] := False;
           FNewPropDlg.ListBoxPropDefVal.Selected[1] := True;
-          //FNewPropDlg.ListBoxPropDefVal.ItemIndex := 1;
         end;
         procmess;
       end
@@ -2937,8 +2187,6 @@ begin
       end;
 
 
-
-
       if FNewPropDlg.ShowModal = mrOk then
       begin
         // modify
@@ -2959,12 +2207,6 @@ begin
           myprop.SetDefaultLines(TStrings(tmpstrlist));
           myprop.SetValueLines(TStrings(tmpstrlist));
           FreeAndNil(tmpstrlist);
-        (*
-        myprop.multivalue:= false;
-        myprop.editable:= false;
-        myprop.SetValueLines(FNewPropDlg.ListBoxPropPosVal.Items);
-        myprop.SetDefaultLines(FNewPropDlg.ListBoxPropDefVal.s
-        *)
         end
         else
         begin
@@ -2976,24 +2218,9 @@ begin
               tmpstrlist.Add(FNewPropDlg.ListBoxPropDefVal.Items[i]);
           myprop.SetDefaultLines(TStrings(tmpstrlist));
           FreeAndNil(tmpstrlist);
-        (*
-        myprop.multivalue:= FNewPropDlg.CheckBoxPropMultiVal.Checked; //multivalue
-        myprop.editable:= FNewPropDlg.CheckBoxPropEdit.Checked;  //editable
-        myprop.SetValueLines(FNewPropDlg.ListBoxPropPosVal.Items);
-        myprop.SetDefaultLines(FNewPropDlg.ListBoxPropDefVal.Items);
-        *)
         end;
         myprop.multivalue := FNewPropDlg.CheckBoxPropMultiVal.Checked; //multivalue
         myprop.editable := FNewPropDlg.CheckBoxPropEdit.Checked;  //editable
-        (*
-        myprop.SetValueLines(FNewPropDlg.ListBoxPropPosVal.Items);
-        tmpstrlist := TStringList.Create;
-        for i := 0 to FNewPropDlg.ListBoxPropDefVal.Count - 1 do
-          if FNewPropDlg.ListBoxPropDefVal.Selected[i] then
-            tmpstrlist.Add(FNewPropDlg.ListBoxPropDefVal.Items[i]);
-        myprop.SetDefaultLines(TStrings(tmpstrlist));
-        FreeAndNil(tmpstrlist);
-        *)
         TIGridProp.ListObject := osdbasedata.aktproduct.properties;
         TIGridProp.ReloadTIList;
         TIGridProp.Update;
@@ -3019,6 +2246,33 @@ begin
   end;
 end;
 
+procedure TResultform1.BitBtnImportControlClick(Sender: TObject);
+begin
+    OpenDialog1.FilterIndex := 9;   // control file
+  if DirectoryExists(myconfiguration.LastProjectFileDir) then
+    OpenDialog1.InitialDir := myconfiguration.LastProjectFileDir
+  else if DirectoryExists(myconfiguration.workbench_Path) then
+    OpenDialog1.InitialDir := myconfiguration.workbench_Path;
+  if OpenDialog1.Execute then
+  begin
+    myconfiguration.LastProjectFileDir := ExtractFileDir(OpenDialog1.FileName);
+    LogDatei.log('Start import control file to existing data from: ' + OpenDialog1.FileName, LLnotice);
+    // do not init product data structure here
+    // we just want to add the data to the existing data structure
+    //initaktproduct;
+    resultform1.updateGUI;
+    // we do not want to import everything : filter = true
+    aktProduct.readControlFile(OpenDialog1.FileName,true);
+    TIGridDep.ListObject := osdbasedata.aktproduct.dependencies;
+    TIGridDep.ReloadTIList;
+    TIGridDep.Update;
+    TIGridProp.ListObject := osdbasedata.aktproduct.properties;
+    TIGridProp.ReloadTIList;
+    TIGridProp.Update;
+    LogDatei.log('Finished import control file to existing data from: ' + OpenDialog1.FileName, LLnotice);
+  end;
+end;
+
 procedure TResultform1.BitBtnOpenFile1Click(Sender: TObject);
 begin
 
@@ -3034,16 +2288,14 @@ var
   str: string;
 begin
   OpenDialog1.FilterIndex := 4;
+  if DirectoryExists(myconfiguration.LastSetupFileDir) then
+    OpenDialog1.InitialDir := myconfiguration.LastSetupFileDir;
   if OpenDialog1.Execute then
   begin
+    myconfiguration.LastSetupFileDir := ExtractFileDir(OpenDialog1.FileName);
     mysetup.mstFullFileName := OpenDialog1.FileName;
     str := ' TRANSFORMS="$installerSourceDir$\' + mysetup.mstFileName + '"';
     mysetup.installCommandLine := mysetup.installCommandLine + str;
-    (*
-    mysetup.installCommandLine :=
-      mysetup.installCommandLine + ' TRANSFORMS=' + '"%scriptpath%\files' +
-      IntToStr(mysetup.ID) + '\' + mysetup.mstFileName + '"';
-      *)
   end;
 end;
 
@@ -3128,7 +2380,7 @@ begin
 
     mysetup.uninstallCheck.Clear;
     uninstcheckstr := mysetup.uninstallProg;
-    // the use of the  $installdir$ variable for the promary section function fileexists
+    // the use of the  $installdir$ variable for the primary section function fileexists
     // will for example result to:
     // if fileexists(""+$installdir$+"\uninst.exe")
     uninstcheckstr := StringReplace(uninstcheckstr, '$installdir$',
@@ -3137,9 +2389,14 @@ begin
     mysetup.uninstallCheck.Add('if fileexists("' + uninstcheckstr + '")');
     mysetup.uninstallCheck.Add('	set $oldProgFound$ = "true"');
     mysetup.uninstallCheck.Add('endif');
-    mysetup.uninstallCommandLine :=
-      '"' + mysetup.uninstallProg + '" ' +
-      installerArray[integer(mysetup.installerId)].unattendeduninstall;
+    if mysetup.preferSilent then
+      mysetup.uninstallCommandLine :=
+        '"' + mysetup.uninstallProg + '" ' +
+        installerArray[integer(mysetup.installerId)].silentuninstall
+    else
+      mysetup.uninstallCommandLine :=
+        '"' + mysetup.uninstallProg + '" ' +
+        installerArray[integer(mysetup.installerId)].unattendeduninstall;
   end
   else
   begin
@@ -3153,6 +2410,8 @@ var
   uninstfile, uninstdir: string;
 begin
   OpenDialog1.FilterIndex := 1;
+  if DirectoryExists('C:\Program Files') then
+    OpenDialog1.InitialDir := 'C:\Program Files';
   if OpenDialog1.Execute then
   begin
     uninstfile := ExtractFileName(OpenDialog1.FileName);
@@ -3176,6 +2435,8 @@ end;
 procedure TResultform1.chooseTargetProgram(var mysetup: TSetupFile);
 begin
   OpenDialog1.FilterIndex := 1;
+  if DirectoryExists('C:\Program Files') then
+    OpenDialog1.InitialDir := 'C:\Program Files';
   if OpenDialog1.Execute then
   begin
     mysetup.targetProg := ExtractFileName(OpenDialog1.FileName);
@@ -3209,14 +2470,49 @@ begin
   OpenMSTFile(aktProduct.SetupFiles[1]);
 end;
 
+procedure TResultform1.BitBtnRebuildClick(Sender: TObject);
+var
+  radioindex: integer;
+  done: boolean = False;
+begin
+  // reset exitcode before (repeated) build:
+  system.ExitCode := 0;
+  logdatei.log('Start BtRebuildClick', LLDebug2);
+  if not DirectoryExists(myconfiguration.workbench_Path) then
+  begin
+    //checkok := False;
+    ShowMessage(sErrPacketBaseDirNotFound);
+  end;
+  try
+    PanelProcess.Visible := True;
+    procmess;
+    callServiceOrPackageBuilder;
+    (*
+    case TIRadioGroupCreateMode.ItemIndex of
+      0: ; // do nothing else
+      1: callServiceOrPackageBuilder;
+      2: ; // do nothing else
+    end;
+    *)
+    procmess;
+    PanelProcess.Visible := False;
+    if (system.ExitCode = 0) then
+      ShowMessage(rsRebuildFinished)
+    else
+      ShowMessage(rsRebuildFailedBuild);
+  finally
+    PanelProcess.Visible := False;
+    procmess;
+  end;
+  logdatei.log('Finished BtRebuildClick', LLDebug2);
+end;
+
 
 procedure TResultform1.BtCreateEmptyTemplateWinClick(Sender: TObject);
 begin
   osdsettings.runmode := createTemplate;
   setRunMode;
   MemoAnalyze.Clear;
-  //StringGridDep.Clean([gzNormal, gzFixedRows]);
-  //StringGridDep.RowCount := 1;
   PageControl1.ActivePage := resultForm1.TabSheetProduct;
   Application.ProcessMessages;
   initaktproduct;
@@ -3236,8 +2532,6 @@ begin
     osdsettings.runmode := createTemplate;
     setRunMode;
     MemoAnalyze.Clear;
-    //StringGridDep.Clean([gzNormal, gzFixedRows]);
-    //StringGridDep.RowCount := 1;
     PageControl1.ActivePage := resultForm1.TabSheetProduct;
     Application.ProcessMessages;
     initaktproduct;
@@ -3277,8 +2571,6 @@ begin
   osdsettings.runmode := createTemplate;
   setRunMode;
   MemoAnalyze.Clear;
-  //StringGridDep.Clean([gzNormal, gzFixedRows]);
-  //StringGridDep.RowCount := 1;
   PageControl1.ActivePage := resultForm1.TabSheetProduct;
   Application.ProcessMessages;
   initaktproduct;
@@ -3290,82 +2582,6 @@ begin
   aktProduct.productdata.productversion := '1.0.0';
   aktProduct.productdata.packageversion := 1;
   aktProduct.productdata.description := 'A template for opsi products for Linux';
-end;
-
-
-procedure TResultform1.fetchDepPropFromForm;
-var
-  i: integer;
-  mydep: TPDependency;
-  myprop: TPProperty;
-  tmpstr: string;
-begin
-  (*
-  //dependencies
-  aktProduct.dependencies.Clear;
-  for i := 1 to StringGridDep.RowCount - 1 do
-  begin
-    mydep := TPDependency(aktProduct.dependencies.add);
-    mydep.init;
-    //aktProduct.dependencies.;
-    mydep.requProductId := StringGridDep.Cells[1, i];
-    case StringGridDep.Cells[2, i] of
-      '': mydep.requState := noState;
-      'installed': mydep.requState := installed;
-      'not installed': mydep.requState := not_installed;
-      'unknown': mydep.requState := unknown;
-    end;
-    case StringGridDep.Cells[3, i] of
-      '': mydep.requAction := noRequest;
-      'setup': mydep.requAction := setup;
-      'uninstall': mydep.requAction := uninstall;
-      'update': mydep.requAction := TPActionRequest.update;
-    end;
-    case StringGridDep.Cells[4, i] of
-      '': mydep.RequType := doNotMatter;
-      'before': mydep.RequType := before;
-      'after': mydep.RequType := after;
-    end;
-  end;
-  TIGridDep.Update;
-  *)
-  (*
-  //properties
-  aktProduct.properties.Clear;
-  for i := 1 to StringGridProp.RowCount - 1 do
-  begin
-    myprop := TPProperty(aktProduct.properties.add);
-    myprop.init;
-    //myprop.Strvalues := TStringlist.Create;
-    //myprop.StrDefault := TStringlist.Create;
-    myprop.Name := StringGridProp.Cells[1, i];
-    myprop.description := StringGridProp.Cells[2, i];
-    tmpstr := StringGridProp.Cells[3, i];
-    case StringGridProp.Cells[3, i] of
-      'bool': myprop.Property_Type := bool;
-      'unicode': myprop.Property_Type := unicode;
-    end;
-    if myprop.Property_Type = unicode then
-    begin
-      tmpstr := StringGridProp.Cells[4, i];
-      myprop.multivalue := StringGridProp.Cells[4, i].ToBoolean;
-      tmpstr := StringGridProp.Cells[5, i];
-      myprop.editable := StringGridProp.Cells[5, i].ToBoolean;
-      myprop.Strvalues.Text := StringGridProp.Cells[6, i];
-      myprop.StrDefault.Text := StringGridProp.Cells[7, i];
-      myprop.boolDefault := False;
-    end
-    else
-    begin
-      myprop.multivalue := False;
-      myprop.editable := False;
-      myprop.Strvalues.Text := '';
-      myprop.StrDefault.Text := BoolToStr(StringGridProp.Cells[7, i].ToBoolean, True);
-      myprop.boolDefault := StringGridProp.Cells[7, i].ToBoolean;
-    end;
-  end;
-  FlowPanel14.Caption := '';
-  *)
 end;
 
 
@@ -3386,17 +2602,21 @@ begin
   try
     PanelProcess.Visible := True;
     procmess;
-    fetchDepPropFromForm;
-    //TIGridDep.ListObject := osdbasedata.aktproduct.dependencies;
-    procmess;
     done := createProductStructure;
     procmess;
+    case TIRadioGroupCreateMode.ItemIndex of
+      0: ; // do nothing else
+      1: callServiceOrPackageBuilder;
+      2: callOpsiPackageBuilder;
+    end;
+    (*
     if RadioButtonCreateOnly.Checked then
     ; // do nothing else
     if RadioButtonBuildPackage.Checked then
       callServiceOrPackageBuilder;
     if RadioButtonPackageBuilder.Checked then
       callOpsiPackageBuilder;
+    *)
     procmess;
     PanelProcess.Visible := False;
     if done and (system.ExitCode = 0) then
@@ -3409,6 +2629,10 @@ begin
     PanelProcess.Visible := False;
     procmess;
   end;
+  // we do not want to sav the actual readio button selection in the configuration
+  //myconfiguration.CreateRadioIndex := TIRadioGroupCreateMode.ItemIndex;
+  //myconfiguration.BuildRadioIndex := TIRadioGroupBuildMode.ItemIndex;
+  (*
   if RadioButtonCreateOnly.Checked then
     radioindex := 0;
   if RadioButtonBuildPackage.Checked then
@@ -3421,20 +2645,7 @@ begin
   if radioBuildModebuildInstall.Checked then
     radioindex := 1;
   myconfiguration.BuildRadioIndex := radioindex;
-  (*
-  if CheckBoxQuiet.Checked then
-    myconfiguration.CreateQuiet := True
-  else
-    myconfiguration.CreateQuiet := False;
-  if CheckBoxBuild.Checked then
-    myconfiguration.CreateBuild := True
-  else
-    myconfiguration.CreateBuild := False;
-  if CheckBoxInstall.Checked then
-    myconfiguration.CreateInstall := True
-  else
-    myconfiguration.CreateInstall := False;
-    *)
+  *)
   logdatei.log('Finished BtCreateProductClick', LLDebug2);
 end;
 
@@ -3479,7 +2690,6 @@ procedure TResultform1.BtProduct1NextStepClick(Sender: TObject);
 var
   checkok: boolean = True;
 begin
-  //makeProperties;
   if (aktProduct.productdata.productId = '') then
   begin
     checkok := False;
@@ -3663,8 +2873,6 @@ var
   checkok, isapp, goon: boolean;
   filename: string;
   localTOSset: TTargetOSset;
-  installerselected: boolean = False;
-  //macosOpendlg: TSelectFileOrDirectoryDialog;
 begin
   checkok := True;
   if ((aktProduct.SetupFiles[1].installDirectory = '') or
@@ -3748,12 +2956,10 @@ begin
           begin
             if not isapp then
               // no showCompleteDirDlg for macos
-              //aktProduct.SetupFiles[2].copyCompleteDir := showCompleteDirDlg;
               aktProduct.SetupFiles[2].copyCompleteDir := False;
             PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
             MemoAnalyze.Clear;
             Application.ProcessMessages;
-            //aktProduct.SetupFiles[2] := osMac;
             aktProduct.SetupFiles[2].targetOS := osMac;
             aktProduct.SetupFiles[2].active := True;
             AnalyzeMac(filename,
@@ -3853,7 +3059,6 @@ end;
 
 procedure TResultform1.BtSingleAnalyzeAndCreateLinClick(Sender: TObject);
 var
-  i: integer;
   filename: string = '';
   goon: boolean;
   isapp: boolean;
@@ -3861,12 +3066,12 @@ var
 begin
   goon := False;
   isapp := False;
-
-  OpenDialog1.InitialDir := filename;
-  ;
   OpenDialog1.FilterIndex := 6;   // linux
+  if DirectoryExists(myconfiguration.LastSetupFileDir) then
+    OpenDialog1.InitialDir := myconfiguration.LastSetupFileDir;
   if OpenDialog1.Execute then
   begin
+    myconfiguration.LastSetupFileDir := ExtractFileDir(OpenDialog1.FileName);
     filename := OpenDialog1.FileName;
     goon := True;
   end
@@ -3901,7 +3106,6 @@ end;
 
 procedure TResultform1.BtSingleAnalyzeAndCreateMacClick(Sender: TObject);
 var
-  i: integer;
   filename: string;
   goon: boolean;
   isapp: boolean;
@@ -3909,6 +3113,8 @@ var
 begin
   goon := False;
   isapp := False;
+  if DirectoryExists(myconfiguration.LastSetupFileDir) then
+    SelectDirectoryDialog1.InitialDir := myconfiguration.LastSetupFileDir;
   if SelectDirectoryDialog1.Execute then
   begin
     goon := True;
@@ -3938,14 +3144,12 @@ begin
     PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
     Application.ProcessMessages;
     initaktproduct;
-    //aktProduct.targetOS := osMac;
     localTOSset := aktProduct.productdata.targetOSset;
     Include(localTOSset, osMac);
     aktProduct.productdata.targetOSset := localTOSset;
     aktProduct.SetupFiles[0].targetOS := osMac;
     MemoAnalyze.Clear;
     // no showCompleteDirDlg for macos
-    //aktProduct.SetupFiles[0].copyCompleteDir := showCompleteDirDlg;
     aktProduct.SetupFiles[0].copyCompleteDir := False;
     makeProperties;
     resultform1.updateGUI;
@@ -3958,7 +3162,6 @@ end;
 
 procedure TResultform1.BtSingleAnalyzeAndCreateMultiClick(Sender: TObject);
 var
-  i: integer;
   localTOSset: TTargetOSset;
   installerselected: boolean = False;
 begin
@@ -3970,8 +3173,11 @@ begin
     mtConfirmation, [mbYes, mbNo], '') = mrYes then
   begin
     OpenDialog1.FilterIndex := 1;   // setup
-    if OpenDialog1.Execute then
-    begin
+    if DirectoryExists(myconfiguration.LastSetupFileDir) then
+    OpenDialog1.InitialDir := myconfiguration.LastSetupFileDir;
+  if OpenDialog1.Execute then
+  begin
+    myconfiguration.LastSetupFileDir := ExtractFileDir(OpenDialog1.FileName);
       PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
       Application.ProcessMessages;
       localTOSset := aktProduct.productdata.targetOSset;
@@ -4001,13 +3207,13 @@ begin
 end;
 
 procedure TResultform1.BtAnalyzeOnlyClick(Sender: TObject);
-var
-  i: integer;
 begin
-
   OpenDialog1.FilterIndex := 1;   // setup
+  if DirectoryExists(myconfiguration.LastSetupFileDir) then
+    OpenDialog1.InitialDir := myconfiguration.LastSetupFileDir;
   if OpenDialog1.Execute then
   begin
+    myconfiguration.LastSetupFileDir := ExtractFileDir(OpenDialog1.FileName);
     osdsettings.runmode := analyzeOnly;
     setRunMode;
     MemoAnalyze.Clear;
@@ -4024,8 +3230,14 @@ end;
 
 
 procedure TResultform1.FileHelpClick(Sender: TObject);
+var
+  myUrl : string;
 begin
-  ShowMessage(rsNotImplemented);
+  if LowerCase(osdsettings.mylang) = 'de' then
+    myUrl := opsidocs_base_url+'opsi-docs-de/4.2/manual/modules/setup-detector.html'
+  else
+    myUrl := opsidocs_base_url+'opsi-docs-en/4.2/manual/modules/setup-detector.html';
+  OpenURL(myUrl);
 end;
 
 
@@ -4060,7 +3272,6 @@ end;
 procedure TResultform1.FileOpenSetupFileClick(Sender: TObject);
 begin
   PageControl1.ActivePage := TabSheetAnalyze;
-  //BtAnalyzeOnly.Click;
   BtSingleAnalyzeAndCreateWin.Click;
 end;
 
@@ -4083,6 +3294,7 @@ begin
   list.Add('This is a part of the opsi.org project: https://opsi.org');
   list.Add('');
   list.add('Icons from Iconic (https://useiconic.com/) under MIT License.');
+  list.add('Icons from feathericons (https://feathericons.com/) under MIT License.');
   //list.add('https://github.com/iconic/open-iconic/blob/master/ICON-LICENSE');
   list.Add('');
   list.Add('Configuration: ');
@@ -4181,10 +3393,8 @@ var
   filename: string;
   resourcedir, templatePath: string;
 begin
-  tmpimage := TPicture.Create;
   loadDefaultIcon := True;
   Application.OnIdle := @ApplicationEventIdle;
-  //main1;
   // TabSheetIcons presets
   BtnOpenIconFolder.Font.Size := 12;
   DefaultIcon := TImage.Create(TabSheetIcons);
@@ -4229,6 +3439,8 @@ begin
     else
       LogDatei.log('Could not find template.png ', LLError);
   end;
+  tmpimage := TPicture.Create;
+
   tmpimage.LoadFromFile(resourcedir + PathDelim + 'images' + PathDelim +
     'analyzepack4.xpm');
   BtSingleAnalyzeAndCreateWin.Glyph.Assign(tmpimage.Bitmap);
@@ -4249,6 +3461,29 @@ begin
     'analyzepack4.xpm');
   BtSingleAnalyzeAndCreateMulti.Glyph.Assign(tmpimage.Bitmap);
 
+  tmpimage.LoadFromFile(resourcedir + PathDelim + 'images' + PathDelim +
+    'analyzepack4.xpm');
+  BtSingleAnalyzeAndCreateWithUser.Glyph.Assign(tmpimage.Bitmap);
+
+  // Help icons at linux has to be loaded as xpm file
+  tmpimage.LoadFromFile(resourcedir + PathDelim + 'images' + PathDelim +
+    'help-circle20.png');
+  SpeedButtonHelpMain.Glyph.Assign(tmpimage.Bitmap);
+  SpeedButtonHelpStartOSIndep.Glyph.Assign(tmpimage.Bitmap);
+  SpeedButtonHelpStartWin.Glyph.Assign(tmpimage.Bitmap);
+  SpeedButtonHelpStartLin.Glyph.Assign(tmpimage.Bitmap);
+  SpeedButtonHelpStartMac.Glyph.Assign(tmpimage.Bitmap);
+  SpeedButtonHelpStartMulti.Glyph.Assign(tmpimage.Bitmap);
+  SpeedButtonHelpAnalyze.Glyph.Assign(tmpimage.Bitmap);
+  SpeedButtonHelpSetup2.Glyph.Assign(tmpimage.Bitmap);
+  SpeedButtonHelpSetup2.Glyph.Assign(tmpimage.Bitmap);
+  SpeedButtonHelpSetup3.Glyph.Assign(tmpimage.Bitmap);
+  SpeedButtonHelpProd1.Glyph.Assign(tmpimage.Bitmap);
+  SpeedButtonHelpProd2.Glyph.Assign(tmpimage.Bitmap);
+  SpeedButtonHelpIcon.Glyph.Assign(tmpimage.Bitmap);
+  SpeedButtonHelpCreate.Glyph.Assign(tmpimage.Bitmap);
+
+
   FreeAndNil(tmpimage);
   {$ENDIF UNIX}
   PaintPreview(DefaultIcon);
@@ -4263,17 +3498,13 @@ end;
 
 procedure TResultform1.ApplicationEventIdle(Sender: TObject; var Done: boolean);
 begin
-  (*
-  if not startupfinished then
-    main2;
-    *)
   Application.ProcessMessages;
   sleep(100);
 end;
 
 
 
-
+(*
 procedure TResultform1.RadioButtonBuildModeChange(Sender: TObject);
 var
   RadioButtonName: string;
@@ -4289,7 +3520,7 @@ begin
   begin
   end;
 end;
-
+*)
 
 procedure TResultform1.SBtnExitClick(Sender: TObject);
 begin
@@ -4298,6 +3529,139 @@ begin
   resultForm1.Destroy;
   freebasedata;
   Application.Terminate;
+end;
+
+procedure TResultform1.SpeedButtonHelpAnalyzeClick(Sender: TObject);
+var
+  myUrl : string;
+begin
+  if LowerCase(osdsettings.mylang) = 'de' then
+    myUrl := opsidocs_base_url+'opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-use-single-analyze'
+  else
+    myUrl := opsidocs_base_url+'opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-use-single-analyze';
+  OpenURL(myUrl);
+end;
+
+procedure TResultform1.SpeedButtonHelpCreateClick(Sender: TObject);
+  var
+  myUrl : string;
+begin
+  if LowerCase(osdsettings.mylang) = 'de' then
+    myUrl := opsidocs_base_url+'opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-product-create'
+  else
+    myUrl := opsidocs_base_url+'opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-product-create';
+  OpenURL(myUrl);
+  //ShowMessage(rsNotImplemented);
+end;
+
+procedure TResultform1.SpeedButtonHelpIconClick(Sender: TObject);
+  var
+    myUrl : string;
+  begin
+    if LowerCase(osdsettings.mylang) = 'de' then
+      myUrl := opsidocs_base_url+'opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-product-configuration-icon'
+    else
+      myUrl := opsidocs_base_url+'opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-product-configuration-icon';
+    OpenURL(myUrl);
+  end;
+
+procedure TResultform1.SpeedButtonHelpMainClick(Sender: TObject);
+var
+  myUrl : string;
+begin
+  if LowerCase(osdsettings.mylang) = 'de' then
+    myUrl := opsidocs_base_url+'opsi-docs-de/4.2/manual/modules/setup-detector.html'
+  else
+    myUrl := opsidocs_base_url+'opsi-docs-en/4.2/manual/modules/setup-detector.html';
+  OpenURL(myUrl);
+end;
+
+procedure TResultform1.SpeedButtonHelpProd1Click(Sender: TObject);
+var
+  myUrl : string;
+begin
+  if LowerCase(osdsettings.mylang) = 'de' then
+    myUrl := opsidocs_base_url+'opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-product-configuration1'
+  else
+    myUrl := opsidocs_base_url+'opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-product-configuration1';
+  OpenURL(myUrl);
+end;
+
+procedure TResultform1.SpeedButtonHelpProd2Click(Sender: TObject);
+var
+  myUrl : string;
+begin
+  if LowerCase(osdsettings.mylang) = 'de' then
+    myUrl := opsidocs_base_url+'opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-product-configuration-priority_dependecy'
+  else
+    myUrl := opsidocs_base_url+'opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-product-configuration-priority_dependency';
+  OpenURL(myUrl);
+end;
+
+procedure TResultform1.SpeedButtonHelpStartOSIndepClick(Sender: TObject);
+var
+  myUrl : string;
+begin
+  if LowerCase(osdsettings.mylang) = 'de' then
+    myUrl := opsidocs_base_url+'opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-tasks-os-independent'
+  else
+    myUrl := opsidocs_base_url+'opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-tasks-os-independent';
+  OpenURL(myUrl);
+end;
+
+procedure TResultform1.SpeedButtonHelpSetup1Click(Sender: TObject);
+var
+  myUrl : string;
+begin
+  if LowerCase(osdsettings.mylang) = 'de' then
+    myUrl := opsidocs_base_url+'opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-use-single-setup-data'
+  else
+    myUrl := opsidocs_base_url+'opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-use-single-setup-data';
+  OpenURL(myUrl);
+end;
+
+procedure TResultform1.SpeedButtonHelpStartLinClick(Sender: TObject);
+var
+  myUrl : string;
+begin
+  if LowerCase(osdsettings.mylang) = 'de' then
+    myUrl := opsidocs_base_url+'opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-tasks-linux'
+  else
+    myUrl := opsidocs_base_url+'opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-tasks-linux';
+  OpenURL(myUrl);
+end;
+
+procedure TResultform1.SpeedButtonHelpStartMacClick(Sender: TObject);
+var
+  myUrl : string;
+begin
+  if LowerCase(osdsettings.mylang) = 'de' then
+    myUrl := opsidocs_base_url+'opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-tasks-macos'
+  else
+    myUrl := opsidocs_base_url+'opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-tasks-macos';
+  OpenURL(myUrl);
+end;
+
+procedure TResultform1.SpeedButtonHelpStartMultiClick(Sender: TObject);
+var
+  myUrl : string;
+begin
+  if LowerCase(osdsettings.mylang) = 'de' then
+    myUrl := opsidocs_base_url+'opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-tasks-multi'
+  else
+    myUrl := opsidocs_base_url+'opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-tasks-multi';
+  OpenURL(myUrl);
+end;
+
+procedure TResultform1.SpeedButtonHelpStartWinClick(Sender: TObject);
+var
+  myUrl : string;
+begin
+  if LowerCase(osdsettings.mylang) = 'de' then
+    myUrl := opsidocs_base_url+'opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-tasks-win'
+  else
+    myUrl := opsidocs_base_url+'opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-tasks-win';
+  OpenURL(myUrl);
 end;
 
 procedure checkWorkbench;
@@ -4351,18 +3715,16 @@ begin
   if (Sender as TTICheckBox).State = cbChecked then
   begin
     FlowPanelMst.Enabled := True;
-    //TIEditMstFile1.Enabled:=true;
   end
   else
   begin
     FlowPanelMst.Enabled := False;
-    //TIEditMstFile1.Enabled:=false;
   end;
 end;
 
 procedure TResultform1.TICheckBoxS1SilentChange(Sender: TObject);
 var
-  setupindex: integer;
+  setupindex: integer = 0;
   cmdstr, fromstr, tostr: string;
 begin
   if (Sender as TTICheckBox).Name = 'TICheckBoxS1Silent' then setupindex := 0
@@ -4422,12 +3784,10 @@ begin
   if (Sender as TTICheckBox).State = cbChecked then
   begin
     FlowPanelMst1.Enabled := True;
-    //TIEditMstFile2.Enabled:=true
   end
   else
   begin
     FlowPanelMst1.Enabled := False;
-    //TIEditMstFile2.Enabled:=false;
   end;
 end;
 
@@ -4482,19 +3842,12 @@ end;
 procedure TResultform1.TIEditSetup2UnProgramEditingDone(Sender: TObject);
 begin
   updateUninstaller(aktProduct.SetupFiles[1]);
-
 end;
 
 procedure TResultform1.TIEditSetup3UnProgramEditingDone(Sender: TObject);
 begin
   updateUninstaller(aktProduct.SetupFiles[2]);
 end;
-
-procedure TResultform1.TIGridDepPropertiesCreated(Sender: TObject);
-begin
-
-end;
-
 
 procedure TResultform1.genRttiEditChange(Sender: TObject);
 var
@@ -4530,17 +3883,17 @@ begin
   end;
 end;
 
+procedure TResultform1.TIRadioGroupBuildModeClick(Sender: TObject);
+begin
+
+end;
+
 procedure TResultform1.TIS1UrlClick(Sender: TObject);
 var
   link: string;
   PropInfo: PPropInfo;
 begin
   link := TTILabel(Sender).Caption;
-  (*
-  PropInfo := GetPropInfo(Sender, 'Caption', []);
-  if Assigned(PropInfo) then
-    link := GetStrProp(Sender, PropInfo);
-    *)
   OpenURL(link);
 end;
 

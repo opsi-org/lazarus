@@ -1,22 +1,23 @@
 object FNewDepDlg: TFNewDepDlg
-  Left = 367
-  Height = 420
-  Top = 184
-  Width = 444
+  Left = 763
+  Height = 461
+  Top = 428
+  Width = 563
   Caption = 'opsi-setup-detector: Dependency Editor'
-  ClientHeight = 420
-  ClientWidth = 444
+  ClientHeight = 461
+  ClientWidth = 563
+  OnActivate = FormActivate
   OnShow = FormShow
   Position = poScreenCenter
-  LCLVersion = '2.2.4.0'
+  LCLVersion = '2.2.6.0'
   object Panel1: TPanel
     Left = 0
     Height = 50
-    Top = 370
-    Width = 444
+    Top = 411
+    Width = 563
     Align = alBottom
     ClientHeight = 50
-    ClientWidth = 444
+    ClientWidth = 563
     ParentFont = False
     TabOrder = 0
     object BitBtn1: TBitBtn
@@ -35,7 +36,7 @@ object FNewDepDlg: TFNewDepDlg
       TabOrder = 0
     end
     object BitBtn2: TBitBtn
-      Left = 335
+      Left = 454
       Height = 38
       Top = 6
       Width = 96
@@ -56,21 +57,22 @@ object FNewDepDlg: TFNewDepDlg
     Left = 0
     Height = 127
     Top = 0
-    Width = 444
+    Width = 563
     Align = alTop
     ClientHeight = 127
-    ClientWidth = 444
+    ClientWidth = 563
     ParentFont = False
     TabOrder = 1
     object Label1: TLabel
       Left = 8
       Height = 81
       Top = 8
-      Width = 428
+      Width = 489
       Align = alClient
       Alignment = taCenter
+      AutoSize = False
       BorderSpacing.Around = 7
-      Caption = 'Please edit the dependency.'#10'Please note:'#10'You may may neither give a requested installation state or a requested action. A combination is not allowed.'
+      Caption = 'Please edit the dependency.'#13#10'Please note:'#13#10'You may may either provide a requested installation state, or a requested action. '#13#10'A combination is not allowed.'
       ParentColor = False
       ParentFont = False
       WordWrap = True
@@ -79,7 +81,7 @@ object FNewDepDlg: TFNewDepDlg
       Left = 12
       Height = 15
       Top = 100
-      Width = 420
+      Width = 539
       Align = alBottom
       Alignment = taCenter
       BorderSpacing.Around = 11
@@ -88,12 +90,79 @@ object FNewDepDlg: TFNewDepDlg
       ParentColor = False
       ParentFont = False
     end
+    object SpeedButtonHelpDependecies: TSpeedButton
+      Left = 504
+      Height = 88
+      Hint = 'Show Help'
+      Top = 1
+      Width = 58
+      Align = alRight
+      Anchors = [akTop, akLeft, akBottom]
+      Flat = True
+      Glyph.Data = {
+        76060000424D7606000000000000360000002800000014000000140000000100
+        2000000000004006000064000000640000000000000000000000000000000000
+        00000000000000000000000000000000000500000054000000A4000000D70000
+        00F3000000F3000000D7000000A4000000530000000500000000000000000000
+        0000000000000000000000000000000000000000000000000000000000510000
+        00DB000000FF000000FF000000F7000000DE000000DF000000F8000000FF0000
+        00FF000000DA0000004E00000000000000000000000000000000000000000000
+        0000000000020000008A000000FF000000FD000000A300000040000000030000
+        0000000000000000000400000041000000A4000000FD000000FE000000880000
+        0002000000000000000000000000000000000000008A000000FF000000E30000
+        0036000000000000000000000000000000000000000000000000000000000000
+        000000000037000000E3000000FF000000880000000000000000000000000000
+        0051000000FF000000E20000001A000000000000000000000000000000000000
+        003F00000040000000000000000000000000000000000000001B000000E30000
+        00FE0000004E0000000000000006000000DC000000FD00000035000000000000
+        0000000000000000000000000000000000D7000000D900000000000000000000
+        0000000000000000000000000037000000FD000000DA00000005000000550000
+        00FF000000A20000000000000000000000000000000000000000000000000000
+        002B0000002C0000000000000000000000000000000000000000000000000000
+        00A4000000FF00000054000000A5000000FF0000003F00000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        000000000000000000000000000000000042000000FF000000A2000000D90000
+        00F6000000030000000000000000000000000000000000000000000000000000
+        009B000000A50000002700000000000000000000000000000000000000000000
+        0004000000F8000000D8000000F3000000DE0000000000000000000000000000
+        0000000000000000000000000000000000C9000000FF000000F9000000570000
+        000000000000000000000000000000000000000000DF000000F1000000F30000
+        00DD000000000000000000000000000000000000000000000000000000000000
+        000300000063000000F4000000FD000000300000000000000000000000000000
+        0000000000DE000000F3000000D9000000F60000000300000000000000000000
+        0000000000020000001900000000000000000000000000000060000000FF0000
+        008000000000000000000000000000000004000000F8000000D8000000A70000
+        00FF0000003D00000000000000000000000000000074000000FE000000400000
+        0000000000000000006D000000FF000000700000000000000000000000000000
+        0040000000FF000000A400000056000000FF000000A100000000000000000000
+        00000000003D000000FF000000E4000000710000007E000000F2000000F80000
+        0024000000000000000000000000000000A3000000FF00000054000000060000
+        00DD000000FC000000330000000000000000000000000000007C000000FE0000
+        00FF000000FF000000F60000005B000000000000000000000000000000360000
+        00FD000000DB000000050000000000000053000000FF000000E10000001A0000
+        0000000000000000000000000026000000630000005E00000018000000000000
+        0000000000000000001A000000E3000000FF0000005100000000000000000000
+        00000000008C000000FF000000E1000000330000000000000000000000000000
+        00000000000000000000000000000000000000000036000000E3000000FF0000
+        008B00000000000000000000000000000000000000020000008B000000FF0000
+        00FD000000A00000003E000000030000000000000000000000030000003F0000
+        00A2000000FD000000FF0000008B000000020000000000000000000000000000
+        0000000000000000000000000053000000DD000000FF000000FF000000F60000
+        00DE000000DE000000F6000000FF000000FF000000DC00000052000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        000600000056000000A6000000D8000000F4000000F4000000D8000000A60000
+        0055000000060000000000000000000000000000000000000000
+      }
+      OnClick = SpeedButtonHelpDependeciesClick
+      ShowHint = True
+      ParentShowHint = False
+    end
   end
   object FlowPanel1: TFlowPanel
     Left = 0
-    Height = 243
+    Height = 284
     Top = 127
-    Width = 444
+    Width = 563
     Align = alClient
     ControlList = <    
       item
@@ -123,7 +192,7 @@ object FNewDepDlg: TFNewDepDlg
     object GroupBox1: TGroupBox
       Left = 6
       Height = 63
-      Top = 64
+      Top = 109
       Width = 417
       Anchors = []
       BorderSpacing.Around = 5
@@ -156,55 +225,132 @@ object FNewDepDlg: TFNewDepDlg
     end
     object FlowPanel2: TFlowPanel
       Left = 1
-      Height = 58
+      Height = 103
       Top = 1
-      Width = 438
+      Width = 559
+      Align = alClient
       Anchors = []
       BevelOuter = bvNone
       ControlList = <      
         item
-          Control = ComboBoxproductIds
+          Control = FlowPanelBaseActionRequest
           WrapAfter = waAuto
           Index = 0
         end      
         item
-          Control = Label2
+          Control = FlowPanel6
           WrapAfter = waAuto
           Index = 1
         end>
-      FlowLayout = tlTop
-      FlowStyle = fsRightLeftTopBottom
+      FlowLayout = tlCenter
+      FlowStyle = fsLeftRightTopBottom
       ParentFont = False
       TabOrder = 1
-      OnClick = FlowPanel2Click
-      object Label2: TLabel
-        Left = 53
-        Height = 30
-        Top = 5
-        Width = 136
+      object FlowPanelBaseActionRequest: TFlowPanel
+        Left = 0
+        Height = 48
+        Top = 0
+        Width = 538
         Anchors = []
-        BorderSpacing.Around = 5
-        Caption = 'productid'#10'of the dependent product'
-        ParentColor = False
-        ParentFont = False
-      end
-      object ComboBoxproductIds: TComboBox
-        Left = 194
-        Height = 23
-        Top = 11
-        Width = 244
-        Anchors = []
-        AutoComplete = True
-        AutoCompleteText = [cbactEnabled, cbactEndOfLineComplete, cbactSearchAscending]
-        BorderSpacing.Top = 11
-        ItemHeight = 15
+        ControlList = <        
+          item
+            Control = LabelDepActionrequest
+            WrapAfter = waAuto
+            Index = 0
+          end        
+          item
+            Control = ComboBoxDepActionrequest
+            WrapAfter = waAuto
+            Index = 1
+          end>
+        FlowLayout = tlTop
+        FlowStyle = fsLeftRightTopBottom
         TabOrder = 0
+        object LabelDepActionrequest: TLabel
+          Left = 6
+          Height = 30
+          Top = 6
+          Width = 128
+          Anchors = []
+          BorderSpacing.Around = 5
+          Caption = 'Dependency'#13#10'for which action request'
+          ParentColor = False
+          ParentFont = False
+        end
+        object ComboBoxDepActionrequest: TComboBox
+          Left = 149
+          Height = 23
+          Top = 12
+          Width = 244
+          Anchors = []
+          AutoComplete = True
+          AutoCompleteText = [cbactEnabled, cbactEndOfLineComplete, cbactSearchAscending]
+          BorderSpacing.Left = 10
+          BorderSpacing.Top = 11
+          ItemHeight = 15
+          ItemIndex = 0
+          Items.Strings = (
+            'setup'
+            'uninstall'
+            'update'
+            'always'
+            'custom'
+            'once'
+          )
+          TabOrder = 0
+          Text = 'setup'
+        end
+      end
+      object FlowPanel6: TFlowPanel
+        Left = 0
+        Height = 48
+        Top = 48
+        Width = 538
+        Anchors = []
+        ControlList = <        
+          item
+            Control = Label5
+            WrapAfter = waAuto
+            Index = 0
+          end        
+          item
+            Control = ComboBoxproductIds
+            WrapAfter = waAuto
+            Index = 1
+          end>
+        FlowLayout = tlTop
+        FlowStyle = fsLeftRightTopBottom
+        TabOrder = 1
+        object Label5: TLabel
+          Left = 6
+          Height = 30
+          Top = 6
+          Width = 136
+          Anchors = []
+          BorderSpacing.Around = 5
+          Caption = 'productid'#10'of the dependent product'
+          ParentColor = False
+          ParentFont = False
+        end
+        object ComboBoxproductIds: TComboBox
+          Left = 157
+          Height = 23
+          Top = 12
+          Width = 244
+          Anchors = []
+          AutoComplete = True
+          AutoCompleteText = [cbactEnabled, cbactEndOfLineComplete, cbactSearchAscending]
+          BorderSpacing.Left = 10
+          BorderSpacing.Top = 11
+          ItemHeight = 15
+          TabOrder = 0
+        end
       end
     end
     object FlowPanel3: TFlowPanel
       Left = 1
       Height = 43
-      Top = 132
+      Top = 177
       Width = 422
       Anchors = []
       BevelOuter = bvNone
@@ -252,7 +398,7 @@ object FNewDepDlg: TFNewDepDlg
     object FlowPanel4: TFlowPanel
       Left = 1
       Height = 43
-      Top = 175
+      Top = 220
       Width = 422
       Anchors = []
       BevelOuter = bvNone

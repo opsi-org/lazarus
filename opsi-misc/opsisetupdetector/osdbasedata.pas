@@ -9,7 +9,6 @@ uses
   Dialogs, StdCtrls,
   strutils,
   {$IFDEF WINDOWS}
-  osdhelper,
   shlobj,
   winpeimagereader,
   {$ENDIF WINDOWS}
@@ -24,7 +23,9 @@ uses
   osregex,
   lcltranslator,
   oscrypt,
-  osparserhelper;
+  osparserhelper,
+  oswebservice,
+  osdhelper;
 
 type
 
@@ -43,12 +44,45 @@ type
   TOSDSettings = class(TPersistent)
   private
     FrunMode: TRunMode;
+    Fshowgui: boolean;
+    Fstartupfinished: boolean;
+    Fmylocaledir: string;
+    Fmylang: string;
+    Fmyexitcode: integer;
+    FCreateModeCreateOnly: boolean;
+    FCreateModeBuildPackage: boolean;
+    FCreateModePackageBuilder: boolean;
+    FBuildModebuildOnly: boolean;
+    FBuildModebuildInstall: boolean;
+    FBuildMode: TStrings;
+    FBuildModeIndex: integer;
+    FBuildModeValue: string;
+    FCreateMode: TStrings;
+    FCreateModeIndex: integer;
+    FCreateModeValue: string;
+    procedure SetBuildMode(const AValue: TStrings);
+    procedure SetBuildModeValue(const AValue: string);
+    procedure SetBuildModeIndex(const AValue: integer);
+    procedure SetCreateMode(const AValue: TStrings);
+    procedure SetCreateModeValue(const AValue: string);
+    procedure SetCreateModeIndex(const AValue: integer);
   published
     property runmode: TRunMode read FrunMode write FrunMode;
+    property showgui: boolean read Fshowgui write Fshowgui;
+    property startupfinished: boolean read Fstartupfinished write Fstartupfinished;
+    property mylocaledir: string read Fmylocaledir write Fmylocaledir;
+    property mylang: string read Fmylang write Fmylang;
+    property myexitcode: integer read Fmyexitcode write Fmyexitcode;
+    property BuildMode: TStrings read FBuildMode write SetBuildMode;
+    property BuildModeIndex: integer read FBuildModeIndex write SetBuildModeIndex;
+    property BuildModeValue: string read FBuildModeValue write SetBuildModeValue;
+    property CreateMode: TStrings read FCreateMode write SetCreateMode;
+    property CreateModeIndex: integer read FCreateModeIndex write SetCreateModeIndex;
+    property CreateModeValue: string read FCreateModeValue write SetCreateModeValue;
   public
     { public declarations }
-    //constructor Create;
-    //destructor Destroy;
+    constructor Create;
+    destructor Destroy;
   end;
 
   TTargetOS = (osLin, osWin, osMac, osMulti, osUnknown);
@@ -58,11 +92,13 @@ type
     amSelectable);
 
   // marker for add installers
-  TKnownInstaller = (stLinRPM, stLinDeb, stMacZip, stMacDmg, stMacPKG, stMacApp,
+  TKnownInstaller = (stAdvancedInstaller, stInstall4J, stPortableApps, stLinRPM, stLinDeb,
+    stMacZip, stMacDmg, stMacPKG, stMacApp,
     stSFXcab, stBoxStub, stAdvancedMSI, stInstallShield,
     stInstallShieldMSI,
     stMsi, stNsis, st7zip, st7zipsfx, stInstallAware, stMSGenericInstaller,
     stWixToolset, stBitrock, stSelfExtractingInstaller, stInno,
+    // stUnknown should be always the last position
     stUnknown);
 
 
@@ -75,12 +111,13 @@ type
     installerId: TKnownInstaller;
     Name: string;
     description: string;
-    patterns: TStringList;
-    infopatterns: TStringList;
-    silentsetup: string;
-    unattendedsetup: string;
-    silentuninstall: string;
-    unattendeduninstall: string;
+    patterns: TStringList;         // pattern that indicates this installer type (has to be there)
+    infopatterns: TStringList;     // pattern that indicates a chance for this installer type (not always there)
+    notpatterns: TStringList;      // pattern that indicates it is not this installer type (veto)
+    silentsetup: string;           // cli parameters for (really) silent setup
+    unattendedsetup: string;       // cli parameters for unattended setup
+    silentuninstall: string;       // cli parameters for (really) silent uninstall
+    unattendeduninstall: string;   // cli parameters for unattended uninstall
     uninstall_waitforprocess: string;
     install_waitforprocess: string;
     uninstallProg: string;
@@ -123,6 +160,7 @@ type
     FinstallCommandLine: string;
     FuninstallCommandLine: string;
     FuninstallProg: string;
+    FuninstallDirectory: string;
     FtargetProg: string;
     FuninstallCheck: TStrings;
     FisExitcodeFatalFunction: string;
@@ -141,6 +179,7 @@ type
     procedure SetUninstallProg(const AValue: string);
     procedure SetTargetProg(const AValue: string);
     procedure SetInstallDirectory(const AValue: string);
+    procedure SetUninstallDirectory(const AValue: string);
     //procedure OnRestoreProperty(Sender: TObject; AObject: TObject;
     //  Info: PPropInfo; AValue: TJSONData; var Handled: Boolean);
   published
@@ -178,6 +217,8 @@ type
     property uninstallCommandLine: string read FuninstallCommandLine
       write FuninstallCommandLine;
     property uninstallProg: string read FuninstallProg write SetUninstallProg;
+    property uninstallDirectory: string read FuninstallDirectory
+      write SetUninstallDirectory;
     property targetProg: string read FtargetProg write SetTargetProg;
     property uninstallCheck: TStrings read FuninstallCheck write SetUninstallCheck;
     property uninstall_waitforprocess: string
@@ -224,7 +265,7 @@ requirementType: before
     FRequType: TPDtype;
   published
     property Required_Type: TPDtype read FRequType write FRequType;
-    property action: string read FAction write FAction;
+    property Action: string read FAction write FAction;
     property Required_ProductId: string read FRequProductId write FRequProductId;
     property Required_State: TPInstallationState read FRequState write FRequState;
     property Required_Action: TPActionRequest read FRequAction write FRequAction;
@@ -336,8 +377,12 @@ default: ["xenial_bionic"]
     Fproducttype: string;
     Fsetupscript: string;
     Funinstallscript: string;
-    Fdelsubscript: string;
     Fupdatescript: string;
+    Falwaysscript: string;
+    Foncescript: string;
+    Fcustomscript: string;
+    FuserLoginscript: string;
+    Fdelsubscript: string;
     Flicenserequired: boolean;
     FproductImageFullFileName: string;
     FtargetOSset: TTargetOSset;
@@ -363,8 +408,12 @@ default: ["xenial_bionic"]
     property producttype: string read Fproducttype write Fproducttype;
     property setupscript: string read Fsetupscript write Fsetupscript;
     property uninstallscript: string read Funinstallscript write Funinstallscript;
-    property delsubscript: string read Fdelsubscript write Fdelsubscript;
     property updatescript: string read Fupdatescript write Fupdatescript;
+    property alwaysscript: string read Falwaysscript write Falwaysscript;
+    property oncescript: string read Foncescript write Foncescript;
+    property customscript: string read Fcustomscript write Fcustomscript;
+    property userLoginscript: string read FuserLoginscript write FuserLoginscript;
+    property delsubscript: string read Fdelsubscript write Fdelsubscript;
     property licenserequired: boolean read Flicenserequired write Flicenserequired;
     property productImageFullFileName: string
       read FproductImageFullFileName write FproductImageFullFileName;
@@ -395,6 +444,7 @@ default: ["xenial_bionic"]
     { public declarations }
     constructor Create;
     procedure readProjectFile(filename: string);
+    procedure readControlFile(filename: string; filter: boolean = False);
     procedure writeProjectFileToPath(path: string);
     procedure writeProjectFileToFile(myfilename: string);
   end;
@@ -403,11 +453,10 @@ default: ["xenial_bionic"]
   private
     Fconfig_version: string;
     { help to detect and handle changes of config file structure }
-    //Fworkbench_share: string;
-    Fworkbench_Path: string;
-    //Fworkbench_mounted: boolean;
-    Fconfig_filled: boolean;
+    Fworkbench_Path: string;   // local path to the (mounted) workbench share
+    Fconfig_filled: boolean;   // is the initial configuration done ?
     FregisterInFilemanager: boolean;
+    // create context menue entry in file manage to call osd
     Femail_address: string;
     FFullName: string;
     Fimport_libraries: TStrings;
@@ -419,9 +468,6 @@ default: ["xenial_bionic"]
     FCreateRadioIndex: integer;  // Create mode
     FBuildRadioIndex: integer;  // Build mode
     FpreferSilent: boolean;  // Install mode (unattended / silent)
-    //FCreateQuiet: boolean;
-    //FCreateBuild: boolean;
-    //FCreateInstall: boolean;
     FUsePropDesktopicon: boolean;
     FUsePropLicenseOrPool: boolean;
     FProperties: TPProperties;
@@ -433,7 +479,12 @@ default: ["xenial_bionic"]
     FService_pass: string;
     FUseService: boolean;
     FTemplateChannel: TTemplateChannels;
-    //FtargetOS : TTargetOS;
+    FLastProjectFileDir: string;  // last dir from wich we opend a project file
+    FLastSetupFileDir: string;  // last dir from wich we opend a setup file
+    FLastIconFileDir: string;  // last dir from wich we opend a icon file
+    Fcontrol_in_toml_format: boolean; // since opsi 4.3 control files in toml format
+    Fdependencies_for_all_actionrequests: boolean;
+    // since opsi 4.3 dependecies are allowed for all action requests
     procedure SetLibraryLines(const AValue: TStrings);
     procedure SetPreInstallLines(const AValue: TStrings);
     procedure SetPostInstallLines(const AValue: TStrings);
@@ -443,9 +494,7 @@ default: ["xenial_bionic"]
     procedure SetWorkbench_path(const AValue: string);
   published
     property config_version: string read Fconfig_version write Fconfig_version;
-    //property workbench_share: string read Fworkbench_share write Fworkbench_share;
     property workbench_Path: string read Fworkbench_Path write SetWorkbench_path;
-    //property workbench_mounted: boolean read Fworkbench_mounted write Fworkbench_mounted;
     property config_filled: boolean read Fconfig_filled write Fconfig_filled;
     property registerInFilemanager: boolean
       read FregisterInFilemanager write FregisterInFilemanager;
@@ -463,14 +512,10 @@ default: ["xenial_bionic"]
     property CreateRadioIndex: integer read FCreateRadioIndex write FCreateRadioIndex;
     property BuildRadioIndex: integer read FBuildRadioIndex write FBuildRadioIndex;
     property preferSilent: boolean read FpreferSilent write FpreferSilent;
-    //property CreateQuiet: boolean read FCreateQuiet write FCreateQuiet;
-    //property CreateBuild: boolean read FCreateBuild write FCreateBuild;
-    //property CreateInstall: boolean read FCreateInstall write FCreateInstall;
     property UsePropDesktopicon: boolean read FUsePropDesktopicon
       write FUsePropDesktopicon;
     property UsePropLicenseOrPool: boolean read FUsePropLicenseOrPool
       write FUsePropLicenseOrPool;
-    //property Properties: TPProperties read FProperties  write SetProperties;
     property Readme_txt_templ: string read FReadme_txt_templ write FReadme_txt_templ;
     property ShowCheckEntryWarning: boolean
       read FShowCheckEntryWarning write FShowCheckEntryWarning;
@@ -481,7 +526,16 @@ default: ["xenial_bionic"]
     property Service_pass: string read FService_pass write FService_pass;
     property templateChannel: TtemplateChannels
       read FTemplateChannel write FTemplateChannel;
-    //property UseService: boolean read FUseService write FUseService;
+    property LastProjectFileDir: string read FLastProjectFileDir
+      write FLastProjectFileDir;
+    property LastSetupFileDir: string read FLastSetupFileDir write FLastSetupFileDir;
+    property LastIconFileDir: string read FLastIconFileDir write FLastIconFileDir;
+    property control_in_toml_format: boolean
+      read Fcontrol_in_toml_format write Fcontrol_in_toml_format;
+    property dependencies_for_all_actionrequests: boolean
+      read Fdependencies_for_all_actionrequests write Fdependencies_for_all_actionrequests;
+
+
 
     procedure writeconfig;
     procedure readconfig;
@@ -507,7 +561,7 @@ function cleanOpsiId(opsiid: string): string; // clean up productId
 const
   CONFVERSION = '4.2.0.9';
   templChannelStrings: array [TTemplateChannels] of string =
-    ('training', 'default', 'structured', 'high_structured');
+    ('training', 'default', 'structured', 'custom');
 
 var
   aktProduct: TopsiProduct;
@@ -527,17 +581,22 @@ var
   forceTargetOS: TTargetOS = osWin; // by cli parameter
   globimportMode: boolean = False;
   defaultIconFullFileName: string;
+  opsitmp: string;
+  localservicedata: TOpsi4Data = nil;
+  //localservicedataInitalized : boolean = false;
+  localservicedataConnected: boolean = False;
+  passwordToUse: string;
+  opsiserviceversion: string;
 
 resourcestring
 
   // new for 4.1.0.2 ******************************************************************
   rsworkbench_Path = 'Path to the opsi_workbench';
-  //rsPreInstallLines = 'opsi-script code, that will be included before the start of the installation.';
   rsworkbench_mounted =
     'Automatically detected. Is the opsi workbench reachable at workbench_Path.';
   rsconfig_filled = 'Automatically detected. Do we have all needed configurations';
   rsregisterInFilemanager =
-    'Should this program be registred to the Filemanger (Explorer) context menu ?';
+    'Should this program be registered to the Filemanager (Explorer) context menu ?';
   rsemail_address = 'Your email address, used for the changelog entry';
   rsfullName = 'Your full name, used for the changelog entry';
   rsimport_libraries = 'List of opsi-script libraries that have to be imported.' +
@@ -548,7 +607,7 @@ resourcestring
     + LineEnding + 'One per line. May be empty. Example: ' + LineEnding +
     'comment "Start the installation ..."';
   rspostInstallLines =
-    'List of opsi-script code lines that should be included after the installation finished.'
+    'List of opsi-script code lines that should be included after the installation is finished.'
     + LineEnding + 'One per line. May be empty. Example:' + LineEnding +
     'comment "Installation finished..."';
   rspreUninstallLines =
@@ -556,23 +615,32 @@ resourcestring
     + LineEnding + 'One per line. May be empty. Example:' + LineEnding +
     'comment "Start the uninstallation ..."';
   rspostUninstallLines =
-    'List of opsi-script code lines that should be included after the uninstallation finished.'
+    'List of opsi-script code lines that should be included after the uninstallation is finished.'
     + LineEnding + 'One per line. May be empty. Example:' + LineEnding +
     'comment "Uninstall finished..."';
   rspathToOpsiPackageBuilder =
     'Path to the OpsiPackageBuilder. OpsiPackageBuilder is used to build the opsi packages via ssh. see: https://forum.opsi.org/viewtopic.php?f=22&t=7573';
-  rscreateRadioIndex = 'selects the Create mode Radiobutton.';
+
+  rsCreateRadioGroupTitle = 'Create Mode';
+  rsCreateRadioIndex = 'selects the Create mode Radiobutton.';
+  rsCreateRadioFiles = 'create opsi product files';
+  rsCreateRadioFilesBuild = 'create opsi product files and  build package';
+  rsCreateRadioFilesPackageBuilder =
+    'create opsi product files and start the interactive PackageBuilder';
+
+  rsBuildRadioGroupTitle = 'Build Mode';
   rsBuildRadioIndex = 'selects the Build mode Radiobutton.';
+  rsBuildRadioBuild = 'build';
+  rsBuildRadioBuildInstall = 'build and install';
   rsCnfdTitle = 'Edit your configuration here.' + LineEnding +
     'Click on a line to get help ' + LineEnding +
     'in the yellow field at the bottom.';
-  rsService_URL = 'The URL of the opsi webservice (like: https://<opsi-server>:4447)';
+  rsService_URL = 'The URL of the opsi webservice (Format: https://<opsi-server>:4447)';
   rsService_user = 'The user name used to connect to the opsi webservice';
   rsService_pass = 'The password of the given user used to connect to the opsi webservice'
-    + LineEnding + 'ATTENTION SECURITY RISK: Even it is stored encrypted,' +
-    LineEnding + 'it is easy to decrypt be analyzing the source code.' +
-    LineEnding + 'If empty you will be asked if the connection is started.';
-  //rsUseService = 'Should this program try to connect to the opsi web service';
+    + LineEnding + 'ATTENTION SECURITY RISK: Even though it is stored encrypted,' +
+    LineEnding + 'it is easy to decrypt by analyzing the source code.' +
+    LineEnding + 'If empty you will be asked when the connection is started.';
   rsConfigVersion = 'Do not change. Version of the config structure.';
   rsReadme_txt_templ = 'Path to the text file that is used as Read-me template';
   rsInternalSet = 'Do not change here - Internally set by a dialog.';
@@ -580,31 +648,94 @@ resourcestring
     'Should we create a "DesktopIcon" property and add code to handle desktop icons ?';
   rsPropDesktopiconDescription = 'Should there be a desktop icon ?';
   rsUsePropLicenseOrPool =
-    'Should we create a "LicenseOrPool" property and add code handle license keys ?';
+    'Should we create a "LicenseOrPool" property and add code to handle license keys ?';
   rsPropLicenseOrPoolDescription = 'License key or opsi license pool';
   rsPropInstallFromLocalDescription =
     'Determines if the installation files will be copied locally';
-  rsPropInstallArchDescription = 'Which architecture (32 / 64 Bit) has to be installed?';
+  rsPropInstallArchDescription = 'Which architecture (32 / 64 Bit) should be installed?';
   rsPreferSilent =
     'Should really silent installs (with no output) be preferred ? Default is false = unattended is preferred.';
-
-    (*
-  rscreateQuiet = 'Selects the Build mode Checkbox quiet.';
-  rscreateBuild = 'Selects the Build mode Checkbox build.';
-  rscreateInstall = 'Selects the Build mode Checkbox install.';
-  *)
+  rsControl_in_toml_format =
+    'Create control file in (opsi 4.3) toml format ?. ' + LineEnding +
+    'If true, you need opsi 4.3 (or up) ' + LineEnding +
+    'and the toml file is the main control file that should be maintained.';
+  rsDependencies_for_all_actionrequests =
+    'Allow dependencies for all action request ?. ' + LineEnding +
+    'If true, you need opsi 4.3 (or up) ' + LineEnding +
+    'Be careful when creating dependencies for other action requests than "setup"';
 
 
 implementation
 
-{$IFDEF OSDGUI}
 uses
-  osdform;
-
-{$ENDIF OSDGUI}
+  osdcontrolfile_io
+{$IFDEF OSDGUI}
+  , osdform
+{$ENDIF OSDGUI}  ;
 
 var
   FileVerInfo: TFileVersionInfo;
+
+// TOSDSettings ************************************
+constructor TOSDSettings.Create;
+begin
+  startupfinished := False;
+  myexitcode := 0;
+  opsitmp := '';
+  FBuildMode := TStringList.Create;
+  FBuildMode.Add(rsBuildRadioBuild);
+  FBuildMode.Add(rsBuildRadioBuildInstall);
+  FCreateMode := TStringList.Create;
+  FCreateMode.Add(rsCreateRadioFiles);
+  FCreateMode.Add(rsCreateRadioFilesBuild);
+  FCreateMode.Add(rsCreateRadioFilesPackageBuilder);
+  FCreateModeIndex := 0;
+  FBuildModeIndex := 0;
+  FCreateModeValue := CreateMode.Strings[FCreateModeIndex];
+  FBuildModeValue := BuildMode.Strings[FBuildModeIndex];
+  inherited;
+end;
+
+destructor TOSDSettings.Destroy;
+begin
+  FreeAndNil(FBuildMode);
+  FreeAndNil(FCreateMode);
+  inherited;
+end;
+
+procedure TOSDSettings.SetBuildMode(const AValue: TStrings);
+begin
+  FBuildMode.Assign(AValue);
+end;
+
+procedure TOSDSettings.SetCreateMode(const AValue: TStrings);
+begin
+  FCreateMode.Assign(AValue);
+end;
+
+procedure TOSDSettings.SetBuildModeValue(const AValue: string);
+begin
+  FBuildModeValue := AValue;
+  FBuildModeIndex := BuildMode.IndexOf(AValue);
+end;
+
+procedure TOSDSettings.SetCreateModeValue(const AValue: string);
+begin
+  FCreateModeValue := AValue;
+  FCreateModeIndex := CreateMode.IndexOf(AValue);
+end;
+
+procedure TOSDSettings.SetBuildModeIndex(const AValue: integer);
+begin
+  FCreateModeIndex := AValue;
+  FBuildModeValue := BuildMode.Strings[AValue];
+end;
+
+procedure TOSDSettings.SetCreateModeIndex(const AValue: integer);
+begin
+  FCreateModeIndex := AValue;
+  FCreateModeValue := CreateMode.Strings[AValue];
+end;
 
 // TInstallerData ************************************
 
@@ -612,6 +743,7 @@ constructor TInstallerData.Create;
 begin
   patterns := TStringList.Create;
   infopatterns := TStringList.Create;
+  notpatterns := TStringList.Create;
   installErrorHandlingLines := TStringList.Create;
   inherited;
 end;
@@ -620,6 +752,7 @@ destructor TInstallerData.Destroy;
 begin
   FreeAndNil(patterns);
   FreeAndNil(infopatterns);
+  FreeAndNil(notpatterns);
   FreeAndNil(installErrorHandlingLines);
   inherited;
 end;
@@ -723,6 +856,16 @@ begin
   FinstallDirectory := str;
 end;
 
+procedure TSetupFile.SetUninstallDirectory(const AValue: string);
+var
+  str: string;
+begin
+  str := AValue;
+  str := opsiunquotestr2(str, '"');
+  str := opsiunquotestr2(str, '''');
+  FuninstallDirectory := str;
+end;
+
 
 procedure TSetupFile.initValues;
 begin
@@ -741,6 +884,7 @@ begin
   FinstallerId := stUnknown;
   FrequiredSpace := 0;
   FinstallDirectory := 'unknown';
+  FuninstallDirectory := '';
   Fmarkerlist.Clear;
   Finfolist.Clear;
   Flink := '';
@@ -774,8 +918,6 @@ procedure TPProperty.init;
 begin
   Fpname := '';
   Fdescription := '';
-  //FStrvalues := TStringList.Create;
-  //FStrdefault := TStringList.Create;
   Ftype := bool;
   Fmultivalue := False;
   Feditable := False;
@@ -790,83 +932,22 @@ begin
   inherited;
 end;
 
-(*
-procedure TPProperty.SetValueLines(const AValue: TStrings);
-var
-  tmpstr : string;
-begin
-  if Assigned(AValue) then
-  //FStrvalues.Assign(AValue);
-    FStrvalues.SetStrings(AValue);
-  if not stringListToJsonArray(TStringlist(AValue),tmpstr) then
-   logdatei.log('Could not convert stringlist to json array',LLerror)
-   else FStrvaluesStr := tmpstr;
-end;
-
-procedure TPProperty.SetDefaultLines(const AValue: TStrings);
-begin
-  if Assigned(AValue) then
-  //FStrDefault.Assign(AValue);
-   FStrDefault.Text:= AValue.Text;
-  if not stringListToJsonArray(TStringlist(AValue),FStrDefaultStr) then
-    logdatei.log('Could not convert stringlist to json array',LLerror);
-end;
-
-function TPProperty.GetValueLines: TStringlist;
-var
-  i : integer;
-  tmpstr : string;
-begin
-  result := TStringlist.Create;
-  //result.Clear;
-  //result.SetStrings(FStrvalues);
-  for i := 0 to FStrvalues.Count-1 do
-  begin
-    tmpstr := FStrvalues[i];
-    result.Add(tmpstr);
-  end;
-end;
-
-
-function TPProperty.GetDefaultLines: TStrings;
-begin
-  result := TStrings.Create;
-  result.SetStrings(FStrDefault);
-end;
-*)
-
 
 // Defaults
 function TPProperty.GetDefaultLines: TStrings;
 begin
   Result := TStringList.Create;
-        (*
-  if globimportMode then
-    begin
-      // return empty
-    end
-  else
-  *)
   Result.DelimitedText := FStrDefaultStr;
 end;
 
 procedure TPProperty.SetDefaultLines(const AValue: TStrings);
 begin
-  (*
-   if globimportMode then
-    begin
-      // do nothing
-    end
-  else
-  *)
   FStrDefaultStr := AValue.DelimitedText;
-
 end;
 
 procedure TPProperty.SetDefaultStr(const AValue: string);
 begin
   FStrDefaultStr := AValue;
-  //FStrDefault.DelimitedText := AValue;
 end;
 
 function TPProperty.GetDefaultStr: string;
@@ -879,34 +960,17 @@ end;
 function TPProperty.GetValueLines: TStrings;
 begin
   Result := TStringList.Create;
-  (*
-  if globimportMode then
-    begin
-      // return empty
-    end
-  else
-  *)
   Result.DelimitedText := FStrvaluesStr;
 end;
 
 procedure TPProperty.SetValueLines(const AValue: TStrings);
 begin
-  (*
-  if globimportMode then
-    begin
-      // do nothing
-    end
-  else
-  begin
-  *)
-  //FStrvalues.SetStrings(AValue);
   FStrvaluesStr := AValue.DelimitedText;
 end;
 
 procedure TPProperty.SetValueStr(const AValue: string);
 begin
   FStrvaluesStr := AValue;
-  //FStrvalues.DelimitedText := AValue;
 end;
 
 function TPProperty.GetValueStr: string;
@@ -926,12 +990,6 @@ begin
   globimportMode := False;
 end;
 
-(*
-function TPProperty.GetDisplayName: string;
-begin
-  Result := Fpname;
-end;
-*)
 
 { TPProperties }
 
@@ -940,25 +998,11 @@ begin
   inherited Create(AOwner, TPProperty);
 end;
 
-(*
-function TPProperties.GetItems(Index: integer): TPProperty;
-begin
-  Result := TPProperty(inherited Items[Index]);
-end;
-
-procedure TPProperties.SetItems(Index: integer; AValue: TPProperty);
-begin
-  Items[Index].Assign(AValue);
-end;
-*)
-
 
 function TPProperties.GetItem(Index: integer): TPProperty;
 begin
   Result := TPProperty(inherited GetItem(Index));
 end;
-
-
 
 function TPProperties.Insert(Index: integer): TPProperty;
 begin
@@ -1036,15 +1080,6 @@ begin
 
 end;
 
-(*
-procedure TPProperties.activateImportMode;
-var
-  i : integer;
-begin
-  for i := 0 to count - 1 do
-    ITems[i].activateImportMode;
-end;
-*)
 procedure makeProperties;
 var
   //myprop: TStringList;
@@ -1055,34 +1090,6 @@ var
   myrunmode: TRunMode;
 begin
   myrunmode := osdsettings.runmode;
-  (*
-  // clear existing props in StringGridProp
-  StringGridProp.Clean([gzNormal, gzFixedRows]);
-  StringGridProp.RowCount := 1;
-
-  if myconfiguration.UsePropDesktopicon and
-    (StringGridProp.Cols[1].IndexOf('DesktopIcon') = -1) then
-  begin
-    index := StringGridProp.RowCount;
-    //Inc(index);
-    //StringGridProp.InsertColRow(false,index);
-    //StringGridProp.RowCount := index;
-    myprop := TStringList.Create;
-    myprop.Add(IntToStr(index));
-    myprop.Add('DesktopIcon');
-    myprop.Add('Soll es ein Desktop Icon geben ?');
-    myprop.Add('bool');  //type
-    myprop.Add('False');      //multivalue
-    myprop.Add('False');      //editable
-    myprop.Add('[]');      //possible values
-    myprop.Add('False');      //default values
-    //StringGridProp.InsertRowWithValues(index,myprop);
-    StringGridProp.InsertColRow(False, index);
-    StringGridProp.Rows[index].Clear;
-    StringGridProp.Rows[index].SetStrings(myprop);
-    myprop.Free;
-    *)
-
   propexists := aktProduct.properties.propExists('DesktopIcon');
   if (aktProduct.productdata.desktopicon) and not propexists then
   begin
@@ -1093,10 +1100,6 @@ begin
     myprop.Property_Type := bool;
     myprop.multivalue := False;
     myprop.editable := False;
-    //tmpstrlist := TStringList.Create;
-    //myprop.SetValueLines(tmpstrlist);
-    //myprop.SetDefaultLines(tmpstrlist);
-    //FreeAndNil(tmpstrlist);
     myprop.boolDefault := False;
   end
   else if propexists and not (aktProduct.productdata.desktopicon) then
@@ -1268,39 +1271,9 @@ procedure TopsiProduct.writeProjectFileToFile(myfilename: string);
 var
   Streamer: TJSONStreamer;
   JSONString: string;
-  //myfilename: string;
   configDir: array[0..MaxPathLen] of char; //Allocate memory
   configDirUtf8: utf8string;
   pfile: TextFile;
-
-  (*
-  // http://wiki.freepascal.org/File_Handling_In_Pascal
-  // SaveStringToFile: function to store a string of text into a diskfile.
-  //   If the function result equals true, the string was written ok.
-  //   If not then there was some kind of error.
-  function SaveStringToFile(theString, filePath: ansistring): boolean;
-  var
-    fsOut: TFileStream;
-  begin
-    // By default assume the writing will fail.
-    Result := False;
-
-    // Write the given string to a file, catching potential errors in the process.
-    try
-      fsOut := TFileStream.Create(filePath, fmCreate);
-      fsOut.Write(theString[1], length(theString));
-      fsOut.Free;
-
-      // At his point it is known that the writing went ok.
-      Result := True
-
-    except
-      on E: Exception do
-        LogDatei.log('String could not be written. Details: ' +
-          E.ClassName + ': ' + E.Message, LLError);
-    end;
-  end;
-  *)
 
 begin
   try
@@ -1337,22 +1310,12 @@ begin
       JSONString := Streamer.ObjectToJSONString(aktProduct.productdata);
       writeln(pfile, JSONString);
       activateImportMode;
-      // has to be fixed: JSONString := Streamer.ObjectToJSONString(aktProduct.properties);
-      //JSONString := Streamer.CollectionToJSON(aktProduct.properties);
       JSONString := Streamer.ObjectToJSONString(aktProduct.properties);
       writeln(pfile, JSONString);
       deactivateImportMode;
       JSONString := Streamer.ObjectToJSONString(aktProduct.dependencies);
-      //JSONString := Streamer.CollectionToJSON(aktProduct.dependencies);
       writeln(pfile, JSONString);
-      //writeln(pfile,aktProduct.FtargetOS);
       CloseFile(pfile);
-      (*
-      logdatei.log('Config: ' + JSONString, LLDebug);
-      if not SaveStringToFile(JSONString, myfilename) then
-        if Assigned(logdatei) then
-          LogDatei.log('failed write project file', LLError);
-      *)
 
     finally
       Streamer.Destroy;
@@ -1369,21 +1332,6 @@ begin
 end;
 
 
-(*
-procedure TSetupFile.OnRestoreProperty(Sender: TObject; AObject: TObject;
-  Info: PPropInfo; AValue: TJSONData; var Handled: Boolean);
-begin
-  Handled := False;
-  if (Info^.Name = 'setupFullFileName') then
-  begin
-    Handled := True;
-    SetSetupFullFileName(AValue.AsString);
-  end;
-  if (Info^.Name = 'setupFileNamePath') then
-    Handled := True;
-end;
-*)
-
 procedure TopsiProduct.readProjectFile(filename: string);
 var
   DeStreamer: TJSONDeStreamer;
@@ -1398,50 +1346,15 @@ var
   aktproperty: TPProperty;
   i: integer;
 
-  (*
-  // http://wiki.freepascal.org/File_Handling_In_Pascal
-  // LoadStringFromFile: function to load a string of text from a diskfile.
-  //   If the function result equals true, the string was load ok.
-  //   If not then there was some kind of error.
-  function LoadStringFromFile(theString, filePath: ansistring): boolean;
-  var
-    fsOut: TFileStream;
-  begin
-    // By default assume the writing will fail.
-    Result := False;
-
-    // Write the given string to a file, catching potential errors in the process.
-    try
-      fsOut := TFileStream.Create(filePath, fmOpenRead);
-      fsOut.Read(theString[1], length(theString));
-      fsOut.Free;
-
-      // At his point it is known that the writing went ok.
-      Result := True
-
-    except
-      on E: Exception do
-        if Assigned(logdatei) then
-          LogDatei.log('String could not be read. Details: ' +
-            E.ClassName + ': ' + E.Message, LLError)
-        else
-          ShowMessage('readProjectFile: String could not be read. Details: ' +
-            E.ClassName + ': ' + E.Message);
-    end;
-  end;
-  *)
-
 begin
   try
     if Assigned(logdatei) then
       logdatei.log('Start readProjectFile', LLDebug);
     // project file name
-    //configDir := IncludeTrailingPathDelimiter(path);
-    //myfilename := configDir + 'opsi-project.osd';
     myfilename := filename;
     myfilename := ExpandFileName(myfilename);
     if Assigned(logdatei) then
-      logdatei.log('readconfig from: ' + myfilename, LLDebug);
+      logdatei.log('readProjectFile from: ' + myfilename, LLDebug);
     if FileExists(myfilename) then
     begin
       AssignFile(pfile, myfilename);
@@ -1479,23 +1392,21 @@ begin
                 DeStreamer.JSONToObject(JSONObjString, aktproperty);
 
               end;
+              if Assigned(aktproperty) then FreeAndNil(aktproperty);
             end;
-            //DeStreamer.JSONToObject(JSONString, aktProduct.properties);
-            //DeStreamer.JSONToCollection(JSONString, aktProduct.properties);
           end;
         deactivateImportMode;
         readln(pfile, JSONString);
         DeStreamer.JSONToObject(JSONString, aktProduct.dependencies);
-        //DeStreamer.JSONToCollection(JSONString, aktProduct.dependencies);
         // Cleanup
       finally
         DeStreamer.Destroy;
         CloseFile(pfile);
       end;
       if Assigned(logdatei) then
-        logdatei.log('read config: ' + JSONString, LLDebug)
+        logdatei.log('readProjectFile: ' + JSONString, LLDebug)
       else
-        ShowMessage('read config: ' + JSONString);
+        ShowMessage('readProjectFile: ' + JSONString);
     end
     else
     begin
@@ -1503,7 +1414,7 @@ begin
         logdatei.log('Project file not found: ' + myfilename, LLError);
     end;
     if Assigned(logdatei) then
-      logdatei.log('Finished readconfig', LLDebug2);
+      logdatei.log('Finished readProjectFile', LLDebug2);
 
   except
     on E: Exception do
@@ -1520,6 +1431,54 @@ begin
   end;
 end;
 
+
+procedure TopsiProduct.readControlFile(filename: string; filter: boolean = False);
+var
+  myfilename: string;
+  cfile: TextFile;
+  line: string;
+begin
+  try
+    if Assigned(logdatei) then
+      logdatei.log('Start readControlFile', LLDebug);
+    // control file name
+    myfilename := filename;
+    myfilename := ExpandFileName(myfilename);
+    if Assigned(logdatei) then
+      logdatei.log('readControlFile from: ' + myfilename, LLDebug);
+    if FileExists(myfilename) then
+    begin
+      if lowercase(ExtractFileName(myfilename)) = 'control.toml' then
+      begin
+        readControlFileToml(myfilename, filter);
+      end
+      else // pre opsi 4.3 (non toml) style control file
+      begin
+        readControlFile42(myfilename, filter);
+      end;
+    end
+    else
+    begin
+      if Assigned(logdatei) then
+        logdatei.log('Control file not found: ' + myfilename, LLError);
+    end;
+    if Assigned(logdatei) then
+      logdatei.log('Finished readControlFile', LLDebug2);
+
+  except
+    on E: Exception do
+      if Assigned(logdatei) then
+      begin
+        LogDatei.log('readControlFile exception. Details: ' + E.ClassName +
+          ': ' + E.Message, LLError);
+        ShowMessage('readControlFile exception. Details: ' +
+          E.ClassName + ': ' + E.Message);
+      end
+      else
+        ShowMessage('readControlFile exception. Details: ' +
+          E.ClassName + ': ' + E.Message);
+  end;
+end;
 
 
 // TProductData **********************************
@@ -1556,6 +1515,15 @@ begin
   FUsePropDesktopicon := False;
   FTemplateChannel := default;
   FpreferSilent := False; // Unattended
+  Fcontrol_in_toml_format := False; // opsi 4.2
+  Fdependencies_for_all_actionrequests := False; // opsi 4.2
+  {$IFDEF UNIX}
+  FLasticonFileDir := '/usr/share/opsi-setup-detector/icons';
+  {$ENDIF UNIX}
+  {$IFDEF WINDOWS}
+  FLasticonFileDir :=
+    ExtractFileDir(Application.Params[0]) + PathDelim + 'icons';
+  {$ENDIF WINDOWS}
   //readconfig;
 end;
 
@@ -1671,11 +1639,13 @@ begin
 
     if (Femail_address = 'missing') or (FFullName = 'missing') or
       (Fworkbench_Path = 'missing') then
-      //or (FPathToOpsiPackageBuilder = 'missing') then
       Fconfig_filled := False
     else
       Fconfig_filled := True;
-    Fconfig_version := CONFVERSION;
+    //Fconfig_version := CONFVERSION;
+    // update written version only if the new version is larger
+    if CompareDotSeparatedNumbers(Fconfig_version, '<', myVersion) then
+      Fconfig_version := myVersion;
 
     FService_pass := encryptStringBlow('opsi-setup-detector' +
       FService_user, FService_pass);
@@ -1690,15 +1660,11 @@ begin
       if not SaveStringToFile(JSONString, myfilename) then
         if Assigned(logdatei) then
           LogDatei.log('failed save configuration', LLError);
-      //AssignFile(myfile, myfilename);
-      //Rewrite(myfile);
-      //Write(myfile, JSONString);
       {$IFDEF WINDOWS}
       registerForWinExplorer(FregisterInFilemanager);
   {$ELSE}
   {$ENDIF WINDOWS}
     finally
-      //CloseFile(myfile);
       Streamer.Destroy;
       FService_pass := decryptStringBlow('opsi-setup-detector' +
         FService_user, FService_pass);
@@ -1718,7 +1684,6 @@ end;
 procedure TConfiguration.readconfig;
 var
   DeStreamer: TJSONDeStreamer;
-  //Streamer: TJSONStreamer;
   JSONString: string;
   myfilename: string;
   configDir: array[0..MaxPathLen] of char; //Allocate memory
@@ -1824,6 +1789,10 @@ begin
         CloseFile(fConfig);
       end;
     end;
+
+    // init FPathToOpsiPackageBuilder;
+    FPathToOpsiPackageBuilder := detect_opb_path(FPathToOpsiPackageBuilder);
+
     if Assigned(logdatei) then
       logdatei.log('Finished readconfig', LLDebug2);
 
@@ -1880,45 +1849,74 @@ end;
 
 function detectedbypatternwithor(parent: TClass; markerlist: TStringList): boolean;
 var
-  //tmpint: integer;
   patternindex: integer;
   pattern: string;
+  numberOfNotpatternDetected: integer = 0;
 begin
   Result := False;
-  //markerlist.Sort;
   for patternindex := 0 to TInstallerData(parent).patterns.Count - 1 do
   begin
     pattern := TInstallerData(parent).patterns[patternindex];
     if markerlist.IndexOf(LowerCase(pattern)) >= 0 then
       Result := True;
   end;
+  for patternindex := 0 to TInstallerData(parent).notpatterns.Count - 1 do
+  begin
+    pattern := TInstallerData(parent).notpatterns[patternindex];
+    if markerlist.IndexOf(LowerCase(pattern)) >= 0 then
+      Inc(numberOfNotpatternDetected);
+  end;
+  if numberOfNotpatternDetected > 0 then Result := False;
 end;
 
 function detectedbypatternwithAnd(parent: TClass; markerlist: TStringList): boolean;
 var
-  //tmpint: integer;
   patternindex: integer;
   pattern: string;
-  numberOfPatterndetected: integer = 0;
+  numberOfPatternDetected: integer = 0;
+  numberOfNotpatternDetected: integer = 0;
+  installerPatternCount: integer = 0;
 begin
   Result := False;
-  //markerlist.Sort;
-  for patternindex := 0 to TInstallerData(parent).patterns.Count - 1 do
+  installerPatternCount := TInstallerData(parent).patterns.Count;
+  for patternindex := 0 to installerPatternCount - 1 do
   begin
     pattern := TInstallerData(parent).patterns[patternindex];
     if markerlist.IndexOf(LowerCase(pattern)) >= 0 then
       Inc(numberOfPatterndetected);
   end;
-  if numberOfPatterndetected = TInstallerData(parent).patterns.Count then
-    Result := True;
+  for patternindex := 0 to TInstallerData(parent).notpatterns.Count - 1 do
+  begin
+    pattern := TInstallerData(parent).notpatterns[patternindex];
+    if markerlist.IndexOf(LowerCase(pattern)) >= 0 then
+      Inc(numberOfNotpatternDetected);
+  end;
+  if numberOfPatterndetected > 0 then
+  begin
+    LogDatei.log('Found patterns: ' + IntToStr(numberOfPatterndetected) +
+      ' for ' + TInstallerData(parent).Name, LLnotice);
+    if numberOfPatterndetected = installerPatternCount then
+    begin
+      Result := True;
+      LogDatei.log('All patterns found, needed: ' + IntToStr(
+        installerPatternCount), LLnotice);
+      if numberOfNotpatternDetected > 0 then
+      begin
+        Result := False;
+        LogDatei.log('Not patterns (Veto) found: ' + IntToStr(numberOfPatterndetected) +
+          ' for ' + TInstallerData(parent).Name, LLnotice);
+      end;
+    end
+    else
+      LogDatei.log('Not all patterns found, needed: ' + IntToStr(
+        installerPatternCount), LLnotice);
+  end;
 end;
 
 procedure initaktproduct;
 var
   i: integer;
   str: string;
-  //newdep: TPDependency;
-  //defaultIconFullFileName :string;
 begin
   LogDatei.log('Start initaktproduct ... ', LLInfo);
   i := 0;
@@ -2031,14 +2029,7 @@ end;
 function cleanOpsiId(opsiId: string): string; // clean up productId
 begin
   opsiId := LowerCase(opsiId);
-  (*
-  opsiId := StringReplace(opsiId,' '.'_',[frReplaceAll]);
-  opsiId := Stringsreplace(opsiId,[' ','/','\','"','''',':',],
-                                  ['_','_','_','_','_', '_','_',],
-                                  [frReplaceAll]);
-                                  *)
   Result := stringReplaceRegex(opsiId, '[^a-z0-9_-]', '_');
-
   // [^A-Za-z0-9._-]
 end;
 
@@ -2050,6 +2041,9 @@ begin
 
   // marker for add installers
   knownInstallerList := TStringList.Create;
+  knownInstallerList.Add('AdvancedInstaller');
+  knownInstallerList.Add('Install4j');
+  knownInstallerList.Add('PortableApps');
   knownInstallerList.Add('LinRPM');
   knownInstallerList.Add('LinDeb');
   knownInstallerList.Add('MacZip');
@@ -2137,6 +2131,8 @@ begin
     patterns.Add('http://nsis.sf.net/');
     patterns.Add('NSISu_.exe');
     patterns.Add('NSIS Error');
+    notpatterns.Add('portableApps.com');
+    notpatterns.Add('paf.exe');
     link :=
       'http://nsis.sourceforge.net/Docs/Chapter3.html#installerusage';
     comment := '';
@@ -2156,8 +2152,13 @@ begin
     uninstall_waitforprocess := '';
     uninstallProg := '$installdir$\uninstall.exe';
     patterns.Add('InstallShield');
-    patterns.Add(
-      '<description>InstallShield.Setup</description>');
+    // Not always there:
+    infopatterns.Add('<description>InstallShield.Setup</description>');
+    // have to be there
+    patterns.Add('InstallShield Wizard');
+    patterns.Add('Setup Launcher');
+    // only installshieldMSI:
+    notpatterns.Add('transforms');
     link :=
       'https://docs.revenera.com/installshield21helplib/helplibrary/IHelpSetup_EXECmdLine.htm';
     // 'https://www.ibm.com/docs/en/personal-communications/12.0?topic=guide-installshield-command-line-parameters'
@@ -2183,7 +2184,8 @@ begin
     uninstall_waitforprocess := '';
     uninstallProg := '$installdir$\uninstall.exe';
     patterns.Add('nstallshield');
-    patterns.Add('issetup.dll');
+    // pattern 'issetup.dll' seems not to be there always
+    infopatterns.Add('issetup.dll');
     patterns.Add('transforms');
     patterns.Add('msiexec.exe');
     link :=
@@ -2284,6 +2286,7 @@ begin
     install_waitforprocess := '';
     uninstallProg := '';
     patterns.Add('layoutpromptrestartforcerestartnorestartpassivesilentsquietqhelph');
+    notpatterns.Add('Advanced Installer');
     //infopatterns.Add('RunProgram="');
     installErrorHandlingLines.Add(
       'includelog "%opsiLogDir%\"+$ProductId$+".install_log.txt" "50" "utf16le"');
@@ -2308,6 +2311,7 @@ begin
     uninstallProg := '';
     patterns.Add('WixBundle');
     patterns.Add('Wix Toolset');
+    notpatterns.Add('Advanced Installer');
     //infopatterns.Add('RunProgram="');
     installErrorHandlingLines.Add(
       'includelog "%opsiLogDir%\"+$ProductId$+".install_log.txt" "50" "utf16le"');
@@ -2357,6 +2361,7 @@ begin
     patterns.Add('sfxcab.exe');
     //patterns.Add('Wix Toolset');
     //infopatterns.Add('RunProgram="');
+    notpatterns.Add('Advanced Installer');
     installErrorHandlingLines.Add(
       'includelog "%opsiLogDir%\"+$ProductId$+".install_log.txt" "50" "utf16le"');
     link :=
@@ -2502,6 +2507,62 @@ begin
     uib_exitcode_function := 'isGenericExitcodeFatal';
     detected := @detectedbypatternwithand;
   end;
+  with installerArray[integer(stPortableApps)] do
+  begin
+    description := 'PortableApps';
+    silentsetup := '';
+    unattendedsetup := '';
+    silentuninstall := '';
+    unattendeduninstall := '';
+    uninstall_waitforprocess := '';
+    install_waitforprocess := '';
+    uninstallProg := '<none>';
+    patterns.Add('portableApps.com');
+    patterns.Add('paf.exe');
+    link := 'https://portableapps.com/';
+    comment := 'selfextracting Executable. Uncompress with 7zip.';
+    uib_exitcode_function := 'isGenericExitcodeFatal';
+    detected := @detectedbypatternwithand;
+  end;
+  with installerArray[integer(stInstall4J)] do
+  begin
+    description := 'Install4j';
+    silentsetup := '-q -overwrite';
+    unattendedsetup := '-q -overwrite';
+    silentuninstall := '-q';
+    unattendeduninstall := '-q';
+    uninstall_waitforprocess := '';
+    install_waitforprocess := '';
+    uninstallProg := 'uninstall.exe';
+    patterns.Add('install4j');
+    link := 'https://www.ej-technologies.com/resources/install4j/help/doc/help.pdf';
+    comment := 'Installs Java based software';
+    uib_exitcode_function := 'isGenericExitcodeFatal';
+    detected := @detectedbypatternwithand;
+  end;
+  with installerArray[integer(stAdvancedInstaller)] do
+  begin
+    description := 'Advanced Installer';
+    silentsetup := '/exenoui /l* "%opsiLogDir%\$ProductId$.install_log.txt" /qn ALLUSERS=1 REBOOT=ReallySuppress';
+    unattendedsetup := '/exebasicui /l* "%opsiLogDir%\$ProductId$.install_log.txt" /qb-! ALLUSERS=1 REBOOT=ReallySuppress';
+    silentuninstall := '/exenoui /qn REMOVE=all /norestart';
+    unattendeduninstall := '/exebasicui /qb-! REMOVE=all /norestart';
+    uninstall_waitforprocess := '';
+    install_waitforprocess := '';
+    uninstallProg := '<setup-file>';
+    patterns.Add('Advanced Installer');
+    patterns.Add('/exebasicui');
+    patterns.Add('/exenoui');
+    patterns.Add('/extractlzma');
+    patterns.Add('/extract');
+    patterns.Add('/exefullui');
+    patterns.Add('/deletelzma');
+
+    link := 'https://www.advancedinstaller.com/user-guide/exe-setup-file.html';
+    comment := 'Wrapper around MSI (and others).Included files may extracted with /extract';
+    uib_exitcode_function := 'isMsiExitcodeFatal';
+    detected := @detectedbypatternwithand;
+  end;
   // marker for add installers
 
   architectureModeList := TStringList.Create;
@@ -2512,6 +2573,8 @@ begin
   architectureModeList.Add('selectable');
 
   myconfiguration := TConfiguration.Create;
+
+  osdsettings := TOSDSettings.Create;
 
 
   //aktSetupFile := TSetupFile.Create;
@@ -2546,7 +2609,9 @@ begin
   LogDatei.log('Log for: ' + Application.exename + ' opend at : ' +
     DateTimeToStr(now), LLEssential);
   LogDatei.log('opsi-setup-detector Version: ' + myVersion, LLEssential);
+  // we need log level 8 in order to see the strings in the binary in the log file
   LogDatei.LogLevel := 8;
+  //LogDatei.debug_prog:=true;
 
   myconfiguration.readconfig;
   LogDatei.log('Finished initialize basedata ', LLInfo);

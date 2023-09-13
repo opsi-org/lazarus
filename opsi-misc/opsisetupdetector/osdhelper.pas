@@ -14,7 +14,8 @@ uses
   Classes,
   Process,
   SysUtils,
-  osparserhelper;
+  osparserhelper,
+  fileutil;
 
 {$IFDEF WINDOWS}
 procedure registerForWinExplorer(doregister: boolean);
@@ -25,11 +26,18 @@ function RunCommandAndCaptureOut
   var report: string; showcmd: integer; var ExitCode: longint): boolean;
 function grepexe(instring: string): string;
 function CompareDotSeparatedNumbers(s1, s2, s3: string): boolean;
+function detect_opb_path(path: string): string;
 
 implementation
 
+{$IFDEF OSDGUI}
 uses
-  osdform;
+  osdform,
+  osdmain;
+{$ELSE OSDGUI}
+uses
+  osdmain;
+{$ENDIF OSDGUI}
 
 {$IFDEF WINDOWS}
 procedure registerForWinExplorer(doregister: boolean);
@@ -38,7 +46,6 @@ var
   IsAdmin: boolean; //for testing
 begin
   myreg := TRegistry.Create(KEY_ALL_ACCESS);
-  //myreg.RootKey := HKEY_CURRENT_USER;
   myreg.RootKey := HKEY_CLASSES_ROOT;
   //remove old registration
   myreg.DeleteKey('Software\Classes\*\shell\opsi setup detector\Command');
@@ -93,20 +100,13 @@ begin
     begin
       if SHGetPathFromIDList(csidl, namebuf) then
         Result := StrPas(namebuf);
-      // Freecsidl(csidl);
     end;
   end
   else
-    //Fix:
-    // if assigned(SHGetFolderPath) and ((csidlvalue = CSIDL_APPDATA) or
-    //   (csidlvalue = CSIDL_PERSONAL)) then
   begin
     if SUCCEEDED(SHGetFolderPath(0, csidlValue, 0, 0, namebuf)) then
       Result := StrPas(namebuf);
   end;
-  //debugmessages.Add('getSpecialFolder: '+inttostr(csidlValue)+' -> ' + result);
-  //if Assigned(LogDatei) then
-  //LogDatei.DependentAdd('getSpecialFolder: '+inttostr(csidlValue)+' -> ' + result, LLDebug2);
 end;
 
 {$ENDIF WINDOWS}
@@ -125,9 +125,7 @@ begin
     (0 < pos('wixquery', lowerstring)) or
     (0 < pos('product_build_number{', lowerstring)) or
     (0 < pos('productcode{', lowerstring)) or (0 < pos('msiexec', lowerstring)) or
-    (0 < pos('extract', lowerstring)) or
-    // (0 < pos('setup', lowerstring)) or
-    (0 < pos('installer', lowerstring)) then
+    (0 < pos('extract', lowerstring)) or (0 < pos('installer', lowerstring)) then
     Result := instring;
 end;
 
@@ -139,7 +137,6 @@ const
   ReadBufferSize = 2048;
 
 var
-  //myStringlist : TStringlist;
   S: TStringList;
   M: TMemoryStream;
   FpcProcess: TProcess;
@@ -158,7 +155,6 @@ begin
       FpcProcess.Options := [poUsePipes, poStderrToOutput];
       FpcProcess.ShowWindow := swoMinimize;
       FpcProcess.Execute;
-      //mywrite('RunCommandAndCaptureOut: started: ' + cmd);
       while FpcProcess.Running do
       begin
         // stellt sicher, dass wir Platz haben
@@ -168,18 +164,14 @@ begin
         if FpcProcess.Output.NumBytesAvailable > 0 then
         begin
           n := FpcProcess.Output.Read((M.Memory + BytesRead)^, ReadBufferSize);
-          //mywrite('RunCommandAndCaptureOut: read: ' + IntToStr(n) + ' bytes');
           if n > 0 then
           begin
             Inc(BytesRead, n);
-            //mywrite('RunCommandAndCaptureOut: read: ' + IntToStr(n) + ' bytes');
-            //Write('.')
           end;
         end
         else
         begin
           // keine Daten, warte 100 ms
-          //mywrite('RunCommandAndCaptureOut: no data - waiting....');
           Sleep(100);
         end;
       end;
@@ -194,32 +186,23 @@ begin
           if n > 0 then
           begin
             Inc(BytesRead, n);
-            //mywrite('RunCommandAndCaptureOut: read: ' + IntToStr(n) + ' bytes');
-            //Write('.');
           end;
         end
         else
           n := 0;
       until n <= 0;
-      //if BytesRead > 0 then WriteLn;
       M.SetSize(BytesRead);
-      //mywrite('RunCommandAndCaptureOut: -- executed --');
-      //WriteLn('-- executed --');
 
       S := TStringList.Create;
       S.LoadFromStream(M);
-      //mywrite('RunCommandAndCaptureOut: -- linecount = ' + IntToStr(S.Count));
-      //WriteLn('-- linecount = ', S.Count, ' --');
       for n := 0 to S.Count - 1 do
       begin
-        //WriteLn('| ', S[n]);
         outlines.Add(S[n]);
       end;
-      //WriteLn('-- end --');
     except
       on e: Exception do
       begin
-        Mywrite('Exception in RunCommandAndCaptureOut: ' + e.message);
+        write_log_and_memo('Exception in RunCommandAndCaptureOut: ' + e.message);
         Result := False;
       end;
     end;
@@ -336,9 +319,6 @@ var
   string1: string;
   string2: string;
 
-  ///partCompareResult : Integer;
-  ///isEqual : Boolean;
-
 begin
 
   Result := True;
@@ -445,7 +425,7 @@ end;
 
 function CompareDotSeparatedNumbers(s1, s2, s3: string): boolean;
 var
-  BooleanResult: boolean;
+  BooleanResult: boolean = False;
   intresult: integer;
   sx: string;
 begin
@@ -496,5 +476,53 @@ begin
   Result := BooleanResult;
 end;
 
+function detect_opb_path(path: string): string;
+const
+  {$IFDEF WINDOWS}
+  TARGETBIN = 'opsipackagebuilder.exe';
+  {$ELSE WINDOWS}
+  TARGETBIN = 'opsipackagebuilder';
+
+  {$ENDIF WINDOWS}
+
+
+  function opb_path_ok(path: string): boolean;
+  begin
+    Result := False;
+    if FileExists(path) then
+      if ExtractFileName(path) = TARGETBIN then
+        Result := True;
+  end;
+
+begin
+  // by default empty
+  Result := '';
+  // check given path
+  if opb_path_ok(path) then Result := path
+  else
+  begin
+    // try to find in search path
+    { Using FindDefaultExecutablePath from fileutil }
+    path := FindDefaultExecutablePath(TARGETBIN);
+    if opb_path_ok(path) then Result := path
+    else
+    begin
+      // try to find in oPB default path
+      {$IFDEF WINDOWS}
+      path := 'C:\Program Files (x86)\opsi PackageBuilderNG\' + TARGETBIN;
+      {$ENDIF WINDOWS}
+
+      {$IFDEF LINUX}
+      path := '/usr/bin/' + TARGETBIN;
+      {$ENDIF LINUX}
+
+      {$IFDEF DARWIN}
+      path := '/Applications/opsiPackageBuilder.app/Contents/MacOS/' + TARGETBIN;
+      {$ENDIF DARWIN}
+
+      if opb_path_ok(path) then Result := path;
+    end;
+  end;
+end;
 
 end.

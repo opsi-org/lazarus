@@ -25,9 +25,8 @@ uses
   oslog,
   osdbasedata,
   oscheckbinarybitness,
-   masks,
+  masks,
   osparserhelper;
-
 
 function getPacketIDfromFilename(str: string): string;
 function getPacketIDShort(str: string): string;
@@ -41,8 +40,14 @@ function analyze_binary(myfilename: string; verbose, skipzero: boolean;
 
 implementation
 
+{$IFDEF OSDGUI}
 uses
-  osdform;
+  osdform,
+  osdmain;
+{$ELSE OSDGUI}
+uses
+  osdmain;
+{$ENDIF OSDGUI}
 
 function getPacketIDfromFilename(str: string): string;
 var
@@ -166,7 +171,7 @@ procedure grepmsi(instring: string);
 begin
   if (0 < pos('product_build_number{', lowercase(instring))) or
     (0 < pos('productcode{', lowercase(instring))) then
-    mywrite(instring);
+    write_log_and_memo(instring);
 end;
 
 function grepinstr(instring: string; searchstr: string): string;
@@ -212,7 +217,7 @@ begin
     begin
       LogDatei.log('Exception in analyze_markerlist', LLcritical);
       LogDatei.log('Error: Message: ' + E.message, LLcritical);
-      system.ExitCode:=1;
+      system.ExitCode := 1;
     end;
   end;
 end;
@@ -228,20 +233,36 @@ var
   var mysetup: TSetupFile);
   var
     i: integer;
-    aktpattern : string;
+    aktpattern: string;
   begin
     for i := 0 to installerArray[integer(instId)].patterns.Count - 1 do
     begin
-      //LogDatei.log('check: ' + line + ' for: ' + installerToInstallerstr(instId), LLDebug2);
       aktpattern := LowerCase(installerArray[integer(instId)].patterns[i]);
-      //if aktpattern = 'bitrock-lzma' then
-      //  LogDatei.log('check: ' + line + ' for: ' + installerToInstallerstr(instId), LLNotice);
       if 0 <> pos(aktpattern, line) then
       begin
-        //aktProduct.markerlist.add(installerArray[integer(instId)].Name + IntToStr(i));
         mysetup.markerlist.add(installerArray[integer(instId)].patterns[i]);
         LogDatei.log('For: ' + installerToInstallerstr(instId) +
           ' found: ' + LowerCase(installerArray[integer(instId)].patterns[i]), LLNotice);
+      end;
+    end;
+    for i := 0 to installerArray[integer(instId)].infopatterns.Count - 1 do
+    begin
+      aktpattern := LowerCase(installerArray[integer(instId)].infopatterns[i]);
+      if 0 <> pos(aktpattern, line) then
+      begin
+        mysetup.markerlist.add(installerArray[integer(instId)].infopatterns[i]);
+        LogDatei.log('Infolevel for: ' + installerToInstallerstr(instId) +
+          ' found: ' + LowerCase(installerArray[integer(instId)].infopatterns[i]), LLNotice);
+      end;
+    end;
+    for i := 0 to installerArray[integer(instId)].notpatterns.Count - 1 do
+    begin
+      aktpattern := LowerCase(installerArray[integer(instId)].notpatterns[i]);
+      if 0 <> pos(aktpattern, line) then
+      begin
+        mysetup.markerlist.add(installerArray[integer(instId)].notpatterns[i]);
+        LogDatei.log('Against: ' + installerToInstallerstr(instId) +
+          ' found: ' + LowerCase(installerArray[integer(instId)].notpatterns[i]), LLNotice);
       end;
     end;
   end;
@@ -253,10 +274,8 @@ var
   begin
     for i := 0 to installerArray[integer(instId)].infopatterns.Count - 1 do
     begin
-      //LogDatei.log('check: ' + line + ' for: ' + installerToInstallerstr(instId), LLDebug2);
       if 0 <> pos(LowerCase(installerArray[integer(instId)].infopatterns[i]), line) then
       begin
-        //aktProduct.markerlist.add(installerArray[integer(instId)].Name + IntToStr(i));
         mysetup.infolist.add(line);
         LogDatei.log('For: ' + installerToInstallerstr(instId) +
           ' found info: ' + line, LLinfo);
@@ -293,7 +312,7 @@ var
   msg: string;
   setuptype: TKnownInstaller;
   progress, lastprogress: int64;
-  fileextension : string;
+  fileextension: string;
 
 begin
   MinLen := 5;
@@ -302,8 +321,8 @@ begin
   setupType := stUnknown;
   Result := stUnknown;
 
-  mywrite('------------------------------------');
-  Mywrite('Analyzing: ' + myfilename);
+  write_log_and_memo('------------------------------------');
+  write_log_and_memo('Analyzing: ' + myfilename);
   msg := 'stringsgrep started (verbose:';
   if verbose = True then
     msg := msg + 'true'
@@ -315,7 +334,7 @@ begin
   else
     msg := msg + 'false';
   msg := msg + ')';
-  mywrite(msg);
+  write_log_and_memo(msg);
   FileStream := TFileStream.Create(myfilename, fmOpenRead);
   try
     {$IFDEF OSDGUI}
@@ -362,7 +381,7 @@ begin
           fileextension := lowercase(ExtractFileExt(myfilename));
 
           //if MatchesMaskList(myfilename,'.exe;.bin;.sh; .run') then
-          if not ('.msi' = fileextension)  then
+          if not ('.msi' = fileextension) then
           begin
             if verbose then
             begin
@@ -404,8 +423,8 @@ begin
     else
       msg := msg + 'false';
     msg := msg + ')';
-    mywrite(msg);
-    mywrite('------------------------------------');
+    write_log_and_memo(msg);
+    write_log_and_memo('------------------------------------');
   finally
     FileStream.Free;
   end;
@@ -414,4 +433,3 @@ end;
 
 
 end.
-
