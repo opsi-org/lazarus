@@ -139,7 +139,7 @@ type
     LabelWinstVersion: TLabel;
     Label6: TLabel;
     Panel4: TPanel;
-    Edit2: TEdit;
+    Edit_LogFile: TEdit;
     Label4: TLabel;
     SpeedButton3: TSpeedButton;
     Button_show_gui: TSpeedButton;
@@ -258,6 +258,7 @@ resourcestring
   rsErrorLoadingLogViewer = 'An error occured while loading opsi-logviewer';
   rsErrorFindingLogViewer =
     'Please install the opsi-logviewer product. opsi-logviewer is not installed in ';
+  rsLogFileNotExists = 'No log file exists. Please run the script to create a log file in path ';
 
 implementation
 
@@ -712,7 +713,7 @@ begin
     Skriptdatei := Edit1.Text;
 
 
-  LogDateiName := Edit2.Text;
+  LogDateiName := Edit_LogFile.Text;
   Memo1.Lines.Clear;
   CentralForm.Refresh;
 
@@ -769,11 +770,11 @@ begin
 
   try
     {$IFDEF WINDOWS}
-    writeLogFileOptions(WinstRegHive, Edit2.Text);
+    writeLogFileOptions(WinstRegHive, Edit_LogFile.Text);
 {$ENDIF}
   except
      { try
-      writeLogFileOptions ('HKCU', Edit2.Text)
+      writeLogFileOptions ('HKCU', Edit_LogFile.Text)
     except
     end; }
   end;
@@ -834,7 +835,7 @@ begin
     Skriptdatei := Edit1.Text;
 
 
-  LogDateiName := Edit2.Text;
+  LogDateiName := Edit_LogFile.Text;
   Memo1.Lines.Clear;
   CentralForm.Refresh;
 
@@ -881,7 +882,7 @@ var
 begin
   Skriptdatei := '';
 
-  LogDateiName := Edit2.Text;
+  LogDateiName := Edit_LogFile.Text;
   LogDatei.StandardPartLogPath := ExtractFileDir(Logdateiname);
   if RadioButtonNewLogFile.Checked then
   begin
@@ -1082,47 +1083,45 @@ procedure TCentralForm.BitBtnViewLogfileClick(Sender: TObject);
 var
   ErrorMessage: string;
   PathOpsiLogViewer: string;
+  Params: string;
 begin
-  {$IFDEF WIN32}
-  (*
-  ShowTextFile.lzRichEdit1.Clear;
-  //ShowTextFile.RichEdit1.Clear;
-  ShowTextFile.Visible := True;
-  if FileExists(LogDateiName) then
+  if FileExists(Edit_Logfile.Text) then
   begin
-    ShowTextFile.reloadfromfile;
-    ShowTextFile.setcolor;
-  end;
-  {$IFDEF WINDOWS}ShowWindow(ShowTextFile.handle, SW_RESTORE);{$ENDIF}
-  *)
-  {$ENDIF WIN32}
-  {$IFDEF WINDOWS}
-  PathOpsiLogViewer :=
-    'C:\Program Files (x86)\opsi.org\opsi-logviewer\opsi-logviewer.exe';
-  {$ENDIF WINDOWS}
-  {$IFDEF LINUX}
-  PathOpsiLogViewer := '/usr/share/opsi-logviewer/logviewer'; // '/usr/bin/logviewer'
-  {$ENDIF LINUX}
-  {$IFDEF DARWIN}
-  //PathOpsiLogViewer := '/Applications/opsi-logviewer.app/Contents/MacOS/opsi-logviewer';
-  ShowMessage('Logview is temporary not working. Please use the opsi-logviewer product.');
-  {$ELSE}
-  if FileExists(PathOpsiLogViewer) then
-  begin
-    if ExecuteProcess(PathOpsiLogViewer, Edit2.Text) <> 0 then
+    {$IFDEF WINDOWS}
+    PathOpsiLogViewer :=
+      'C:\Program Files (x86)\opsi.org\configed\opsi-logviewer.exe';
+    Params := Edit_LogFile.Text;
+    {$ENDIF WINDOWS}
+    {$IFDEF LINUX}
+    PathOpsiLogViewer := '/usr/share/opsi-configed/java/jre/bin/java';
+    Params := '-jar "/usr/share/opsi-configed/configed.jar" --logviewer ' + Edit_LogFile.Text;
+    {$ENDIF LINUX}
+    {$IFDEF DARWIN}
+    PathOpsiLogViewer := '/Applications/opsi-logviewer.app/Contents/MacOS/opsi-logviewer';
+    Params := Edit_LogFile.Text;
+    {$ENDIF DARWIN}
+    if FileExists(PathOpsiLogViewer) then
     begin
-      ErrorMessage := rsErrorLoadingLogViewer;
+      if ExecuteProcess(PathOpsiLogViewer, Params) <> 0 then
+      begin
+        ErrorMessage := rsErrorLoadingLogViewer + ' with parameter(s): ' + Params;
+        LogDatei.log(ErrorMessage, LLInfo);
+        ShowMessage(ErrorMessage);
+      end;
+    end
+    else
+    begin
+      ErrorMessage := rsErrorFindingLogViewer + PathOpsiLogViewer;
       LogDatei.log(ErrorMessage, LLInfo);
       ShowMessage(ErrorMessage);
     end;
   end
   else
-  begin
-    ErrorMessage := rsErrorFindingLogViewer + PathOpsiLogViewer;
-    LogDatei.log(ErrorMessage, LLInfo);
-    ShowMessage(ErrorMessage);
-  end;
-  {$ENDIF DARWIN}
+    begin
+      ErrorMessage := rsLogFileNotExists + Edit_LogFile.Text;
+      LogDatei.log(ErrorMessage, LLInfo);
+      ShowMessage(ErrorMessage);
+    end;
 end;
 
 

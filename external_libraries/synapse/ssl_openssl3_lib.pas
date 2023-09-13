@@ -1535,24 +1535,6 @@ begin
   {$IFDEF SSLPATH}
   DLLSSLName := GetSSLPath(DLLSSLName);
   DLLUtilName := GetSSLPath(DLLUtilName);
-	(*  
-    {$IFDEF WIN32}
-      DLLSSLName := GetSSLPath('libssl-1_1.dll');
-      DLLUtilName := GetSSLPath('libcrypto-1_1.dll');
-    {$ENDIF WIN32}
-    {$IFDEF WIN64}
-      DLLSSLName := GetSSLPath('libssl-1_1-x64.dll');
-      DLLUtilName := GetSSLPath('libcrypto-1_1-x64.dll');
-    {$ENDIF WIN64}
-    {$IFDEF LINUX}
-      DLLSSLName := GetSSLPath('libssl.so');
-      DLLUtilName := GetSSLPath('libcrypto.so'); ;
-    {$ENDIF LINUX}
-    {$IFDEF DARWIN}
-      DLLSSLName := GetSSLPath('libssl.dylib');
-      DLLUtilName := GetSSLPath('libcrypto.dylib');;
-    {$ENDIF DARWIN}
-	*)
   {$ENDIF SSLPATH}
 end;
 initialization

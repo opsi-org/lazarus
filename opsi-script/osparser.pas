@@ -747,8 +747,8 @@ resourcestring
   rsGetServiceUrl = 'Please enter opsi service URL:';
   rsGetUserName = 'Please enter opsi service user name:';
   rsGetPassword = 'Please enter opsi service user password:';
-  rsReadyToContinue = 'Ready to continue ?';
-  rsAbortProgram = 'Abort program ?';
+  rsReadyToContinue = 'Ready to continue?';
+  rsAbortProgram = 'Abort program?';
 
 
 implementation
@@ -26890,8 +26890,8 @@ begin
 
     if opsidata <> nil then
     begin
-      LogDatei.log('opsi service version : ' + opsidata.getOpsiServiceVersion,
-        LLessential);
+      LogDatei.log('opsi service version : ' + opsidata.getOpsiServiceVersion
+                    + ' ('+opsidata.getOpsiVersion+')', LLessential);
       //Logdatei.log('Setup script name: '+opsidata.getProductScriptPath(tacSetup), LLessential);
     end;
 
