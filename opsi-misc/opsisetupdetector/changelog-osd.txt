@@ -126,6 +126,12 @@ todo:
 
 # Changelog opsi-setup-detector
 
+## [4.3.0.0-1] - 2023-09-06
+
+### Changed
+- Changed all opsi icons to 4.3 style (Detlef Oertel <d.oertel@uib.de> 2023-09-26)
+
+
 ## [4.2.2.4-1] - 2023-09-06
 
 ### Fixed
