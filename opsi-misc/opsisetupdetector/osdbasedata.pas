@@ -92,7 +92,8 @@ type
     amSelectable);
 
   // marker for add installers
-  TKnownInstaller = (stAdvancedInstaller, stInstall4J, stPortableApps, stLinRPM, stLinDeb,
+  TKnownInstaller = (stAdvancedInstaller, stInstall4J, stPortableApps,
+    stLinRPM, stLinDeb,
     stMacZip, stMacDmg, stMacPKG, stMacApp,
     stSFXcab, stBoxStub, stAdvancedMSI, stInstallShield,
     stInstallShieldMSI,
@@ -111,9 +112,12 @@ type
     installerId: TKnownInstaller;
     Name: string;
     description: string;
-    patterns: TStringList;         // pattern that indicates this installer type (has to be there)
-    infopatterns: TStringList;     // pattern that indicates a chance for this installer type (not always there)
-    notpatterns: TStringList;      // pattern that indicates it is not this installer type (veto)
+    patterns: TStringList;
+    // pattern that indicates this installer type (has to be there)
+    infopatterns: TStringList;
+    // pattern that indicates a chance for this installer type (not always there)
+    notpatterns: TStringList;
+    // pattern that indicates it is not this installer type (veto)
     silentsetup: string;           // cli parameters for (really) silent setup
     unattendedsetup: string;       // cli parameters for unattended setup
     silentuninstall: string;       // cli parameters for (really) silent uninstall
@@ -126,6 +130,9 @@ type
     uib_exitcode_function: string;
     detected: TdetectInstaller;
     installErrorHandlingLines: TStringList;
+    info_message_html: TStringList;  // Important Information about this Installer.
+    // Displayed after detection
+    // formatted in markdown
     { public declarations }
     constructor Create;
     destructor Destroy;
@@ -745,6 +752,7 @@ begin
   infopatterns := TStringList.Create;
   notpatterns := TStringList.Create;
   installErrorHandlingLines := TStringList.Create;
+  info_message_html := TStringList.Create;
   inherited;
 end;
 
@@ -754,6 +762,7 @@ begin
   FreeAndNil(infopatterns);
   FreeAndNil(notpatterns);
   FreeAndNil(installErrorHandlingLines);
+  FreeAndNil(info_message_html);
   inherited;
 end;
 
@@ -2160,7 +2169,8 @@ begin
     // only installshieldMSI:
     notpatterns.Add('transforms');
     link :=
-      'https://docs.revenera.com/installshield21helplib/helplibrary/IHelpSetup_EXECmdLine.htm';
+      'https://docs.revenera.com/installshield/helplibrary/IHelpSetup_EXECmdLine.htm';
+    // outdated  'https://docs.revenera.com/installshield21helplib/helplibrary/IHelpSetup_EXECmdLine.htm';
     // 'https://www.ibm.com/docs/en/personal-communications/12.0?topic=guide-installshield-command-line-parameters'
     // 'https://www.itninja.com/static/090770319967727eb89b428d77dcac07.pdf'
     // broken: 'http://helpnet.flexerasoftware.com/installshield19helplib/helplibrary/IHelpSetup_EXECmdLine.htm';
@@ -2189,10 +2199,31 @@ begin
     patterns.Add('transforms');
     patterns.Add('msiexec.exe');
     link :=
-      'http://helpnet.flexerasoftware.com/installshield19helplib/helplibrary/IHelpSetup_EXECmdLine.htm';
+      'https://docs.revenera.com/installshield/helplibrary/IHelpSetup_EXECmdLine.htm';
     comment := '';
     uib_exitcode_function := 'isInstallshieldExitcodeFatal';
     detected := @detectedbypatternwithAnd;
+    info_message_html.Text :=
+      'This is a Installshield Installer.' + LineEnding + 'So it will be perhaps complicated -' +
+      LineEnding + 'because:' + LineEnding + '' + LineEnding + '1. Installshield exists since 1993.' +
+      LineEnding + 'Over the time some command line parameter have changed' +
+      LineEnding + 'and we could not detect the version of the Installshield that was used.' +
+      LineEnding + '' + LineEnding + '2. Installshield may create two different kinds of Installer:' +
+      LineEnding + 'A kind of classic setup and a kind setup as wrapper around msi.' +
+      LineEnding + 'We could not detect for sure, which kind of installer we have.' +
+      LineEnding + '' + LineEnding + '3. Installshield is flexible.' + LineEnding +
+      'So in fact, the developer may have changed the command line parameter to a totally different style.'
+      +
+      LineEnding + '' + LineEnding + 'If you have a MSI-Wrapper then we have as cli parameter:' +
+      LineEnding + 'silent:' + LineEnding + '/s /v" /qn ALLUSERS=1 REBOOT=ReallySuppress"' +
+      LineEnding + 'unattended:' + LineEnding + '/s /v"/qb-! ALLUSERS=1 REBOOT=ReallySuppress"' +
+      LineEnding + '' + LineEnding + 'If you have a classic setup then we have as cli parameter just:'
+      +
+      LineEnding + 'silent:' + LineEnding + '/s' + LineEnding + '' + LineEnding +
+      'If you have a classic setup that is very old (last century or near by), then you perhaps have to add the parameter:'
+      +
+      LineEnding + '/sms';
+
   end;
   // MSI
   with installerArray[integer(stMSI)] do
@@ -2543,8 +2574,10 @@ begin
   with installerArray[integer(stAdvancedInstaller)] do
   begin
     description := 'Advanced Installer';
-    silentsetup := '/exenoui /l* "%opsiLogDir%\$ProductId$.install_log.txt" /qn ALLUSERS=1 REBOOT=ReallySuppress';
-    unattendedsetup := '/exebasicui /l* "%opsiLogDir%\$ProductId$.install_log.txt" /qb-! ALLUSERS=1 REBOOT=ReallySuppress';
+    silentsetup :=
+      '/exenoui /l* "%opsiLogDir%\$ProductId$.install_log.txt" /qn ALLUSERS=1 REBOOT=ReallySuppress';
+    unattendedsetup :=
+      '/exebasicui /l* "%opsiLogDir%\$ProductId$.install_log.txt" /qb-! ALLUSERS=1 REBOOT=ReallySuppress';
     silentuninstall := '/exenoui /qn REMOVE=all /norestart';
     unattendeduninstall := '/exebasicui /qb-! REMOVE=all /norestart';
     uninstall_waitforprocess := '';

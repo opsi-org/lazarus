@@ -126,6 +126,16 @@ todo:
 
 # Changelog opsi-setup-detector
 
+## [4.3.0.1-1] - 2023-09-28
+
+### Fixed
+- fix : utils\extractMSI.cmd: call setup with language parameter to avoid language dialog
+  using language english -L0x0409 (Detlef Oertel <d.oertel@uib.de> 2023-09-28)
+
+### Added
+- Info Message window for some of the detected installers with additional 'need to know' infos.
+(Detlef Oertel <d.oertel@uib.de> 2023-09-28)
+
 ## [4.3.0.0-1] - 2023-09-06
 
 ### Changed
