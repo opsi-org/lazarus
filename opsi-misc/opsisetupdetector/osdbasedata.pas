@@ -92,7 +92,7 @@ type
     amSelectable);
 
   // marker for add installers
-  TKnownInstaller = (stAdvancedInstaller, stInstall4J, stPortableApps,
+  TKnownInstaller = (stInstallAnywhere, stAdvancedInstaller, stInstall4J, stPortableApps,
     stLinRPM, stLinDeb,
     stMacZip, stMacDmg, stMacPKG, stMacApp,
     stSFXcab, stBoxStub, stAdvancedMSI, stInstallShield,
@@ -2050,6 +2050,7 @@ begin
 
   // marker for add installers
   knownInstallerList := TStringList.Create;
+  knownInstallerList.Add('InstallAnywhere');
   knownInstallerList.Add('AdvancedInstaller');
   knownInstallerList.Add('Install4j');
   knownInstallerList.Add('PortableApps');
@@ -2204,25 +2205,29 @@ begin
     uib_exitcode_function := 'isInstallshieldExitcodeFatal';
     detected := @detectedbypatternwithAnd;
     info_message_html.Text :=
-      'This is a Installshield Installer.' + LineEnding + 'So it will be perhaps complicated -' +
-      LineEnding + 'because:' + LineEnding + '' + LineEnding + '1. Installshield exists since 1993.' +
+      'This is a Installshield Installer.' + LineEnding +
+      'So it will be perhaps complicated -' + LineEnding + 'because:' +
+      LineEnding + '' + LineEnding + '1. Installshield exists since 1993.' +
       LineEnding + 'Over the time some command line parameter have changed' +
-      LineEnding + 'and we could not detect the version of the Installshield that was used.' +
-      LineEnding + '' + LineEnding + '2. Installshield may create two different kinds of Installer:' +
+      LineEnding + 'and we could not detect the version of the Installshield that was used.'
+      + LineEnding + '' + LineEnding +
+      '2. Installshield may create two different kinds of Installer:' +
       LineEnding + 'A kind of classic setup and a kind setup as wrapper around msi.' +
       LineEnding + 'We could not detect for sure, which kind of installer we have.' +
-      LineEnding + '' + LineEnding + '3. Installshield is flexible.' + LineEnding +
+      LineEnding + '' + LineEnding + '3. Installshield is flexible.' +
+      LineEnding +
       'So in fact, the developer may have changed the command line parameter to a totally different style.'
-      +
-      LineEnding + '' + LineEnding + 'If you have a MSI-Wrapper then we have as cli parameter:' +
-      LineEnding + 'silent:' + LineEnding + '/s /v" /qn ALLUSERS=1 REBOOT=ReallySuppress"' +
-      LineEnding + 'unattended:' + LineEnding + '/s /v"/qb-! ALLUSERS=1 REBOOT=ReallySuppress"' +
-      LineEnding + '' + LineEnding + 'If you have a classic setup then we have as cli parameter just:'
-      +
-      LineEnding + 'silent:' + LineEnding + '/s' + LineEnding + '' + LineEnding +
+      + LineEnding + '' + LineEnding +
+      'If you have a MSI-Wrapper then we have as cli parameter:' +
+      LineEnding + 'silent:' + LineEnding +
+      '/s /v" /qn ALLUSERS=1 REBOOT=ReallySuppress"' + LineEnding +
+      'unattended:' + LineEnding + '/s /v"/qb-! ALLUSERS=1 REBOOT=ReallySuppress"' +
+      LineEnding + '' + LineEnding +
+      'If you have a classic setup then we have as cli parameter just:' +
+      LineEnding + 'silent:' + LineEnding + '/s' + LineEnding + '' +
+      LineEnding +
       'If you have a classic setup that is very old (last century or near by), then you perhaps have to add the parameter:'
-      +
-      LineEnding + '/sms';
+      + LineEnding + '/sms';
 
   end;
   // MSI
@@ -2595,6 +2600,34 @@ begin
     comment := 'Wrapper around MSI (and others).Included files may extracted with /extract';
     uib_exitcode_function := 'isMsiExitcodeFatal';
     detected := @detectedbypatternwithand;
+  end;
+  with installerArray[integer(stInstallAnywhere)] do
+  begin
+    description := 'InstallAnywhere';
+    silentsetup := '-i silent';
+    unattendedsetup := '-i silent';
+    silentuninstall := '-i silent';
+    unattendeduninstall := '-i silent';
+    uninstall_waitforprocess := '';
+    install_waitforprocess := '';
+    uninstallProg := '$Installdir$\Uninstall\Uninstall.exe';
+    patterns.Add('InstallAnywhere');
+    patterns.Add('InstallAnywhere.Setup');
+
+    link :=
+      'https://docs.revenera.com/installanywhere2021/Content/helplibrary/ia_ref_command_line_install_uninstall.htm';
+    comment := 'Multi-Platform Installers';
+    uib_exitcode_function := 'isGenericExitcodeFatal';
+    detected := @detectedbypatternwithand;
+    info_message_html.Text :=
+      'This is a InstallAnywhere Installer.' +
+      LineEnding + 'If the parameter "-i silent" does not work, try the following:' +
+      LineEnding + 'Run the installer interactive with the -r switch followed by' +
+      LineEnding + 'the path and file name of the response file you want to generate. For example:'
+      + LineEnding + 'setup.exe -r "./response.txt"' +
+      LineEnding + 'You have to add to top of the generated response file the line:' +
+      LineEnding + '"INSTALLER_UI=silent"' + LineEnding + 'Then run silent by calling:' +
+      LineEnding + 'setup.exe -f "./response.txt"' + LineEnding;
   end;
   // marker for add installers
 

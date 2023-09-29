@@ -112,6 +112,14 @@ stWixToolset,
   * marker: 'Advanced Installer'
   * marker: '/extractlzma/help/extract/exebasicui/exefullui/deletelzma/exenoui'
 
+* InstallAnywhere
+  * https://www.revenera.de/install/products/installanywhere
+  * command line options: https://docs.revenera.com/installanywhere2021/Content/helplibrary/ia_ref_command_line_install_uninstall.htm
+  * https://docs.revenera.com/installanywhere2021/Content/helplibrary/ia_using_command_line_arguments.htm#advanced_solutions_2317019866_1071496
+  * exitcodes: https://docs.revenera.com/installanywhere2021/Content/helplibrary/ia_ts_exit_codes_install.htm#advanced_solutions_2317019866_1081220
+  * example: https://www.ibm.com/docs/en/icos/20.1.0?topic=2010-silent-installation-cplex-optimization-studio
+
+
 
 Uebersicht:
 http://www.fredshack.com/docs/packagers.html
@@ -126,7 +134,7 @@ todo:
 
 # Changelog opsi-setup-detector
 
-## [4.3.0.1-1] - 2023-09-28
+## [4.3.1.0-1] - 2023-09-28
 
 ### Fixed
 - fix : utils\extractMSI.cmd: call setup with language parameter to avoid language dialog
@@ -135,6 +143,10 @@ todo:
 ### Added
 - Info Message window for some of the detected installers with additional 'need to know' infos.
 (Detlef Oertel <d.oertel@uib.de> 2023-09-28)
+
+- new installer type : InstallAnywhere
+  * https://www.revenera.de/install/products/installanywhere
+
 
 ## [4.3.0.0-1] - 2023-09-06
 
