@@ -30,6 +30,7 @@ stWixToolset,
 * QT Installer Framework (Avidemux 4.7.3, msys2)
   * https://chocolatey.org/packages/msys2-installer
   * https://doc.qt.io/qtinstallerframework/
+
 * National Instruments installer
   ** Labview32 in phywe/measure-ct
   ** ;https://knowledge.ni.com/KnowledgeArticleDetails?id=kA00Z0000019Ld6SAE&l=de-DE
@@ -77,6 +78,11 @@ stWixToolset,
   * https://github.com/squirrel/squirrel.windows
   * see also: https://www.nuget.org/
   * see also: https://de.wikipedia.org/wiki/NuGet
+
+* nuget
+  * https://www.nuget.org/
+  * https://www.nuget.org/packages/7-Zip.x64
+  * https://www.nuget.org/api/v2/package/7-Zip.x64/16.2.1
 
 * SAP front-end installer self-extractor tool
   * beispiel sap-analysis-for-office
@@ -139,9 +145,11 @@ todo:
 ### Fixed
 - fix : utils\extractMSI.cmd: call setup with language parameter to avoid language dialog
   using language english -L0x0409 (Detlef Oertel <d.oertel@uib.de> 2023-09-28)
+- fix some installer exitcode function to 'isMsiExitcodeFatal_short' (Detlef Oertel <d.oertel@uib.de> 2023-10-02)
 
 ### Added
 - Info Message window for some of the detected installers with additional 'need to know' infos.
+  rsInstallerInfo_Installshield, rsInstallerInfo_InstallAnywhere, rsInstallerInfo_PortableApps
 (Detlef Oertel <d.oertel@uib.de> 2023-09-28)
 
 - new installer type : InstallAnywhere

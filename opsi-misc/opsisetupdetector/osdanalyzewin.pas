@@ -28,6 +28,7 @@ uses
   osdbasedata,
   osdanalyzegeneral,
   oscheckbinarybitness,
+  osmessagedialog,
   Controls;
 
 procedure get_aktProduct_general_info_win(installerId: TKnownInstaller;
@@ -1183,6 +1184,9 @@ begin
   begin
     {$IFDEF OSDGUI}
     resultform1.BtAnalyzeNextStepClick(nil);
+    tmpstr := installerArray[integer(setupType)].info_message_html.Text;
+    if tmpstr <> '' then
+      MyMessageDlg.wiMessageSized(tmpstr,[mrOk], 950, 740);
     {$ENDIF OSDGUI}
   end;
 end;

@@ -670,6 +670,47 @@ resourcestring
     'Allow dependencies for all action request ?. ' + LineEnding +
     'If true, you need opsi 4.3 (or up) ' + LineEnding +
     'Be careful when creating dependencies for other action requests than "setup"';
+  //************************************************
+  //info_message_html.Text
+  //************************************************
+  rsInstallerInfo_Installshield =
+      'This is a Installshield Installer.' + LineEnding +
+      'So it will be perhaps complicated -' + LineEnding + 'because:' +
+      LineEnding + '' + LineEnding + '1. Installshield exists since 1993.' +
+      LineEnding + 'Over the time some command line parameter have changed' +
+      LineEnding + 'and we could not detect the version of the Installshield that was used.'
+      + LineEnding + '' + LineEnding +
+      '2. Installshield may create two different kinds of Installer:' +
+      LineEnding + 'A kind of classic setup and a kind setup as wrapper around msi.' +
+      LineEnding + 'We could not detect for sure, which kind of installer we have.' +
+      LineEnding + '' + LineEnding + '3. Installshield is flexible.' +
+      LineEnding +
+      'So in fact, the developer may have changed the command line parameter to a totally different style.'
+      + LineEnding + '' + LineEnding +
+      'If you have a MSI-Wrapper then we have as cli parameter:' +
+      LineEnding + 'silent:' + LineEnding +
+      '/s /v" /qn ALLUSERS=1 REBOOT=ReallySuppress"' + LineEnding +
+      'unattended:' + LineEnding + '/s /v"/qb-! ALLUSERS=1 REBOOT=ReallySuppress"' +
+      LineEnding + '' + LineEnding +
+      'If you have a classic setup then we have as cli parameter just:' +
+      LineEnding + 'silent:' + LineEnding + '/s' + LineEnding + '' +
+      LineEnding +
+      'If you have a classic setup that is very old (last century or near by), then you perhaps have to add the parameter:'
+      + LineEnding + '/sms';
+  rsInstallerInfo_InstallAnywhere =
+    'This is a InstallAnywhere Installer.' +
+      LineEnding + 'If the parameter "-i silent" does not work, try the following:' +
+      LineEnding + 'Run the installer interactive with the -r switch followed by' +
+      LineEnding + 'the path and file name of the response file you want to generate. For example:'
+      + LineEnding + 'setup.exe -r "./response.txt"' +
+      LineEnding + 'You have to add to top of the generated response file the line:' +
+      LineEnding + '"INSTALLER_UI=silent"' + LineEnding + 'Then run silent by calling:' +
+      LineEnding + 'setup.exe -f "./response.txt"' + LineEnding;
+  rsInstallerInfo_PortableApps =
+      'This is not a Setupprogram. It is a PortableApps Selfextractor.'
+      'So ther are no unattended / Silent modes. + LineEnding +
+      'Uncompress with 7zip and copy the files';
+
 
 
 implementation
@@ -2124,6 +2165,7 @@ begin
     comment := '';
     uib_exitcode_function := 'isInnoExitcodeFatal';
     detected := @detectedbypatternwithor;
+    info_message_html.Text := '';
   end;
 
   // NSIS
@@ -2148,7 +2190,7 @@ begin
     comment := '';
     uib_exitcode_function := 'isNsisExitcodeFatal';
     detected := @detectedbypatternwithor;
-
+    info_message_html.Text := '';
   end;
   // InstallShield
   with installerArray[integer(stInstallShield)] do
@@ -2178,6 +2220,7 @@ begin
     comment := '';
     uib_exitcode_function := 'isInstallshieldExitcodeFatal';
     detected := @detectedbypatternwithAnd;
+    info_message_html.Text := rsInstallerInfo_Installshield;
   end;
   // InstallShieldMSI
   with installerArray[integer(stInstallShieldMSI)] do
@@ -2204,30 +2247,7 @@ begin
     comment := '';
     uib_exitcode_function := 'isInstallshieldExitcodeFatal';
     detected := @detectedbypatternwithAnd;
-    info_message_html.Text :=
-      'This is a Installshield Installer.' + LineEnding +
-      'So it will be perhaps complicated -' + LineEnding + 'because:' +
-      LineEnding + '' + LineEnding + '1. Installshield exists since 1993.' +
-      LineEnding + 'Over the time some command line parameter have changed' +
-      LineEnding + 'and we could not detect the version of the Installshield that was used.'
-      + LineEnding + '' + LineEnding +
-      '2. Installshield may create two different kinds of Installer:' +
-      LineEnding + 'A kind of classic setup and a kind setup as wrapper around msi.' +
-      LineEnding + 'We could not detect for sure, which kind of installer we have.' +
-      LineEnding + '' + LineEnding + '3. Installshield is flexible.' +
-      LineEnding +
-      'So in fact, the developer may have changed the command line parameter to a totally different style.'
-      + LineEnding + '' + LineEnding +
-      'If you have a MSI-Wrapper then we have as cli parameter:' +
-      LineEnding + 'silent:' + LineEnding +
-      '/s /v" /qn ALLUSERS=1 REBOOT=ReallySuppress"' + LineEnding +
-      'unattended:' + LineEnding + '/s /v"/qb-! ALLUSERS=1 REBOOT=ReallySuppress"' +
-      LineEnding + '' + LineEnding +
-      'If you have a classic setup then we have as cli parameter just:' +
-      LineEnding + 'silent:' + LineEnding + '/s' + LineEnding + '' +
-      LineEnding +
-      'If you have a classic setup that is very old (last century or near by), then you perhaps have to add the parameter:'
-      + LineEnding + '/sms';
+    info_message_html.Text := rsInstallerInfo_Installshield;
 
   end;
   // MSI
@@ -2269,7 +2289,7 @@ begin
     patterns.Add('7-Zip Installer');
     link := 'https://www.7-zip.org/faq.html';
     comment := '';
-    uib_exitcode_function := 'isMsExitcodeFatal_short';
+    uib_exitcode_function := 'isMsiExitcodeFatal_short';
     detected := @detectedbypatternwithor;
   end;
   // st7zipsfx
@@ -2285,7 +2305,7 @@ begin
     patterns.Add('7zipsfx');
     link := 'https://sourceforge.net/p/s-zipsfxbuilder/code/ci/master/tree/7zSD_EN.chm';
     comment := '';
-    uib_exitcode_function := 'isMsExitcodeFatal_short';
+    uib_exitcode_function := 'isMsiExitcodeFatal_short';
     detected := @detectedbypatternwithor;
   end;
   // stInstallAware
@@ -2305,7 +2325,7 @@ begin
       'includelog "%opsiLogDir%\"+$ProductId$+".install_log.txt" "50" "utf16le"');
     link := 'https://www.installaware.com/mhtml5/desktop/setupcommandlineparameters.htm';
     comment := '';
-    uib_exitcode_function := 'isMsExitcodeFatal_short';
+    uib_exitcode_function := 'isMsiExitcodeFatal_short';
     detected := @detectedbypatternwithor;
   end;
   // stMSGenericInstaller
@@ -2329,7 +2349,7 @@ begin
     link :=
       'https://docs.microsoft.com/en-us/windows/desktop/msi/standard-installer-command-line-options';
     comment := '';
-    uib_exitcode_function := 'isMsExitcodeFatal_short';
+    uib_exitcode_function := 'isMsiExitcodeFatal_short';
     detected := @detectedbypatternwithor;
   end;
   // stWixToolset
@@ -2354,7 +2374,7 @@ begin
     link :=
       'https://docs.microsoft.com/en-us/windows/desktop/msi/standard-installer-command-line-options';
     comment := '';
-    uib_exitcode_function := 'isMsExitcodeFatal_short';
+    uib_exitcode_function := 'isMsiExitcodeFatal_short';
     detected := @detectedbypatternwithand;
   end;
   // stBoxStub
@@ -2378,7 +2398,7 @@ begin
     link :=
       'https://docs.microsoft.com/en-us/windows/desktop/msi/standard-installer-command-line-options';
     comment := '';
-    uib_exitcode_function := 'isMsExitcodeFatal_short';
+    uib_exitcode_function := 'isMsiExitcodeFatal_short';
     detected := @detectedbypatternwithand;
   end;
   // stSFXcab
@@ -2403,7 +2423,7 @@ begin
     link :=
       'https://docs.microsoft.com/en-us/windows/desktop/msi/standard-installer-command-line-options';
     comment := '';
-    uib_exitcode_function := 'isMsExitcodeFatal_short';
+    uib_exitcode_function := 'isMsiExitcodeFatal_short';
     detected := @detectedbypatternwithand;
   end;
   // stBitrock
@@ -2559,6 +2579,7 @@ begin
     comment := 'selfextracting Executable. Uncompress with 7zip.';
     uib_exitcode_function := 'isGenericExitcodeFatal';
     detected := @detectedbypatternwithand;
+    info_message_html.Text := rsInstallerInfo_PortableApps;
   end;
   with installerArray[integer(stInstall4J)] do
   begin
@@ -2575,6 +2596,7 @@ begin
     comment := 'Installs Java based software';
     uib_exitcode_function := 'isGenericExitcodeFatal';
     detected := @detectedbypatternwithand;
+    info_message_html.Text := '';
   end;
   with installerArray[integer(stAdvancedInstaller)] do
   begin
@@ -2600,6 +2622,7 @@ begin
     comment := 'Wrapper around MSI (and others).Included files may extracted with /extract';
     uib_exitcode_function := 'isMsiExitcodeFatal';
     detected := @detectedbypatternwithand;
+    info_message_html.Text := '';
   end;
   with installerArray[integer(stInstallAnywhere)] do
   begin
@@ -2619,15 +2642,7 @@ begin
     comment := 'Multi-Platform Installers';
     uib_exitcode_function := 'isGenericExitcodeFatal';
     detected := @detectedbypatternwithand;
-    info_message_html.Text :=
-      'This is a InstallAnywhere Installer.' +
-      LineEnding + 'If the parameter "-i silent" does not work, try the following:' +
-      LineEnding + 'Run the installer interactive with the -r switch followed by' +
-      LineEnding + 'the path and file name of the response file you want to generate. For example:'
-      + LineEnding + 'setup.exe -r "./response.txt"' +
-      LineEnding + 'You have to add to top of the generated response file the line:' +
-      LineEnding + '"INSTALLER_UI=silent"' + LineEnding + 'Then run silent by calling:' +
-      LineEnding + 'setup.exe -f "./response.txt"' + LineEnding;
+    info_message_html.Text := rsInstallerInfo_InstallAnywhere;
   end;
   // marker for add installers
 
