@@ -60,6 +60,7 @@ type
     FCreateMode: TStrings;
     FCreateModeIndex: integer;
     FCreateModeValue: string;
+    FDetectCount : integer;
     procedure SetBuildMode(const AValue: TStrings);
     procedure SetBuildModeValue(const AValue: string);
     procedure SetBuildModeIndex(const AValue: integer);
@@ -79,6 +80,7 @@ type
     property CreateMode: TStrings read FCreateMode write SetCreateMode;
     property CreateModeIndex: integer read FCreateModeIndex write SetCreateModeIndex;
     property CreateModeValue: string read FCreateModeValue write SetCreateModeValue;
+    property DetectCount: integer read FDetectCount write FDetectCount;
   public
     { public declarations }
     constructor Create;
@@ -92,10 +94,12 @@ type
     amSelectable);
 
   // marker for add installers
-  TKnownInstaller = (stInstallAnywhere, stAdvancedInstaller, stInstall4J, stPortableApps,
+  TKnownInstaller = (stSetupFactory, stInstallAnywhere, stAdvancedInstaller, stInstall4J, stPortableApps,
     stLinRPM, stLinDeb,
     stMacZip, stMacDmg, stMacPKG, stMacApp,
-    stSFXcab, stBoxStub, stAdvancedMSI, stInstallShield,
+    stSFXcab, stBoxStub,
+    //stAdvancedMSI,
+    stInstallShield,
     stInstallShieldMSI,
     stMsi, stNsis, st7zip, st7zipsfx, stInstallAware, stMSGenericInstaller,
     stWixToolset, stBitrock, stSelfExtractingInstaller, stInno,
@@ -707,10 +711,14 @@ resourcestring
       LineEnding + '"INSTALLER_UI=silent"' + LineEnding + 'Then run silent by calling:' +
       LineEnding + 'setup.exe -f "./response.txt"' + LineEnding;
   rsInstallerInfo_PortableApps =
-      'This is not a Setupprogram. It is a PortableApps Selfextractor.'
-      'So ther are no unattended / Silent modes. + LineEnding +
+      'This is not a Setupprogram. It is a PortableApps Selfextractor.' + LineEnding +
+      'So there are no unattended / Silent modes.' + LineEnding +
       'Uncompress with 7zip and copy the files';
-
+  rsInstallerInfo_SetupFactory =
+      'This is a Setup Factory Installer.' + LineEnding +
+      'Perhaps the parameter /S may work for silent mode.' + LineEnding +
+      'But often this functionality is not enabled.' + LineEnding +
+      'In this case you have extract / install the content and deploy it on an other way.';
 
 
 implementation
@@ -741,6 +749,7 @@ begin
   FBuildModeIndex := 0;
   FCreateModeValue := CreateMode.Strings[FCreateModeIndex];
   FBuildModeValue := BuildMode.Strings[FBuildModeIndex];
+  DetectCount := 0;
   inherited;
 end;
 
@@ -2091,6 +2100,7 @@ begin
 
   // marker for add installers
   knownInstallerList := TStringList.Create;
+  knownInstallerList.Add('SetupFactory');
   knownInstallerList.Add('InstallAnywhere');
   knownInstallerList.Add('AdvancedInstaller');
   knownInstallerList.Add('Install4j');
@@ -2103,7 +2113,7 @@ begin
   knownInstallerList.Add('MacApp');
   knownInstallerList.Add('SFXcab');
   knownInstallerList.Add('BoxStub');
-  knownInstallerList.Add('AdvancedMSI');
+  //knownInstallerList.Add('AdvancedMSI');
   knownInstallerList.Add('InstallShield');
   knownInstallerList.Add('InstallShieldMSI');
   knownInstallerList.Add('MSI');
@@ -2643,6 +2653,26 @@ begin
     uib_exitcode_function := 'isGenericExitcodeFatal';
     detected := @detectedbypatternwithand;
     info_message_html.Text := rsInstallerInfo_InstallAnywhere;
+  end;
+  with installerArray[integer(stSetupFactory)] do
+  begin
+    description := 'SetupFactory';
+    silentsetup := '/S /NOINIT /W';
+    unattendedsetup := '/S /NOINIT /W';
+    silentuninstall := '/S /U';
+    unattendeduninstall := '/S /U';
+    uninstall_waitforprocess := '';
+    install_waitforprocess := '';
+    uninstallProg := '$Installdir$\Uninstall\Uninstall.exe';
+    patterns.Add('Setup Factory');
+    patterns.Add('Indigo Rose Corporation');
+    infopatterns.Add('<description>Setup Factory Run-time</description>');
+    link :=
+      'https://www.indigorose.com/webhelp/suf9/index.htm';
+    comment := 'SetupFactory';
+    uib_exitcode_function := 'isGenericExitcodeFatal';
+    detected := @detectedbypatternwithand;
+    info_message_html.Text := rsInstallerInfo_SetupFactory;
   end;
   // marker for add installers
 

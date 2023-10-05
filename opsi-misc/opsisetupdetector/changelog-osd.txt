@@ -150,10 +150,14 @@ todo:
 ### Added
 - Info Message window for some of the detected installers with additional 'need to know' infos.
   rsInstallerInfo_Installshield, rsInstallerInfo_InstallAnywhere, rsInstallerInfo_PortableApps
+-Warn on more than one detection
 (Detlef Oertel <d.oertel@uib.de> 2023-09-28)
 
 - new installer type : InstallAnywhere
   * https://www.revenera.de/install/products/installanywhere
+
+### Changed
+- removed AdvancedMSI (replaced by AdvancedInstaller)
 
 
 ## [4.3.0.0-1] - 2023-09-06

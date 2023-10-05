@@ -577,7 +577,7 @@ var
   showNSIS: boolean = True;
   showInstallShield: boolean = True;
   showInstallShieldMSI: boolean = True;
-  showAdvancedMSI: boolean = True;
+  //showAdvancedMSI: boolean = True;
   //*****************************************
   firstshowconfigdone: boolean = False;
   productIds: TStringList;

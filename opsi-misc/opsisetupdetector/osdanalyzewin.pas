@@ -39,7 +39,7 @@ procedure get_msi_info(myfilename: string; var mysetup: TSetupFile;
 procedure get_inno_info(myfilename: string; var mysetup: TSetupFile);
 //procedure get_installshield_info(myfilename: string; var mysetup: TSetupFile);
 procedure get_installshieldmsi_info(myfilename: string; var mysetup: TSetupFile);
-procedure get_advancedmsi_info(myfilename: string; var mysetup: TSetupFile);
+//procedure get_advancedmsi_info(myfilename: string; var mysetup: TSetupFile);
 procedure get_null_info(myfilename: string; var mysetup: TSetupFile);
 procedure get_installaware_info(myfilename: string; var mysetup: TSetupFile);
 procedure get_genmsinstaller_info(myfilename: string; var mysetup: TSetupFile);
@@ -537,6 +537,10 @@ begin
   myoutlines := TStringList.Create;
   destDir := GetTempDir(False);
   destDir := destDir + DirectorySeparator + 'INNO';
+  // cleanup destination
+  if DirectoryExists(destDir) then
+    DeleteDirectory(destDir,true);
+  // create destination
   if not DirectoryExists(destDir) then
     ForceDirectories(destDir);
   destfile := ExtractFileName(myfilename);
@@ -778,7 +782,7 @@ begin
 end;
 
 
-
+(*
 procedure get_advancedmsi_info(myfilename: string; var mysetup: TSetupFile);
 var
   myoutlines: TStringList;
@@ -854,9 +858,9 @@ begin
   {$ENDIF WINDOWS}
 
   write_log_and_memo('get_AdvancedMSI_info finished');
-  write_log_and_memo('Advancd Installer Setup (with embedded MSI) detected');
+  write_log_and_memo('Advanced Installer Setup (with embedded MSI) detected');
 end;
-
+*)
 (*
 procedure get_7zip_info(myfilename: string);
 var
@@ -932,6 +936,10 @@ begin
   myoutlines := TStringList.Create;
   destDir := GetTempDir(False);
   destDir := destDir + DirectorySeparator + 'wixbundle';
+  // cleanup destination
+  if DirectoryExists(destDir) then
+    DeleteDirectory(destDir,true);
+  // create destination
   if not DirectoryExists(destDir) then
     ForceDirectories(destDir);
 
@@ -1122,7 +1130,7 @@ begin
       // get additional infos for some installers:
       stInno: get_inno_info(FileName, mysetup);
       stInstallShieldMSI: get_installshieldmsi_info(FileName, mysetup);
-      stAdvancedMSI: get_advancedmsi_info(FileName, mysetup);
+      //stAdvancedMSI: get_advancedmsi_info(FileName, mysetup);
       stMsi: ;// nothing to do here - see above;
       stInstallAware: get_installaware_info(FileName, mysetup);
       stMSGenericInstaller: get_genmsinstaller_info(FileName, mysetup);
@@ -1137,7 +1145,7 @@ begin
         get_null_info(FileName, mysetup);
         {nothing special right now for stBitrock, stSelfExtractingInstaller,
          stPortableApps, stInstall4J, st7zip, stNsis, stInstallShield,
-         st7zipsfx}
+         st7zipsfx,stSetupFactory}
     end;
 
 
@@ -1174,6 +1182,9 @@ begin
   {$IFDEF OSDGUI}
   resultForm1.ProgressBarAnalyze.Position := 100;
   procmess;
+  if osdsettings.DetectCount > 1 then
+    MyMessageDlg.showMessage('Warning','More than one installertype detected.' +LineEnding+
+      'Please check log file.', [mrOK]);
   {$ENDIF OSDGUI}
   //sleep(2000);
   mysetup.installerId := setupType;
