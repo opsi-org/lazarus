@@ -82,13 +82,10 @@ begin
       end;
     end;
 
+    'oracleserver':
+    if DistroRelease[1] = '8' then Result := OracleLinux_8;
     'ol':
-    begin
-      case DistroRelease[1] of
-        '8': Result := OracleLinux_8;
-        '9': Result := OracleLinux_9;
-      end;
-    end;
+    if DistroRelease[1] = '9' then Result := OracleLinux_9;
 
     'redhatenterprise':
       if DistroRelease[1] = '8' then Result := RHEL_8;
