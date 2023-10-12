@@ -50,6 +50,7 @@ procedure get_sfxcab_info(myfilename: string; var mysetup: TSetupFile);
 //procedure get_selfextrackting_info(myfilename: string; var mysetup: TSetupFile);
 procedure get_advancedInstaller_info(myfilename: string; var mysetup: TSetupFile);
 procedure get_installAnywhere_info(myfilename: string; var mysetup: TSetupFile);
+procedure get_QtInstaller_info(myfilename: string; var mysetup: TSetupFile);
 // marker for add installers
 procedure Analyze(FileName: string; var mysetup: TSetupFile; verbose: boolean);
 function getProductInfoFromResource(infokey: string; filename: string): string;
@@ -1056,6 +1057,16 @@ begin
   write_log_and_memo('get_installAnywhere_info finished');
 end;
 
+procedure get_QtInstaller_info(myfilename: string; var mysetup: TSetupFile);
+var
+  str1, str2: string;
+  pos1, pos2, i: integer;
+begin
+  write_log_and_memo('Analyzing QtInstaller:');
+  mysetup.installDirectory:= '"%Programfiles64Dir%\"+$ProductId$';
+  write_log_and_memo('get_QtInstaller_info finished');
+end;
+
 // marker for add installers
 
 (*
@@ -1139,6 +1150,7 @@ begin
       stSFXcab: get_sfxcab_info(FileName, mysetup);
       stAdvancedInstaller: get_advancedInstaller_info(FileName, mysetup);
       stInstallAnywhere: get_installAnywhere_info(FileName, mysetup);
+      stQtInstaller: get_QtInstaller_info(FileName, mysetup);
       stUnknown: LogDatei.log(
           'Unknown Installer after Analyze.', LLcritical);
       else

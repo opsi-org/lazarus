@@ -1,7 +1,7 @@
 object MyMessageDlg: TMyMessageDlg
-  Left = 244
+  Left = 246
   Height = 241
-  Top = 584
+  Top = 586
   Width = 600
   Caption = 'opsi-script Message'
   ClientHeight = 241

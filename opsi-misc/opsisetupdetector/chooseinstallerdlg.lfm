@@ -1,14 +1,14 @@
 object FChooseInstallerDlg: TFChooseInstallerDlg
-  Left = 419
+  Left = 421
   Height = 251
-  Top = 203
+  Top = 205
   Width = 338
   Caption = 'opsi-setup-detector'
   ClientHeight = 251
   ClientWidth = 338
   OnCreate = FormCreate
   OnShow = FormShow
-  LCLVersion = '2.2.0.4'
+  LCLVersion = '2.2.6.0'
   object Panel1: TPanel
     Left = 0
     Height = 127
@@ -26,6 +26,7 @@ object FChooseInstallerDlg: TFChooseInstallerDlg
       Align = alClient
       Alignment = taCenter
       BorderSpacing.Around = 11
+      ParentColor = False
     end
     object LabelSorryUnknown: TLabel
       Left = 1
@@ -38,6 +39,7 @@ object FChooseInstallerDlg: TFChooseInstallerDlg
       Font.Color = clRed
       Font.Height = -17
       Font.Style = [fsBold]
+      ParentColor = False
       ParentFont = False
     end
   end

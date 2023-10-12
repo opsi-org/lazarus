@@ -94,7 +94,7 @@ type
     amSelectable);
 
   // marker for add installers
-  TKnownInstaller = (stSetupFactory, stInstallAnywhere, stAdvancedInstaller, stInstall4J, stPortableApps,
+  TKnownInstaller = (stQtInstaller,stSetupFactory, stInstallAnywhere, stAdvancedInstaller, stInstall4J, stPortableApps,
     stLinRPM, stLinDeb,
     stMacZip, stMacDmg, stMacPKG, stMacApp,
     stSFXcab, stBoxStub,
@@ -719,6 +719,16 @@ resourcestring
       'Perhaps the parameter /S may work for silent mode.' + LineEnding +
       'But often this functionality is not enabled.' + LineEnding +
       'In this case you have extract / install the content and deploy it on an other way.';
+  rsInstallerInfo_QtInstaller =
+    'This is a QT Installer.' + LineEnding +
+    'Perhaps the standard parameters may work for silent mode.' + LineEnding +
+    'In this case you have to give the installdir - it will not work without.' + LineEnding +
+    'In other cases, you may call an answer script (*.qs) with the parameter --script.' + LineEnding +
+    'And you should have a look at the following documentation pages:.' + LineEnding +
+    'https://doc.qt.io/qtinstallerframework/ifw-cli.html' + LineEnding +
+    'https://doc.qt.io/qtinstallerframework/ifw-use-cases-cli.html' + LineEnding +
+    'https://wiki.qt.io/Online_Installer_4.x' + LineEnding +
+    'https://gist.github.com/WindAzure/f3bed9e058cdc81eaa357414610c9125';
 
 
 implementation
@@ -2100,6 +2110,7 @@ begin
 
   // marker for add installers
   knownInstallerList := TStringList.Create;
+  knownInstallerList.Add('QtInstaller');
   knownInstallerList.Add('SetupFactory');
   knownInstallerList.Add('InstallAnywhere');
   knownInstallerList.Add('AdvancedInstaller');
@@ -2673,6 +2684,28 @@ begin
     uib_exitcode_function := 'isGenericExitcodeFatal';
     detected := @detectedbypatternwithand;
     info_message_html.Text := rsInstallerInfo_SetupFactory;
+  end;
+  with installerArray[integer(stQtInstaller)] do
+  begin
+    description := 'QtInstaller';
+    silentsetup := '--verbose --accept-licenses --default-answer --accept-obligations --confirm-command install --root "$installdir$"';
+    unattendedsetup := '--verbose --accept-licenses --default-answer --accept-obligations --confirm-command install --root "$installdir$"';
+    silentuninstall := '--verbose --accept-licenses --default-answer --accept-obligations --confirm-command purge';
+    unattendeduninstall := '--verbose --accept-licenses --default-answer --accept-obligations --confirm-command purge';
+    uninstall_waitforprocess := '';
+    install_waitforprocess := '';
+    uninstallProg := '$Installdir$\Uninstall.exe';
+    patterns.Add('Qt Installer Framework');
+    patterns.Add('QFontDatabase');
+    patterns.Add('QInstaller');
+    patterns.Add('QFileDialog');
+    //infopatterns.Add('<description>Setup Factory Run-time</description>');
+    link :=
+      'https://doc.qt.io/qtinstallerframework/';
+    comment := 'QtInstaller';
+    uib_exitcode_function := 'isGenericExitcodeFatal';
+    detected := @detectedbypatternwithand;
+    info_message_html.Text := rsInstallerInfo_QtInstaller;
   end;
   // marker for add installers
 

@@ -2,7 +2,7 @@
 7-Zip SFX,   ok
 Adobe Installer,
 Astrum Installer,
-Box Stub,   (boxstub.exe, dotnet) stBoxStub,
+Box Stub,   (boxstub.exe, dotnet) stBoxStub, (done)
 Excelsior Installer,
 Ghost Installer,
 Inno Setup,    ok
@@ -11,31 +11,35 @@ Java Installer,
 MS Office (Click-to-Run),
 Windows Installer (MSI or MSI in EXE), ok
 NSIS Setup, ok
-SFX Cab,   (sfxcab.exe,  vcredist)  stSFXcab  = dotnetinstaller (https://github.com/dotnetinstaller)
+SFX Cab,   (sfxcab.exe,  vcredist)  stSFXcab  = dotnetinstaller (https://github.com/dotnetinstaller)  (done)
 Smart Installer Maker,
 Squirrel-Installer,
 Windows installer XML,  (atwork, Boxmarker)
 WinRAR Installer,
 WinZip Installer,
 Wise Installer
-stWixToolset,
+stWixToolset,  (done)
 
-* install4j (install4j, ej-technologies : perpustakaan-light)
+* install4j (install4j, ej-technologies : perpustakaan-light) (done)
   * https://www.ej-technologies.com/resources/install4j/help/doc/help.pdf
   * https://www.ej-technologies.com/products/install4j/overview.html
   * beispiel ElsterAuthenticator_windows_55_0_0_x64.exe
   * marker: install4j
 
 
-* QT Installer Framework (Avidemux 4.7.3, msys2)
+* QT Installer Framework (Avidemux 4.7.3, msys2)   (done)
   * https://chocolatey.org/packages/msys2-installer
   * https://doc.qt.io/qtinstallerframework/
+  * marker: Qt Installer Framework
+  * marker: QFontDatabase
+  * marker: QInstaller
+  * marker: QFileDialog
 
 * National Instruments installer
   ** Labview32 in phywe/measure-ct
   ** ;https://knowledge.ni.com/KnowledgeArticleDetails?id=kA00Z0000019Ld6SAE&l=de-DE
 
-* Bitrock Installer
+* Bitrock Installer (done)
   * setupmspec32bits.exe (Phywe spec)
   * pattern: <description>BitRock Installer</description>
   * https://iserv.eu/doc/development/deploy/packages/installer/bitrock/
@@ -89,7 +93,7 @@ stWixToolset,
   * marker: "SAP front-end installer self-extractor tool"
   * info https://help.sap.com/doc/2e5792a2569b403da415080f35f8bbf6/770.00/en-US/sap_frontend_inst_guide.pdf
 
-* portableapps.com
+* portableapps.com (done)
   * komprimierte, portabe applikationen, kein (!) installer, keine Silent Parameter
   * oft mit NSIS Mitteln gepackt und deshalb als NSIS erkannt
   * lzma komprimiertes self-extracting executable
@@ -104,13 +108,13 @@ stWixToolset,
   * marker: Install SumatraPDF
   * marker: SumatraPDF has been installed
 
-* setup factory
+* setup factory  (done)
   * https://setupfactory.com/
   * https://www.indigorose.com/setup-factory/
   * command line options: https://www.indigorose.com/webhelp/suf9/index.htm
   * example: E:\_#_#_#_Setup-examples-by-installer\setup_factory
 
-* Advanced Installer
+* Advanced Installer (done)
   * https://www.advancedinstaller.com/
   * command line options: https://www.advancedinstaller.com/silent-install-exe-msi-applications.html
   * example: E:\_#_#_#_Setup-examples-by-installer\advanced_installer\Brackets-2.2.1.exe
@@ -118,7 +122,7 @@ stWixToolset,
   * marker: 'Advanced Installer'
   * marker: '/extractlzma/help/extract/exebasicui/exefullui/deletelzma/exenoui'
 
-* InstallAnywhere
+* InstallAnywhere  (done)
   * https://www.revenera.de/install/products/installanywhere
   * command line options: https://docs.revenera.com/installanywhere2021/Content/helplibrary/ia_ref_command_line_install_uninstall.htm
   * https://docs.revenera.com/installanywhere2021/Content/helplibrary/ia_using_command_line_arguments.htm#advanced_solutions_2317019866_1071496
@@ -150,15 +154,18 @@ todo:
 ### Added
 - Info Message window for some of the detected installers with additional 'need to know' infos.
   rsInstallerInfo_Installshield, rsInstallerInfo_InstallAnywhere, rsInstallerInfo_PortableApps
--Warn on more than one detection
-(Detlef Oertel <d.oertel@uib.de> 2023-09-28)
-
+- Warn on more than one detection
 - new installer type : InstallAnywhere
   * https://www.revenera.de/install/products/installanywhere
+- new installer type : setupFactory
+  * https://www.indigorose.com/webhelp/suf9/index.htm
+- new installer type : QtInstaller
+  * https://doc.qt.io/qtinstallerframework/
 
 ### Changed
 - removed AdvancedMSI (replaced by AdvancedInstaller)
 
+(Detlef Oertel <d.oertel@uib.de> 2023-09-28)
 
 ## [4.3.0.0-1] - 2023-09-06
 
