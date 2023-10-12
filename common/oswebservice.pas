@@ -459,6 +459,7 @@ type
     function getOpsiServiceConfigs: string;
     function getConfigStateObjectsFromService(ConfigIDsAsJsonArray:string):string;
     function getConfigObjectsFromService(ConfigIDsAsJsonArray:string):string;
+    function getConfigStateValuesFromService(ConfigIDsAsJsonArray:string; WithDefaults:string = 'true'):string;
     function getLogSize: int64;
     function getProductIds: TStringList;
     function getLocalbootProductIds: TStringList;
@@ -6393,6 +6394,21 @@ begin
   method :=  'config_getObjects';
   params := ['', '{"id":' + ConfigIDsAsJsonArray + '}'];
   LogErrorMessage := 'Warning: Could not get config defaults from service (oswebservice: TOpsi4Data.getConfigObjectsFromService)';
+  Result := getJSONFromService(method, params, logErrorMessage);
+end;
+
+function TOpsi4Data.getConfigStateValuesFromService(
+  ConfigIDsAsJsonArray: string; WithDefaults: string = 'true'
+  ): string;
+var
+  method: string;
+  params: array of string;
+  LogErrorMessage: string;
+begin
+  Result := '';
+  method :=  'configState_getValues';
+  params := [ConfigIDsAsJsonArray, '"'+actualClient+'"', WithDefaults];
+  LogErrorMessage := 'Warning: Could not get config state values from service (oswebservice: TOpsi4Data.getConfigStateValuesFromService)';
   Result := getJSONFromService(method, params, logErrorMessage);
 end;
 
