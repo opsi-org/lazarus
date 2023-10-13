@@ -329,6 +329,20 @@ const
   MaxSavedScriptFiles = 20;
   StandardIniFile = 'opsi-script.ini';
 
+function ProgramModeToString(ProgramMode:TProgramMode):string;
+begin
+  case ProgramMode of
+    pmNotSet: Result := 'pmNotSet';
+    pmInfo: Result := 'pmInfo';
+    pmStandard: Result := 'pmStandard';
+    pmHistoDialog: Result := 'pmHistoDialog';
+    pmBuildPC_classic: Result := 'pmBuildPC_classic';
+    pmBuildPC_service: Result := 'pmBuildPC_service';
+    pmBatch:Result := 'pmBatch';
+    pmSilent: Result := 'pmSilent';
+    else Result := 'Unknown ProgramMode';
+  end;
+end;
 
 procedure saveVersionToProfile;
 var
@@ -1792,7 +1806,7 @@ begin
         if extremeErrorLevel > levelfatal then
         begin
           //successful after setup
-          opsidata.ProductOnClient_update('',
+          opsidata.ProductOnClient_update(LogDatei.ActionProgress,
             tar4Successful,
             tac4None,
             ttc4Installed,
@@ -1802,7 +1816,7 @@ begin
         else //failed
         begin
           //failed after setup
-          opsidata.ProductOnClient_update('',
+          opsidata.ProductOnClient_update(LogDatei.ActionProgress,
             tar4Failed,
             tac4None,
             ttc4Installed,
@@ -1981,8 +1995,8 @@ begin
     FBatchOberflaeche.SetBatchWindowMode(BatchWindowMode);
     //writeln('StartProgramModes5');
     {$ENDIF GUI}
-    LogDatei.log('pm: ' + IntToStr(Ord(ProgramMode)), LLessential);
-    startupmessages.Append('pm: ' + IntToStr(Ord(ProgramMode)) + ' ' +
+    LogDatei.log('program mode: ' + ProgramModeToString(ProgramMode), LLessential);
+    startupmessages.Append('program mode: ' + ProgramModeToString(ProgramMode) + ' ' +
       DateTimeToStr(Now));
     sessionid := '';
 
