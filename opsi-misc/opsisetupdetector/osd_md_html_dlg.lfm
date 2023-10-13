@@ -1,0 +1,72 @@
+object OSD_info: TOSD_info
+  Left = 463
+  Height = 378
+  Top = 355
+  Width = 705
+  Caption = 'opsi-setup-detector Info'
+  ClientHeight = 378
+  ClientWidth = 705
+  OnCreate = FormCreate
+  OnShow = FormShow
+  Position = poMainFormCenter
+  LCLVersion = '2.2.6.0'
+  object Panel1: TPanel
+    Left = 0
+    Height = 336
+    Top = 0
+    Width = 705
+    Align = alClient
+    Caption = 'Panel1'
+    ClientHeight = 336
+    ClientWidth = 705
+    TabOrder = 0
+    object HtmlViewer: THtmlViewer
+      Left = 1
+      Height = 334
+      Top = 1
+      Width = 703
+      BorderStyle = htFocused
+      HistoryMaxCount = 0
+      NoSelect = False
+      PrintMarginBottom = 2
+      PrintMarginLeft = 2
+      PrintMarginRight = 2
+      PrintMarginTop = 2
+      PrintScale = 1
+      Align = alClient
+      TabOrder = 0
+    end
+  end
+  object FlowPanel1: TFlowPanel
+    Left = 0
+    Height = 42
+    Top = 336
+    Width = 705
+    Align = alBottom
+    ControlList = <    
+      item
+        Control = BitBtn1
+        WrapAfter = waAuto
+        Index = 0
+      end>
+    FlowLayout = tlCenter
+    FlowStyle = fsRightLeftTopBottom
+    TabOrder = 1
+    object BitBtn1: TBitBtn
+      Left = 542
+      Height = 26
+      Top = 7
+      Width = 62
+      Anchors = []
+      AutoSize = True
+      BorderSpacing.Left = 100
+      BorderSpacing.Top = 6
+      BorderSpacing.Right = 100
+      Default = True
+      DefaultCaption = True
+      Kind = bkOK
+      ModalResult = 1
+      TabOrder = 0
+    end
+  end
+end

@@ -677,58 +677,65 @@ resourcestring
   //************************************************
   //info_message_html.Text
   //************************************************
-  rsInstallerInfo_Installshield =
-      'This is a Installshield Installer.' + LineEnding +
-      'So it will be perhaps complicated -' + LineEnding + 'because:' +
-      LineEnding + '' + LineEnding + '1. Installshield exists since 1993.' +
-      LineEnding + 'Over the time some command line parameter have changed' +
-      LineEnding + 'and we could not detect the version of the Installshield that was used.'
-      + LineEnding + '' + LineEnding +
-      '2. Installshield may create two different kinds of Installer:' +
-      LineEnding + 'A kind of classic setup and a kind setup as wrapper around msi.' +
-      LineEnding + 'We could not detect for sure, which kind of installer we have.' +
-      LineEnding + '' + LineEnding + '3. Installshield is flexible.' +
-      LineEnding +
-      'So in fact, the developer may have changed the command line parameter to a totally different style.'
-      + LineEnding + '' + LineEnding +
-      'If you have a MSI-Wrapper then we have as cli parameter:' +
-      LineEnding + 'silent:' + LineEnding +
-      '/s /v" /qn ALLUSERS=1 REBOOT=ReallySuppress"' + LineEnding +
-      'unattended:' + LineEnding + '/s /v"/qb-! ALLUSERS=1 REBOOT=ReallySuppress"' +
-      LineEnding + '' + LineEnding +
-      'If you have a classic setup then we have as cli parameter just:' +
-      LineEnding + 'silent:' + LineEnding + '/s' + LineEnding + '' +
-      LineEnding +
-      'If you have a classic setup that is very old (last century or near by), then you perhaps have to add the parameter:'
-      + LineEnding + '/sms';
-  rsInstallerInfo_InstallAnywhere =
-    'This is a InstallAnywhere Installer.' +
-      LineEnding + 'If the parameter "-i silent" does not work, try the following:' +
-      LineEnding + 'Run the installer interactive with the -r switch followed by' +
-      LineEnding + 'the path and file name of the response file you want to generate. For example:'
-      + LineEnding + 'setup.exe -r "./response.txt"' +
-      LineEnding + 'You have to add to top of the generated response file the line:' +
-      LineEnding + '"INSTALLER_UI=silent"' + LineEnding + 'Then run silent by calling:' +
-      LineEnding + 'setup.exe -f "./response.txt"' + LineEnding;
-  rsInstallerInfo_PortableApps =
-      'This is not a Setupprogram. It is a PortableApps Selfextractor.' + LineEnding +
-      'So there are no unattended / Silent modes.' + LineEnding +
-      'Uncompress with 7zip and copy the files';
-  rsInstallerInfo_SetupFactory =
-      'This is a Setup Factory Installer.' + LineEnding +
-      'Perhaps the parameter /S may work for silent mode.' + LineEnding +
-      'But often this functionality is not enabled.' + LineEnding +
-      'In this case you have extract / install the content and deploy it on an other way.';
-  rsInstallerInfo_QtInstaller =
-    'This is a QT Installer.' + LineEnding +
-    'Perhaps the standard parameters may work for silent mode.' + LineEnding +
-    'In this case you have to give the installdir - it will not work without.' + LineEnding +
-    'In other cases, you may call an answer script (*.qs) with the parameter --script.' + LineEnding +
-    'And you should have a look at the following documentation pages:.' + LineEnding +
-    'https://doc.qt.io/qtinstallerframework/ifw-cli.html' + LineEnding +
-    'https://doc.qt.io/qtinstallerframework/ifw-use-cases-cli.html' + LineEnding +
-    'https://wiki.qt.io/Online_Installer_4.x' + LineEnding +
-    'https://gist.github.com/WindAzure/f3bed9e058cdc81eaa357414610c9125';
+  mdInstallerInfo_Installshield =
+    '## This is a Installshield Installer.' + LineEnding +
+    'So it will be perhaps complicated -' + LineEnding + 'because:' +
+    LineEnding + '' + LineEnding + '1. Installshield exists since 1993.' +
+    LineEnding + 'Over the time some command line parameter have changed' +
+    LineEnding + 'and we could not detect the version of the Installshield that was used.'
+    + LineEnding + '' + LineEnding +
+    '2. Installshield may create two different kinds of Installer:' +
+    LineEnding + 'A kind of classic setup and a kind setup as wrapper around msi.' +
+    LineEnding + 'We could not detect for sure, which kind of installer we have.' +
+    LineEnding + '' + LineEnding + '3. Installshield is flexible.' +
+    LineEnding +
+    'So in fact, the developer may have changed the command line parameter to a totally different style.'
+    + LineEnding + '' + LineEnding +
+    'If you have a MSI-Wrapper then we have as cli parameter:' +
+    LineEnding + '' + LineEnding + '- silent:' + LineEnding +
+    '`/s /v" /qn ALLUSERS=1 REBOOT=ReallySuppress`"' + LineEnding +
+    '' + LineEnding + '- unattended:' + LineEnding +
+    '`/s /v"/qb-! ALLUSERS=1 REBOOT=ReallySuppress`"' + LineEnding +
+    '' + LineEnding + 'If you have a classic setup then we have as cli parameter just:'
+    + LineEnding + '' + LineEnding + '- silent:' + LineEnding +
+    '`/s`' + LineEnding + '' + LineEnding +
+    'If you have a classic setup that is very old (last century or near by), then you perhaps have to add the parameter:'
+    + LineEnding + '`/sms`';
+  mdInstallerInfo_InstallAnywhere =
+    '## This is a InstallAnywhere Installer.' + LineEnding +
+    'If the parameter `-i silent` does not work, try the following:' + '' + LineEnding +
+    LineEnding + 'Run the installer interactive with the `-r` switch followed by' +
+    LineEnding +
+    'the path and file name of the response file you want to generate.' +
+    LineEnding + '' + LineEnding + 'For example:' +
+    LineEnding + '' + LineEnding + '`setup.exe -r "./response.txt"`' +
+    LineEnding + '' + LineEnding +
+    'Then you have to add at the top of the generated response file the line:' +
+    LineEnding + '' + LineEnding + '`INSTALLER_UI=silent`' +
+    LineEnding + '' + LineEnding + 'Then run silent by calling:' +
+    LineEnding + '`setup.exe -f "./response.txt"`' + LineEnding;
+  mdInstallerInfo_PortableApps =
+    '## This is not a setup program.' + LineEnding +
+    'It is a PortableApps Selfextractor.' +
+    LineEnding + 'So there are no unattended / silent modes.' + '' + LineEnding +
+    LineEnding + 'Uncompress with 7zip and copy the files';
+  mdInstallerInfo_SetupFactory =
+    '## This is a Setup Factory Installer.' + LineEnding +
+    'Perhaps the parameter `/S` may work for silent mode.' + LineEnding + '' + LineEnding +
+    'But often this functionality is not enabled.' + LineEnding + '' + LineEnding +
+    'In this case you have extract / install the content and deploy it on an other way.';
+  mdInstallerInfo_QtInstaller =
+    '## This is a QT Installer.' + LineEnding + '' + LineEnding +
+    'Perhaps the standard parameters may work for silent mode.' +
+    LineEnding + 'In this case you have to give the **installdir** - it will not work without.'
+    + LineEnding + '' + LineEnding +
+    'In other cases, you may call an answer script (*.qs) with the parameter `--script` .'
+    + LineEnding + 'And you should have a look at the following documentation pages:.' +
+    LineEnding + '' + LineEnding +
+    '* <https://doc.qt.io/qtinstallerframework/ifw-cli.html> ' +
+    LineEnding + '* <https://doc.qt.io/qtinstallerframework/ifw-use-cases-cli.html> ' +
+    LineEnding + '* <https://wiki.qt.io/Online_Installer_4.x> ' +
+    LineEnding + '* <https://gist.github.com/WindAzure/f3bed9e058cdc81eaa357414610c9125> ';
 
 
 implementation
@@ -2241,7 +2248,7 @@ begin
     comment := '';
     uib_exitcode_function := 'isInstallshieldExitcodeFatal';
     detected := @detectedbypatternwithAnd;
-    info_message_html.Text := rsInstallerInfo_Installshield;
+    info_message_html.Text := mdInstallerInfo_Installshield;
   end;
   // InstallShieldMSI
   with installerArray[integer(stInstallShieldMSI)] do
@@ -2268,7 +2275,7 @@ begin
     comment := '';
     uib_exitcode_function := 'isInstallshieldExitcodeFatal';
     detected := @detectedbypatternwithAnd;
-    info_message_html.Text := rsInstallerInfo_Installshield;
+    info_message_html.Text := mdInstallerInfo_Installshield;
 
   end;
   // MSI
@@ -2600,7 +2607,7 @@ begin
     comment := 'selfextracting Executable. Uncompress with 7zip.';
     uib_exitcode_function := 'isGenericExitcodeFatal';
     detected := @detectedbypatternwithand;
-    info_message_html.Text := rsInstallerInfo_PortableApps;
+    info_message_html.Text := mdInstallerInfo_PortableApps;
   end;
   with installerArray[integer(stInstall4J)] do
   begin
@@ -2663,7 +2670,7 @@ begin
     comment := 'Multi-Platform Installers';
     uib_exitcode_function := 'isGenericExitcodeFatal';
     detected := @detectedbypatternwithand;
-    info_message_html.Text := rsInstallerInfo_InstallAnywhere;
+    info_message_html.Text := mdInstallerInfo_InstallAnywhere;
   end;
   with installerArray[integer(stSetupFactory)] do
   begin
@@ -2683,7 +2690,7 @@ begin
     comment := 'SetupFactory';
     uib_exitcode_function := 'isGenericExitcodeFatal';
     detected := @detectedbypatternwithand;
-    info_message_html.Text := rsInstallerInfo_SetupFactory;
+    info_message_html.Text := mdInstallerInfo_SetupFactory;
   end;
   with installerArray[integer(stQtInstaller)] do
   begin
@@ -2705,7 +2712,7 @@ begin
     comment := 'QtInstaller';
     uib_exitcode_function := 'isGenericExitcodeFatal';
     detected := @detectedbypatternwithand;
-    info_message_html.Text := rsInstallerInfo_QtInstaller;
+    info_message_html.Text := mdInstallerInfo_QtInstaller;
   end;
   // marker for add installers
 

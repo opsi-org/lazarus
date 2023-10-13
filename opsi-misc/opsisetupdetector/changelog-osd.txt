@@ -161,6 +161,8 @@ todo:
   * https://www.indigorose.com/webhelp/suf9/index.htm
 - new installer type : QtInstaller
   * https://doc.qt.io/qtinstallerframework/
+- Info Message window is now a html viewer with markdown input so it can show formatted input
+  and active weblinks
 
 ### Changed
 - removed AdvancedMSI (replaced by AdvancedInstaller)

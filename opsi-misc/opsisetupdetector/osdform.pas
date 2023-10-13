@@ -41,7 +41,8 @@ uses
   Contnrs,
   osmessagedialog,
   oswebservice,
-  osdmain;
+  osdmain,
+  osd_md_html_dlg;
 
 type
   TIconDisplay = class(TPersistent)
@@ -440,6 +441,7 @@ type
     procedure FormMouseLeave(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure MenuHelpLogClick(Sender: TObject);
+    procedure MenuItem1Click(Sender: TObject);
     procedure MenuItemOpenControlClick(Sender: TObject);
     procedure MenuItemOpenProjClick(Sender: TObject);
     procedure MenuItemSaveProjClick(Sender: TObject);
@@ -938,6 +940,7 @@ begin
   TIS2Url.Link.TIObject := nil;
   TICheckBoxS1Mst.Link.TIObject := nil;
   TICheckBoxS2Mst.Link.TIObject := nil;
+  OSD_info.Destroy;
 end;
 
 
@@ -1082,6 +1085,13 @@ begin
     LogDatei.log(ErrorMessage, LLInfo);
     ShowMessage(ErrorMessage);
   end;
+end;
+
+procedure TResultform1.MenuItem1Click(Sender: TObject);
+begin
+  //OSD_info := TOSD_info.Create(resultForm1);
+  OSD_info.ShowModal;
+  //OSD_info.Destroy;
 end;
 
 procedure TResultform1.MenuItemOpenControlClick(Sender: TObject);
@@ -3488,6 +3498,7 @@ begin
   {$ENDIF UNIX}
   PaintPreview(DefaultIcon);
   DataModule1.SetFontName(TControl(Sender), myFont);
+  OSD_info := TOSD_info.Create(resultForm1);
   LogDatei.log('Finished FormCreate ', LLInfo);
 end;
 
