@@ -36,6 +36,9 @@ end;
 procedure TIndependentMessageDisplayer.DisplayMessage(Message: string;
   DisplayOnLabel: boolean = False);
 begin
+  // For a generalized procedure we need the DisplayOnLabel parameter since there
+  // are two ways in a gui program to display a message but for console applications
+  // the parameter doesn't play any role.
   {$IFDEF GUI}
   if DisplayOnLabel then
   begin
@@ -47,13 +50,8 @@ begin
     ShowMessage(Message);
   end;
   {$ENDIF GUI}
-
   {$IFDEF NOGUI}
-  // For a generalized procedure we need the DisplayOnLabel parameter since there
-  // are two ways in a gui program to display a message but for console applications
-  // the parameter doesn't play any role.
-  if DisplayOnLabel or not DisplayOnLabel then
-    writeln(Message);
+  writeln(Message);
   {$ENDIF NOGUI}
 end;
 
