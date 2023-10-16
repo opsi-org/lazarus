@@ -495,14 +495,27 @@ begin
     if opsidata.isConnected2(startupmessages) then
     begin
       try
+
         ConfigIDsAsJsonArray:=StringListAsJsonArray(ConfigIDs);
-        //Get defaults from service and set config default values
-        JsonRpcResponse := OpsiData.getConfigObjectsFromService(ConfigIDsAsJsonArray);
-        SetConfigs(JsonRpcResponse, 'id', 'defaultValues');
-        //Get actual values from service and set actual config values
-        JsonRpcResponse := OpsiData.getConfigStateObjectsFromService(ConfigIDsAsJsonArray);
-        SetConfigs(JsonRpcResponse, 'configId', 'values');
-        Result := 'readConfigFromService: ok';
+
+        if OpsiData.isMethodProvided('configState_getValues') then
+        begin
+          //opsi 4.3
+          JsonRpcResponse := OpsiData.getConfigStateValuesFromService(ConfigIDsAsJsonArray);
+          SetConfigs(JsonRpcResponse, 'id', 'defaultValues');
+
+        end
+        else
+        begin
+          //opsi 4.2
+          //Get defaults from service and set config default values
+          JsonRpcResponse := OpsiData.getConfigObjectsFromService(ConfigIDsAsJsonArray);
+          SetConfigs(JsonRpcResponse, 'id', 'defaultValues');
+          //Get actual values from service and set actual config values
+          JsonRpcResponse := OpsiData.getConfigStateObjectsFromService(ConfigIDsAsJsonArray);
+          SetConfigs(JsonRpcResponse, 'configId', 'values');
+          Result := 'readConfigFromService: ok';
+        end;
       except
         on e: Exception do
         begin
