@@ -1,5 +1,7 @@
 unit OpsiLinuxInstaller_QueryData;
 
+// Object to store the data asked in the queries.
+
 {$mode ObjFPC}{$H+}
 
 interface

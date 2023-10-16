@@ -1,5 +1,7 @@
 unit LogFileFunctions;
 
+// Helper function(s) for the 'LogDatei' from 'oslog'.
+
 {$mode ObjFPC}{$H+}
 
 interface

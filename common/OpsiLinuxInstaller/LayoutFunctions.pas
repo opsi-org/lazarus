@@ -1,5 +1,7 @@
 unit LayoutFunctions;
 
+// Functions to decorate the OpsiLinuxInstaller_BaseForm at the bottom with a red and blue line in opsi colors.
+
 {$mode ObjFPC}{$H+}
 
 interface
