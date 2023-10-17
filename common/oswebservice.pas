@@ -6407,7 +6407,7 @@ var
 begin
   Result := '';
   method :=  'configState_getValues';
-  params := [ConfigIDsAsJsonArray, '"'+actualClient+'"', WithDefaults];
+  params := [ConfigIDsAsJsonArray, actualClient, WithDefaults];
   LogErrorMessage := 'Warning: Could not get config state values from service (oswebservice: TOpsi4Data.getConfigStateValuesFromService)';
   Result := getJSONFromService(method, params, logErrorMessage);
 end;
