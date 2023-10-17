@@ -388,7 +388,7 @@ begin
 end;
 
 
-procedure SetSingleConfig(const JsonObject: TJSONObject; const KeyConfigID:string; const KeyConfigValue:string);
+procedure SetSingleConfig42(const JsonObject: TJSONObject; const KeyConfigID:string; const KeyConfigValue:string);
 (* Procedure SetsingleConfig sets the value for an opsi-script config (Host-Parameter).
    The value is taken from a json object which contains the value and
    the corresponding config ID.
@@ -435,7 +435,7 @@ begin
     startupmessages.Append('Unknown config: ' + ConfigID + ' (osconf.pas: procedure SetSingleConfig)');
 end;
 
-procedure SetConfigs(const JsonRpcResponse: string; KeyConfigID:string; KeyConfigValue:string);
+procedure SetConfigs42(const JsonRpcResponse: string; KeyConfigID:string; KeyConfigValue:string);
 (* Procedure SetConfigs extracts the values of opsi-script configs from a JSON-RPC response.
    Therefore it loops through the result of the response. The expected result is a json array
    containing different Config or ConfigState objects in json object format.
@@ -459,7 +459,7 @@ begin
       begin
         // Cast the enum value to ConfigObject
         SingleConfig := ConfigEnum.Value as TJSONObject;
-        SetSingleConfig(SingleConfig, KeyConfigID, KeyConfigValue);
+        SetSingleConfig42(SingleConfig, KeyConfigID, KeyConfigValue);
       end;
     end
     else
@@ -467,11 +467,39 @@ begin
   end;
 end;
 
+procedure SetConfigs43(const JsonRpcResponse: string);
+var
+  ConfigValue: string;
+  JSONObject: TJSONObject;
+  JSONResult: TJSONData;
+begin
+  if JsonRpcResponse <> '' then
+  begin
+    JSONResult := GetJSON(JsonRpcResponse).FindPath('result');
+    if (JSONResult <> nil) and not(JSONResult is TJSONNull) and (JSONResult.AsJSON <> '{}') then
+    begin
+      startupmessages.Append('Got json result with opsi 4.3 method: '+ JSONResult.AsJSON);
+      JSONObject := JSONResult as TJSONObject;
+      JSONResult := JSONObject.Find('jan-client01.uib.local');
+      if (JSONResult <> nil) and not(JSONResult is TJSONNull) and (JSONResult.AsJSON <> '{}') then
+       begin
+         JSONObject := JSONResult as TJSONObject;
+         ConfigValue := (JSONObject.Find(LowerCase('opsi-script.global.debug_prog')) as TJSONArray).Items[0].AsString;
+         debug_prog := ConfigValueToBool(ConfigValue, 'debug_prog', False);
+       end;
+    end
+    else
+      startupmessages.Append('Got no configs, json result was: '+ JSONResult.AsJSON);
+  end;
+end;
+
+
 function readConfigsFromService: string;
 var
   JsonRpcResponse: string;
   ConfigIDs: TStringList;
   ConfigIDsAsJsonArray: string;
+
 begin
   ConfigIDs := TStringList.Create;
   try
@@ -495,25 +523,22 @@ begin
     if opsidata.isConnected2(startupmessages) then
     begin
       try
-
         ConfigIDsAsJsonArray:=StringListAsJsonArray(ConfigIDs);
-
         if OpsiData.isMethodProvided('configState_getValues') then
         begin
           //opsi 4.3
           JsonRpcResponse := OpsiData.getConfigStateValuesFromService(ConfigIDsAsJsonArray);
-          SetConfigs(JsonRpcResponse, 'id', 'defaultValues');
-
+          SetConfigs43(JsonRpcResponse);
         end
         else
         begin
           //opsi 4.2
           //Get defaults from service and set config default values
           JsonRpcResponse := OpsiData.getConfigObjectsFromService(ConfigIDsAsJsonArray);
-          SetConfigs(JsonRpcResponse, 'id', 'defaultValues');
+          SetConfigs42(JsonRpcResponse, 'id', 'defaultValues');
           //Get actual values from service and set actual config values
           JsonRpcResponse := OpsiData.getConfigStateObjectsFromService(ConfigIDsAsJsonArray);
-          SetConfigs(JsonRpcResponse, 'configId', 'values');
+          SetConfigs42(JsonRpcResponse, 'configId', 'values');
           Result := 'readConfigFromService: ok';
         end;
       except
