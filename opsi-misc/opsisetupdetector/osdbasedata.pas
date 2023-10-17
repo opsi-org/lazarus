@@ -727,7 +727,8 @@ resourcestring
   mdInstallerInfo_QtInstaller =
     '## This is a QT Installer.' + LineEnding + '' + LineEnding +
     'Perhaps the standard parameters may work for silent mode.' +
-    LineEnding + 'In this case you have to give the **installdir** - it will not work without.'
+    LineEnding + 'In this case you have to give the **installdir** - it will not work without.' +
+    LineEnding + 'Therefore a install dir value will be created and you may have to change it.'
     + LineEnding + '' + LineEnding +
     'In other cases, you may call an answer script (*.qs) with the parameter `--script` .'
     + LineEnding + 'And you should have a look at the following documentation pages:.' +

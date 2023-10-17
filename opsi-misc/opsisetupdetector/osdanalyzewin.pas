@@ -1064,7 +1064,7 @@ var
   pos1, pos2, i: integer;
 begin
   write_log_and_memo('Analyzing QtInstaller:');
-  mysetup.installDirectory:= '"%Programfiles64Dir%\"+$ProductId$';
+  mysetup.installDirectory:= '%Programfiles64Dir%\"+$ProductId$+"';
   write_log_and_memo('get_QtInstaller_info finished');
 end;
 
