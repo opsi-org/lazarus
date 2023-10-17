@@ -1,11 +1,11 @@
 object resultForm1: TresultForm1
-  Left = 413
-  Height = 740
-  Top = 96
-  Width = 1239
+  Left = 463
+  Height = 675
+  Top = 346
+  Width = 1081
   Caption = 'opsi Setup Detector'
-  ClientHeight = 720
-  ClientWidth = 1239
+  ClientHeight = 655
+  ClientWidth = 1081
   Menu = MainMenu1
   OnClose = FormClose
   OnCreate = FormCreate
@@ -19,12 +19,12 @@ object resultForm1: TresultForm1
     Left = 0
     Height = 40
     Top = 0
-    Width = 1239
+    Width = 1081
     Align = alTop
     Alignment = taLeftJustify
     BorderStyle = bsSingle
     ClientHeight = 36
-    ClientWidth = 1235
+    ClientWidth = 1077
     ParentFont = False
     TabOrder = 0
     OnClick = Panel1Click
@@ -32,7 +32,7 @@ object resultForm1: TresultForm1
       Left = 1
       Height = 26
       Top = 1
-      Width = 1233
+      Width = 1075
       ParentFont = False
       TabOrder = 0
       object SBtnExit: TSpeedButton
@@ -152,19 +152,19 @@ object resultForm1: TresultForm1
   end
   object Panel3: TPanel
     Left = 0
-    Height = 657
+    Height = 592
     Top = 40
-    Width = 1239
+    Width = 1081
     Align = alClient
-    ClientHeight = 657
-    ClientWidth = 1239
+    ClientHeight = 592
+    ClientWidth = 1081
     ParentFont = False
     TabOrder = 1
     object PageControl1: TPageControl
       Left = 7
-      Height = 655
+      Height = 590
       Top = 1
-      Width = 1231
+      Width = 1073
       ActivePage = TabSheetStart
       Align = alClient
       Images = ImageList1
@@ -174,15 +174,15 @@ object resultForm1: TresultForm1
       OnChange = PageControl1Change
       object TabSheetStart: TTabSheet
         Caption = 'Start'
-        ClientHeight = 627
-        ClientWidth = 1223
+        ClientHeight = 562
+        ClientWidth = 1065
         OnExit = TabSheetStartExit
         ParentFont = False
         object FlowPanel3: TFlowPanel
           Left = 0
-          Height = 627
+          Height = 562
           Top = 0
-          Width = 1223
+          Width = 1065
           Align = alClient
           AutoSize = True
           ControlList = <          
@@ -6066,14 +6066,14 @@ object resultForm1: TresultForm1
       end
       object TabSheetAnalyze: TTabSheet
         Caption = 'Analyze'
-        ClientHeight = 627
-        ClientWidth = 1223
+        ClientHeight = 562
+        ClientWidth = 1065
         ParentFont = False
         object MemoAnalyze: TMemo
           Left = 0
-          Height = 461
+          Height = 396
           Top = 92
-          Width = 1223
+          Width = 1065
           Align = alClient
           ParentFont = False
           ScrollBars = ssAutoBoth
@@ -6082,16 +6082,16 @@ object resultForm1: TresultForm1
         object Panel2: TPanel
           Left = 0
           Height = 74
-          Top = 553
-          Width = 1223
+          Top = 488
+          Width = 1065
           Align = alBottom
           BorderStyle = bsSingle
           ClientHeight = 70
-          ClientWidth = 1219
+          ClientWidth = 1061
           ParentFont = False
           TabOrder = 1
           object BtAnalyzeNextStep: TBitBtn
-            Left = 1060
+            Left = 902
             Height = 50
             Hint = 'Go to the next Step'
             Top = 10
@@ -6244,10 +6244,10 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 42
           Top = 0
-          Width = 1223
+          Width = 1065
           Align = alTop
           ClientHeight = 42
-          ClientWidth = 1223
+          ClientWidth = 1065
           ParentFont = False
           TabOrder = 2
           object EditLogInfo: TEdit
@@ -6268,7 +6268,7 @@ object resultForm1: TresultForm1
             Height = 40
             Hint = 'Show Help'
             Top = 1
-            Width = 150
+            Width = 0
             Align = alRight
             Anchors = [akTop, akLeft, akBottom]
             BorderSpacing.Left = 100
@@ -6336,17 +6336,17 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 50
           Top = 42
-          Width = 1223
+          Width = 1065
           Align = alTop
           ClientHeight = 50
-          ClientWidth = 1223
+          ClientWidth = 1065
           ParentFont = False
           TabOrder = 3
           object ProgressBarAnalyze: TProgressBar
             Left = 1
             Height = 23
             Top = 1
-            Width = 1221
+            Width = 1063
             Align = alTop
             ParentColor = False
             ParentFont = False
@@ -6358,14 +6358,14 @@ object resultForm1: TresultForm1
       end
       object TabSheetSetup1: TTabSheet
         Caption = '1. Setup'
-        ClientHeight = 627
-        ClientWidth = 1223
+        ClientHeight = 562
+        ClientWidth = 1065
         ParentFont = False
         object FlowPanel1: TFlowPanel
           Left = 0
           Height = 80
           Top = 0
-          Width = 1223
+          Width = 1065
           Align = alTop
           BorderWidth = 3
           ControlList = <          
@@ -6597,7 +6597,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 41
           Top = 80
-          Width = 1223
+          Width = 1065
           Align = alTop
           Alignment = taLeftJustify
           AutoWrap = False
@@ -6649,7 +6649,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 41
           Top = 121
-          Width = 1223
+          Width = 1065
           Align = alTop
           Alignment = taLeftJustify
           AutoWrap = False
@@ -6757,7 +6757,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 41
           Top = 203
-          Width = 1223
+          Width = 1065
           Align = alTop
           Alignment = taLeftJustify
           AutoWrap = False
@@ -6809,7 +6809,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 41
           Top = 162
-          Width = 1223
+          Width = 1065
           Align = alTop
           Alignment = taLeftJustify
           AutoWrap = False
@@ -6900,7 +6900,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 41
           Top = 244
-          Width = 1223
+          Width = 1065
           Align = alTop
           Alignment = taLeftJustify
           AutoWrap = False
@@ -7080,7 +7080,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 41
           Top = 285
-          Width = 1223
+          Width = 1065
           Align = alTop
           Alignment = taLeftJustify
           AutoWrap = False
@@ -7132,7 +7132,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 41
           Top = 326
-          Width = 1223
+          Width = 1065
           Align = alTop
           Alignment = taLeftJustify
           AutoWrap = False
@@ -7184,7 +7184,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 41
           Top = 367
-          Width = 1223
+          Width = 1065
           Align = alTop
           Alignment = taLeftJustify
           AutoWrap = False
@@ -7380,9 +7380,9 @@ object resultForm1: TresultForm1
         end
         object FlowPanel17: TFlowPanel
           Left = 0
-          Height = 219
+          Height = 154
           Top = 408
-          Width = 1223
+          Width = 1065
           Align = alClient
           ControlList = <          
             item
@@ -7395,10 +7395,10 @@ object resultForm1: TresultForm1
           ParentFont = False
           TabOrder = 7
           object BtSetup1NextStep: TBitBtn
-            Left = 1064
+            Left = 906
             Height = 52
             Hint = 'Go to the next Step'
-            Top = 157
+            Top = 92
             Width = 149
             Align = alRight
             Anchors = [akRight]
@@ -7548,14 +7548,14 @@ object resultForm1: TresultForm1
       end
       object TabSheetSetup2: TTabSheet
         Caption = '2. Setup'
-        ClientHeight = 627
-        ClientWidth = 1223
+        ClientHeight = 562
+        ClientWidth = 1065
         ParentFont = False
         object FlowPanel2: TFlowPanel
           Left = 0
           Height = 80
           Top = 0
-          Width = 1223
+          Width = 1065
           Align = alTop
           BorderWidth = 3
           ControlList = <          
@@ -7787,7 +7787,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 41
           Top = 121
-          Width = 1223
+          Width = 1065
           Align = alTop
           Alignment = taLeftJustify
           AutoWrap = False
@@ -7896,7 +7896,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 41
           Top = 162
-          Width = 1223
+          Width = 1065
           Align = alTop
           Alignment = taLeftJustify
           AutoWrap = False
@@ -7987,7 +7987,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 41
           Top = 203
-          Width = 1223
+          Width = 1065
           Align = alTop
           Alignment = taLeftJustify
           AutoWrap = False
@@ -8039,7 +8039,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 41
           Top = 244
-          Width = 1223
+          Width = 1065
           Align = alTop
           Alignment = taLeftJustify
           AutoWrap = False
@@ -8219,7 +8219,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 41
           Top = 80
-          Width = 1223
+          Width = 1065
           Align = alTop
           Alignment = taLeftJustify
           AutoWrap = False
@@ -8271,7 +8271,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 41
           Top = 285
-          Width = 1223
+          Width = 1065
           Align = alTop
           Alignment = taLeftJustify
           AutoWrap = False
@@ -8323,7 +8323,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 41
           Top = 326
-          Width = 1223
+          Width = 1065
           Align = alTop
           Alignment = taLeftJustify
           AutoWrap = False
@@ -8375,7 +8375,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 41
           Top = 367
-          Width = 1223
+          Width = 1065
           Align = alTop
           Alignment = taLeftJustify
           AutoWrap = False
@@ -8571,9 +8571,9 @@ object resultForm1: TresultForm1
         end
         object FlowPanel13: TFlowPanel
           Left = 0
-          Height = 219
+          Height = 154
           Top = 408
-          Width = 1223
+          Width = 1065
           Align = alClient
           ControlList = <          
             item
@@ -8586,10 +8586,10 @@ object resultForm1: TresultForm1
           ParentFont = False
           TabOrder = 9
           object BtSetup2NextStep: TBitBtn
-            Left = 1064
+            Left = 906
             Height = 54
             Hint = 'Go to the next Step'
-            Top = 155
+            Top = 90
             Width = 149
             Anchors = []
             AutoSize = True
@@ -8738,14 +8738,14 @@ object resultForm1: TresultForm1
       end
       object TabSheetSetup3: TTabSheet
         Caption = '3. Setup'
-        ClientHeight = 627
-        ClientWidth = 1223
+        ClientHeight = 562
+        ClientWidth = 1065
         ParentFont = False
         object FlowPanel8: TFlowPanel
           Left = 0
           Height = 80
           Top = 0
-          Width = 1223
+          Width = 1065
           Align = alTop
           BorderWidth = 3
           ControlList = <          
@@ -8977,7 +8977,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 41
           Top = 121
-          Width = 1223
+          Width = 1065
           Align = alTop
           Alignment = taLeftJustify
           AutoWrap = False
@@ -9086,7 +9086,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 41
           Top = 162
-          Width = 1223
+          Width = 1065
           Align = alTop
           Alignment = taLeftJustify
           AutoWrap = False
@@ -9177,7 +9177,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 41
           Top = 203
-          Width = 1223
+          Width = 1065
           Align = alTop
           Alignment = taLeftJustify
           AutoWrap = False
@@ -9229,7 +9229,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 41
           Top = 244
-          Width = 1223
+          Width = 1065
           Align = alTop
           Alignment = taLeftJustify
           AutoWrap = False
@@ -9409,7 +9409,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 41
           Top = 80
-          Width = 1223
+          Width = 1065
           Align = alTop
           Alignment = taLeftJustify
           AutoWrap = False
@@ -9461,7 +9461,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 41
           Top = 285
-          Width = 1223
+          Width = 1065
           Align = alTop
           Alignment = taLeftJustify
           AutoWrap = False
@@ -9513,7 +9513,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 41
           Top = 326
-          Width = 1223
+          Width = 1065
           Align = alTop
           Alignment = taLeftJustify
           AutoWrap = False
@@ -9565,7 +9565,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 41
           Top = 367
-          Width = 1223
+          Width = 1065
           Align = alTop
           Alignment = taLeftJustify
           AutoWrap = False
@@ -9761,9 +9761,9 @@ object resultForm1: TresultForm1
         end
         object FlowPanel25: TFlowPanel
           Left = 0
-          Height = 219
+          Height = 154
           Top = 408
-          Width = 1223
+          Width = 1065
           Align = alClient
           ControlList = <          
             item
@@ -9776,10 +9776,10 @@ object resultForm1: TresultForm1
           ParentFont = False
           TabOrder = 9
           object BtSetup3NextStep: TBitBtn
-            Left = 1064
+            Left = 906
             Height = 54
             Hint = 'Go to the next Step'
-            Top = 155
+            Top = 90
             Width = 149
             Anchors = []
             AutoSize = True
@@ -9928,14 +9928,14 @@ object resultForm1: TresultForm1
       end
       object TabSheetProduct: TTabSheet
         Caption = 'Product Configuration 1'
-        ClientHeight = 627
-        ClientWidth = 1223
+        ClientHeight = 562
+        ClientWidth = 1065
         ParentFont = False
         object FlowPanel6: TFlowPanel
           Left = 0
           Height = 41
           Top = 41
-          Width = 1223
+          Width = 1065
           Align = alTop
           Alignment = taLeftJustify
           AutoWrap = False
@@ -10021,7 +10021,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 41
           Top = 0
-          Width = 1223
+          Width = 1065
           Align = alTop
           Alignment = taLeftJustify
           AutoWrap = False
@@ -10239,9 +10239,9 @@ object resultForm1: TresultForm1
         end
         object FlowPanel18: TFlowPanel
           Left = 0
-          Height = 171
-          Top = 456
-          Width = 1223
+          Height = 71
+          Top = 491
+          Width = 1065
           Align = alClient
           ControlList = <          
             item
@@ -10255,10 +10255,10 @@ object resultForm1: TresultForm1
           TabOrder = 2
           OnClick = FlowPanel18Click
           object BtProduct1NextStep: TBitBtn
-            Left = 1064
+            Left = 906
             Height = 54
             Hint = 'Go to the next Step'
-            Top = 107
+            Top = 7
             Width = 149
             Anchors = [akRight, akBottom]
             AutoSize = True
@@ -10408,294 +10408,409 @@ object resultForm1: TresultForm1
           Cursor = crVSplit
           Left = 0
           Height = 9
-          Top = 200
-          Width = 1223
+          Top = 252
+          Width = 1065
           Align = alTop
           Constraints.MinHeight = 9
           ResizeAnchor = akTop
         end
         object Panel6: TPanel
           Left = 0
-          Height = 118
+          Height = 170
           Top = 82
-          Width = 1223
+          Width = 1065
           Align = alTop
-          ClientHeight = 118
-          ClientWidth = 1223
+          ClientHeight = 170
+          ClientWidth = 1065
           ParentFont = False
           TabOrder = 4
           object Panel7: TPanel
             Left = 1
-            Height = 116
+            Height = 168
             Top = 1
             Width = 126
             Align = alLeft
             BevelOuter = bvNone
-            ClientHeight = 116
+            ClientHeight = 168
             ClientWidth = 126
             ParentFont = False
             TabOrder = 0
             object Label57: TLabel
               Left = 13
-              Height = 108
+              Height = 160
               Top = 4
               Width = 109
               Align = alClient
               Anchors = []
               BorderSpacing.Left = 9
               BorderSpacing.Around = 4
-              Caption = 'Description'
+              Caption = 'Description'#13#10'(Markdown)'
               Font.Height = -16
               ParentColor = False
               ParentFont = False
             end
           end
-          object TIMemoDesc: TTIMemo
-            Left = 140
-            Height = 108
-            Top = 5
-            Width = 1078
+          object Panel14: TPanel
+            Left = 127
+            Height = 168
+            Top = 1
+            Width = 357
             Align = alClient
-            Anchors = [akLeft]
-            BorderSpacing.Left = 9
-            BorderSpacing.Around = 4
-            OnChange = genRttiEditChange
-            ParentFont = False
-            ScrollBars = ssAutoVertical
+            ClientHeight = 168
+            ClientWidth = 357
+            TabOrder = 1
+            object TIMemoDesc: TTIMemo
+              Left = 14
+              Height = 158
+              Top = 5
+              Width = 338
+              Align = alClient
+              Anchors = [akLeft]
+              BorderSpacing.Left = 9
+              BorderSpacing.Around = 4
+              OnChange = genRttiEditChange
+              OnEditingDone = TIMemoDescEditingDone
+              ParentFont = False
+              ScrollBars = ssAutoVertical
+            end
+          end
+          object Panel15: TPanel
+            Left = 484
+            Height = 168
+            Top = 1
+            Width = 580
+            Align = alRight
+            ClientHeight = 168
+            ClientWidth = 580
+            TabOrder = 2
+            object HtmlViewerDesc: THtmlViewer
+              Left = 1
+              Height = 151
+              Top = 16
+              Width = 578
+              BorderStyle = htFocused
+              DefFontName = 'SansSerif'
+              DefFontSize = 8
+              HistoryMaxCount = 0
+              MarginHeight = 0
+              MarginWidth = 0
+              NoSelect = False
+              PrintMarginBottom = 2
+              PrintMarginLeft = 2
+              PrintMarginRight = 2
+              PrintMarginTop = 2
+              PrintScale = 1
+              Align = alClient
+              TabOrder = 0
+            end
+            object Label7: TLabel
+              Left = 1
+              Height = 15
+              Top = 1
+              Width = 578
+              Align = alTop
+              Alignment = taCenter
+              Caption = 'Markdown Preview'
+              Color = clBtnFace
+              ParentColor = False
+              Transparent = False
+            end
           end
         end
         object Panel8: TPanel
           Left = 0
-          Height = 118
-          Top = 209
-          Width = 1223
+          Height = 170
+          Top = 261
+          Width = 1065
           Align = alTop
-          ClientHeight = 118
-          ClientWidth = 1223
+          ClientHeight = 170
+          ClientWidth = 1065
           ParentFont = False
           TabOrder = 5
           object Panel9: TPanel
             Left = 1
-            Height = 116
+            Height = 168
             Top = 1
             Width = 126
             Align = alLeft
             BevelOuter = bvNone
-            ClientHeight = 116
+            ClientHeight = 168
             ClientWidth = 126
             ParentFont = False
             TabOrder = 0
             object Label65: TLabel
               Left = 13
-              Height = 108
+              Height = 160
               Top = 4
               Width = 109
               Align = alClient
               Anchors = []
               BorderSpacing.Left = 9
               BorderSpacing.Around = 4
-              Caption = 'Advice'
+              Caption = 'Advice'#13#10'(Markdown)'
               Font.Height = -16
               ParentColor = False
               ParentFont = False
             end
           end
-          object TIMemoAdvice: TTIMemo
-            Left = 140
-            Height = 108
-            Top = 5
-            Width = 1078
+          object Panel16: TPanel
+            Left = 127
+            Height = 168
+            Top = 1
+            Width = 357
             Align = alClient
-            Anchors = [akLeft]
-            BorderSpacing.Left = 9
-            BorderSpacing.Around = 4
-            OnChange = genRttiEditChange
-            ParentFont = False
-            ScrollBars = ssAutoVertical
-          end
-        end
-        object FlowPanelCustomDir: TFlowPanel
-          Left = 0
-          Height = 129
-          Top = 327
-          Width = 1223
-          Align = alTop
-          Anchors = []
-          BevelOuter = bvNone
-          ControlList = <          
-            item
-              Control = PanelChannel
-              WrapAfter = waAuto
-              Index = 0
-            end          
-            item
-              Control = TICheckBoxCustomdir
-              WrapAfter = waAuto
-              Index = 1
-            end          
-            item
-              Control = TICheckBoxInstallFromLocal
-              WrapAfter = waAuto
-              Index = 2
-            end          
-            item
-              Control = TICheckBoxHandleLiceneKey
-              WrapAfter = waAuto
-              Index = 3
-            end          
-            item
-              Control = TICheckBoxDesktopIcon
-              WrapAfter = waAuto
-              Index = 4
-            end          
-            item
-              Control = TICheckBoxCustomizeProfile
-              WrapAfter = waAuto
-              Index = 5
-            end>
-          FlowLayout = tlTop
-          FlowStyle = fsLeftRightTopBottom
-          ParentFont = False
-          TabOrder = 6
-          object TICheckBoxCustomdir: TTICheckBox
-            Left = 278
-            Height = 19
-            Top = 24
-            Width = 155
-            Anchors = []
-            AutoSize = True
-            BorderSpacing.Top = 15
-            BorderSpacing.Around = 9
-            Caption = 'Support custom directory'
-            ParentShowHint = False
-            PropertyNameAsCaption = False
-            ShowHint = True
-            TabOrder = 4
-            TabStop = True
-          end
-          object PanelChannel: TPanel
-            Left = 0
-            Height = 64
-            Top = 0
-            Width = 269
-            Align = alClient
-            Anchors = []
-            BorderSpacing.InnerBorder = 6
-            BevelOuter = bvNone
-            ClientHeight = 64
-            ClientWidth = 269
-            TabOrder = 5
-            object LabelChannel: TLabel
-              Left = 12
-              Height = 15
-              Top = 4
-              Width = 254
-              Align = alTop
-              BorderSpacing.Left = 9
-              BorderSpacing.Top = 1
-              BorderSpacing.Around = 3
-              Caption = 'Template Channel:'
-              ParentColor = False
-            end
-            object TIComboBoxChannel: TTIComboBox
-              Left = 3
-              Height = 23
-              Top = 22
-              Width = 263
+            ClientHeight = 168
+            ClientWidth = 357
+            TabOrder = 1
+            object TIMemoAdvice: TTIMemo
+              Left = 14
+              Height = 158
+              Top = 5
+              Width = 338
               Align = alClient
-              BorderSpacing.Around = 3
-              HistoryCaseSensitive = False
-              MaxHistoryCount = 0
-              OnChange = TIComboBoxChannelChange
-              OnEditingDone = TIComboBoxChannelEditingDone
-              ParentShowHint = False
-              ShowHint = True
+              BorderSpacing.Left = 9
+              BorderSpacing.Around = 4
+              OnChange = genRttiEditChange
+              OnEditingDone = TIMemoAdviceEditingDone
+              ParentFont = False
+              ScrollBars = ssAutoVertical
+            end
+          end
+          object Panel17: TPanel
+            Left = 484
+            Height = 168
+            Top = 1
+            Width = 580
+            Align = alRight
+            ClientHeight = 168
+            ClientWidth = 580
+            TabOrder = 2
+            object HtmlViewerAdvice: THtmlViewer
+              Left = 1
+              Height = 151
+              Top = 16
+              Width = 578
+              BorderStyle = htFocused
+              DefFontName = 'SansSerif'
+              DefFontSize = 8
+              HistoryMaxCount = 0
+              MarginHeight = 0
+              MarginWidth = 0
+              NoSelect = False
+              PrintMarginBottom = 2
+              PrintMarginLeft = 2
+              PrintMarginRight = 2
+              PrintMarginTop = 2
+              PrintScale = 1
+              Align = alClient
               TabOrder = 0
             end
+            object Label8: TLabel
+              Left = 1
+              Height = 15
+              Top = 1
+              Width = 578
+              Align = alTop
+              Alignment = taCenter
+              Caption = 'Markdown Preview'
+              Color = clBtnFace
+              ParentColor = False
+              Transparent = False
+            end
           end
-          object TICheckBoxInstallFromLocal: TTICheckBox
-            Left = 451
-            Height = 19
-            Top = 24
-            Width = 156
-            Anchors = []
-            AutoSize = True
-            BorderSpacing.Top = 15
-            BorderSpacing.Around = 9
-            Caption = 'Install from local temp dir'
-            OnChange = CallMakeProperties
-            ParentShowHint = False
-            PropertyNameAsCaption = False
-            ShowHint = True
-            TabOrder = 3
-            TabStop = True
-          end
-          object TICheckBoxHandleLiceneKey: TTICheckBox
-            Left = 625
-            Height = 19
-            Top = 24
-            Width = 128
-            Anchors = []
-            AutoSize = True
-            BorderSpacing.Top = 15
-            BorderSpacing.Right = 11
-            BorderSpacing.Around = 9
-            Caption = 'Handle License Key  '
-            OnChange = CallMakeProperties
-            ParentShowHint = False
-            PropertyNameAsCaption = False
-            ShowHint = True
-            TabOrder = 2
-            TabStop = True
-          end
-          object TICheckBoxDesktopIcon: TTICheckBox
-            Left = 782
-            Height = 19
-            Top = 24
-            Width = 92
-            Anchors = []
-            AutoSize = True
-            BorderSpacing.Top = 15
-            BorderSpacing.Right = 11
-            BorderSpacing.Around = 9
-            Caption = 'DesktopIcon  '
-            OnChange = CallMakeProperties
-            ParentShowHint = False
-            PropertyNameAsCaption = False
-            ShowHint = True
-            TabOrder = 1
-            TabStop = True
-          end
-          object TICheckBoxCustomizeProfile: TTICheckBox
-            Left = 903
-            Height = 19
-            Top = 24
-            Width = 113
-            Anchors = []
-            AutoSize = True
-            BorderSpacing.Top = 15
-            BorderSpacing.Right = 11
-            BorderSpacing.Around = 9
-            Caption = 'Customize Profile'
-            OnChange = CallMakeProperties
-            ParentShowHint = False
-            PropertyNameAsCaption = False
-            ShowHint = True
+        end
+        object Panel18: TPanel
+          Left = 0
+          Height = 60
+          Top = 431
+          Width = 1065
+          Align = alTop
+          ClientHeight = 60
+          ClientWidth = 1065
+          TabOrder = 6
+          object Panel19: TPanel
+            Left = 1
+            Height = 58
+            Top = 1
+            Width = 287
+            Align = alLeft
+            ClientHeight = 58
+            ClientWidth = 287
             TabOrder = 0
-            TabStop = True
+            object PanelChannel: TPanel
+              Left = 1
+              Height = 56
+              Top = 1
+              Width = 285
+              Align = alClient
+              Anchors = []
+              BorderSpacing.InnerBorder = 6
+              BevelOuter = bvNone
+              ClientHeight = 56
+              ClientWidth = 285
+              TabOrder = 0
+              object LabelChannel: TLabel
+                Left = 12
+                Height = 15
+                Top = 4
+                Width = 270
+                Align = alTop
+                BorderSpacing.Left = 9
+                BorderSpacing.Top = 1
+                BorderSpacing.Around = 3
+                Caption = 'Template Channel:'
+                ParentColor = False
+              end
+              object TIComboBoxChannel: TTIComboBox
+                Left = 3
+                Height = 23
+                Top = 22
+                Width = 279
+                Align = alClient
+                BorderSpacing.Around = 3
+                HistoryCaseSensitive = False
+                MaxHistoryCount = 0
+                OnChange = TIComboBoxChannelChange
+                OnEditingDone = TIComboBoxChannelEditingDone
+                ParentShowHint = False
+                ShowHint = True
+                TabOrder = 0
+              end
+            end
+          end
+          object FlowPanelCustomDir: TFlowPanel
+            Left = 288
+            Height = 58
+            Top = 1
+            Width = 776
+            Align = alClient
+            Anchors = []
+            BevelOuter = bvNone
+            ControlList = <            
+              item
+                Control = TICheckBoxCustomdir
+                WrapAfter = waAuto
+                Index = 0
+              end            
+              item
+                Control = TICheckBoxInstallFromLocal
+                WrapAfter = waAuto
+                Index = 1
+              end            
+              item
+                Control = TICheckBoxHandleLiceneKey
+                WrapAfter = waAuto
+                Index = 2
+              end            
+              item
+                Control = TICheckBoxDesktopIcon
+                WrapAfter = waAuto
+                Index = 3
+              end            
+              item
+                Control = TICheckBoxCustomizeProfile
+                WrapAfter = waAuto
+                Index = 4
+              end>
+            FlowLayout = tlTop
+            FlowStyle = fsLeftRightTopBottom
+            ParentFont = False
+            TabOrder = 1
+            object TICheckBoxCustomdir: TTICheckBox
+              Left = 5
+              Height = 19
+              Top = 5
+              Width = 155
+              Anchors = []
+              AutoSize = True
+              BorderSpacing.Around = 5
+              Caption = 'Support custom directory'
+              ParentShowHint = False
+              PropertyNameAsCaption = False
+              ShowHint = True
+              TabOrder = 3
+              TabStop = True
+            end
+            object TICheckBoxInstallFromLocal: TTICheckBox
+              Left = 170
+              Height = 19
+              Top = 5
+              Width = 156
+              Anchors = []
+              AutoSize = True
+              BorderSpacing.Around = 5
+              Caption = 'Install from local temp dir'
+              OnChange = CallMakeProperties
+              ParentShowHint = False
+              PropertyNameAsCaption = False
+              ShowHint = True
+              TabOrder = 4
+              TabStop = True
+            end
+            object TICheckBoxHandleLiceneKey: TTICheckBox
+              Left = 336
+              Height = 19
+              Top = 5
+              Width = 128
+              Anchors = []
+              AutoSize = True
+              BorderSpacing.Right = 11
+              BorderSpacing.Around = 5
+              Caption = 'Handle License Key  '
+              OnChange = CallMakeProperties
+              ParentShowHint = False
+              PropertyNameAsCaption = False
+              ShowHint = True
+              TabOrder = 2
+              TabStop = True
+            end
+            object TICheckBoxDesktopIcon: TTICheckBox
+              Left = 485
+              Height = 19
+              Top = 5
+              Width = 92
+              Anchors = []
+              AutoSize = True
+              BorderSpacing.Right = 11
+              BorderSpacing.Around = 5
+              Caption = 'DesktopIcon  '
+              OnChange = CallMakeProperties
+              ParentShowHint = False
+              PropertyNameAsCaption = False
+              ShowHint = True
+              TabOrder = 1
+              TabStop = True
+            end
+            object TICheckBoxCustomizeProfile: TTICheckBox
+              Left = 598
+              Height = 19
+              Top = 5
+              Width = 113
+              Anchors = []
+              AutoSize = True
+              BorderSpacing.Right = 11
+              BorderSpacing.Around = 5
+              Caption = 'Customize Profile'
+              OnChange = CallMakeProperties
+              ParentShowHint = False
+              PropertyNameAsCaption = False
+              ShowHint = True
+              TabOrder = 0
+              TabStop = True
+            end
           end
         end
       end
       object TabSheetProduct2: TTabSheet
         Caption = 'Product Configuration 2'
-        ClientHeight = 627
-        ClientWidth = 1223
+        ClientHeight = 562
+        ClientWidth = 1065
         ParentFont = False
         object FlowPanel21: TFlowPanel
           Left = 0
           Height = 58
           Top = 0
-          Width = 1223
+          Width = 1065
           Align = alTop
           ControlList = <          
             item
@@ -10834,9 +10949,9 @@ object resultForm1: TresultForm1
         end
         object FlowPanel23: TFlowPanel
           Left = 0
-          Height = 179
+          Height = 114
           Top = 448
-          Width = 1223
+          Width = 1065
           Align = alClient
           ControlList = <          
             item
@@ -10850,10 +10965,10 @@ object resultForm1: TresultForm1
           TabOrder = 1
           OnClick = FlowPanel18Click
           object BtProduct2NextStep: TBitBtn
-            Left = 1064
+            Left = 906
             Height = 54
             Hint = 'Go to the next Step'
-            Top = 115
+            Top = 50
             Width = 149
             Anchors = [akRight, akBottom]
             AutoSize = True
@@ -11004,7 +11119,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 390
           Top = 58
-          Width = 1223
+          Width = 1065
           Align = alTop
           Position = 192
           SplitterType = pstVertical
@@ -11013,19 +11128,19 @@ object resultForm1: TresultForm1
             Left = 0
             Height = 192
             Top = 0
-            Width = 1223
+            Width = 1065
             ChildSizing.TopBottomSpacing = 3
-            ClientWidth = 1223
+            ClientWidth = 1065
             ClientHeight = 192
             object Panel4: TPanel
               Left = 0
               Height = 186
               Top = 3
-              Width = 1223
+              Width = 1065
               Align = alClient
               Caption = 'Panel4'
               ClientHeight = 186
-              ClientWidth = 1223
+              ClientWidth = 1065
               ParentFont = False
               TabOrder = 0
               object Panel5: TPanel
@@ -11058,7 +11173,7 @@ object resultForm1: TresultForm1
                 Left = 160
                 Height = 184
                 Top = 1
-                Width = 768
+                Width = 610
                 AliasPropertyNames.Strings = (
                   'doNotMatter=''none'''
                   'noState=''none'''
@@ -11090,14 +11205,14 @@ object resultForm1: TresultForm1
                 TIOptions = [tgoStartIndexAtOne, tgoShowOnlyProperties]
                 ColWidths = (
                   64
-                  170
-                  170
-                  170
-                  173
+                  135
+                  135
+                  135
+                  137
                 )
               end
               object PanelDepBtns: TPanel
-                Left = 928
+                Left = 770
                 Height = 184
                 Top = 1
                 Width = 294
@@ -11262,26 +11377,26 @@ object resultForm1: TresultForm1
             Left = 0
             Height = 193
             Top = 197
-            Width = 1223
+            Width = 1065
             ChildSizing.TopBottomSpacing = 3
-            ClientWidth = 1223
+            ClientWidth = 1065
             ClientHeight = 193
             object Panel10: TPanel
               Left = 0
               Height = 187
               Top = 3
-              Width = 1223
+              Width = 1065
               Align = alClient
               Caption = 'Panel10'
               ClientHeight = 187
-              ClientWidth = 1223
+              ClientWidth = 1065
               ParentFont = False
               TabOrder = 0
               object FlowPanel4: TFlowPanel
                 Left = 1
                 Height = 42
                 Top = 1
-                Width = 1221
+                Width = 1063
                 Align = alTop
                 ControlList = <                
                   item
@@ -11473,7 +11588,7 @@ object resultForm1: TresultForm1
                 Left = 1
                 Height = 143
                 Top = 43
-                Width = 1221
+                Width = 1063
                 AliasPropertyNames.Strings = (
                   'pname=PropertyId'
                   'description=Description'
@@ -11516,10 +11631,10 @@ object resultForm1: TresultForm1
                 TIOptions = [tgoStartIndexAtOne, tgoShowOnlyProperties]
                 ColWidths = (
                   64
-                  284
-                  284
-                  284
-                  284
+                  248
+                  248
+                  248
+                  251
                 )
               end
             end
@@ -11528,18 +11643,18 @@ object resultForm1: TresultForm1
       end
       object TabSheetIcons: TTabSheet
         Caption = 'Product Icon'
-        ClientHeight = 627
-        ClientWidth = 1223
+        ClientHeight = 562
+        ClientWidth = 1065
         OnShow = TabSheetIconsShow
         ParentFont = False
         object Panel11: TPanel
-          Left = 823
-          Height = 627
+          Left = 665
+          Height = 562
           Top = 0
           Width = 400
           Align = alRight
           BevelOuter = bvNone
-          ClientHeight = 627
+          ClientHeight = 562
           ClientWidth = 400
           Color = clNone
           ParentColor = False
@@ -11584,7 +11699,7 @@ object resultForm1: TresultForm1
             Left = 214
             Height = 54
             Hint = 'Go to the next Step'
-            Top = 559
+            Top = 494
             Width = 149
             Anchors = [akRight, akBottom]
             AutoSize = True
@@ -11943,21 +12058,21 @@ object resultForm1: TresultForm1
         end
         object ScrollBox1: TScrollBox
           Left = 0
-          Height = 627
+          Height = 562
           Top = 0
-          Width = 823
+          Width = 665
           HorzScrollBar.Page = 47
           VertScrollBar.Page = 15
           Align = alClient
-          ClientHeight = 623
-          ClientWidth = 819
+          ClientHeight = 558
+          ClientWidth = 661
           ParentFont = False
           TabOrder = 0
           object Label1: TLabel
             Left = 0
-            Height = 623
+            Height = 558
             Top = 0
-            Width = 819
+            Width = 661
             Align = alClient
             Alignment = taCenter
             Caption = 'No Icons'
@@ -11971,15 +12086,15 @@ object resultForm1: TresultForm1
       end
       object TabSheetCreate: TTabSheet
         Caption = 'Create'
-        ClientHeight = 627
-        ClientWidth = 1223
+        ClientHeight = 562
+        ClientWidth = 1065
         OnShow = TabSheetCreateShow
         ParentFont = False
         object FlowPanel14: TFlowPanel
           Left = 0
           Height = 64
           Top = 0
-          Width = 1223
+          Width = 1065
           Align = alTop
           ControlList = <          
             item
@@ -12159,7 +12274,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 58
           Top = 64
-          Width = 1223
+          Width = 1065
           Align = alTop
           ControlList = <          
             item
@@ -12266,7 +12381,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 190
           Top = 122
-          Width = 1223
+          Width = 1065
           Align = alTop
           ControlList = <          
             item
@@ -12376,7 +12491,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 126
           Top = 312
-          Width = 1223
+          Width = 1065
           Align = alTop
           ControlList = <          
             item
@@ -12394,7 +12509,7 @@ object resultForm1: TresultForm1
           ParentFont = False
           TabOrder = 3
           object BtCreateProduct: TBitBtn
-            Left = 950
+            Left = 792
             Height = 86
             Hint = 'Create an opsi Product'
             Top = 10
@@ -12926,7 +13041,7 @@ object resultForm1: TresultForm1
             TabOrder = 0
           end
           object BitBtnRebuild: TBitBtn
-            Left = 761
+            Left = 603
             Height = 40
             Hint = 'Rebuild Package'
             Top = 51
@@ -13010,7 +13125,7 @@ object resultForm1: TresultForm1
     end
     object Splitter2: TSplitter
       Left = 1
-      Height = 655
+      Height = 590
       Top = 1
       Width = 6
     end
@@ -13018,8 +13133,8 @@ object resultForm1: TresultForm1
   object StatusBar1: TStatusBar
     Left = 0
     Height = 23
-    Top = 697
-    Width = 1239
+    Top = 632
+    Width = 1081
     Panels = <    
       item
         Width = 9
@@ -13071,14 +13186,11 @@ object resultForm1: TresultForm1
     end
     object FileHelp: TMenuItem
       Caption = '&Help'
-      object MenuHelpOpen: TMenuItem
-        Caption = 'Open help'
-        OnClick = FileHelpClick
-      end
-      object MenuHelpLog: TMenuItem
-        Caption = 'Open log file'
-        OnClick = MenuHelpLogClick
-      end
+      OnClick = FileHelpClick
+    end
+    object MenuItemLog: TMenuItem
+      Caption = 'Show Log'
+      OnClick = MenuItemLogClick
     end
     object MenuItemAbout: TMenuItem
       Caption = '&About'

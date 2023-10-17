@@ -26,6 +26,7 @@ object OSD_info: TOSD_info
       Top = 1
       Width = 703
       BorderStyle = htFocused
+      DefFontName = 'SansSerif'
       HistoryMaxCount = 0
       NoSelect = False
       PrintMarginBottom = 2

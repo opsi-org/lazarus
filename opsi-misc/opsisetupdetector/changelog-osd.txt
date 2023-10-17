@@ -166,6 +166,7 @@ todo:
 
 ### Changed
 - removed AdvancedMSI (replaced by AdvancedInstaller)
+- Description and Advice now with markdown preview
 
 (Detlef Oertel <d.oertel@uib.de> 2023-09-28)
 

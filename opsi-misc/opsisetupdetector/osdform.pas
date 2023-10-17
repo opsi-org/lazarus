@@ -32,7 +32,11 @@ uses
   EditBtn,
   Grids,
   PairSplitter,
-  ColorBox,
+  ColorBox, HtmlView,
+  MarkdownUtils,
+  MarkdownProcessor,
+  HtmlGlobals,
+  HTMLUn2,
   oslog,
   osdbasedata, osdconfigdlg, osdcreate, fpjsonrtti, osddlgnewdependency,
   osddlgnewproperty, osparserhelper,
@@ -130,8 +134,8 @@ type
     FlowPanel6: TFlowPanel;
     FlowPanel8: TFlowPanel;
     FlowPanel9: TFlowPanel;
-    FlowPanelLinuxTitle: TFlowPanel;
     FlowPanelCustomDir: TFlowPanel;
+    FlowPanelLinuxTitle: TFlowPanel;
     FlowPanelLinuxTitle2: TFlowPanel;
     FlowPanelMacosTitle: TFlowPanel;
     FlowPanelMsiId1: TFlowPanel;
@@ -158,6 +162,8 @@ type
     FlowPanelSetup43: TFlowPanel;
     FlowPanelWindowsTitle: TFlowPanel;
     GroupBox2: TGroupBox;
+    HtmlViewerAdvice: THtmlViewer;
+    HtmlViewerDesc: THtmlViewer;
     Image1: TImage;
     Image2: TImage;
     Image3: TImage;
@@ -179,6 +185,8 @@ type
     Label56: TLabel;
     Label6: TLabel;
     Label63: TLabel;
+    Label7: TLabel;
+    Label8: TLabel;
     Label86: TLabel;
     Label88: TLabel;
     Label89: TLabel;
@@ -234,8 +242,7 @@ type
     LabelWorkbenchOK: TLabel;
     LabelWorkbenchNotOK: TLabel;
     MemoDefault: TMemo;
-    MenuHelpOpen: TMenuItem;
-    MenuHelpLog: TMenuItem;
+    MenuItemLog: TMenuItem;
     MenuItemOpenControl: TMenuItem;
     MenuItemOpenProj: TMenuItem;
     MenuItemSaveProj: TMenuItem;
@@ -255,6 +262,13 @@ type
     Panel11: TPanel;
     Panel12: TPanel;
     Panel13: TPanel;
+    Panel14: TPanel;
+    Panel15: TPanel;
+    Panel16: TPanel;
+    Panel17: TPanel;
+    Panel18: TPanel;
+    Panel19: TPanel;
+    PanelChannel: TPanel;
     SpeedButtonHelpMain: TSpeedButton;
     SpeedButtonHelpAnalyze: TSpeedButton;
     SpeedButtonHelpSetup1: TSpeedButton;
@@ -275,7 +289,6 @@ type
     TaskPanelWin: TPanel;
     TaskPanelLinux: TPanel;
     TaskPanelIndep: TPanel;
-    PanelChannel: TPanel;
     PanelNumIcons: TPanel;
     PanelIconPreview: TPanel;
     Panel4: TPanel;
@@ -316,10 +329,10 @@ type
     Panel3: TPanel;
     TabSheetAnalyze: TTabSheet;
     TICheckBoxCustomdir: TTICheckBox;
-    TICheckBoxDesktopIcon: TTICheckBox;
     TICheckBoxCustomizeProfile: TTICheckBox;
-    TICheckBoxInstallFromLocal: TTICheckBox;
+    TICheckBoxDesktopIcon: TTICheckBox;
     TICheckBoxHandleLiceneKey: TTICheckBox;
+    TICheckBoxInstallFromLocal: TTICheckBox;
     TICheckBoxS1Mst: TTICheckBox;
     TICheckBoxS1Silent: TTICheckBox;
     TICheckBoxS3Silent: TTICheckBox;
@@ -442,6 +455,7 @@ type
     procedure FormShow(Sender: TObject);
     procedure MenuHelpLogClick(Sender: TObject);
     procedure MenuItem1Click(Sender: TObject);
+    procedure MenuItemLogClick(Sender: TObject);
     procedure MenuItemOpenControlClick(Sender: TObject);
     procedure MenuItemOpenProjClick(Sender: TObject);
     procedure MenuItemSaveProjClick(Sender: TObject);
@@ -505,6 +519,8 @@ type
     procedure TIEditSetup1UnProgramEditingDone(Sender: TObject);
     procedure TIEditSetup2UnProgramEditingDone(Sender: TObject);
     procedure TIEditSetup3UnProgramEditingDone(Sender: TObject);
+    procedure TIMemoAdviceEditingDone(Sender: TObject);
+    procedure TIMemoDescEditingDone(Sender: TObject);
     procedure TimerFirstconfigTimer(Sender: TObject);
     procedure TIRadioGroupBuildModeClick(Sender: TObject);
     procedure TIS1UrlClick(Sender: TObject);
@@ -698,6 +714,21 @@ resourcestring
 implementation
 
 {$R *.lfm}
+
+const
+  CSSDecoration = '<style type="text/css">' + 'code{' +
+    '  color: #A00;' + '}' + 'pre{' +
+    '  background: #f4f4f4;' + '  border: 1px solid #ddd;' +
+    '  border-left: 3px solid #f36d33;' +
+    '  color: #555;' + '  overflow: auto;' +
+    '  padding: 1em 1.5em;' + '  display: block;' +
+    '}' + 'pre code{' +
+    '  color: inherit;' + '}' + '</style>';
+
+  var
+  md: TMarkdownProcessor;
+  HtmlContent: string;
+
 
 procedure initGUI;
 
@@ -941,6 +972,7 @@ begin
   TICheckBoxS1Mst.Link.TIObject := nil;
   TICheckBoxS2Mst.Link.TIObject := nil;
   OSD_info.Destroy;
+  FreeAndNil(md);
 end;
 
 
@@ -1092,6 +1124,55 @@ begin
   //OSD_info := TOSD_info.Create(resultForm1);
   OSD_info.ShowModal;
   //OSD_info.Destroy;
+end;
+
+procedure TResultform1.MenuItemLogClick(Sender: TObject);
+var
+  ErrorMessage: string;
+  PathOpsiLogViewer: string;
+  paramstring : string;
+  basepath : string;
+begin
+  {$IFDEF WINDOWS}
+  basepath := 'C:\Program Files (x86)';
+  if not DirectoryExists(basepath) then basepath := 'C:\Program Files';
+  PathOpsiLogViewer :=
+    basepath +'\opsi.org\configed\opsi-logviewer.exe';
+  if not FileExists(PathOpsiLogViewer) then
+  PathOpsiLogViewer :=
+    basepath +'\opsi.org\opsi-logviewer\opsi-logviewer.exe';
+  paramstring := LogDatei.FileName;
+  {$ENDIF WINDOWS}
+  {$IFDEF LINUX}
+  // call of logviewer at linux (N.Otto 3.7.2023):
+  // /usr/share/opsi-configed/java/jre/bin/java -jar "/usr/share/opsi-configed/configed.jar" --logviewer
+  PathOpsiLogViewer := '/usr/share/opsi-configed/java/jre/bin/java';
+  paramstring := ' -jar "/usr/share/opsi-configed/configed.jar" --logviewer -f '+LogDatei.FileName;
+  (*
+  PathOpsiLogViewer := '/usr/share/opsi-logviewer/logviewer'; // '/usr/bin/logviewer'
+  paramstring := ' -f '+LogDatei.FileName;
+  *)
+  {$ENDIF LINUX}
+  {$IFDEF DARWIN}
+  PathOpsiLogViewer := '/Applications/opsi-logviewer.app/Contents/MacOS/opsi-logviewer';
+  paramstring := ' -f '+LogDatei.FileName;
+  //ShowMessage('Logview is temporary not working. Please use the opsi-logviewer product.');
+  {$ENDIF DARWIN}
+  if FileExists(PathOpsiLogViewer) then
+  begin
+    if ExecuteProcess(PathOpsiLogViewer, paramstring) <> 0 then
+    begin
+      ErrorMessage := rsErrorLoadingLogViewer;
+      LogDatei.log(ErrorMessage, LLInfo);
+      ShowMessage(ErrorMessage);
+    end;
+  end
+  else
+  begin
+    ErrorMessage := rsErrorFindingLogViewer + PathOpsiLogViewer;
+    LogDatei.log(ErrorMessage, LLInfo);
+    ShowMessage(ErrorMessage);
+  end;
 end;
 
 procedure TResultform1.MenuItemOpenControlClick(Sender: TObject);
@@ -3499,6 +3580,10 @@ begin
   PaintPreview(DefaultIcon);
   DataModule1.SetFontName(TControl(Sender), myFont);
   OSD_info := TOSD_info.Create(resultForm1);
+  md := TMarkdownProcessor.createDialect(mdDaringFireball);
+  md.UnSafe := True;
+  HtmlViewerDesc.LoadFromString(CSSDecoration + '');
+  HtmlViewerAdvice.LoadFromString('');
   LogDatei.log('Finished FormCreate ', LLInfo);
 end;
 
@@ -3858,6 +3943,19 @@ end;
 procedure TResultform1.TIEditSetup3UnProgramEditingDone(Sender: TObject);
 begin
   updateUninstaller(aktProduct.SetupFiles[2]);
+end;
+
+procedure TResultform1.TIMemoAdviceEditingDone(Sender: TObject);
+begin
+  HtmlContent := md.process(TTIMemo(Sender).Text);
+  HtmlViewerAdvice.LoadFromString(HtmlContent);
+end;
+
+procedure TResultform1.TIMemoDescEditingDone(Sender: TObject);
+begin
+  HtmlContent := md.process(TTIMemo(Sender).Text);
+  //HtmlViewerDesc.LoadFromString(CSSDecoration + HtmlContent);
+  HtmlViewerDesc.LoadFromString(HtmlContent);
 end;
 
 procedure TResultform1.genRttiEditChange(Sender: TObject);
