@@ -5659,10 +5659,6 @@ function TuibInstScript.doRegistryAllNTUserDats(const Sektion: TWorkSection;
   rfSelected: TRegistryFormat; const flag_force64: boolean): TSectionResult;
 
 var
-  //SearchPath : String='';
-  //SearchRec  : TSearchRec;
-  //findresult : Integer=0;
-
   profilename, profilepath: string;
   ProfileList: TStringList;
   hkulist: TStringList;
@@ -5670,6 +5666,7 @@ var
   pc: integer;
   domain: string = '';
   UserPath: string = '';
+  UserName: string = '';
   aktsidStr: string = '';
 
   Errorcode: integer = 0;
@@ -5677,6 +5674,7 @@ var
 
   StartWithErrorNumbers: integer = 0;
   StartWithWarningsNumber: integer = 0;
+  patchViaUsername: boolean = False;
 
   function LoadNTUserDat(const path: string): boolean;
   var
@@ -5756,33 +5754,37 @@ var
     sidStr: string = '';
   begin
     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
-
-    //sidStr := GetLocalUserSidStr(GetUserNameEx_);
-    //LogDatei.log('sidStr :'+sidStr,LLDebug);
     sidStr := GetLocalUserSidStr(Name);
-    LogDatei.log('sidStr :' + sidStr, LLDebug2);
+    LogDatei.log('sidStr : ' + sidStr, LLDebug2);
     sidStr := copy(sidStr, 2, length(sidStr) - 2);
-    LogDatei.log('sidStr :' + sidStr, LLDebug);
+    LogDatei.log('sidStr : ' + sidStr, LLDebug);
 
-
-    case rfSelected of
-      trfRegedit: doRegistryHackRegeditFormat(Sektion, 'HKEY_USERS\' +
-          sidStr, flag_force64);
-      trfWinst: doRegistryHack(Sektion, 'HKEY_USERS\' + sidStr, flag_force64);
-    end;
-
-    LogDatei.log('', LLDebug);
-    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
-
-    ErrorCode := RegFlushKey(HKEY_Users);
-
-    if Errorcode = Error_success then
-      LogDatei.log('Flushed', LLdebug)
+    if not RegKeyExists('HKEY_USERS\' + sidStr, flag_force64) then
+    begin
+      LogDatei.log('RegKey does not exists : HKU\' + sidStr +
+        ' - can not patch', LLError);
+    end
     else
     begin
-      LogDatei.log('Warning: Could not be flushed. Code ' +
-        IntToStr(Errorcode) + ': ' + RemoveLineBreaks(SysErrorMessage(Errorcode)),
-        LLWarning);
+      case rfSelected of
+        trfRegedit: doRegistryHackRegeditFormat(Sektion, 'HKEY_USERS\' +
+            sidStr, flag_force64);
+        trfWinst: doRegistryHack(Sektion, 'HKEY_USERS\' + sidStr, flag_force64);
+      end;
+
+      LogDatei.log('', LLDebug);
+      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
+
+      ErrorCode := RegFlushKey(HKEY_Users);
+
+      if Errorcode = Error_success then
+        LogDatei.log('Flushed', LLdebug)
+      else
+      begin
+        LogDatei.log('Warning: Could not be flushed. Code ' +
+          IntToStr(Errorcode) + ': ' + RemoveLineBreaks(SysErrorMessage(Errorcode)),
+          LLWarning);
+      end;
     end;
   end;
 
@@ -5821,37 +5823,58 @@ begin
         end
         else
         begin
-          if (GetUserNameEx_ <> '') then
+          UserName := GetUserNameEx_;
+          LogDatei.log('NTUSER.dat locked. We found as loggedin user: "' +
+            UserName + '"', LLDebug);
+          if (UserName <> '') then
           begin
             hkulist := GetRegistryKeyList('HKU\', False);
             for i := 0 to hkulist.Count - 1 do
               LogDatei.log('found in hku  ' + hkulist.Strings[i], LLDebug2);
             hkulist.Free;
-            aktsidStr := GetDomainUserSidS('', GetUserNameEx_, domain);
+            aktsidStr := GetDomainUserSidS('', UserName, domain);
             aktsidStr := copy(aktsidStr, 2, length(aktsidStr) - 2);
             LogDatei.log('sid is: ' + aktsidStr, LLDebug2);
             LogDatei.log('index is: ' + IntToStr(GetRegistryKeyList(
               'HKU\', False).IndexOf(aktsidStr)), LLDebug2);
-            if (profilename = GetUserNameEx_) or
-              (profilepath = getProfileImagePathfromSid(
-              GetLocalUserSidStr(GetUserNameEx_))) or
+            if ((profilename = UserName) or
+              (profilepath = getProfileImagePathfromSid(opsiunquotestr2(
+              GetLocalUserSidStr(UserName),'[]')))) and
               (GetRegistryKeyList('HKU\', False).IndexOf(aktsidStr) > -1) then
             begin
-              LogDatei.log('The Branch for :' + profilename +
-                ' seems to be the logged in user,', LLDebug);
-              LogDatei.log('so let us try to patch it via HKUsers\SID', LLDebug);
-              workOnHkuserSid(GetUserNameEx_);
+              LogDatei.log('The Branch ' + profilename +
+                ' seems to be the logged in user: ' + UserName, LLDebug);
+              LogDatei.log('So let us try to patch it via HKUsers\SID of the user name',
+                LLDebug);
+              patchViaUsername := True;
+            end
+            else
+            begin
+              // we could not load NTUSER.dat and we have a user name that not match to the profile
+              // so we just try to patch via SID of the profilename
+              LogDatei.log('The Branch ' + profilename +
+                ' has a locked NTUSER.dat and we have a user name that not match to the profile.',
+                LLDebug);
+              LogDatei.log(
+                'So let us try to patch it via HKUsers\SID of the profile name',
+                LLDebug);
             end;
           end
           else
           begin
-            // at XP we have problems to get the username while pcpatch is logged in
-            if GetSystemOSVersionInfoEx('major_version') = '5' then
-            begin
-              LogDatei.log('The Branch for :' + profilename +
-                ' may be the logged in user,', LLDebug);
-              LogDatei.log('so let us try to patch it via HKUsers\SID', LLDebug);
+            LogDatei.log('The Branch ' + profilename +
+              ' has a locked NTUSER.dat and we have no user name.', LLDebug);
+          end;
+          if patchViaUsername then workOnHkuserSid(UserName)
+          else
+          begin
+            try
+              // we could not load NTUSER.dat and we have no user name
+              // so we just try if we can patch via SID of the profilename
+              LogDatei.log('Try to patch via HKUsers\SID of the profile name', LLDebug);
               workOnHkuserSid(profilename);
+            except
+              LogDatei.log('Warning: Failed to patch it via HKUsers\SID of profile name: '+profilename, LLWarning);
             end;
           end;
         end;
@@ -5859,12 +5882,6 @@ begin
     end;
   end;
 
-   (*
-     findresult := findnext (SearchRec);
-   End;
-
-   sysutils.findclose (SearchRec);
-   *)
 
 
   // Patch HKEY_Current_User
