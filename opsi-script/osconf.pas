@@ -435,6 +435,7 @@ begin
     startupmessages.Append('Unknown config: ' + ConfigID + ' (osconf.pas: procedure SetSingleConfig)');
 end;
 
+
 procedure SetConfigs42(const JsonRpcResponse: string; KeyConfigID:string; KeyConfigValue:string);
 (* Procedure SetConfigs extracts the values of opsi-script configs from a JSON-RPC response.
    Therefore it loops through the result of the response. The expected result is a json array
@@ -467,6 +468,7 @@ begin
   end;
 end;
 
+
 procedure SetConfigs43(const JsonRpcResponse: string);
 var
   ConfigValue: string;
@@ -478,14 +480,37 @@ begin
     JSONResult := GetJSON(JsonRpcResponse).FindPath('result');
     if (JSONResult <> nil) and not(JSONResult is TJSONNull) and (JSONResult.AsJSON <> '{}') then
     begin
-      startupmessages.Append('Got json result with opsi 4.3 method: '+ JSONResult.AsJSON);
       JSONObject := JSONResult as TJSONObject;
-      JSONResult := JSONObject.Find('jan-client01.uib.local');
+      JSONResult := JSONObject.Find(OpsiData.actualClient);
       if (JSONResult <> nil) and not(JSONResult is TJSONNull) and (JSONResult.AsJSON <> '{}') then
        begin
          JSONObject := JSONResult as TJSONObject;
          ConfigValue := (JSONObject.Find(LowerCase('opsi-script.global.debug_prog')) as TJSONArray).Items[0].AsString;
          debug_prog := ConfigValueToBool(ConfigValue, 'debug_prog', False);
+         ConfigValue := (JSONObject.Find(LowerCase('opsi-script.global.debug_lib')) as TJSONArray).Items[0].AsString;
+         debug_lib := ConfigValueToBool(ConfigValue, 'debug_lib', False);
+         ConfigValue := (JSONObject.Find(LowerCase('opsi-script.global.default_loglevel')) as TJSONArray).Items[0].AsString;
+         default_loglevel := ConfigValueToInt(ConfigValue, 'default_loglevel', 7);
+         ConfigValue := (JSONObject.Find(LowerCase('opsi-script.global.force_min_loglevel')) as TJSONArray).Items[0].AsString;
+         force_min_loglevel := ConfigValueToInt(ConfigValue, 'force_min_loglevel', 0);
+         ConfigValue := (JSONObject.Find(LowerCase('opsi-script.global.ScriptErrorMessages')) as TJSONArray).Items[0].AsString;
+         ScriptErrorMessages := ConfigValueToBool(ConfigValue, 'ScriptErrorMessages', False);
+         ConfigValue := (JSONObject.Find(LowerCase('opsi-script.global.AutoActivityDisplay')) as TJSONArray).Items[0].AsString;
+         AutoActivityDisplay := ConfigValueToBool(ConfigValue, 'AutoActivityDisplay', True);
+         ConfigValue := (JSONObject.Find(LowerCase('opsi-script.global.w10BitlockerSuspendOnReboot')) as TJSONArray).Items[0].AsString;
+         w10BitlockerSuspendOnReboot := ConfigValueToBool(ConfigValue, 'w10BitlockerSuspendOnReboot', True);
+         ConfigValue := (JSONObject.Find(LowerCase('opsi-script.global.ReverseProductOrderByUninstall')) as TJSONArray).Items[0].AsString;
+         configReverseProductOrderByUninstall := ConfigValueToBool(ConfigValue, 'ReverseProductOrderByUninstall', True);
+         ConfigValue := (JSONObject.Find(LowerCase('opsi-script.global.supressSystemEncodingWarning')) as TJSONArray).Items[0].AsString;
+         configsupressSystemEncodingWarning := ConfigValueToBool(ConfigValue, 'supressSystemEncodingWarning', False);
+         ConfigValue := (JSONObject.Find(LowerCase('opsi-script.global.log_rotation_count')) as TJSONArray).Items[0].AsString;
+         log_rotation_count := ConfigValueToInt(ConfigValue, 'log_rotation_count', 32);
+         ConfigValue := (JSONObject.Find(LowerCase('opsi-script.global.writeProductLogFile')) as TJSONArray).Items[0].AsString;
+         configwriteProductLogFile := ConfigValueToBool(ConfigValue, 'writeProductLogFile', False);
+         ConfigValue := (JSONObject.Find(LowerCase('opsi-script.global.testSyntax')) as TJSONArray).Items[0].AsString;
+         configtestSyntax := ConfigValueToBool(ConfigValue, 'testSyntax', False);
+         ConfigValue := (JSONObject.Find(LowerCase('clientconfig.depot.user')) as TJSONArray).Items[0].AsString;
+         DepotUser := ConfigValue;
        end;
     end
     else
