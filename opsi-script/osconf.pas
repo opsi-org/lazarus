@@ -554,7 +554,6 @@ begin
           //opsi 4.3
           JsonRpcResponse := OpsiData.getConfigStateValuesFromService(ConfigIDsAsJsonArray);
           SetConfigsOpsi43(JsonRpcResponse);
-          Result := 'readConfigFromService: ok';
         end
         else
         begin
@@ -565,8 +564,8 @@ begin
           //Get actual values from service and set actual config values
           JsonRpcResponse := OpsiData.getConfigStateObjectsFromService(ConfigIDsAsJsonArray);
           SetConfigs(JsonRpcResponse, 'configId', 'values');
-          Result := 'readConfigFromService: ok';
         end;
+        Result := 'readConfigFromService: ok';
       except
         on e: Exception do
         begin
