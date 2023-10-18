@@ -388,7 +388,7 @@ begin
 end;
 
 
-procedure SetSingleConfig42(const JsonObject: TJSONObject; const KeyConfigID:string; const KeyConfigValue:string);
+procedure SetSingleConfig(const JsonObject: TJSONObject; const KeyConfigID:string; const KeyConfigValue:string);
 (* Procedure SetsingleConfig sets the value for an opsi-script config (Host-Parameter).
    The value is taken from a json object which contains the value and
    the corresponding config ID.
@@ -436,7 +436,7 @@ begin
 end;
 
 
-procedure SetConfigs42(const JsonRpcResponse: string; KeyConfigID:string; KeyConfigValue:string);
+procedure SetConfigs(const JsonRpcResponse: string; KeyConfigID:string; KeyConfigValue:string);
 (* Procedure SetConfigs extracts the values of opsi-script configs from a JSON-RPC response.
    Therefore it loops through the result of the response. The expected result is a json array
    containing different Config or ConfigState objects in json object format.
@@ -460,7 +460,7 @@ begin
       begin
         // Cast the enum value to ConfigObject
         SingleConfig := ConfigEnum.Value as TJSONObject;
-        SetSingleConfig42(SingleConfig, KeyConfigID, KeyConfigValue);
+        SetSingleConfig(SingleConfig, KeyConfigID, KeyConfigValue);
       end;
     end
     else
@@ -469,7 +469,7 @@ begin
 end;
 
 
-procedure SetConfigs43(const JsonRpcResponse: string);
+procedure SetConfigsOpsi43(const JsonRpcResponse: string);
 var
   ConfigValue: string;
   JSONObject: TJSONObject;
@@ -553,17 +553,17 @@ begin
         begin
           //opsi 4.3
           JsonRpcResponse := OpsiData.getConfigStateValuesFromService(ConfigIDsAsJsonArray);
-          SetConfigs43(JsonRpcResponse);
+          SetConfigsOpsi43(JsonRpcResponse);
         end
         else
         begin
           //opsi 4.2
           //Get defaults from service and set config default values
           JsonRpcResponse := OpsiData.getConfigObjectsFromService(ConfigIDsAsJsonArray);
-          SetConfigs42(JsonRpcResponse, 'id', 'defaultValues');
+          SetConfigs(JsonRpcResponse, 'id', 'defaultValues');
           //Get actual values from service and set actual config values
           JsonRpcResponse := OpsiData.getConfigStateObjectsFromService(ConfigIDsAsJsonArray);
-          SetConfigs42(JsonRpcResponse, 'configId', 'values');
+          SetConfigs(JsonRpcResponse, 'configId', 'values');
           Result := 'readConfigFromService: ok';
         end;
       except
