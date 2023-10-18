@@ -5659,10 +5659,6 @@ function TuibInstScript.doRegistryAllNTUserDats(const Sektion: TWorkSection;
   rfSelected: TRegistryFormat; const flag_force64: boolean): TSectionResult;
 
 var
-  //SearchPath : String='';
-  //SearchRec  : TSearchRec;
-  //findresult : Integer=0;
-
   profilename, profilepath: string;
   ProfileList: TStringList;
   hkulist: TStringList;
@@ -5678,7 +5674,6 @@ var
 
   StartWithErrorNumbers: integer = 0;
   StartWithWarningsNumber: integer = 0;
-  //retrycounter: integer = 0;
   patchViaUsername: boolean = False;
 
   function LoadNTUserDat(const path: string): boolean;
@@ -5831,17 +5826,6 @@ begin
           UserName := GetUserNameEx_;
           LogDatei.log('NTUSER.dat locked. We found as loggedin user: "' +
             UserName + '"', LLDebug);
-          (* The following code does not detect that a user has logged in
-             perhaps because GetUserNameEx_ does not see the new master window)
-          while (UserName = '') and (retrycounter < 15) do
-          begin
-            LogDatei.log('No valid user - We retry to get the loggedin user.', LLDebug);
-            Sleep(1000);
-            UserName := GetUserNameEx_;
-            LogDatei.log('We found as loggedin user: "' + UserName +'"', LLDebug);
-            inc(retrycounter);
-          end;
-          *)
           if (UserName <> '') then
           begin
             hkulist := GetRegistryKeyList('HKU\', False);
@@ -5878,18 +5862,16 @@ begin
           end
           else
           begin
-            // we could not load NTUSER.dat and we have no user name
-            // so we just try if we can patch via SID of the profilename
             LogDatei.log('The Branch ' + profilename +
               ' has a locked NTUSER.dat and we have no user name.', LLDebug);
-            LogDatei.log(
-              'So let us try to patch it via HKUsers\SID of the profile name',
-              LLDebug);
           end;
           if patchViaUsername then workOnHkuserSid(UserName)
           else
           begin
             try
+              // we could not load NTUSER.dat and we have no user name
+              // so we just try if we can patch via SID of the profilename
+              LogDatei.log('Try to patch via HKUsers\SID of the profile name', LLDebug);
               workOnHkuserSid(profilename);
             except
               LogDatei.log('Warning: Failed to patch it via HKUsers\SID of profile name: '+profilename, LLWarning);
