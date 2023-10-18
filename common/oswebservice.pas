@@ -279,10 +279,10 @@ type
   protected
     actualProduct: string;
     actualVersion: string;
-    actualClient: string;
     options: string;
     FSortByServer: boolean;
   public
+    actualClient: string;
     {constructor}
     constructor Create;
     {functions}
