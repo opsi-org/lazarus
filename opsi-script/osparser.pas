@@ -605,11 +605,11 @@ type
       FetchExitCodePublic, FatalOnFail: boolean): TStringList; overload;
 {$IFDEF WINDOWS}
     function execPowershellCall(command: string; archparam: string;
-      logleveloffset: integer; FetchExitCodePublic, FatalOnFail: boolean;
-      handle_policy: boolean): TStringList; overload;
+      logleveloffset: integer; FetchExitCodePublic, FatalOnFail: boolean):TStringList;
+      overload;
     function execPowershellCall(command: string; archparam: string;
       logleveloffset: integer; FetchExitCodePublic, FatalOnFail: boolean;
-      handle_policy: boolean; optionstr: string): TStringList; overload;
+      optionstr: string): TStringList; overload;
  {$ENDIF WINDOWS}
   end;
 
@@ -10358,16 +10358,15 @@ end;
 
 {$IFDEF WINDOWS}
 function TuibInstScript.execPowershellCall(command: string; archparam: string;
-  logleveloffset: integer; FetchExitCodePublic, FatalOnFail: boolean;
-  handle_policy: boolean): TStringList;
+  logleveloffset: integer; FetchExitCodePublic, FatalOnFail: boolean): TStringList;
 begin
   Result := execPowershellCall(command, archparam, logleveloffset,
-    FetchExitCodePublic, FatalOnFail, handle_policy, '');
+    FetchExitCodePublic, FatalOnFail, '');
 end;
 
 function TuibInstScript.execPowershellCall(command: string; archparam: string;
   logleveloffset: integer; FetchExitCodePublic, FatalOnFail: boolean;
-  handle_policy: boolean; optionstr: string): TStringList;
+  optionstr: string): TStringList;
 var
   commandline: string = '';
   //fullps : string;
@@ -10415,22 +10414,6 @@ begin
       LLNotice + logleveloffset);
 
 
-    if handle_policy then // backup and set execution policy
-    begin
-      // backup
-      commandline := 'powershell.exe get-executionpolicy';
-      tmplist := execShellCall(commandline, shortarch, 1 + logleveloffset, False, True);
-      org_execution_policy := trim(tmplist[0]);
-      LogDatei.log('Powershell excution policy = ' + org_execution_policy, LLinfo);
-      if not (LowerCase(org_execution_policy) = LowerCase('AllSigned')) then
-      begin
-        // set (open)
-        commandline := 'powershell.exe set-executionpolicy ByPass';
-        tmplist := execShellCall(commandline, shortarch, 1 + logleveloffset,
-          False, True);
-      end;
-    end;
-
     mySektion := TWorkSection.Create(NestingLevel, ActiveSection);
     mySektion.Add('trap { write-output $_ ; exit 1 }');
     mySektion.Add(command);
@@ -10459,16 +10442,7 @@ begin
     Result.Text := output.Text;
     output.Free;
 
-    if handle_policy then // restore execution policy
-    begin
-      if not (LowerCase(org_execution_policy) = LowerCase('AllSigned')) then
-      begin
-        // set (close)
-        commandline := 'powershell.exe set-executionpolicy ' + org_execution_policy;
-        tmplist := execShellCall(commandline, shortarch, 1 + logleveloffset,
-          False, True);
-      end;
-    end;
+
   finally
     {$IFDEF GUI}
     FBatchOberflaeche.SetElementVisible(False, eActivityBar);//showAcitvityBar(False);
@@ -11424,9 +11398,7 @@ var
   powershellpara: string;
   catcommand: string = 'cat ';
   //useStdIn: boolean = False;
-  allSignedHack: boolean = False;
   tmplist: TStringList;
-  org_execution_policy: string = '';
 
 begin
   try
@@ -11586,32 +11558,8 @@ begin
         programparas := copy(programparas, 1, rpos(' -file', LowerCase(programparas)));
       end;
       LogDatei.log('powershell programparas are now: ' + programparas, LLDebug2);
-
-      commandline := 'powershell.exe get-executionpolicy';
-      tmplist := execShellCall(commandline, 'sysnative', 1 + logleveloffset,
-        False, True);
-      org_execution_policy := trim(tmplist[0]);
-      if LowerCase(org_execution_policy) = LowerCase('AllSigned') then
-      begin
-        allSignedHack := True;
-        //useStdIn := True;
-        LogDatei.log('Powershell with AllSigned detected - switching to Get-Content Mode',
-          LLinfo);
-        (*if trim(programparas) <> '' then
-          LogDatei.log('Powershell with AllSigned: ignored programparas: ' +
-            programparas, LLinfo);
-            *)
-        if trim(passparas) <> '' then
-          LogDatei.log('Powershell with AllSigned: ignored passparas: ' +
-            passparas, LLinfo);
-      end;
     end;
     //if useStdIn then
-    if allSignedHack then
-    begin
-      //powershellpara := ' -command - ';
-      powershellpara := ' -Command ';
-    end;
     tempfilename := winstGetTempFileNameWithExt(useext);
 
     if not Sektion.FuncSaveToFile(tempfilename, encodingString) then
@@ -11663,18 +11611,7 @@ begin
         end;
       end;
 
-      if allSignedHack then
-      begin
-        {$IFDEF WINDOWS}
-        catcommand := 'type ';
-        {$ENDIF WINDOWS}
-        //commandline := 'cmd.exe /C ' + catcommand + tempfilename +
-        //  ' | ' + '"' + programfilename + '" ' + programparas + ' ' + powershellpara;
-        commandline := '"' + programfilename + '" ' + programparas +
-          ' ' + powershellpara + '"Get-Content -Path ' + tempfilename +
-          ' | Out-String | Invoke-Expression" ';
-      end
-      else
+
       begin
         // if parameters end with '=' we concat tempfile without space
         if copy(programparas, length(programparas), 1) = '=' then
@@ -12091,7 +12028,7 @@ begin
         begin
           try
             FreeAndNil(list); //free list before assign new TXStringlist object to variable
-            list := TXStringList(execPowershellCall(s1, s2, 1, True, False, tmpbool, s4));
+            list := TXStringList(execPowershellCall(s1, s2, 1, True, False, s4));
           except
             on e: Exception do
             begin
@@ -16782,13 +16719,13 @@ begin
         if not testSyntax then
         begin
           try
-            execPowershellCall(s1, s2, 0, True, False, tmpbool, s4);
+            execPowershellCall(s1, s2, 0, True, False, s4);
             StringResult := IntToStr(FLastExitCodeOfExe);
           except
             on e: Exception do
             begin
               try
-                execPowershellCall(s1, s2, 0, True, False, tmpbool1, s4);
+                execPowershellCall(s1, s2, 0, True, False, s4);
                 StringResult := IntToStr(FLastExitCodeOfExe);
               except
                 on e: Exception do
@@ -24614,7 +24551,7 @@ begin
                 if syntaxCheck and not testSyntax then
                 begin
                   try
-                    execPowershellCall(s1, s2, 0, True, False, tmpbool, s4);
+                    execPowershellCall(s1, s2, 0, True, False, s4);
                   except
                     on e: Exception do
                     begin
