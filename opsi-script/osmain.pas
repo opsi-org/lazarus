@@ -1425,7 +1425,7 @@ begin
                     tmpstr + ').EncryptionPercentage';
                   tmplist.Text :=
                     buildpcscript.execPowershellCall(cmdstr, 'sysnative',
-                    0, True, False, True).Text;
+                    0, True, False).Text;
                   if buildpcscript.LastExitCodeOfExe = 0 then
                   begin
                     LogDatei.log('Succesful asked for Bitlocker', LLInfo);
@@ -1440,7 +1440,7 @@ begin
                         'Suspend-BitLocker -MountPoint "' +
                         tmpstr + '" -RebootCount 1';
                       buildpcscript.execPowershellCall(cmdstr,
-                        'sysnative', 0, True, False, True);
+                        'sysnative', 0, True, False);
                     end;
                   end
                   else
