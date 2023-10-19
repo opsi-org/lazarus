@@ -605,11 +605,8 @@ type
       FetchExitCodePublic, FatalOnFail: boolean): TStringList; overload;
 {$IFDEF WINDOWS}
     function execPowershellCall(command: string; archparam: string;
-      logleveloffset: integer; FetchExitCodePublic, FatalOnFail: boolean):TStringList;
-      overload;
-    function execPowershellCall(command: string; archparam: string;
       logleveloffset: integer; FetchExitCodePublic, FatalOnFail: boolean;
-      optionstr: string): TStringList; overload;
+      optionstr: string = ''): TStringList; overload;
  {$ENDIF WINDOWS}
   end;
 
@@ -10358,31 +10355,19 @@ end;
 
 {$IFDEF WINDOWS}
 function TuibInstScript.execPowershellCall(command: string; archparam: string;
-  logleveloffset: integer; FetchExitCodePublic, FatalOnFail: boolean): TStringList;
-begin
-  Result := execPowershellCall(command, archparam, logleveloffset,
-    FetchExitCodePublic, FatalOnFail, '');
-end;
-
-function TuibInstScript.execPowershellCall(command: string; archparam: string;
   logleveloffset: integer; FetchExitCodePublic, FatalOnFail: boolean;
-  optionstr: string): TStringList;
+  optionstr: string = ''): TStringList;
 var
   commandline: string = '';
-  //fullps : string;
   runas: TRunAs;
-  //force64: boolean;
   oldDisableWow64FsRedirectionStatus: pointer = nil;
   output: TXStringList;
-  tmplist: TStringList;
-  //dummybool : boolean;
   filename: string = '';
   parameters: string = '';
   report: string = '';
   errorinfo: string = '';
   i: integer = 0;
   localExitCode: longint = 0;
-  org_execution_policy: string;
   mySektion: TWorkSection;
   ActionResult: TSectionResult;
   shortarch: string;  // for execShellCall
@@ -10394,7 +10379,6 @@ begin
     runAs := traInvoker;
     OldNumberOfErrors := LogDatei.NumberOfErrors;
     OldNumberOfWarnings := LogDatei.NumberOfWarnings;
-    //force64 := false;
     shortarch := 'sysnative';
     {$IFDEF GUI}
     if AutoActivityDisplay then
@@ -11381,7 +11365,6 @@ var
   force64: boolean;
   oldDisableWow64FsRedirectionStatus: pointer = nil;
   Wow64FsRedirectionDisabled, boolresult: boolean;
-  goon: boolean;
   remaining: string;
   expr: string = '';
   onlyWindows: boolean;
@@ -11390,15 +11373,11 @@ var
   use_sp: boolean;
   encodingString: string = '';
   InfoSyntaxError: string = '';
-
   usehookscript: boolean = False;
   hookscriptfile: string;
   exitcode: integer;
   myoutput: TXStringlist;
   powershellpara: string;
-  catcommand: string = 'cat ';
-  //useStdIn: boolean = False;
-  tmplist: TStringList;
 
 begin
   try
