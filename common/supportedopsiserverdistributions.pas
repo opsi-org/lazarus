@@ -41,9 +41,10 @@ function GetSupportedDistribution(DistroName: string;
 
 const
   SupportedDistributionsInfoString =
-    'AlmaLinux 8, AlmaLinux 9,' + #10 + 'Debian 10, Debian 11, Debian 12,' +
+    'AlmaLinux 8, AlmaLinux 9,' +
+    #10 + 'Debian 10, Debian 11, Debian 12,' +
     #10 + 'openSUSE 15.4, openSUSE 15.5,' +
-    #10 + 'OL 8, OL 9, RedHatEnterprise 8, RHEL 9, Rocky 8, Rocky 9,' +
+    #10 + 'OracleServer 8, OL 9, RedHatEnterprise 8, RHEL 9, Rocky 8, Rocky 9,' +
     #10 + 'SUSE 15.1, SUSE 15.2, SUSE 15.3, SUSE 15.4, SUSE 15.5,' +
     #10 + 'Ubuntu 18.04, Ubuntu 20.04, Ubuntu 22.04,' + #10 +
     'Univention 4.4, Univention 5.0';
