@@ -11,11 +11,9 @@ type
   TSupportedDistribution = (
     AlmaLinux_8,
     AlmaLinux_9,
-    Debian_9_0,
     Debian_10,
     Debian_11,
     Debian_12,
-    openSUSE_Leap_15_3,
     openSUSE_Leap_15_4,
     openSUSE_Leap_15_5,
     OracleLinux_8,
@@ -43,8 +41,8 @@ function GetSupportedDistribution(DistroName: string;
 
 const
   SupportedDistributionsInfoString =
-    'AlmaLinux 8, AlmaLinux 9,' + #10 + 'Debian 9, Debian 10, Debian 11, Debian 12,' +
-    #10 + 'openSUSE 15.3, openSUSE 15.4, openSUSE 15.5,' +
+    'AlmaLinux 8, AlmaLinux 9,' + #10 + 'Debian 10, Debian 11, Debian 12,' +
+    #10 + 'openSUSE 15.4, openSUSE 15.5,' +
     #10 + 'OL 8, OL 9, RedHatEnterprise 8, RHEL 9, Rocky 8, Rocky 9,' +
     #10 + 'SUSE 15.1, SUSE 15.2, SUSE 15.3, SUSE 15.4, SUSE 15.5,' +
     #10 + 'Ubuntu 18.04, Ubuntu 20.04, Ubuntu 22.04,' + #10 +
@@ -67,7 +65,6 @@ begin
 
     'debian':
     begin
-      if Pos('9', DistroRelease) = 1 then Result := Debian_9_0;
       if Pos('10', DistroRelease) = 1 then Result := Debian_10;
       if Pos('11', DistroRelease) = 1 then Result := Debian_11;
       if Pos('12', DistroRelease) = 1 then Result := Debian_12;
@@ -76,7 +73,6 @@ begin
     'opensuse':
     begin
       case DistroRelease of
-        '15.3': Result := openSUSE_Leap_15_3;
         '15.4': Result := openSUSE_Leap_15_4;
         '15.5': Result := openSUSE_Leap_15_5;
       end;
