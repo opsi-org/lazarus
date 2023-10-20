@@ -41,6 +41,7 @@ type
     private
       currentIndex: integer;
       fileInfo: TFileInfo;
+      consumedLineEnding: boolean;
     protected type
       {$scopedenums on}
       TIdentifier = Ansistring;
@@ -75,6 +76,7 @@ type
                 Dash,
                 Dot,
                 Plus,
+                EOL,
                 EOF
                 );
       {$scopedenums off}
@@ -83,6 +85,7 @@ type
       pattern: ansistring;
       token: TToken;
       c: char;
+      readLineEndingsAsTokens: boolean;
     protected
       procedure Consume; inline;
       procedure Consume(t: TToken);
@@ -133,7 +136,7 @@ implementation
 
 {$macro on}
 {$define TCharSetLineEnding:=#10, #12, #13}
-{$define TCharSetWhiteSpace:=' ', '	', TCharSetLineEnding}
+{$define TCharSetWhiteSpace:=' ', '	'}
 {$define TCharSetWord:='a'..'z','A'..'Z','_'}
 {$define TCharSetInteger:='0'..'9'}
 {$define TCharSetQuotes:='"', ''''}
@@ -192,7 +195,9 @@ begin
 		TScanner.TToken.Plus:
 			result := '+';
 		TScanner.TToken.EOF:
-			result := 'EOF';
+			result := 'End of File';
+		TScanner.TToken.EOL:
+			result := 'End of Line';
 		otherwise
 			raise exception.create('invalid token');
 	end;
@@ -251,8 +256,13 @@ end;
 
 procedure TScanner.SkipSpace;
 begin
+	consumedLineEnding := false;
 	while IsWhiteSpace do
-		ReadChar;
+		begin
+			if IsLineEnding then
+				consumedLineEnding := true;
+			ReadChar;
+		end;
 end;
 
 function TScanner.IsLineEnding: boolean;
@@ -262,7 +272,7 @@ end;
 
 function TScanner.IsWhiteSpace: boolean;
 begin
-	result := c in [TCharSetWhiteSpace];
+	result := (c in [TCharSetWhiteSpace]) or IsLineEnding;
 end;
 
 function TScanner.Peek(offset: integer = 1): char;
@@ -275,12 +285,17 @@ end;
 
 function TScanner.Peek(str: string; offset: integer = 0): boolean;
 var
-	i: integer;
+	i, contentsOffset: integer;
 begin
-	result := true;
-	for i := 1 + offset to length(str) do
-		if contents[currentIndex + (i - 1)] <> str[i] then
-			exit(false);
+	result := false;
+	for i := 0 to length(str) - 1 do
+		begin
+			contentsOffset := currentIndex + offset + i;
+			if (contentsOffset < length(contents)) and (contents[contentsOffset] = str[i + 1]) then
+				result := true
+			else
+				exit(false);
+		end;
 end;
 
 function TScanner.PeekString(count: integer): string;
@@ -359,17 +374,12 @@ end;
 
 
 function TScanner.ReadNumber: string;
-var
-	negative: boolean = false;
 begin
 	pattern := '';
 	token := TToken.Integer;
 
 	if c = '-' then
-		begin
-			negative := true;
-			AdvancePattern;
-		end;
+		AdvancePattern;
 
 	if c = '+' then
 		AdvancePattern;
@@ -567,8 +577,17 @@ begin
 				  	ReadChar;
 				  	goto TokenRead;
 				  end;
+				TCharSetLineEnding,
 				TCharSetWhiteSpace:
-					SkipSpace;
+          begin
+  					SkipSpace;
+            if consumedLineEnding and readLineEndingsAsTokens then
+              begin
+                token := TToken.EOL;
+                consumedLineEnding := false;
+                goto TokenRead;
+              end;
+          end;
 				otherwise
 					begin
 						cont := false;
