@@ -2,7 +2,24 @@ todo:
 isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-package-requires-a-reboot-of-my-system
 mac getIpByName liefert name von IPnum
 
-opsi-script (4.12.11.0) unreleased; urgency=medium
+opsi-script (4.12.12.0) unreleased (4.2/4.3); urgency=medium
+
+ * [fix] patch local NTUSER.dat if logged-in user is not found (d.oertel, !187)
+ * [fix] show an individual error message in report also for the event silent install (j.werner, !188)
+ * [new] use new opsi 4.3 API method "configState_getValues"  to read configs from service  (j.werner, !189)
+ * [change] osparser.pas: powershellcall: remove unnecessary police handling and all_signe hack (j.werner, !190)
+ * [update] fpTOML library (https://github.com/genericptr/fpTOML) (d.oertel, !184)
+
+-- j.werner <j.werner@uib.de> 23 Oct 2023
+
+opsi-script (4.12.11.1) testing (4.3)/unreleased (4.2); urgency=medium
+
+ * [new] opsi logo/corporate design (j.schneider, d.oertel, !186)
+ * [fix] oscertificates.pas: correct path for master ca-certificate file on suse distributions (j. werner, !182)
+
+-- j.werner <j.werner@uib.de> 25 Sept 2023
+
+opsi-script (4.12.11.0) stable; urgency=medium
 
  * [change] oswebservice.pas: update synapse to support openssl version 3 (j.werner, d.oertel, !173, #4809)
  * [new] oswebservice.pas: new functions to get an ordered product sequence from service:
