@@ -24383,8 +24383,13 @@ begin
                   syntaxCheck := True;
                 if syntaxCheck and not testSyntax then
                 begin
-                  LogDatei.log('set ActionProgress to: ' + Parameter, LLInfo);
-                  opsidata.setActionProgress(Parameter);
+                  if Assigned(opsidata) then
+                  begin
+                    opsidata.setActionProgress(Parameter);
+                    LogDatei.log('set ActionProgress to: ' + Parameter, LLInfo);
+                  end
+                  else
+                    LogDatei.log('Could not set ActionProgress to: ' + Parameter + ', probably no service connection available', LLWarning);
                 end;
               end;
 
