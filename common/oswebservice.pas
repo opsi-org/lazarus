@@ -3654,6 +3654,7 @@ begin
   //inherited create;
   actualclient := '';
   FJsonExecutioner := nil;
+  FProductOnClient_aktobject := nil;
   FSortByServer := False;
   FCommunicationMode := -1;
   //Set stringlists to nil, so it can be checked if they are nil
@@ -5812,18 +5813,21 @@ var
   jO: ISuperObject;
   parastr: string;
 begin
-  FProductOnClient_aktobject.AsObject.S['actionProgress'] := progress;
-  parastr := FProductOnClient_aktobject.asJson(False, False);
-  omc := TOpsiMethodCall.Create('productOnClient_updateObject', [parastr]);
-  jO := FjsonExecutioner.retrieveJSONObject(omc);
-  omc.Free;
-      (*
-  omc := TOpsiMethodCall.Create('setProductActionProgress',
-    [actualProduct, actualClient, progress]);
-
-  jO := FjsonExecutioner.retrieveJSONObject(omc);
-  omc.Free;
-  *)
+  try
+    if Assigned(FProductOnClient_aktobject) then
+    begin
+      FProductOnClient_aktobject.AsObject.S['actionProgress'] := progress;
+      parastr := FProductOnClient_aktobject.asJson(False, False);
+      omc := TOpsiMethodCall.Create('productOnClient_updateObject', [parastr]);
+      jO := FjsonExecutioner.retrieveJSONObject(omc);
+      omc.Free;
+    end
+    else
+      LogDatei.log('Could not set action progress. ProductOnClient not assigned', LLWarning);
+  except
+     LogDatei.log('Exception in opsi4data.setActionProgress , parastr: ' +
+      parastr, LLerror);
+  end;
 end;
 
 procedure TOpsi4Data.setProductState(newState: TProductState);
