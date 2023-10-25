@@ -4986,8 +4986,8 @@ var
   omc: TOpsiMethodCall;
 begin
   //result := TStringList.create;
-  omc := TOpsiMethodCall.Create('getProductProperties_hash',
-    [actualproduct, actualclient]);
+  omc := TOpsiMethodCall.Create('productPropertyState_getValues',
+    [actualproduct,'""', actualclient, 'true']);
   Result := FJsonExecutioner.getMapResult(omc);
   omc.Free;
   if Result = nil then
@@ -4996,11 +4996,12 @@ begin
       LLWarning);
     //ProcessMess;
     Sleep(500);
-    omc := TOpsiMethodCall.Create('getProductProperties_hash',
-      [actualproduct, actualclient]);
+    omc := TOpsiMethodCall.Create('productPropertyState_getValues',
+      [actualproduct,'""', actualclient, 'true']);
     Result := FJsonExecutioner.getMapResult(omc);
     omc.Free;
   end;
+  LogDatei.log('Mapped result of productPropertyState_getValues: ' + Result.Text, LLDebug);
   if Result = nil then
   begin
     Result := TStringList.Create;
