@@ -11542,16 +11542,12 @@ begin
       end;
       LogDatei.log('powershell programparas are now: ' + programparas, LLDebug2);
 
-      //commandline := 'powershell.exe get-executionpolicy';
-      //tmplist := execShellCall(commandline, 'sysnative', 1 + logleveloffset,
-      //  False, True);
-      //ExecutionPolicy := trim(tmplist[0]);
-      //FreeAndNil(tmplist);
-      if RunCommand('powershell.exe', ['Get-ExecutionPolicy -Scope MachinePolicy'], ExecutionPolicy) then
+      if RunCommand('powershell.exe', ['Get-ExecutionPolicy -Scope MachinePolicy'], ExecutionPolicy, [], swoHIDE) then
       begin
+        ExecutionPolicy := trim(ExecutionPolicy);
         LogDatei.log('Get execution policy for scope "MachinePolicy": ' + ExecutionPolicy, LLDebug);
-        if (LowerCase(ExecutionPolicy) = LowerCase('AllSigned')) or
-          (LowerCase(ExecutionPolicy) = LowerCase('Restricted'))  then
+        if ((LowerCase(ExecutionPolicy) = LowerCase('AllSigned')) or
+          (LowerCase(ExecutionPolicy) = LowerCase('Restricted'))) then
         begin
           allSignedHack := True;
           //useStdIn := True;
