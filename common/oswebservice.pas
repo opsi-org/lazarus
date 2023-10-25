@@ -5196,7 +5196,7 @@ begin
       if (Result[0] = 'Empty value') then
       begin
         Result.Text := '';
-        LogDatei.log('Got empty property value from service', LLWarning);
+        LogDatei.log('Got empty property value from service', LLInfo);
       end
       else
       begin
