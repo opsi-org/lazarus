@@ -84,7 +84,7 @@ uses
   oszip,
   //DOM,
   //wixml,
-  //Process,
+  Process,
   fileutil,
   LazFileUtils,
   SysUtils,
@@ -11378,6 +11378,10 @@ var
   exitcode: integer;
   myoutput: TXStringlist;
   powershellpara: string;
+  tmplist: TStringList;
+  ExecutionPolicy: string = '';
+  AllSignedHack: boolean = false;
+  catcommand: string = 'cat ';
 
 begin
   try
@@ -11537,8 +11541,48 @@ begin
         programparas := copy(programparas, 1, rpos(' -file', LowerCase(programparas)));
       end;
       LogDatei.log('powershell programparas are now: ' + programparas, LLDebug2);
+
+      //commandline := 'powershell.exe get-executionpolicy';
+      //tmplist := execShellCall(commandline, 'sysnative', 1 + logleveloffset,
+      //  False, True);
+      //ExecutionPolicy := trim(tmplist[0]);
+      //FreeAndNil(tmplist);
+      if RunCommand('powershell.exe', ['Get-ExecutionPolicy -Scope MachinePolicy'], ExecutionPolicy) then
+      begin
+        LogDatei.log('Get execution policy for scope "MachinePolicy": ' + ExecutionPolicy, LLDebug);
+        if (LowerCase(ExecutionPolicy) = LowerCase('AllSigned')) or
+          (LowerCase(ExecutionPolicy) = LowerCase('Restricted'))  then
+        begin
+          allSignedHack := True;
+          //useStdIn := True;
+          LogDatei.log('Powershell with AllSigned/Restricted detected - switching to Get-Content Mode',
+            LLinfo);
+          (*if trim(programparas) <> '' then
+            LogDatei.log('Powershell with AllSigned: ignored programparas: ' +
+              programparas, LLinfo);
+              *)
+          if trim(passparas) <> '' then
+            LogDatei.log('Powershell with AllSigned/Restricted: ignored passparas: ' +
+              passparas, LLinfo);
+        end;
+      end
+      else
+      begin
+        LogDatei.log('Could not get execution policy for scope "MachinePolicy": ' + ExecutionPolicy + ' - use Get-Content Mode', LLWarning);
+        allSignedHack := True;
+        if trim(passparas) <> '' then
+          LogDatei.log('Powershell ignored passparas: ' + passparas, LLwarning);
+      end;
     end;
+
     //if useStdIn then
+    if allSignedHack then
+    begin
+      //powershellpara := ' -command - ';
+      powershellpara := ' -Command ';
+    end;
+
+
     tempfilename := winstGetTempFileNameWithExt(useext);
 
     if not Sektion.FuncSaveToFile(tempfilename, encodingString) then
@@ -11590,7 +11634,18 @@ begin
         end;
       end;
 
-
+      if allSignedHack then
+      begin
+        {$IFDEF WINDOWS}
+        catcommand := 'type ';
+        {$ENDIF WINDOWS}
+        //commandline := 'cmd.exe /C ' + catcommand + tempfilename +
+        //  ' | ' + '"' + programfilename + '" ' + programparas + ' ' + powershellpara;
+        commandline := '"' + programfilename + '" ' + programparas +
+          ' ' + powershellpara + '"Get-Content -Path ' + tempfilename +
+          ' | Out-String | Invoke-Expression" ';
+      end
+      else
       begin
         // if parameters end with '=' we concat tempfile without space
         if copy(programparas, length(programparas), 1) = '=' then
