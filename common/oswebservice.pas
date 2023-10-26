@@ -369,6 +369,8 @@ type
     function GetSortedProductOnClientListFromService: TStringList;
   protected
     FServiceLastErrorInfo: TStringList;
+    function getProductPropertiesOpsi43: TStringList;
+    function getProductPropertiesOpsi42: TStringList;
     //FactualClient: string;
   public
     //actualClient: string;
@@ -406,7 +408,7 @@ type
     function initProduct: boolean; override;
     function getActualProductVersion: string; override;
     function getSpecialScriptPath: string; override;
-    function getProductproperties: TStringList; override;
+    function getProductProperties: TStringList; override;
     function getBeforeRequirements: TStringList; override;
     function getAfterRequirements: TStringList; override;
     function getListOfProductIDs: TStringList; override;
@@ -4981,7 +4983,15 @@ begin
   Result := '';
 end;
 
-function TOpsi4Data.getProductproperties: TStringList;
+function TOpsi4Data.getProductProperties: TStringList;
+begin
+  if OpsiData.isMethodProvided('productPropertyState_getValues') then
+    Result := getProductPropertiesOpsi43
+  else
+    Result := getProductPropertiesOpsi42;
+end;
+
+function TOpsi4Data.getProductPropertiesOpsi43: TStringList;
 var
   omc: TOpsiMethodCall;
 begin
@@ -5002,6 +5012,34 @@ begin
     omc.Free;
   end;
   LogDatei.log('Mapped result of productPropertyState_getValues: ' + Result.Text, LLDebug);
+  if Result = nil then
+  begin
+    Result := TStringList.Create;
+    LogDatei.log('Error: Opsi4Data.getProductproperties failed: giving up',
+      LLError);
+  end;
+end;
+
+function TOpsi4Data.getProductPropertiesOpsi42: TStringList;
+var
+  omc: TOpsiMethodCall;
+begin
+  //result := TStringList.create;
+  omc := TOpsiMethodCall.Create('getProductProperties_hash',
+    [actualproduct, actualclient]);
+  Result := FJsonExecutioner.getMapResult(omc);
+  omc.Free;
+  if Result = nil then
+  begin
+    LogDatei.log('Error: Opsi4Data.getProductproperties failed: retry',
+      LLWarning);
+    //ProcessMess;
+    Sleep(500);
+    omc := TOpsiMethodCall.Create('getProductProperties_hash',
+      [actualproduct, actualclient]);
+    Result := FJsonExecutioner.getMapResult(omc);
+    omc.Free;
+  end;
   if Result = nil then
   begin
     Result := TStringList.Create;
