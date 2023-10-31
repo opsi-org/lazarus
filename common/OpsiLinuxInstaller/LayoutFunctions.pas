@@ -17,7 +17,6 @@ var
 begin
   // thin decoration line above the big one in opsi-red
   PanelRedLine := TPanel.Create(Sender);
-  PanelRedLine.Parent := Sender;
   PanelRedLine.ParentColor := False;
   PanelRedLine.BevelOuter := bvNone;
   PanelRedLine.Height := 8;
@@ -27,6 +26,7 @@ begin
   // opsi red: #cb1e58
   PanelRedLine.Color := TColor($00581ECB);
   PanelRedLine.BevelColor := TColor($00581ECB);
+  PanelRedLine.Parent := Sender;
 end;
 
 procedure DecorateForm(Sender: TForm);
