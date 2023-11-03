@@ -4997,7 +4997,8 @@ function TOpsi4Data.parse_JSONResult_productPropertyState_getValues(const JSONRe
 var
   JSONData: TJSONData;
   JSONObject: TJSONObject;
-  i: integer;
+  JSONArray:TJSONArray;
+  i, j: integer;
   PropertyName: string;
   PropertyValue: string;
 begin
@@ -5017,7 +5018,15 @@ begin
             for i := 0 to JSONObject.Count - 1 do
             begin
               PropertyName := JSONObject.Names[i];
-              PropertyValue := (JSONObject.Items[i] as TJSONArray).Items[0].AsString;
+              JSONArray := (JSONObject.Items[i] as TJSONArray);
+              PropertyValue := '';
+              for j := 0 to JSONArray.Count -1 do
+              begin
+                if j = 0 then
+                  PropertyValue := JSONArray.Items[j].AsString
+                else
+                  PropertyValue := PropertyValue + ',' + JSONArray.Items[j].AsString;
+              end;
               Result.Add(PropertyName + '=' + PropertyValue);
             end;
         end;
