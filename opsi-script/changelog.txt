@@ -7,11 +7,14 @@ opsi-script (4.12.12.0) unreleased (4.2/4.3); urgency=medium
  * [fix] patch local NTUSER.dat if logged-in user is not found (d.oertel, !187)
  * [fix] show an individual error message in report also for the event silent install (j.werner, !188)
  * [fix] opsi-script will no longer run in an exception, if the setActionProgress command is used and no service is available (j.werner, !193)
- * [new] use new opsi 4.3 API method "configState_getValues"  to read configs from service  (j.werner, !189)
+ * [change] use opsi 4.3 API method "configState_getValues"  to read configs from service  (j.werner, !189)
  * [change] osparser.pas: powershellcall: remove unnecessary policy handling, update AllSigned hack (j.werner, !196)
+ * [change] replace deprecated method getProductProperties_hash with productPropertyState_getValues, opsi4.3 (j.werner, !197)
+ * [change] remove deprecated API method getProdcutIds_list, due to it is not used (j. werner, !195)
+ * [change] remove deprecated method getProductInstallationSatus_listOfHashes, due to it is not used (j. werner, !194)
  * [update] fpTOML library (https://github.com/genericptr/fpTOML) (d.oertel, !184)
 
--- j.werner <j.werner@uib.de> 23 Oct 2023
+-- j.werner <j.werner@uib.de> 3 Nov 2023
 
 opsi-script (4.12.11.1) testing (4.3)/unreleased (4.2); urgency=medium
 
