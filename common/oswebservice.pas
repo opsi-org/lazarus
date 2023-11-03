@@ -29,6 +29,8 @@ uses
   oslog,
   superobject,
   osjson,
+  fpjson,
+  jsonparser,
   strutils,
   {$IFDEF SYNAPSE}
   httpsend, SSL_OPENSSL_UNIT, SSL_OPENSSL_LIB_UNIT, blcksock,
@@ -356,6 +358,7 @@ type
     FCommunicationMode: integer;
     //Function getMapOfProductSwitches : TStringList;
     //Function getProductRequirements (requirementType : String) : TStringList;
+    function ProductPropertyState_getValues_KeyValueMapp(var error: boolean): TStringList;
     function getProductRequirements(productname: string;
       requirementType: string): TStringList;
     procedure reverseProductOrderByUninstall(var MapOfProductStates: TStringList);
@@ -368,6 +371,8 @@ type
     function GetSortedProductOnClientListFromService: TStringList;
   protected
     FServiceLastErrorInfo: TStringList;
+    function getProductPropertiesOpsi43: TStringList;
+    function getProductPropertiesOpsi42: TStringList;
     //FactualClient: string;
   public
     //actualClient: string;
@@ -405,7 +410,8 @@ type
     function initProduct: boolean; override;
     function getActualProductVersion: string; override;
     function getSpecialScriptPath: string; override;
-    function getProductproperties: TStringList; override;
+    function getProductProperties: TStringList; override;
+    function parse_JSONResult_productPropertyState_getValues(const JSONResult: string): TStringList;
     function getBeforeRequirements: TStringList; override;
     function getAfterRequirements: TStringList; override;
     function getListOfProductIDs: TStringList; override;
@@ -4979,7 +4985,71 @@ begin
   Result := '';
 end;
 
-function TOpsi4Data.getProductproperties: TStringList;
+function TOpsi4Data.getProductProperties: TStringList;
+begin
+  if isMethodProvided('productPropertyState_getValues') then
+    Result := getProductPropertiesOpsi43
+  else
+    Result := getProductPropertiesOpsi42;
+end;
+
+function TOpsi4Data.parse_JSONResult_productPropertyState_getValues(const JSONResult: string): TStringList;
+var
+  JSONData: TJSONData;
+  JSONObject: TJSONObject;
+  i: integer;
+  PropertyName: string;
+  PropertyValue: string;
+begin
+  Result := TStringList.Create;
+  JSONData := GetJSON(JSONResult);
+  if (JSONData <> nil) and not(JSONDAta is TJSONNull) and (JSONData.AsJSON <> '{}') then
+    begin
+      JSONObject := JSONData as TJSONObject;
+      JSONData := JSONObject.Find(actualClient);
+      if (JSONData <> nil) and not(JSONDAta is TJSONNull) and (JSONData.AsJSON <> '{}') then
+      begin
+        JSONObject := JSONData as TJSONObject;
+        JSONData := JSONObject.Find(actualProduct);
+         if (JSONData <> nil) and not(JSONDAta is TJSONNull) and (JSONData.AsJSON <> '{}') then
+        begin
+          JSONObject := JSONData as TJSONObject;
+            for i := 0 to JSONObject.Count - 1 do
+            begin
+              PropertyName := JSONObject.Names[i];
+              PropertyValue := (JSONObject.Items[i] as TJSONArray).Items[0].AsString;
+              Result.Add(PropertyName + '=' + PropertyValue);
+            end;
+        end;
+      end;
+    end;
+end;
+
+function TOpsi4Data.getProductPropertiesOpsi43: TStringList;
+var
+  error: boolean = False;
+begin
+  Result := nil;
+  Result := ProductPropertyState_getValues_KeyValueMapp(error);
+  if Result = nil then
+  begin
+    LogDatei.log('Error: Opsi4Data.getProductproperties failed: retry',
+      LLWarning);
+    //ProcessMess;
+    Sleep(500);
+    Result := ProductPropertyState_getValues_KeyValueMapp(error);
+  end;
+  if Result = nil then
+  begin
+    Result := TStringList.Create;
+    LogDatei.log('Error: Opsi4Data.getProductproperties failed: giving up',
+      LLError);
+  end
+  else
+    LogDatei.log('Mapped result of productPropertyState_getValues: ' + Result.Text, LLDebug);
+end;
+
+function TOpsi4Data.getProductPropertiesOpsi42: TStringList;
 var
   omc: TOpsiMethodCall;
 begin
@@ -5500,6 +5570,22 @@ begin
       end;
     end;
   end;
+end;
+
+function TOpsi4Data.ProductPropertyState_getValues_KeyValueMapp(var error: boolean):TStringList;
+var
+  JSONResult: string;
+  omc: TOpsiMethodCall;
+begin
+  Result := nil;
+  omc := TOpsiMethodCall.Create('productPropertyState_getValues',
+    [actualproduct, '""', actualclient, 'true']);
+  JSONResult := self.checkAndRetrieveString(omc, error);
+  if not error then
+    Result := parse_JSONResult_productPropertyState_getValues(JSONResult)
+  else
+    LogDatei.log('Error while calling API method productPropertyState_getValues: ' + FServiceLastErrorInfo.Text, LLError);
+  omc.Free;
 end;
 
 function TOpsi4Data.getProductState: TProductState;
