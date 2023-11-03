@@ -358,7 +358,6 @@ type
     //Function getProductRequirements (requirementType : String) : TStringList;
     function getProductRequirements(productname: string;
       requirementType: string): TStringList;
-    function getMapOfProductStates: TStringList;
     procedure reverseProductOrderByUninstall(var MapOfProductStates: TStringList);
     //procedure productOnClient_getobject_actualclient;
     function getInstallableProducts: TStringList;
@@ -5221,32 +5220,6 @@ begin
   finally
     if Assigned(omc)then FreeAndNil(omc);
   end;
-end;
-
-function TOpsi4Data.getMapOfProductStates: TStringList;
-var
-  resultlist: TStringList;
-  omc: TOpsiMethodCall;
-  i: integer;
-  productEntry: ISuperObject;
-begin
-  Result := TStringList.Create;
-  omc := TOpsiMethodCall.Create('getProductInstallationStatus_listOfHashes',
-    [actualClient]);
-  resultList := FjsonExecutioner.getListResult(omc);
-  omc.Free;
-  if resultList <> nil then
-    for i := 0 to resultList.Count - 1 do
-    begin
-      productEntry := SO(resultList.Strings[i]);
-      if (productEntry.O['productId'] <> nil) then
-      begin
-        Result.add(
-          productEntry.S['productId']);
-        Result.Values[productEntry.S['productId']] :=
-          productEntry.S['installationStatus'];
-      end;
-    end;
 end;
 
 
