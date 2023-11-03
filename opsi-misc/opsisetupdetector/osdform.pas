@@ -11,7 +11,7 @@ uses
   Windows,
   {$ENDIF WINDOWS}
   lazfileutils,
-  Classes, SysUtils, FileUtil, RTTICtrls, RTTIGrids,
+  Classes, SysUtils, FileUtil, RTTICtrls, RTTIGrids, IpHtml,
   Forms, Controls, Graphics,
   LCLType,
   LclIntf,
@@ -172,6 +172,7 @@ type
     Image6: TImage;
     Image7: TImage;
     ImageList1: TImageList;
+    IpHtmlPanelDesc: TIpHtmlPanel;
     Label1: TLabel;
     Label100: TLabel;
     Label101: TLabel;
@@ -3952,11 +3953,30 @@ begin
 end;
 
 procedure TResultform1.TIMemoDescEditingDone(Sender: TObject);
+var
+  fs: TStringStream;
+  pHTML: TIpHtml;
 begin
   HtmlContent := md.process(TTIMemo(Sender).Text);
   //HtmlViewerDesc.LoadFromString(CSSDecoration + HtmlContent);
   HtmlViewerDesc.LoadFromString(HtmlContent);
+  try
+    fs := TStringStream.Create( HtmlContent );
+    try
+      pHTML:=TIpHtml.Create; // Beware: Will be freed automatically by IpHtmlPanelDesc
+      pHTML.LoadFromStream(fs);
+    finally
+      fs.Free;
+    end;
+    IpHtmlPanelDesc.SetHtml( pHTML );
+    Caption := IpHtmlPanelDesc.Title;
+  except
+    on E: Exception do begin
+      MessageDlg( 'Error: '+E.Message, mtError, [mbCancel], 0 );
+    end;
+  end;
 end;
+
 
 procedure TResultform1.genRttiEditChange(Sender: TObject);
 var

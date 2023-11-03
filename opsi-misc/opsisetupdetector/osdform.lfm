@@ -165,11 +165,11 @@ object resultForm1: TresultForm1
       Height = 590
       Top = 1
       Width = 1073
-      ActivePage = TabSheetStart
+      ActivePage = TabSheetProduct
       Align = alClient
       Images = ImageList1
       ParentFont = False
-      TabIndex = 0
+      TabIndex = 5
       TabOrder = 0
       OnChange = PageControl1Change
       object TabSheetStart: TTabSheet
@@ -10502,6 +10502,26 @@ object resultForm1: TresultForm1
               PrintScale = 1
               Align = alClient
               TabOrder = 0
+              object IpHtmlPanelDesc: TIpHtmlPanel
+                Left = 0
+                Height = 151
+                Top = 0
+                Width = 578
+                Align = alClient
+                FixedTypeface = 'Courier New'
+                DefaultTypeFace = 'default'
+                DefaultFontSize = 12
+                FlagErrors = False
+                PrintSettings.MarginLeft = 0.5
+                PrintSettings.MarginTop = 0.5
+                PrintSettings.MarginRight = 0.5
+                PrintSettings.MarginBottom = 0.5
+                PrintSettings.Preview.Left = 469
+                PrintSettings.Preview.Top = 245
+                PrintSettings.Preview.Width = 1407
+                PrintSettings.Preview.Height = 735
+                TabOrder = 4
+              end
             end
             object Label7: TLabel
               Left = 1
@@ -11205,10 +11225,10 @@ object resultForm1: TresultForm1
                 TIOptions = [tgoStartIndexAtOne, tgoShowOnlyProperties]
                 ColWidths = (
                   64
-                  135
-                  135
-                  135
-                  137
+                  131
+                  131
+                  131
+                  132
                 )
               end
               object PanelDepBtns: TPanel
@@ -11631,10 +11651,10 @@ object resultForm1: TresultForm1
                 TIOptions = [tgoStartIndexAtOne, tgoShowOnlyProperties]
                 ColWidths = (
                   64
-                  248
-                  248
-                  248
-                  251
+                  244
+                  244
+                  244
+                  246
                 )
               end
             end
