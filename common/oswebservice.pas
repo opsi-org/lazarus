@@ -460,9 +460,6 @@ type
     function getConfigObjectsFromService(ConfigIDsAsJsonArray:string):string;
     function getConfigStateValuesFromService(ConfigIDsAsJsonArray:string; WithDefaults:string = 'true'):string;
     function getLogSize: int64;
-    function getProductIds: TStringList;
-    function getLocalbootProductIds: TStringList;
-    function getNetbootProductIds: TStringList;
     function demandLicenseKey(const parameters: array of string; var errorOccured: boolean):string;
     {$IFNDEF SYNAPSE}
     function decreaseSslProtocol: boolean;
@@ -5460,65 +5457,7 @@ begin
   end;
 end;
 
-function TOpsi4Data.getProductIds: TStringList;
-var
-  objectlist: TStringList;
-  omc: TOpsiMethodCall;
-  i: integer;
-begin
-  omc := TOpsiMethodCall.Create('getProductIds_list', []);
-  objectlist := FjsonExecutioner.getListResult(omc);
-  omc.Free;
 
-  Result := TStringList.Create;
-
-  for i := 0 to objectlist.Count - 1 do
-  begin
-    testresult := objectlist.Strings[i];
-    testresult := SO('"' + testresult + '"').AsJSon(False, False);
-    Result.add(testresult);
-  end;
-end;
-
-function TOpsi4Data.getLocalbootProductIds: TStringList;
-var
-  objectlist: TStringList;
-  omc: TOpsiMethodCall;
-  i: integer;
-begin
-  omc := TOpsiMethodCall.Create('getProductIds_list', ['localboot']);
-  objectlist := FjsonExecutioner.getListResult(omc);
-  omc.Free;
-
-  Result := TStringList.Create;
-
-  for i := 0 to objectlist.Count - 1 do
-  begin
-    testresult := objectlist.Strings[i];
-    testresult := SO('"' + testresult + '"').AsJSon(False, False);
-    Result.add(testresult);
-  end;
-end;
-
-function TOpsi4Data.getNetbootProductIds: TStringList;
-var
-  objectlist: TStringList;
-  omc: TOpsiMethodCall;
-  i: integer;
-begin
-  omc := TOpsiMethodCall.Create('getProductIds_list', ['netboot']);
-  objectlist := FjsonExecutioner.getListResult(omc);
-  omc.Free;
-
-  Result := TStringList.Create;
-
-  for i := 0 to objectlist.Count - 1 do
-  begin
-    testresult := objectlist.Strings[i];
-    testresult := SO('"' + testresult + '"').AsJSon(False, False);
-    Result.add(testresult);
-  end;
-end;
 
 function TOpsi4Data.demandLicenseKey(const parameters: array of string;
   var errorOccured: boolean): string;
