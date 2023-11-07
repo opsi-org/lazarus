@@ -165,11 +165,11 @@ object resultForm1: TresultForm1
       Height = 590
       Top = 1
       Width = 1073
-      ActivePage = TabSheetProduct
+      ActivePage = TabSheetStart
       Align = alClient
       Images = ImageList1
       ParentFont = False
-      TabIndex = 5
+      TabIndex = 0
       TabOrder = 0
       OnChange = PageControl1Change
       object TabSheetStart: TTabSheet
@@ -10483,46 +10483,6 @@ object resultForm1: TresultForm1
             ClientHeight = 168
             ClientWidth = 580
             TabOrder = 2
-            object HtmlViewerDesc: THtmlViewer
-              Left = 1
-              Height = 151
-              Top = 16
-              Width = 578
-              BorderStyle = htFocused
-              DefFontName = 'SansSerif'
-              DefFontSize = 8
-              HistoryMaxCount = 0
-              MarginHeight = 0
-              MarginWidth = 0
-              NoSelect = False
-              PrintMarginBottom = 2
-              PrintMarginLeft = 2
-              PrintMarginRight = 2
-              PrintMarginTop = 2
-              PrintScale = 1
-              Align = alClient
-              TabOrder = 0
-              object IpHtmlPanelDesc: TIpHtmlPanel
-                Left = 0
-                Height = 151
-                Top = 0
-                Width = 578
-                Align = alClient
-                FixedTypeface = 'Courier New'
-                DefaultTypeFace = 'default'
-                DefaultFontSize = 12
-                FlagErrors = False
-                PrintSettings.MarginLeft = 0.5
-                PrintSettings.MarginTop = 0.5
-                PrintSettings.MarginRight = 0.5
-                PrintSettings.MarginBottom = 0.5
-                PrintSettings.Preview.Left = 469
-                PrintSettings.Preview.Top = 245
-                PrintSettings.Preview.Width = 1407
-                PrintSettings.Preview.Height = 735
-                TabOrder = 4
-              end
-            end
             object Label7: TLabel
               Left = 1
               Height = 15
@@ -10534,6 +10494,26 @@ object resultForm1: TresultForm1
               Color = clBtnFace
               ParentColor = False
               Transparent = False
+            end
+            object IpHtmlPanelDesc: TIpHtmlPanel
+              Left = 1
+              Height = 151
+              Top = 16
+              Width = 578
+              Align = alClient
+              FixedTypeface = 'Liberation Sans'
+              DefaultTypeFace = 'Liberation Sans'
+              DefaultFontSize = 12
+              FlagErrors = False
+              PrintSettings.MarginLeft = 0.5
+              PrintSettings.MarginTop = 0.5
+              PrintSettings.MarginRight = 0.5
+              PrintSettings.MarginBottom = 0.5
+              PrintSettings.Preview.Left = 469
+              PrintSettings.Preview.Top = 245
+              PrintSettings.Preview.Width = 1407
+              PrintSettings.Preview.Height = 735
+              TabOrder = 0
             end
           end
         end
@@ -10605,26 +10585,6 @@ object resultForm1: TresultForm1
             ClientHeight = 168
             ClientWidth = 580
             TabOrder = 2
-            object HtmlViewerAdvice: THtmlViewer
-              Left = 1
-              Height = 151
-              Top = 16
-              Width = 578
-              BorderStyle = htFocused
-              DefFontName = 'SansSerif'
-              DefFontSize = 8
-              HistoryMaxCount = 0
-              MarginHeight = 0
-              MarginWidth = 0
-              NoSelect = False
-              PrintMarginBottom = 2
-              PrintMarginLeft = 2
-              PrintMarginRight = 2
-              PrintMarginTop = 2
-              PrintScale = 1
-              Align = alClient
-              TabOrder = 0
-            end
             object Label8: TLabel
               Left = 1
               Height = 15
@@ -10636,6 +10596,26 @@ object resultForm1: TresultForm1
               Color = clBtnFace
               ParentColor = False
               Transparent = False
+            end
+            object IpHtmlPanelAdvice: TIpHtmlPanel
+              Left = 1
+              Height = 151
+              Top = 16
+              Width = 578
+              Align = alClient
+              FixedTypeface = 'Liberation Sans'
+              DefaultTypeFace = 'Liberation Sans'
+              DefaultFontSize = 12
+              FlagErrors = False
+              PrintSettings.MarginLeft = 0.5
+              PrintSettings.MarginTop = 0.5
+              PrintSettings.MarginRight = 0.5
+              PrintSettings.MarginBottom = 0.5
+              PrintSettings.Preview.Left = 469
+              PrintSettings.Preview.Top = 245
+              PrintSettings.Preview.Width = 1407
+              PrintSettings.Preview.Height = 735
+              TabOrder = 0
             end
           end
         end

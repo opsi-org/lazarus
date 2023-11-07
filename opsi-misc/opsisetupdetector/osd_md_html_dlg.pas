@@ -7,12 +7,12 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, Buttons,
-  LCLIntf,
-  HtmlView,
+  LCLIntf, IpHtml,
+  //HtmlView,
   MarkdownUtils,
-  MarkdownProcessor,
-  HtmlGlobals,
-  HTMLUn2;
+  MarkdownProcessor;
+  //HtmlGlobals,
+  //HTMLUn2;
 
 type
 
@@ -21,14 +21,19 @@ type
   TOSD_info = class(TForm)
     BitBtn1: TBitBtn;
     FlowPanel1: TFlowPanel;
-    HtmlViewer: THtmlViewer;
+    IpHtmlPanel1: TIpHtmlPanel;
     Panel1: TPanel;
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure IpHtmlPanel1HotClick(Sender: TObject);
+    (*
     procedure HtmlViewerHotSpotClick(Sender: TObject; const SRC: ThtString;
       var Handled: boolean);
     procedure HtmlViewerHotSpotTargetClick(Sender: TObject;
       const Target, URL: ThtString; var Handled: boolean);
+    procedure IpHtmlPanel1HotClick(Sender: TObject);
+    *)
+    procedure IpHtmlPanel1HotURL(Sender: TObject; const URL: String);
 
   private
 
@@ -159,28 +164,60 @@ end;
 { TOSD_info }
 
 procedure TOSD_info.FormShow(Sender: TObject);
+var
+  fs: TStringStream;
+  pHTML: TIpHtml;
+begin
+  HtmlContent := Convert_md_to_html(mdContent);
+  try
+    fs := TStringStream.Create( HtmlContent );
+    try
+      pHTML:=TIpHtml.Create; // Beware: Will be freed automatically by IpHtmlPanelDesc
+      pHTML.LoadFromStream(fs);
+    finally
+      fs.Free;
+    end;
+    IpHtmlPanel1.SetHtml( pHTML );
+    //Caption := IpHtmlPanelAdvice.Title;
+  except
+    on E: Exception do begin
+      MessageDlg( 'Error: '+E.Message, mtError, [mbCancel], 0 );
+    end;
+  end;
+end;
+
+procedure TOSD_info.IpHtmlPanel1HotClick(Sender: TObject);
+var
+  NodeA: TIpHtmlNodeA;
+  URL: String;
+begin
+  if IpHtmlPanel1.HotNode is TIpHtmlNodeA then begin
+    NodeA:=TIpHtmlNodeA(IpHtmlPanel1.HotNode);
+    URL:=NodeA.HRef;
+    OpenUrl(URL);
+  end;
+end;
+
+(*
 begin
   //mdContent := mdInstallerInfo_QtInstaller;
   HtmlContent := Convert_md_to_html(mdContent);
   HtmlViewer.LoadFromString(CSSDecoration + HtmlContent);
 end;
+*)
 
-procedure TOSD_info.HtmlViewerHotSpotClick(Sender: TObject;
-  const SRC: ThtString; var Handled: boolean);
-begin
-  Handled := OpenUrl(SRC);
-end;
 
-procedure TOSD_info.HtmlViewerHotSpotTargetClick(Sender: TObject;
-  const Target, URL: ThtString; var Handled: boolean);
+
+procedure TOSD_info.IpHtmlPanel1HotURL(Sender: TObject; const URL: String);
 begin
-  Handled := OpenUrl(URL);
+  //OpenUrl(URL);
 end;
 
 procedure TOSD_info.FormCreate(Sender: TObject);
 begin
   md := TMarkdownProcessor.createDialect(mdCommonMark);
   md.UnSafe := False;
+  (*
   HtmlViewer.DefBackground := clWhite;
   HtmlViewer.DefFontColor := clBlack;
   HtmlViewer.DefFontName := 'Helvetica';
@@ -193,7 +230,7 @@ begin
   //HtmlViewer.OnImageRequest:=@HtmlViewerImageRequest;
   //MStream := TMemoryStream.Create;
   //B_ConvertClick(Self);
-
+  *)
 end;
 
 end.

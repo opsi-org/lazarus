@@ -18,7 +18,6 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
   fileinfo,
   winpeimagereader,
   lcltranslator,
-  FrameViewer09,
   runtimetypeinfocontrols,
   osdanalyzewin,
   osdhelper,

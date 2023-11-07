@@ -32,11 +32,12 @@ uses
   EditBtn,
   Grids,
   PairSplitter,
-  ColorBox, HtmlView,
+  ColorBox,
+  //HtmlView,
   MarkdownUtils,
   MarkdownProcessor,
-  HtmlGlobals,
-  HTMLUn2,
+  //HtmlGlobals,
+  //HTMLUn2,
   oslog,
   osdbasedata, osdconfigdlg, osdcreate, fpjsonrtti, osddlgnewdependency,
   osddlgnewproperty, osparserhelper,
@@ -162,8 +163,6 @@ type
     FlowPanelSetup43: TFlowPanel;
     FlowPanelWindowsTitle: TFlowPanel;
     GroupBox2: TGroupBox;
-    HtmlViewerAdvice: THtmlViewer;
-    HtmlViewerDesc: THtmlViewer;
     Image1: TImage;
     Image2: TImage;
     Image3: TImage;
@@ -172,6 +171,7 @@ type
     Image6: TImage;
     Image7: TImage;
     ImageList1: TImageList;
+    IpHtmlPanelAdvice: TIpHtmlPanel;
     IpHtmlPanelDesc: TIpHtmlPanel;
     Label1: TLabel;
     Label100: TLabel;
@@ -454,6 +454,9 @@ type
     procedure FormDeactivate(Sender: TObject);
     procedure FormMouseLeave(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure IpHtmlPanelAdviceHotClick(Sender: TObject);
+    procedure IpHtmlPanelDescClick(Sender: TObject);
+    procedure IpHtmlPanelDescHotClick(Sender: TObject);
     procedure MenuHelpLogClick(Sender: TObject);
     procedure MenuItem1Click(Sender: TObject);
     procedure MenuItemLogClick(Sender: TObject);
@@ -1069,6 +1072,41 @@ procedure TResultform1.FormShow(Sender: TObject);
 begin
   if not osdsettings.startupfinished then
     main;
+end;
+
+procedure TResultform1.IpHtmlPanelAdviceHotClick(Sender: TObject);
+var
+  NodeA: TIpHtmlNodeA;
+  URL: string;
+begin
+  (*
+  if IpHtmlPanelAdvice.HotNode is TIpHtmlNodeA then
+  begin
+    NodeA := TIpHtmlNodeA(IpHtmlPanelAdvice.HotNode);
+    URL := NodeA.HRef;
+    OpenUrl(URL);
+  end;
+  *)
+end;
+
+procedure TResultform1.IpHtmlPanelDescClick(Sender: TObject);
+begin
+  // nothing
+end;
+
+procedure TResultform1.IpHtmlPanelDescHotClick(Sender: TObject);
+var
+  NodeA: TIpHtmlNodeA;
+  URL: string;
+begin
+(*
+  if IpHtmlPanelDesc.HotNode is TIpHtmlNodeA then
+  begin
+    NodeA := TIpHtmlNodeA(IpHtmlPanelDesc.HotNode);
+    URL := NodeA.HRef;
+    OpenUrl(URL);
+  end;
+  *)
 end;
 
 procedure TResultform1.MenuHelpLogClick(Sender: TObject);
@@ -3583,8 +3621,8 @@ begin
   OSD_info := TOSD_info.Create(resultForm1);
   md := TMarkdownProcessor.createDialect(mdDaringFireball);
   md.UnSafe := True;
-  HtmlViewerDesc.LoadFromString(CSSDecoration + '');
-  HtmlViewerAdvice.LoadFromString('');
+  //HtmlViewerDesc.LoadFromString(CSSDecoration + '');
+  //HtmlViewerAdvice.LoadFromString('');
   LogDatei.log('Finished FormCreate ', LLInfo);
 end;
 
@@ -3947,9 +3985,26 @@ begin
 end;
 
 procedure TResultform1.TIMemoAdviceEditingDone(Sender: TObject);
+var
+  fs: TStringStream;
+  pHTML: TIpHtml;
 begin
   HtmlContent := md.process(TTIMemo(Sender).Text);
-  HtmlViewerAdvice.LoadFromString(HtmlContent);
+  try
+    fs := TStringStream.Create(CSSDecoration + HtmlContent );
+    try
+      pHTML:=TIpHtml.Create; // Beware: Will be freed automatically by IpHtmlPanelDesc
+      pHTML.LoadFromStream(fs);
+    finally
+      fs.Free;
+    end;
+    IpHtmlPanelAdvice.SetHtml( pHTML );
+    //Caption := IpHtmlPanelAdvice.Title;
+  except
+    on E: Exception do begin
+      MessageDlg( 'Error: '+E.Message, mtError, [mbCancel], 0 );
+    end;
+  end;
 end;
 
 procedure TResultform1.TIMemoDescEditingDone(Sender: TObject);
@@ -3959,9 +4014,9 @@ var
 begin
   HtmlContent := md.process(TTIMemo(Sender).Text);
   //HtmlViewerDesc.LoadFromString(CSSDecoration + HtmlContent);
-  HtmlViewerDesc.LoadFromString(HtmlContent);
+  //HtmlViewerDesc.LoadFromString(HtmlContent);
   try
-    fs := TStringStream.Create( HtmlContent );
+    fs := TStringStream.Create(CSSDecoration + HtmlContent );
     try
       pHTML:=TIpHtml.Create; // Beware: Will be freed automatically by IpHtmlPanelDesc
       pHTML.LoadFromStream(fs);
@@ -3969,7 +4024,7 @@ begin
       fs.Free;
     end;
     IpHtmlPanelDesc.SetHtml( pHTML );
-    Caption := IpHtmlPanelDesc.Title;
+    //Caption := IpHtmlPanelDesc.Title;
   except
     on E: Exception do begin
       MessageDlg( 'Error: '+E.Message, mtError, [mbCancel], 0 );
