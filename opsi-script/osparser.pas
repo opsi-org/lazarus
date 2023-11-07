@@ -11540,10 +11540,14 @@ begin
         // so we shoud remove this (even for AllSigned hack)
         programparas := copy(programparas, 1, rpos(' -file', LowerCase(programparas)));
       end;
-      LogDatei.log('powershell programparas are now: ' + programparas, LLDebug2);
+      LogDatei.log('powershell powershell parameters are: ' + powershellpara, LLDebug);
+      LogDatei.log('powershell programparas are: ' + programparas, LLDebug2);
 
-      if RunCommand('powershell.exe', ['Get-ExecutionPolicy -Scope MachinePolicy'], ExecutionPolicy, [], swoHIDE) then
+      if RunCommandAndCaptureOut('powershell.exe "Get-ExecutionPolicy -Scope MachinePolicy"' , True, output, report, showcmd, FLastExitCodeOfExe) then
       begin
+        ExecutionPolicy := output.Text;
+        output.Clear;
+        report := '';
         ExecutionPolicy := trim(ExecutionPolicy);
         LogDatei.log('Get execution policy for scope "MachinePolicy": ' + ExecutionPolicy, LLDebug);
         if ((LowerCase(ExecutionPolicy) = LowerCase('AllSigned')) or
@@ -11703,7 +11707,7 @@ begin
 
       if use_sp then
       begin
-        LogDatei.log_prog('Executing with SP: ' + commandline, LLDebug);
+        LogDatei.log('Executing with SP: ' + commandline, LLDebug);
         if not StartProcess(Commandline, showcmd, showoutput, not
           threaded, False, False, False, False, runas, '', WaitSecs,
           Report, FLastExitCodeOfExe, catchout, output, Sektion.Name) then
@@ -11717,7 +11721,7 @@ begin
       end
       else
       begin
-        LogDatei.log_prog('Executing with RCACO:  ' + commandline, LLDebug);
+        LogDatei.log('Executing with RCACO:  ' + commandline, LLDebug);
         if not RunCommandAndCaptureOut(commandline, True, output,
           report, showcmd, FLastExitCodeOfExe) then
         begin
