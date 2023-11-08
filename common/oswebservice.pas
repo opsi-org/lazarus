@@ -346,7 +346,6 @@ type
     FProductStates: TStringList;
     FProductActionRequests: TStringList;
     FSortedProductIDsWhereActionIsSet: TStringList;
-    FInstallableProducts: TStringList;
     ProductVars: TStringList;
     FOpsiModules: ISuperObject;
     FOpsiInformation: ISuperObject;
@@ -3671,7 +3670,6 @@ begin
   FProductStates := nil;
   FProductActionRequests := nil;
   FSortedProductIDsWhereActionIsSet := nil;
-  FInstallableProducts := nil;
   ProductVars := nil;
   FProductOnClientIndex := nil;
   mylist := nil;
@@ -5845,7 +5843,6 @@ var
   jO: ISuperObject;
   stateS, parastr: string;
 begin
-  //if FInstallableProducts.IndexOf(actualProduct) = -1 then exit;
   try
     stateS := stateToString(newState);
     FProductOnClient_aktobject.AsObject.N['modificationTime'] := nil;
@@ -5865,7 +5862,7 @@ begin
   end;
   // save the new value in the local cache as well
   if FProductStates.IndexOf(actualProduct) > -1 then
-    FProductStates.Values[actualProduct] := installationStatusToString(tps4Unkown);
+    FProductStates.Values[actualProduct] := installationStatusToString(newState);
 end;
 
 procedure TOpsi4Data.setProductProgress(myprogres: string);
