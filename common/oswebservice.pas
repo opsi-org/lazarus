@@ -144,7 +144,7 @@ type
   TActionResult4 = (tar4None, tar4Failed, tar4Successful);
 
 
-  TProductState = (tpsUndefined, tpsNotInstalled, tpsInstalling,
+  TProductState = (tpsUndefined, tpsNotInstalled, tpsInstalling, tpsUninstalling,
     tpsInstalled, tpsFailed, tps4Installed,
     tps4Not_installed,
     tps4Unkown);
@@ -5874,22 +5874,15 @@ begin
   try
     begin
       stateS := myprogres;
-      //FProductOnClient_aktobject.put('actionProgress',stateS);
-      //FProductOnClient_aktobject :=
       FProductOnClient_aktobject.AsObject.N['modificationTime'] := nil;
       parastr := FProductOnClient_aktobject.asJson(False, False);
-      //FProductOnClient_aktobject :=
       FProductOnClient_aktobject.AsObject.N['actionSequence'] := nil;
       parastr := FProductOnClient_aktobject.asJson(False, False);
-      //FProductOnClient_aktobject :=
       FProductOnClient_aktobject.AsObject.S['installationStatus'] :=
         installationStatusToString(tps4Unkown);
-      //.putS('installationStatus',installationStatusToString(tps4Unkown));
-      //FProductOnClient_aktobject :=
       FProductOnClient_aktobject.AsObject.S['actionProgress'] := stateS;
       parastr := FProductOnClient_aktobject.asJson(False, False);
       omc := TOpsiMethodCall.Create('productOnClient_updateObject', [parastr]);
-      //omc := TOpsiMethodCall.create('setProductInstallationStatus',[actualProduct, actualClient, stateS]);
       jO := FjsonExecutioner.retrieveJSONObject(omc);
       omc.Free;
     end;
@@ -6320,6 +6313,7 @@ end;
 function TOpsi4Data.installationStatusToString(installationStatus:
   TProductstate): string;
 begin
+  Result := 'unknown';
   case installationStatus of
     tps4Installed: Result := 'installed';
     tps4Not_installed: Result := 'not_installed';

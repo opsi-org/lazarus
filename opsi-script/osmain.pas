@@ -844,6 +844,18 @@ begin
   end;
 end;
 
+procedure SetProductProgress(const Verfahren: TAction);
+begin
+  case Verfahren of
+    tacSetup: opsidata.setProductProgress('Installing');
+    tacDeinstall: opsidata.setProductProgress('Uninstalling');
+    tacOnce: opsidata.setProductProgress('Installing');
+    tacAlways: opsidata.setProductProgress('Installing');
+    tacCustom: opsidata.setProductProgress('Installing');
+    tacLogin: opsidata.setProductProgress('Installing');
+  end;
+end;
+
 
 procedure ProcessProdukt(var extremeErrorLevel: TErrorLevel);
 
@@ -946,8 +958,7 @@ begin
       Logdatei.log('scriptname: "' + scriptname + '", special path: "' +
         pfad + '"', LLInfo);
       absscriptname := makeAbsoluteScriptPath(Pfad, scriptname);
-      if Verfahren = tacSetup then
-        opsidata.setProductState(tpsInstalling);
+      SetProductProgress(Verfahren);
       if (Verfahren in [tacDeinstall, tacSetup, tacOnce, tacAlways, tacCustom]) or
         ((Verfahren = tacLogin) and (scriptname <> '')) then
         if not ProcessNonZeroScript(absscriptname, extremeErrorLevel)
