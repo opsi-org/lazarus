@@ -132,9 +132,9 @@ type
     tac4Custom,
     tac4Login);
 
-  TProductstate4 = (tps4Installed,
-    tps4Not_installed,
-    tps4Unkown);
+  //TProductstate4 = (tps4Installed,
+  //  tps4Not_installed,
+  //  tps4Unkown);
 
   TTargetConfiguration4 = (ttc4Installed,
     ttc4Forbidden,
@@ -145,7 +145,9 @@ type
 
 
   TProductState = (tpsUndefined, tpsNotInstalled, tpsInstalling,
-    tpsInstalled, tpsFailed);
+    tpsInstalled, tpsFailed, tps4Installed,
+    tps4Not_installed,
+    tps4Unkown);
   //  TProductState4 = (tpsUndefined, tpsNotInstalled, tpsInstalled);
   //  TProductProgress = (tppUndefined, tppInstalling, tppNone);
   //  TProductResult = (tprNone, tprFailed, tprSuccessful);
@@ -446,7 +448,7 @@ type
     function actionRequest4ToString(actionRequest: TActionRequest4): string;
     function targetConfigurationToString(targetConfiguration: TTargetConfiguration4)
       : string;
-    function installationStatusToString(installationStatus: TProductstate4): string;
+    function installationStatusToString(installationStatus: TProductstate): string;
     function UpdateSwitches(extremeErrorLevel: TErrorLevel): boolean; override; overload;
     function UpdateSwitches(extremeErrorLevel: TErrorLevel; Progress: string): boolean;
       overload;
@@ -494,7 +496,7 @@ type
     procedure ProductOnClient_update(actionProgressS: string;
       actionResult: TActionResult4; actionRequest: TActionRequest4;
       targetConfiguration: TTargetConfiguration4; lastAction: TActionRequest4;
-      installationStatus: TProductstate4);
+      installationStatus: TProductstate);
     function getOpsiVersion: string;  // get opsiversion from backend_info
     // get list of methods via service:
     function getOpsiServiceMethods(allow_deprecated : boolean) : TStringlist;
@@ -5845,29 +5847,18 @@ var
 begin
   //if FInstallableProducts.IndexOf(actualProduct) = -1 then exit;
   try
-    //stateS := stateToString(newState);
-    if newState = tpsInstalling then
-    begin
-      stateS := 'installing';
-      //FProductOnClient_aktobject.put('actionProgress',stateS);
-      //FProductOnClient_aktobject :=
-      FProductOnClient_aktobject.AsObject.N['modificationTime'] := nil;
-      parastr := FProductOnClient_aktobject.asJson(False, False);
-      //FProductOnClient_aktobject :=
-      FProductOnClient_aktobject.AsObject.N['actionSequence'] := nil;
-      parastr := FProductOnClient_aktobject.asJson(False, False);
-      //FProductOnClient_aktobject :=
-      FProductOnClient_aktobject.AsObject.S['installationStatus'] :=
-        installationStatusToString(tps4Unkown);
-      //.putS('installationStatus',installationStatusToString(tps4Unkown));
-      //FProductOnClient_aktobject :=
-      FProductOnClient_aktobject.AsObject.S['actionProgress'] := stateS;
-      parastr := FProductOnClient_aktobject.asJson(False, False);
-      omc := TOpsiMethodCall.Create('productOnClient_updateObject', [parastr]);
-      //omc := TOpsiMethodCall.create('setProductInstallationStatus',[actualProduct, actualClient, stateS]);
-      jO := FjsonExecutioner.retrieveJSONObject(omc);
-      omc.Free;
-    end;
+    stateS := stateToString(newState);
+    FProductOnClient_aktobject.AsObject.N['modificationTime'] := nil;
+    parastr := FProductOnClient_aktobject.asJson(False, False);
+    FProductOnClient_aktobject.AsObject.N['actionSequence'] := nil;
+    parastr := FProductOnClient_aktobject.asJson(False, False);
+    FProductOnClient_aktobject.AsObject.S['installationStatus'] :=
+      installationStatusToString(newState);
+    FProductOnClient_aktobject.AsObject.S['actionProgress'] := stateS;
+    parastr := FProductOnClient_aktobject.asJson(False, False);
+    omc := TOpsiMethodCall.Create('productOnClient_updateObject', [parastr]);
+    jO := FjsonExecutioner.retrieveJSONObject(omc);
+    omc.Free;
   except
     LogDatei.log('Exception in opsi4data.setProductState , parastr: ' +
       parastr, LLerror);
@@ -5917,7 +5908,7 @@ end;
 procedure TOpsi4Data.ProductOnClient_update(actionProgressS: string;
   actionResult: TActionResult4; actionRequest: TActionRequest4;
   targetConfiguration: TTargetConfiguration4; lastAction: TActionRequest4;
-  installationStatus: TProductstate4);
+  installationStatus: TProductstate);
 
 var
   omc: TOpsiMethodCall;
@@ -6330,7 +6321,7 @@ begin
 end;
 
 function TOpsi4Data.installationStatusToString(installationStatus:
-  TProductstate4): string;
+  TProductstate): string;
 begin
   case installationStatus of
     tps4Installed: Result := 'installed';
