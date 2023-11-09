@@ -6866,8 +6866,8 @@ begin
               '\opsi.org\opsi-client-agent\opsiclientd\opsiclientd.conf';
             {$ENDIF WINDOWS}
             {$IFDEF UNIX}
-            opsiclientd_conf := '/etc/opsi/opsiclientd.conf';
-            {$ENDIF LINUX}
+            opsiclientd_conf := '/etc/opsi-client-agent/opsiclientd.conf';
+            {$ENDIF UNIX}
             if FileExists(opsiclientd_conf) then
             begin
               myconf := TInifile.Create(opsiclientd_conf);
