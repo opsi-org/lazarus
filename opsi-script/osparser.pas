@@ -6877,7 +6877,7 @@ begin
               myconf.Free;
             end
             else
-              LogDatei.log('opsiclientd.conf does not exists or could not accessed at ' + opsiclientd_conf, LLError);
+              LogDatei.log('opsiclientd.conf does not exist or could not accessed at ' + opsiclientd_conf, LLError);
 
             if password = '' then
             begin
