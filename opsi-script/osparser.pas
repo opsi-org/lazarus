@@ -6866,15 +6866,19 @@ begin
               '\opsi.org\opsi-client-agent\opsiclientd\opsiclientd.conf';
             {$ENDIF WINDOWS}
             {$IFDEF UNIX}
-            opsiclientd_conf := '/etc/opsi/opsiclientd.conf';
-            {$ENDIF LINUX}
+            opsiclientd_conf := '/etc/opsi-client-agent/opsiclientd.conf';
+            {$ENDIF UNIX}
             if FileExists(opsiclientd_conf) then
             begin
+              LogDatei.log('Found opsiclientd.conf: '+ opsiclientd_conf, LLDebug2);
               myconf := TInifile.Create(opsiclientd_conf);
               password := myconf.ReadString('global', 'opsi_host_key', '');
               username := myconf.ReadString('global', 'host_id', '');
               myconf.Free;
-            end;
+            end
+            else
+              LogDatei.log('opsiclientd.conf does not exist or could not accessed at ' + opsiclientd_conf, LLError);
+
             if password = '' then
             begin
               stopIt := True;

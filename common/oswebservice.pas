@@ -3749,6 +3749,8 @@ begin
   try
     if Assigned(FJsonExecutioner) then
       FreeAndNil(FJsonExecutioner);
+    Logdatei.log('init opsi connection (URL,user,password,sessionid,ip,port,agentstring): '
+      +serviceUrl+','+username+','+password+','+sessionid+','+ip+','+port+','+agentstring, LLDebug2);
     FjsonExecutioner := TJsonThroughHTTPS.Create(serviceUrl, username,
       password, sessionid, ip, port, agentstring);
     ProfildateiChange := False;
