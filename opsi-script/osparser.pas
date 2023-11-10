@@ -25055,7 +25055,7 @@ begin
                     if not testSyntax then
                     begin
                       FExtremeErrorLevel := LevelFatal;
-                      LogDatei.log('Error level set to fatal', LLCritical);
+                      LogDatei.log('Error level set to fatal: '+ Parameter, LLCritical);
                       ActionResult := tsrFatalError;
                       LogDatei.ActionProgress := Parameter;
                       scriptstopped := True;
