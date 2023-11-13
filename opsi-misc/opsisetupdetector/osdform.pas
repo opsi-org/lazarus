@@ -3516,6 +3516,45 @@ begin
   end;
 end;
 
+// https://www.lazarusforum.de/viewtopic.php?p=116368#p116368
+Function ChangeFileNameFilter(sFilter: String): String; // Filter-String für Linux die Groß/Kleinschreibung als Filter setzen
+{$ifdef UNIX}
+Var sl: TStringList;
+  s, s2: String;
+  i, k: Integer;
+{$endif}
+Begin
+  {$ifdef UNIX}
+  // macht aus "*.jpg" ein "*.[jJ][pP][gG]"
+  sl := TStringList.Create;
+  sl.Delimiter := '|';
+  sl.StrictDelimiter := True;
+  sl.DelimitedText := sFilter;
+  For i := 0 To sl.Count - 1 Do
+  Begin
+    If (i Mod 2) = 1 Then
+    Begin
+      s := sl[i];
+      For k := Length(s) DownTo 1 Do
+      Begin
+        s2 := LowerCase(Copy(s, k, 1));
+        If s2[1] In ['a'..'z'] Then
+        Begin
+          s2 := '[' + s2 + UpperCase(s2) + ']';
+          Delete(s, k, 1);
+          Insert(s2, s, k);
+        End;
+      End;
+      sl[i] := s;
+    End;
+  End;
+  Result := sl.DelimitedText;
+  sl.Free;
+  {$else} // Windows
+  Result := sFilter;
+  {$endif}
+End;
+
 procedure TResultform1.FormCreate(Sender: TObject);
 var
   DefaultIcon: TImage;
@@ -3623,6 +3662,12 @@ begin
   md.UnSafe := True;
   //HtmlViewerDesc.LoadFromString(CSSDecoration + '');
   //HtmlViewerAdvice.LoadFromString('');
+  //{$ifdef UNIX}
+  // make opendialog filter case insensitive at Unix
+  // https://www.lazarusforum.de/viewtopic.php?p=116368#p116368
+  OpenDialogSetupfile.Filter:= ChangeFileNameFilter(OpenDialogSetupfile.Filter);
+  OpenDialog1.Filter:= ChangeFileNameFilter(OpenDialog1.Filter);
+  //{$endif}
   LogDatei.log('Finished FormCreate ', LLInfo);
 end;
 
