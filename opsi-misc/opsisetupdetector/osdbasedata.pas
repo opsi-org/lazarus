@@ -733,7 +733,7 @@ resourcestring
     'In other cases, you may call an answer script (*.qs) with the parameter `--script` .'
     + LineEnding + 'And you should have a look at the following documentation pages:.' +
     LineEnding + '' + LineEnding +
-    '* <https://doc.qt.io/qtinstallerframework/ifw-cli.html> ' +
+    '* <https://doc.qt.io/qtinstallerframework/ifw-cli.html>  ' +
     LineEnding + '* <https://doc.qt.io/qtinstallerframework/ifw-use-cases-cli.html> ' +
     LineEnding + '* <https://wiki.qt.io/Online_Installer_4.x> ' +
     LineEnding + '* <https://gist.github.com/WindAzure/f3bed9e058cdc81eaa357414610c9125> ';

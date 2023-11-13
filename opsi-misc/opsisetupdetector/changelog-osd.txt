@@ -148,8 +148,9 @@ todo:
 
 ### Fixed
 - fix : utils\extractMSI.cmd: call setup with language parameter to avoid language dialog
-  using language english -L0x0409 (Detlef Oertel <d.oertel@uib.de> 2023-09-28)
-- fix some installer exitcode function to 'isMsiExitcodeFatal_short' (Detlef Oertel <d.oertel@uib.de> 2023-10-02)
+  using language english -L0x0409 (<d.oertel@uib.de> 2023-09-28)
+- fix some installer exitcode function to 'isMsiExitcodeFatal_short' (<d.oertel@uib.de> 2023-10-02)
+- fix: make opendialog filter case insensitive at Unix (<d.oertel@uib.de> 2023-11-13)
 
 ### Added
 - Info Message window for some of the detected installers with additional 'need to know' infos.
