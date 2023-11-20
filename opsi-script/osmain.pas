@@ -853,6 +853,7 @@ begin
     tacAlways: opsidata.setProductProgress('Installing');
     tacCustom: opsidata.setProductProgress('Installing');
     tacLogin: opsidata.setProductProgress('Installing');
+    tacUpdate: opsidata.setProductProgress('Installing');
   end;
 end;
 
@@ -951,6 +952,8 @@ begin
     else
       Verfahren := opsidata.getProductAction;
 
+    SetProductProgress(Verfahren);
+
     if Verfahren in [tacDeinstall, tacSetup, tacOnce, tacAlways,
       tacCustom, tacLogin] then
     begin
@@ -958,7 +961,6 @@ begin
       Logdatei.log('scriptname: "' + scriptname + '", special path: "' +
         pfad + '"', LLInfo);
       absscriptname := makeAbsoluteScriptPath(Pfad, scriptname);
-      SetProductProgress(Verfahren);
       if (Verfahren in [tacDeinstall, tacSetup, tacOnce, tacAlways, tacCustom]) or
         ((Verfahren = tacLogin) and (scriptname <> '')) then
         if not ProcessNonZeroScript(absscriptname, extremeErrorLevel)
