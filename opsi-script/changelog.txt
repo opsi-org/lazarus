@@ -2,7 +2,16 @@ todo:
 isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-package-requires-a-reboot-of-my-system
 mac getIpByName liefert name von IPnum
 
-opsi-script (4.12.12.1) unreleased (4.2/4.3); urgency=medium
+
+opsi-script (4.12.12.2) unreleased (4.2/4.3); urgency=medium
+
+ * [fix] update the prodcut status/progress (ProductOnClient_updateObject) for all action requests (j.werner, !199)
+ * [update] osparser.pas: isFatalError: additional log the error message in the logfile (j.werner, 8efada26b0380c2e4c382ce711a80dd94be5132a)
+
+-- j.werner <j.werner@uib.de> 21 Nov 2023
+
+
+opsi-script (4.12.12.1) experimenatl/testing (4.2/4.3); urgency=medium
 
  * [fix] osparser.pas: correct path used to read opsiclientd.conf on Unix systems,
          opsiservicecall modifier opsiclientd/opsiclientd-once (j.werner, !198)
