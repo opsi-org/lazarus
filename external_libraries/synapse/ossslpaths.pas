@@ -62,6 +62,7 @@ begin
       Path.Append('/usr/bin/' + LibName);
     {$ENDIF LINUX}
     {$IFDEF DARWIN}
+      Path.Append(ProgramDirectory + LibName);
       {$IFDEF APP_BUNDLE}
         Path.Append(ProgramDirectory + '../Frameworks/' + LibName);
       {$ELSE}
