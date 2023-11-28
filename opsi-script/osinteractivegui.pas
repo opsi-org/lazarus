@@ -249,7 +249,6 @@ var
 
 
   toggle: boolean;
-  starttimestr: string;
 
 
 
@@ -742,7 +741,7 @@ begin
     LogDatei.log('', LLessential);
     LogDatei.log('', LLessential);
     Logdatei.Log('opsi-script ' + OpsiscriptVersion +
-      ' started at ' + starttimestr,
+      ' started at ' +  DateTimeToStr(Now),
       LLessential);
     Logdatei.log('opsi-script log file with encoding ' + DefaultEncoding, LLessential);
     Logdatei.Log('======= APPEND   ' + DateTimeToStr(Now), LLessential);
@@ -864,7 +863,7 @@ begin
     Logdatei.Log('', LLessential);
     Logdatei.Log('', LLessential);
     Logdatei.Log('opsi-script ' + OpsiscriptVersion +
-      ' started at ' + starttimestr,
+      ' started at ' +  DateTimeToStr(Now),
       LLessential);
     Logdatei.log('opsi-script log file with encoding ' + DefaultEncoding, LLessential);
     Logdatei.Log('======= APPEND   ' + DateTimeToStr(Now), LLessential);
@@ -1157,6 +1156,5 @@ initialization
  {$i osinteractivegui.lrs}
 {$ELSE}
 {$ENDIF}
-
   opsiserviceSessionId := '';
 end.

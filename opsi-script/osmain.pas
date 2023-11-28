@@ -1998,8 +1998,8 @@ begin
     {$MACRO ON}
     //(*  comment this block for code formatting
     startupmessages.Append(
-      'Compiled with FPC: ' + {$i %FPCVERSION%} + ' for: ' +
-      {$i %FPCTARGETOS%} + '-' + {$i %FPCTARGETCPU%});
+      'Compiled with FPC ' + {$i %FPCVERSION%} + ' for ' +
+      {$i %FPCTARGETOS%} + '-' + {$i %FPCTARGETCPU%} + ' at ' + {$i %TIME%} + ' on ' + {$i %DATE%});
     //*)
     {$MACRO OFF}
     //writeln('StartProgramModes4');
@@ -2009,8 +2009,7 @@ begin
     //writeln('StartProgramModes5');
     {$ENDIF GUI}
     LogDatei.log('program mode: ' + ProgramModeToString(ProgramMode), LLessential);
-    startupmessages.Append('program mode: ' + ProgramModeToString(ProgramMode) + ' ' +
-      DateTimeToStr(Now));
+    startupmessages.Append('program mode: ' + ProgramModeToString(ProgramMode));
     sessionid := '';
 
     if ProgramMode = pmInfo then
