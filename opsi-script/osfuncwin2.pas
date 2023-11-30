@@ -59,6 +59,7 @@ const
 
 type
   TConvertSidToStringSidA = function(Sid: PSID; var StringSid: LPSTR): BOOL; stdcall;
+  TProfilesType = (tDirectory, tSID);
 
 
 
@@ -110,6 +111,7 @@ function mountSmbShare(drive: string; uncPath: string; Username: string;
   Password: string; RestoreAtLogon: boolean): DWORD;
 function unmountSmbShare(driveOrPath: string; force: boolean): DWORD;
 function getProfilesDirListWin: TStringList;
+function getProfilesListWin(ProfilesType:TProfilesType):TStringList;
 
 
 function winCreateHardLink(lpFileName: PChar; lpExistingFileName: PChar;
@@ -547,11 +549,8 @@ begin
   RefDomainSize := SizeOf(RefDomain);
   Sid := nil;
   FillChar(RefDomain, SizeOf(RefDomain), 0);
-  LookupAccountName(nil, PChar(UserName), Sid, SidSize, RefDomain,
-    RefDomainSize, Snu);
   Sid := AllocMem(SidSize);
   try
-    RefDomainSize := SizeOf(RefDomain);
     if LookupAccountName(nil, PChar(UserName), Sid, SidSize, RefDomain,
       RefDomainSize, Snu) then
       Result := GetSidStr(Sid);
@@ -2144,7 +2143,8 @@ begin
 end;
 
 
-function getProfilesDirListWin: TStringList;
+function getProfilesListWin(ProfilesType:TProfilesType):TStringList;
+
 var
   profileList: TStringList;
   noredirection: boolean;
@@ -2169,10 +2169,22 @@ begin
       (0 = pos('systemprofile', LowerCase(mypath))) and
       // avoid empty path
       (mypath <> '') then
-      Result.Add(mypath);
+        case ProfilesType of
+          tDirectory: Result.Add(mypath);
+          tSID: Result.Add(profileList.Strings[i]);
+        end;
   end;
-  Result.Add(GetDefaultUsersProfilesPath);
+  case ProfilesType of
+    tDirectory: Result.Add(GetDefaultUsersProfilesPath);
+    tSID: Result.Add('.DEFAULT');
+  end;
   profileList.Free;
+end;
+
+
+function getProfilesDirListWin: TStringList;
+begin
+  Result := getProfilesListWin(tDirectory);
 end;
 
 (*
