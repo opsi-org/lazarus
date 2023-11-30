@@ -5949,17 +5949,13 @@ var
     end;
   end;
 
-  procedure workOnHkuserSid(const Name: string);
+  procedure workOnHkuserSid(const SID: string);
   var
     sidStr: string = '';
   begin
     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
 
-    //sidStr := GetLocalUserSidStr(GetUserNameEx_);
-    //LogDatei.log('sidStr :'+sidStr,LLDebug);
-    sidStr := GetLocalUserSidStr(Name);
-    LogDatei.log('sidStr :' + sidStr, LLDebug2);
-    sidStr := copy(sidStr, 2, length(sidStr) - 2);
+    sidStr := SID;
     LogDatei.log('sidStr :' + sidStr, LLDebug);
 
 
@@ -5992,10 +5988,13 @@ begin
   LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
 
   // mount the UsrClass.dat in the users profile path , patch them and write them back
-  ProfileList := getProfilesDirList;
+  ProfileList := getProfilesListWin(tSID);
   for pc := 0 to ProfileList.Count - 1 do
   begin
-    profilepath := ProfileList.Strings[pc];
+    if ProfileList.Strings[pc] <> '.DEFAULT' then
+      profilepath := getProfileImagePathfromSid(ProfileList.Strings[pc])
+    else
+      profilepath := GetDefaultUsersProfilesPath;
     profilename := ExtractFileName(profilepath);
 
     LogDatei.log('', LLInfo);
@@ -6023,76 +6022,11 @@ begin
         end
         else
         begin
-          if (GetUserNameEx_ <> '') then
-          begin
-            hkulist := GetRegistryKeyList('HKU\', False);
-            for i := 0 to hkulist.Count - 1 do
-              LogDatei.log('found in hku  ' + hkulist.Strings[i], LLDebug2);
-            hkulist.Free;
-            aktsidStr := GetDomainUserSidS('', GetUserNameEx_, domain);
-            aktsidStr := copy(aktsidStr, 2, length(aktsidStr) - 2);
-            LogDatei.log('sid is: ' + aktsidStr, LLDebug2);
-            LogDatei.log('index is: ' + IntToStr(GetRegistryKeyList(
-              'HKU\', False).IndexOf(aktsidStr)), LLDebug2);
-            if (profilename = GetUserNameEx_) or
-              (profilepath = getProfileImagePathfromSid(
-              GetLocalUserSidStr(GetUserNameEx_))) or
-              (GetRegistryKeyList('HKU\', False).IndexOf(aktsidStr) > -1) then
-            begin
-              LogDatei.log('The Branch for :' + profilename +
-                ' seems to be the logged in user,', LLDebug);
-              LogDatei.log('so let us try to patch it via HKUsers\SID', LLDebug);
-              workOnHkuserSid(GetUserNameEx_);
-            end;
-          end
-          else
-          begin
-            // at XP we have problems to get the username while pcpatch is logged in
-            if GetSystemOSVersionInfoEx('major_version') = '5' then
-            begin
-              LogDatei.log('The Branch for :' + profilename +
-                ' may be the logged in user,', LLDebug);
-              LogDatei.log('so let us try to patch it via HKUsers\SID', LLDebug);
-              workOnHkuserSid(profilename);
-            end;
-          end;
+          LogDatei.log('UsrClass.dat locked for ' +
+            ProfileList.Strings[pc] + '. Thus it is loaded and we can work directly on it.', LLDebug);
+          workOnHkuserSid(ProfileList.Strings[pc]+'_Classes');
         end;
       end;
-    end;
-  end;
-
-   (*
-     findresult := findnext (SearchRec);
-   End;
-
-   sysutils.findclose (SearchRec);
-   *)
-
-
-  // Patch HKEY_Current_User
-
-  LogDatei.log('', LLinfo);
-  LogDatei.log('Make it for user .DEFAULT', LLinfo);
-  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
-  case rfSelected of
-    trfRegedit: doRegistryHackRegeditFormat(Sektion, 'HKEY_USERS\.DEFAULT',
-        flag_force64);
-    trfWinst: doRegistryHack(Sektion, 'HKEY_USERS\.DEFAULT', flag_force64);
-  end;
-
-  // do not to try the temporary pcpatch account or SYSTEM - sense less and may fail
-  if not ((GetUserName_ = 'pcpatch') or (GetUserName_ = 'SYSTEM')) then
-  begin
-    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
-    LogDatei.log('', LLinfo);
-    LogDatei.log('And finally: The current user: ' + GetUserName_ +
-      ' : ' + GetLocalUserSidStr(GetUserName_), LLInfo);
-    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
-
-    case rfSelected of
-      trfRegedit: doRegistryHackRegeditFormat(Sektion, 'HKEY_CURRENT_USER',
-          flag_force64);
-      trfWinst: doRegistryHack(Sektion, 'HKEY_CURRENT_USER', flag_force64);
     end;
   end;
 
