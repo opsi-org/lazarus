@@ -4728,9 +4728,10 @@ begin
       GetWord(key, key0, key, ['\']);
       LogDatei.log('Key0 is: ' + key0, LLdebug2);
       if (flag_all_ntuser or flag_ntuser or flag_all_usrclass or runLoginScripts) and
-        (('HKEY_CURRENT_USER' = UpperCase(key0)) or ('HKCU' = UpperCase(key0))) then
+        (('HKEY_CURRENT_USER' = UpperCase(key0)) or ('HKCU' = UpperCase(key0)) or ('HKEY_USERS' = UpperCase(key0)) or
+              ('HKU' = UpperCase(key0))) then
       begin
-        // remove HKCU from the beginning
+        // remove HKCU/HKU from the beginning
         key := key;
         LogDatei.log('Running loginscripts: ignoring key0 : ' + key0 +
           ', using only key : ' + key, LLdebug2);
@@ -5101,9 +5102,10 @@ begin
             LogDatei.log('Key0 is: ' + key0, LLdebug2);
             if (flag_all_ntuser or flag_ntuser or flag_all_usrclass or
               runLoginScripts) and (('HKEY_CURRENT_USER' = UpperCase(key0)) or
-              ('HKCU' = UpperCase(key0))) then
+              ('HKCU' = UpperCase(key0)) or ('HKEY_USERS' = UpperCase(key0)) or
+              ('HKU' = UpperCase(key0))) then
             begin
-              // remove HKCU from the beginning
+              // remove HKCU/HKU from the beginning
               key := key;
               LogDatei.log('Running loginscripts: ignoring key0 : ' +
                 key0 + ', using only key : ' + key, LLdebug2);
