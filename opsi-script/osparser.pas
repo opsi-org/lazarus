@@ -5702,9 +5702,9 @@ var
     else
     begin
       (* check if NTUser.dat is in use, since the specific user is logged in *)
-      LogDatei.log('Warning: NTUser.dat could not be loaded from path "' +
+      LogDatei.log('NTUser.dat could not be loaded from path "' +
         path + '". ' + 'Code ' + IntToStr(Errorcode) + ': ' +
-        RemoveLineBreaks(SysErrorMessage(Errorcode)), LLWarning);
+        RemoveLineBreaks(SysErrorMessage(Errorcode)), LLNotice);
       Result := False;
     end;
   end;
@@ -5794,7 +5794,7 @@ begin
   ProfileList := getProfilesListWin(tSID);
   for pc := 0 to ProfileList.Count - 1 do
   begin
-    if ProfileList.Strings[pc] <> '.DEFAULT' then
+    if ProfileList.Strings[pc] <> 'defaultprofile' then
       profilepath := getProfileImagePathfromSid(ProfileList.Strings[pc])
     else
       profilepath := GetDefaultUsersProfilesPath;
@@ -5905,9 +5905,9 @@ var
     else
     begin
       (* check if UsrClass.dat is in use, since the specific user is logged in *)
-      LogDatei.log('Warning: UsrClass.dat could not be loaded from path "' +
+      LogDatei.log('UsrClass.dat could not be loaded from path "' +
         path + '". ' + 'Code ' + IntToStr(Errorcode) + ': ' +
-        RemoveLineBreaks(SysErrorMessage(Errorcode)), LLWarning);
+        RemoveLineBreaks(SysErrorMessage(Errorcode)), LLNotice);
       Result := False;
     end;
   end;
@@ -5991,7 +5991,7 @@ begin
   ProfileList := getProfilesListWin(tSID);
   for pc := 0 to ProfileList.Count - 1 do
   begin
-    if ProfileList.Strings[pc] <> '.DEFAULT' then
+    if ProfileList.Strings[pc] <> 'defaultprofile' then
       profilepath := getProfileImagePathfromSid(ProfileList.Strings[pc])
     else
       profilepath := GetDefaultUsersProfilesPath;
@@ -6024,7 +6024,7 @@ begin
         begin
           LogDatei.log('UsrClass.dat locked for ' +
             ProfileList.Strings[pc] + '. Thus it is loaded and we can work directly on it.', LLDebug);
-          workOnHkuserSid(ProfileList.Strings[pc]+'_Classes');
+          workOnHkuserSid(ProfileList.Strings[pc]);
         end;
       end;
     end;

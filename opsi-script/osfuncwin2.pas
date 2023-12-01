@@ -2176,7 +2176,7 @@ begin
   end;
   case ProfilesType of
     tDirectory: Result.Add(GetDefaultUsersProfilesPath);
-    tSID: Result.Add('.DEFAULT');
+    tSID: Result.Add('defaultprofile');
   end;
   profileList.Free;
 end;
