@@ -99,6 +99,7 @@ uses
   osconf,
   FileUtil,
   LazFileUtils,
+  LazUTF8,
   SysUtils,
   Classes,
   synautil,
@@ -2742,7 +2743,7 @@ begin
 
     for i := 1 to ParamCount do
     begin
-      teststr := reencode(ParamStr(i), 'system');
+      teststr := SysToUTF8(ParamStr(i));
       ParamListe.Add(teststr);
     end;
 
@@ -3025,7 +3026,6 @@ begin
                       ProgramMode := pmInfo;
                       exit;
                     end;
-
                     usercontext := opsiunQuotestr(trim(r), '"');
                     if (usercontext = '') or (usercontext = '\') then
                     begin
@@ -3036,7 +3036,6 @@ begin
                       inUsercontext := True;
                     Inc(i);
                   end
-
                   else
                   begin
                     ProgramMode := pmInfo;

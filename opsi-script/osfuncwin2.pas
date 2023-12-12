@@ -998,7 +998,7 @@ var
   //pid: dword;
   //user, domain,
   //myuser, mydomain,
-  foundexe, domuser: ansistring;
+  foundexe, domuser: string;
   //winstuser, winstdom: ansistring;
   h: HWND;
   proclist: TStringList;
@@ -1027,7 +1027,7 @@ begin
       end;
       foundexe := procdetails.Strings[0];
       domuser := procdetails.Strings[2];
-      if (searchexe = '') or (AnsiLowerCase(searchexe) = AnsiLowerCase(foundexe)) then
+      if (searchexe = '') or (LowerCase(searchexe) = LowerCase(foundexe)) then
         if (domuser = domain + '\' + user) then
         begin
           found := True;
