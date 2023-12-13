@@ -953,7 +953,8 @@ begin
     else
       Verfahren := opsidata.getProductAction;
 
-    SetProductProgress(Verfahren);
+    if Verfahren in [tacDeinstall, tacSetup, tacAlways] then
+      SetProductProgress(Verfahren);
 
     if Verfahren in [tacDeinstall, tacSetup, tacOnce, tacAlways,
       tacCustom, tacLogin] then
