@@ -47,7 +47,8 @@ uses
   JwaWbemCli,
   ostxstringlist,
   LAZUTF8,
-  lazfileutils;
+  lazfileutils,
+  Process;
 
 //JclSecurity,
 //JclWin32;
@@ -81,6 +82,7 @@ function KillProcessbypid(pid: DWORD): boolean;
 function getWinProcessList: TStringList;
 //procedure myimpersontest;
 function getloggedonDomUser: string;
+function GetLoggedInUserSID: string;
 function GetUserName_: string;
 function GetUserNameEx_: string;
 {$IFDEF WIN32}
@@ -367,6 +369,18 @@ begin
   end;
 end;
 
+function GetLoggedInUserSID: string;
+var
+  Output: string;
+  Command: string;
+begin
+  Command := '([System.Security.Principal.NTAccount](Get-WMIObject -class Win32_ComputerSystem ' +
+    '| Select-Object -Property username).username).Translate([System.Security.Principal.SecurityIdentifier]).Value';
+  if RunCommand('powershell',['-c', Command], Output,[poUsePipes], swoHide) then
+    Result := trim(Output)
+  else
+    Result := 'Unkown_SID';
+end;
 
 {:Returns user name of the current thread.
   @author  Miha-R, Lee_Nover

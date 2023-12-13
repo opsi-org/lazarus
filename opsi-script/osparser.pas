@@ -4731,8 +4731,14 @@ begin
         (('HKEY_CURRENT_USER' = UpperCase(key0)) or ('HKCU' = UpperCase(key0)) or ('HKEY_USERS' = UpperCase(key0)) or
               ('HKU' = UpperCase(key0))) then
       begin
-        // remove HKCU/HKU from the beginning
-        key := key;
+        // remove HKCU/HKU from the beginning and update key accordingly
+        if runLoginScripts and not (flag_all_ntuser or flag_ntuser or flag_all_usrclass) then
+        begin
+          key := 'HKEY_USERS\' + GetLoggedInUserSID + key;
+          key_completepath := key;
+        end
+        else
+          key := key;
         LogDatei.log('Running loginscripts: ignoring key0 : ' + key0 +
           ', using only key : ' + key, LLdebug2);
       end
@@ -5105,11 +5111,17 @@ begin
               ('HKCU' = UpperCase(key0)) or ('HKEY_USERS' = UpperCase(key0)) or
               ('HKU' = UpperCase(key0))) then
             begin
-              // remove HKCU/HKU from the beginning
-              key := key;
+              // remove HKCU/HKU from the beginning and update key accordingly
+              if runLoginScripts and not (flag_all_ntuser or flag_ntuser or flag_all_usrclass) then
+              begin
+                key := 'HKEY_USERS\' + GetLoggedInUserSID + key;
+                key_completepath := key;
+              end
+              else
+                key := key;
               LogDatei.log('Running loginscripts: ignoring key0 : ' +
                 key0 + ', using only key : ' + key, LLdebug2);
-            end
+             end
             else
               key := key_completepath;
             GetWord(key, key0, key, ['\']);
