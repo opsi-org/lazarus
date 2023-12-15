@@ -5121,7 +5121,7 @@ begin
                 key := key;
               LogDatei.log('Running loginscripts: ignoring key0 : ' +
                 key0 + ', using only key : ' + key, LLdebug2);
-             end
+            end
             else
               key := key_completepath;
             GetWord(key, key0, key, ['\']);
