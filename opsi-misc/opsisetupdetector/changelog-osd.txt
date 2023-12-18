@@ -144,6 +144,20 @@ todo:
 
 # Changelog opsi-setup-detector
 
+## [4.3.1.1-1] - 2023-12-18
+
+### Fixed
+- reset detection counter in initaktproduct
+
+### Added
+- Warn on more than one detection:
+  show detected installer types
+
+### Changed
+
+(Detlef Oertel <d.oertel@uib.de> 2023-09-28)
+
+
 ## [4.3.1.0-1] - 2023-09-28
 
 ### Fixed

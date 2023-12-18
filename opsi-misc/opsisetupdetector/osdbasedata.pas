@@ -61,12 +61,14 @@ type
     FCreateModeIndex: integer;
     FCreateModeValue: string;
     FDetectCount : integer;
+    FDetectionSummary: TStrings;
     procedure SetBuildMode(const AValue: TStrings);
     procedure SetBuildModeValue(const AValue: string);
     procedure SetBuildModeIndex(const AValue: integer);
     procedure SetCreateMode(const AValue: TStrings);
     procedure SetCreateModeValue(const AValue: string);
     procedure SetCreateModeIndex(const AValue: integer);
+    procedure SetDetectionSummary(const AValue: TStrings);
   published
     property runmode: TRunMode read FrunMode write FrunMode;
     property showgui: boolean read Fshowgui write Fshowgui;
@@ -81,6 +83,7 @@ type
     property CreateModeIndex: integer read FCreateModeIndex write SetCreateModeIndex;
     property CreateModeValue: string read FCreateModeValue write SetCreateModeValue;
     property DetectCount: integer read FDetectCount write FDetectCount;
+    property DetectionSummary: TStrings read FDetectionSummary write SetDetectionSummary;
   public
     { public declarations }
     constructor Create;
@@ -767,6 +770,7 @@ begin
   FBuildModeIndex := 0;
   FCreateModeValue := CreateMode.Strings[FCreateModeIndex];
   FBuildModeValue := BuildMode.Strings[FBuildModeIndex];
+  FDetectionSummary := TStringList.Create;
   DetectCount := 0;
   inherited;
 end;
@@ -775,6 +779,7 @@ destructor TOSDSettings.Destroy;
 begin
   FreeAndNil(FBuildMode);
   FreeAndNil(FCreateMode);
+  FreeAndNil(FDetectionSummary);
   inherited;
 end;
 
@@ -811,6 +816,12 @@ begin
   FCreateModeIndex := AValue;
   FCreateModeValue := CreateMode.Strings[AValue];
 end;
+
+procedure TOSDSettings.SetDetectionSummary(const AValue: TStrings);
+begin
+  FDetectionSummary.Assign(AValue);
+end;
+
 
 // TInstallerData ************************************
 
@@ -1953,6 +1964,7 @@ var
   numberOfPatternDetected: integer = 0;
   numberOfNotpatternDetected: integer = 0;
   installerPatternCount: integer = 0;
+  tmpstr : string;
 begin
   Result := False;
   installerPatternCount := TInstallerData(parent).patterns.Count;
@@ -1970,23 +1982,33 @@ begin
   end;
   if numberOfPatterndetected > 0 then
   begin
-    LogDatei.log('Found patterns: ' + IntToStr(numberOfPatterndetected) +
-      ' for ' + TInstallerData(parent).Name, LLnotice);
+    tmpstr := 'Found patterns: ' + IntToStr(numberOfPatterndetected) +
+      ' for ' + TInstallerData(parent).Name;
+    LogDatei.log(tmpstr, LLnotice);
+    osdsettings.DetectionSummary.Add(tmpstr);
     if numberOfPatterndetected = installerPatternCount then
     begin
       Result := True;
-      LogDatei.log('All patterns found, needed: ' + IntToStr(
-        installerPatternCount), LLnotice);
+      tmpstr := 'All patterns found, needed: ' + IntToStr(
+        installerPatternCount);
+      LogDatei.log(tmpstr, LLnotice);
+      osdsettings.DetectionSummary.Add(tmpstr);
       if numberOfNotpatternDetected > 0 then
       begin
         Result := False;
-        LogDatei.log('Not patterns (Veto) found: ' + IntToStr(numberOfPatterndetected) +
-          ' for ' + TInstallerData(parent).Name, LLnotice);
+        tmpstr := 'Not patterns (Veto) found: ' + IntToStr(numberOfPatterndetected) +
+          ' for ' + TInstallerData(parent).Name;
+        LogDatei.log(tmpstr, LLnotice);
+        osdsettings.DetectionSummary.Add(tmpstr);
       end;
     end
     else
-      LogDatei.log('Not all patterns found, needed: ' + IntToStr(
-        installerPatternCount), LLnotice);
+    begin
+      tmpstr := 'Not all patterns found, needed: ' + IntToStr(
+        installerPatternCount);
+      LogDatei.log(tmpstr, LLnotice);
+      osdsettings.DetectionSummary.Add(tmpstr);
+    end;
   end;
 end;
 
@@ -2080,6 +2102,9 @@ begin
   aktProduct.dependencies := TCollection.Create(TPDependency);
   // Create Properties
   aktProduct.properties := TPProperties.Create(aktProduct);
+  // detection count
+  osdsettings.DetectionSummary.Clear;
+  osdsettings.DetectCount:= 0;
   //aktProduct.targetOS:= osWin;
 end;
 

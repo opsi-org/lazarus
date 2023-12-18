@@ -1196,7 +1196,8 @@ begin
   resultForm1.ProgressBarAnalyze.Position := 100;
   procmess;
   if osdsettings.DetectCount > 1 then
-    MyMessageDlg.showMessage('Warning','More than one installertype detected.' +LineEnding+
+    MyMessageDlg.showMessage('Warning','More than one installertype detected:' +LineEnding+
+      osdsettings.DetectionSummary.Text +LineEnding+
       'Please check log file.', [mrOK]);
   {$ENDIF OSDGUI}
   //sleep(2000);
