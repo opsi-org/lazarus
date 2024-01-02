@@ -1076,7 +1076,7 @@ end;
 
 procedure TResultform1.IpHtmlPanelAdviceHotClick(Sender: TObject);
 var
-  NodeA: TIpHtmlNodeA;
+  //NodeA: TIpHtmlNodeA;
   URL: string;
 begin
   (*
@@ -1096,7 +1096,7 @@ end;
 
 procedure TResultform1.IpHtmlPanelDescHotClick(Sender: TObject);
 var
-  NodeA: TIpHtmlNodeA;
+  //NodeA: TIpHtmlNodeA;
   URL: string;
 begin
 (*

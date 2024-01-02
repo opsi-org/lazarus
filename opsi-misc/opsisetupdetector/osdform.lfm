@@ -4,7 +4,7 @@ object resultForm1: TresultForm1
   Top = 346
   Width = 1081
   Caption = 'opsi Setup Detector'
-  ClientHeight = 655
+  ClientHeight = 675
   ClientWidth = 1081
   Menu = MainMenu1
   OnClose = FormClose
@@ -14,7 +14,7 @@ object resultForm1: TresultForm1
   OnMouseLeave = FormMouseLeave
   OnShow = FormShow
   Position = poScreenCenter
-  LCLVersion = '2.2.6.0'
+  LCLVersion = '3.0.0.3'
   object Panel1: TPanel
     Left = 0
     Height = 40
@@ -152,17 +152,17 @@ object resultForm1: TresultForm1
   end
   object Panel3: TPanel
     Left = 0
-    Height = 592
+    Height = 612
     Top = 40
     Width = 1081
     Align = alClient
-    ClientHeight = 592
+    ClientHeight = 612
     ClientWidth = 1081
     ParentFont = False
     TabOrder = 1
     object PageControl1: TPageControl
       Left = 7
-      Height = 590
+      Height = 610
       Top = 1
       Width = 1073
       ActivePage = TabSheetStart
@@ -174,13 +174,13 @@ object resultForm1: TresultForm1
       OnChange = PageControl1Change
       object TabSheetStart: TTabSheet
         Caption = 'Start'
-        ClientHeight = 562
+        ClientHeight = 582
         ClientWidth = 1065
         OnExit = TabSheetStartExit
         ParentFont = False
         object FlowPanel3: TFlowPanel
           Left = 0
-          Height = 562
+          Height = 582
           Top = 0
           Width = 1065
           Align = alClient
@@ -6066,12 +6066,12 @@ object resultForm1: TresultForm1
       end
       object TabSheetAnalyze: TTabSheet
         Caption = 'Analyze'
-        ClientHeight = 562
+        ClientHeight = 582
         ClientWidth = 1065
         ParentFont = False
         object MemoAnalyze: TMemo
           Left = 0
-          Height = 396
+          Height = 416
           Top = 92
           Width = 1065
           Align = alClient
@@ -6082,7 +6082,7 @@ object resultForm1: TresultForm1
         object Panel2: TPanel
           Left = 0
           Height = 74
-          Top = 488
+          Top = 508
           Width = 1065
           Align = alBottom
           BorderStyle = bsSingle
@@ -6358,7 +6358,7 @@ object resultForm1: TresultForm1
       end
       object TabSheetSetup1: TTabSheet
         Caption = '1. Setup'
-        ClientHeight = 562
+        ClientHeight = 582
         ClientWidth = 1065
         ParentFont = False
         object FlowPanel1: TFlowPanel
@@ -6418,10 +6418,10 @@ object resultForm1: TresultForm1
             ParentFont = False
           end
           object TICheckBoxS1Mst: TTICheckBox
-            Left = 484
+            Left = 482
             Height = 23
             Top = 13
-            Width = 91
+            Width = 89
             Anchors = []
             AutoSize = True
             BorderSpacing.Left = 20
@@ -6456,7 +6456,7 @@ object resultForm1: TresultForm1
             Left = 337
             Height = 23
             Top = 13
-            Width = 121
+            Width = 119
             Anchors = []
             AutoSize = True
             BorderSpacing.Left = 20
@@ -6469,7 +6469,7 @@ object resultForm1: TresultForm1
             TabOrder = 1
           end
           object SpeedButtonHelpSetup1: TSpeedButton
-            Left = 678
+            Left = 674
             Height = 22
             Hint = 'Show Help'
             Top = 14
@@ -7380,7 +7380,7 @@ object resultForm1: TresultForm1
         end
         object FlowPanel17: TFlowPanel
           Left = 0
-          Height = 154
+          Height = 174
           Top = 408
           Width = 1065
           Align = alClient
@@ -7398,7 +7398,7 @@ object resultForm1: TresultForm1
             Left = 906
             Height = 52
             Hint = 'Go to the next Step'
-            Top = 92
+            Top = 112
             Width = 149
             Align = alRight
             Anchors = [akRight]
@@ -7548,7 +7548,7 @@ object resultForm1: TresultForm1
       end
       object TabSheetSetup2: TTabSheet
         Caption = '2. Setup'
-        ClientHeight = 562
+        ClientHeight = 582
         ClientWidth = 1065
         ParentFont = False
         object FlowPanel2: TFlowPanel
@@ -7608,10 +7608,10 @@ object resultForm1: TresultForm1
             ParentFont = False
           end
           object TICheckBoxS2Mst: TTICheckBox
-            Left = 484
+            Left = 482
             Height = 23
             Top = 13
-            Width = 91
+            Width = 89
             Anchors = []
             AutoSize = True
             BorderSpacing.Left = 20
@@ -7646,7 +7646,7 @@ object resultForm1: TresultForm1
             Left = 337
             Height = 23
             Top = 13
-            Width = 121
+            Width = 119
             Anchors = []
             AutoSize = True
             BorderSpacing.Left = 20
@@ -7659,7 +7659,7 @@ object resultForm1: TresultForm1
             TabOrder = 1
           end
           object SpeedButtonHelpSetup2: TSpeedButton
-            Left = 678
+            Left = 674
             Height = 22
             Hint = 'Show Help'
             Top = 14
@@ -8571,7 +8571,7 @@ object resultForm1: TresultForm1
         end
         object FlowPanel13: TFlowPanel
           Left = 0
-          Height = 154
+          Height = 174
           Top = 408
           Width = 1065
           Align = alClient
@@ -8589,7 +8589,7 @@ object resultForm1: TresultForm1
             Left = 906
             Height = 54
             Hint = 'Go to the next Step'
-            Top = 90
+            Top = 110
             Width = 149
             Anchors = []
             AutoSize = True
@@ -8738,7 +8738,7 @@ object resultForm1: TresultForm1
       end
       object TabSheetSetup3: TTabSheet
         Caption = '3. Setup'
-        ClientHeight = 562
+        ClientHeight = 582
         ClientWidth = 1065
         ParentFont = False
         object FlowPanel8: TFlowPanel
@@ -8798,10 +8798,10 @@ object resultForm1: TresultForm1
             ParentFont = False
           end
           object TICheckBoxS3Mst: TTICheckBox
-            Left = 484
+            Left = 482
             Height = 23
             Top = 13
-            Width = 91
+            Width = 89
             Anchors = []
             AutoSize = True
             BorderSpacing.Left = 20
@@ -8836,7 +8836,7 @@ object resultForm1: TresultForm1
             Left = 337
             Height = 23
             Top = 13
-            Width = 121
+            Width = 119
             Anchors = []
             AutoSize = True
             BorderSpacing.Left = 20
@@ -8849,7 +8849,7 @@ object resultForm1: TresultForm1
             TabOrder = 1
           end
           object SpeedButtonHelpSetup3: TSpeedButton
-            Left = 678
+            Left = 674
             Height = 22
             Hint = 'Show Help'
             Top = 14
@@ -9761,7 +9761,7 @@ object resultForm1: TresultForm1
         end
         object FlowPanel25: TFlowPanel
           Left = 0
-          Height = 154
+          Height = 174
           Top = 408
           Width = 1065
           Align = alClient
@@ -9779,7 +9779,7 @@ object resultForm1: TresultForm1
             Left = 906
             Height = 54
             Hint = 'Go to the next Step'
-            Top = 90
+            Top = 110
             Width = 149
             Anchors = []
             AutoSize = True
@@ -9928,7 +9928,7 @@ object resultForm1: TresultForm1
       end
       object TabSheetProduct: TTabSheet
         Caption = 'Product Configuration 1'
-        ClientHeight = 562
+        ClientHeight = 582
         ClientWidth = 1065
         ParentFont = False
         object FlowPanel6: TFlowPanel
@@ -10239,7 +10239,7 @@ object resultForm1: TresultForm1
         end
         object FlowPanel18: TFlowPanel
           Left = 0
-          Height = 71
+          Height = 91
           Top = 491
           Width = 1065
           Align = alClient
@@ -10258,7 +10258,7 @@ object resultForm1: TresultForm1
             Left = 906
             Height = 54
             Hint = 'Go to the next Step'
-            Top = 7
+            Top = 27
             Width = 149
             Anchors = [akRight, akBottom]
             AutoSize = True
@@ -10720,7 +10720,7 @@ object resultForm1: TresultForm1
               Left = 5
               Height = 19
               Top = 5
-              Width = 155
+              Width = 153
               Anchors = []
               AutoSize = True
               BorderSpacing.Around = 5
@@ -10732,10 +10732,10 @@ object resultForm1: TresultForm1
               TabStop = True
             end
             object TICheckBoxInstallFromLocal: TTICheckBox
-              Left = 170
+              Left = 168
               Height = 19
               Top = 5
-              Width = 156
+              Width = 154
               Anchors = []
               AutoSize = True
               BorderSpacing.Around = 5
@@ -10748,10 +10748,10 @@ object resultForm1: TresultForm1
               TabStop = True
             end
             object TICheckBoxHandleLiceneKey: TTICheckBox
-              Left = 336
+              Left = 332
               Height = 19
               Top = 5
-              Width = 128
+              Width = 126
               Anchors = []
               AutoSize = True
               BorderSpacing.Right = 11
@@ -10765,10 +10765,10 @@ object resultForm1: TresultForm1
               TabStop = True
             end
             object TICheckBoxDesktopIcon: TTICheckBox
-              Left = 485
+              Left = 479
               Height = 19
               Top = 5
-              Width = 92
+              Width = 90
               Anchors = []
               AutoSize = True
               BorderSpacing.Right = 11
@@ -10782,10 +10782,10 @@ object resultForm1: TresultForm1
               TabStop = True
             end
             object TICheckBoxCustomizeProfile: TTICheckBox
-              Left = 598
+              Left = 590
               Height = 19
               Top = 5
-              Width = 113
+              Width = 111
               Anchors = []
               AutoSize = True
               BorderSpacing.Right = 11
@@ -10803,7 +10803,7 @@ object resultForm1: TresultForm1
       end
       object TabSheetProduct2: TTabSheet
         Caption = 'Product Configuration 2'
-        ClientHeight = 562
+        ClientHeight = 582
         ClientWidth = 1065
         ParentFont = False
         object FlowPanel21: TFlowPanel
@@ -10949,7 +10949,7 @@ object resultForm1: TresultForm1
         end
         object FlowPanel23: TFlowPanel
           Left = 0
-          Height = 114
+          Height = 134
           Top = 448
           Width = 1065
           Align = alClient
@@ -10968,7 +10968,7 @@ object resultForm1: TresultForm1
             Left = 906
             Height = 54
             Hint = 'Go to the next Step'
-            Top = 50
+            Top = 70
             Width = 149
             Anchors = [akRight, akBottom]
             AutoSize = True
@@ -11205,10 +11205,10 @@ object resultForm1: TresultForm1
                 TIOptions = [tgoStartIndexAtOne, tgoShowOnlyProperties]
                 ColWidths = (
                   64
-                  131
-                  131
-                  131
-                  132
+                  136
+                  136
+                  135
+                  135
                 )
               end
               object PanelDepBtns: TPanel
@@ -11631,10 +11631,10 @@ object resultForm1: TresultForm1
                 TIOptions = [tgoStartIndexAtOne, tgoShowOnlyProperties]
                 ColWidths = (
                   64
-                  244
-                  244
-                  244
-                  246
+                  249
+                  249
+                  249
+                  248
                 )
               end
             end
@@ -11643,20 +11643,21 @@ object resultForm1: TresultForm1
       end
       object TabSheetIcons: TTabSheet
         Caption = 'Product Icon'
-        ClientHeight = 562
+        ClientHeight = 582
         ClientWidth = 1065
         OnShow = TabSheetIconsShow
         ParentFont = False
         object Panel11: TPanel
           Left = 665
-          Height = 562
+          Height = 582
           Top = 0
           Width = 400
           Align = alRight
           BevelOuter = bvNone
-          ClientHeight = 562
+          ClientHeight = 582
           ClientWidth = 400
           Color = clNone
+          ParentBackground = False
           ParentColor = False
           ParentFont = False
           TabOrder = 1
@@ -11671,6 +11672,7 @@ object resultForm1: TresultForm1
             ClientHeight = 162
             ClientWidth = 162
             Color = clForm
+            ParentBackground = False
             ParentColor = False
             ParentFont = False
             TabOrder = 0
@@ -11699,7 +11701,7 @@ object resultForm1: TresultForm1
             Left = 214
             Height = 54
             Hint = 'Go to the next Step'
-            Top = 494
+            Top = 514
             Width = 149
             Anchors = [akRight, akBottom]
             AutoSize = True
@@ -11889,23 +11891,23 @@ object resultForm1: TresultForm1
             Left = 17
             Height = 19
             Top = 304
-            Width = 81
+            Width = 79
             Caption = 'use no icon'
-            OnChange = CheckBoxNoIconChange
             ParentFont = False
             TabOrder = 2
+            OnChange = CheckBoxNoIconChange
           end
           object CheckBoxDefaultIcon: TCheckBox
             Left = 186
             Height = 19
             Top = 304
-            Width = 104
+            Width = 102
             Caption = 'use default icon'
             Checked = True
-            OnChange = CheckBoxDefaultIconChange
             ParentFont = False
             State = cbChecked
             TabOrder = 3
+            OnChange = CheckBoxDefaultIconChange
           end
           object PanelNumIcons: TPanel
             Left = 16
@@ -11916,6 +11918,7 @@ object resultForm1: TresultForm1
             BevelOuter = bvNone
             ClientHeight = 15
             ClientWidth = 133
+            ParentBackground = False
             ParentFont = False
             TabOrder = 4
             object LabelNumIcons: TLabel
@@ -12058,19 +12061,19 @@ object resultForm1: TresultForm1
         end
         object ScrollBox1: TScrollBox
           Left = 0
-          Height = 562
+          Height = 582
           Top = 0
           Width = 665
           HorzScrollBar.Page = 47
           VertScrollBar.Page = 15
           Align = alClient
-          ClientHeight = 558
+          ClientHeight = 578
           ClientWidth = 661
           ParentFont = False
           TabOrder = 0
           object Label1: TLabel
             Left = 0
-            Height = 558
+            Height = 578
             Top = 0
             Width = 661
             Align = alClient
@@ -12086,7 +12089,7 @@ object resultForm1: TresultForm1
       end
       object TabSheetCreate: TTabSheet
         Caption = 'Create'
-        ClientHeight = 562
+        ClientHeight = 582
         ClientWidth = 1065
         OnShow = TabSheetCreateShow
         ParentFont = False
@@ -12448,6 +12451,7 @@ object resultForm1: TresultForm1
             ClientHeight = 64
             ClientWidth = 358
             Color = clGradientActiveCaption
+            ParentBackground = False
             ParentColor = False
             ParentFont = False
             TabOrder = 1
@@ -13125,7 +13129,7 @@ object resultForm1: TresultForm1
     end
     object Splitter2: TSplitter
       Left = 1
-      Height = 590
+      Height = 610
       Top = 1
       Width = 6
     end
@@ -13133,7 +13137,7 @@ object resultForm1: TresultForm1
   object StatusBar1: TStatusBar
     Left = 0
     Height = 23
-    Top = 632
+    Top = 652
     Width = 1081
     Panels = <    
       item

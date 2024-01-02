@@ -7,7 +7,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, Buttons,
-  LCLIntf, IpHtml,
+  LCLIntf, IpHtml, IpHtmlNodes,
   //HtmlView,
   MarkdownUtils,
   MarkdownProcessor;
