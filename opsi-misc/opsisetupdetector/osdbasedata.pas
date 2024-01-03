@@ -60,7 +60,7 @@ type
     FCreateMode: TStrings;
     FCreateModeIndex: integer;
     FCreateModeValue: string;
-    FDetectCount : integer;
+    FDetectCount: integer;
     FDetectionSummary: TStrings;
     procedure SetBuildMode(const AValue: TStrings);
     procedure SetBuildModeValue(const AValue: string);
@@ -97,7 +97,8 @@ type
     amSelectable);
 
   // marker for add installers
-  TKnownInstaller = (stQtInstaller,stSetupFactory, stInstallAnywhere, stAdvancedInstaller, stInstall4J, stPortableApps,
+  TKnownInstaller = (stQtInstaller, stSetupFactory, stInstallAnywhere,
+    stAdvancedInstaller, stInstall4J, stPortableApps,
     stLinRPM, stLinDeb,
     stMacZip, stMacDmg, stMacPKG, stMacApp,
     stSFXcab, stBoxStub,
@@ -249,7 +250,6 @@ type
       write FinstallerSourceDir;
     property preferSilent: boolean read FpreferSilent write FpreferSilent;
     procedure initValues;
-
   public
     { public declarations }
 
@@ -571,6 +571,7 @@ procedure freebasedata;
 procedure activateImportMode;
 procedure deactivateImportMode;
 function cleanOpsiId(opsiid: string): string; // clean up productId
+procedure reload_installer_info_messages;
 
 const
   CONFVERSION = '4.2.0.9';
@@ -700,38 +701,38 @@ resourcestring
     '' + LineEnding + '- unattended:' + LineEnding +
     '`/s /v"/qb-! ALLUSERS=1 REBOOT=ReallySuppress`"' + LineEnding +
     '' + LineEnding + 'If you have a classic setup then we have as cli parameter just:'
-    + LineEnding + '' + LineEnding + '- silent:' + LineEnding +
-    '`/s`' + LineEnding + '' + LineEnding +
+    + LineEnding + '' + LineEnding + '- silent:' + LineEnding + '`/s`' +
+    LineEnding + '' + LineEnding +
     'If you have a classic setup that is very old (last century or near by), then you perhaps have to add the parameter:'
     + LineEnding + '`/sms`';
   mdInstallerInfo_InstallAnywhere =
     '## This is a InstallAnywhere Installer.' + LineEnding +
-    'If the parameter `-i silent` does not work, try the following:' + '' + LineEnding +
-    LineEnding + 'Run the installer interactive with the `-r` switch followed by' +
-    LineEnding +
-    'the path and file name of the response file you want to generate.' +
-    LineEnding + '' + LineEnding + 'For example:' +
-    LineEnding + '' + LineEnding + '`setup.exe -r "./response.txt"`' +
-    LineEnding + '' + LineEnding +
-    'Then you have to add at the top of the generated response file the line:' +
-    LineEnding + '' + LineEnding + '`INSTALLER_UI=silent`' +
+    'If the parameter `-i silent` does not work, try the following:' +
+    '' + LineEnding + LineEnding +
+    'Run the installer interactive with the `-r` switch followed by' +
+    LineEnding + 'the path and file name of the response file you want to generate.' +
+    LineEnding + '' + LineEnding + 'For example:' + LineEnding +
+    '' + LineEnding + '`setup.exe -r "./response.txt"`' + LineEnding +
+    '' + LineEnding + 'Then you have to add at the top of the generated response file the line:'
+    + LineEnding + '' + LineEnding + '`INSTALLER_UI=silent`' +
     LineEnding + '' + LineEnding + 'Then run silent by calling:' +
     LineEnding + '`setup.exe -f "./response.txt"`' + LineEnding;
   mdInstallerInfo_PortableApps =
     '## This is not a setup program.' + LineEnding +
-    'It is a PortableApps Selfextractor.' +
-    LineEnding + 'So there are no unattended / silent modes.' + '' + LineEnding +
+    'It is a PortableApps Selfextractor.' + LineEnding +
+    'So there are no unattended / silent modes.' + '' + LineEnding +
     LineEnding + 'Uncompress with 7zip and copy the files';
   mdInstallerInfo_SetupFactory =
     '## This is a Setup Factory Installer.' + LineEnding +
-    'Perhaps the parameter `/S` may work for silent mode.' + LineEnding + '' + LineEnding +
-    'But often this functionality is not enabled.' + LineEnding + '' + LineEnding +
+    'Perhaps the parameter `/S` may work for silent mode.' + LineEnding +
+    '' + LineEnding + 'But often this functionality is not enabled.' +
+    LineEnding + '' + LineEnding +
     'In this case you have extract / install the content and deploy it on an other way.';
   mdInstallerInfo_QtInstaller =
     '## This is a QT Installer.' + LineEnding + '' + LineEnding +
     'Perhaps the standard parameters may work for silent mode.' +
-    LineEnding + 'In this case you have to give the **installdir** - it will not work without.' +
-    LineEnding + 'Therefore a install dir value will be created and you may have to change it.'
+    LineEnding + 'In this case you have to give the **installdir** - it will not work without.'
+    + LineEnding + 'Therefore a install dir value will be created and you may have to change it.'
     + LineEnding + '' + LineEnding +
     'In other cases, you may call an answer script (*.qs) with the parameter `--script` .'
     + LineEnding + 'And you should have a look at the following documentation pages:.' +
@@ -746,9 +747,9 @@ implementation
 
 uses
   osdcontrolfile_io
-{$IFDEF OSDGUI}
+  {$IFDEF OSDGUI}
   , osdform
-{$ENDIF OSDGUI}  ;
+  {$ENDIF OSDGUI}  ;
 
 var
   FileVerInfo: TFileVersionInfo;
@@ -1153,17 +1154,17 @@ begin
     // deleting the first entry leads to an access violation
     // to avoid this we move the item to delete to the end of the collection
     aktProduct.properties.Exchange(delindex, numberItems - 1);
-  {$IFDEF OSDGUI}
+    {$IFDEF OSDGUI}
     // then we have to sync with the grid
     resultForm1.TIGridProp.ReloadTIList;
-  {$ENDIF OSDGUI}
+    {$ENDIF OSDGUI}
     // now we delete the last element
     aktProduct.properties.Delete(numberItems - 1);
-  {$IFDEF OSDGUI}
+    {$IFDEF OSDGUI}
     // and now we can resync without access violation
     resultForm1.TIGridProp.ReloadTIList;
     resultForm1.TIGridProp.Update;
-  {$ENDIF OSDGUI}
+    {$ENDIF OSDGUI}
   end;
 
 end;
@@ -1362,7 +1363,6 @@ var
   configDir: array[0..MaxPathLen] of char; //Allocate memory
   configDirUtf8: utf8string;
   pfile: TextFile;
-
 begin
   try
     if Assigned(logdatei) then
@@ -1433,7 +1433,6 @@ var
   pfile: TextFile;
   aktproperty: TPProperty;
   i: integer;
-
 begin
   try
     if Assigned(logdatei) then
@@ -1671,10 +1670,10 @@ var
   configDirUtf8: utf8string;
   //myfile: TextFile;
 
-  // http://wiki.freepascal.org/File_Handling_In_Pascal
-  // SaveStringToFile: function to store a string of text into a diskfile.
-  //   If the function result equals true, the string was written ok.
-  //   If not then there was some kind of error.
+// http://wiki.freepascal.org/File_Handling_In_Pascal
+// SaveStringToFile: function to store a string of text into a diskfile.
+//   If the function result equals true, the string was written ok.
+//   If not then there was some kind of error.
   function SaveStringToFile(theString, filePath: ansistring): boolean;
   var
     fsOut: TFileStream;
@@ -1703,14 +1702,14 @@ begin
     if Assigned(logdatei) then
       logdatei.log('Start writeconfig', LLDebug);
     configDir := '';
-  {$IFDEF Windows}
+    {$IFDEF Windows}
     SHGetFolderPath(0, CSIDL_APPDATA, 0, SHGFP_TYPE_CURRENT, configDir);
     configDir := configDir + PathDelim + 'opsi.org' + PathDelim;
     configDirUtf8 := WinCPToUTF8(configDir);
-  {$ELSE}
+    {$ELSE}
     configDir := GetAppConfigDir(False);
     configDirUtf8 := configDir;
-  {$ENDIF WINDOWS}
+    {$ENDIF WINDOWS}
     configDirUtf8 := StringReplace(configDirUtf8, 'opsi-setup-detector',
       'opsi.org', [rfReplaceAll]);
     configDirUtf8 := StringReplace(configDirUtf8, 'opsisetupdetector',
@@ -1750,8 +1749,8 @@ begin
           LogDatei.log('failed save configuration', LLError);
       {$IFDEF WINDOWS}
       registerForWinExplorer(FregisterInFilemanager);
-  {$ELSE}
-  {$ENDIF WINDOWS}
+      {$ELSE}
+      {$ENDIF WINDOWS}
     finally
       Streamer.Destroy;
       FService_pass := decryptStringBlow('opsi-setup-detector' +
@@ -1781,10 +1780,10 @@ var
   oldconfigDir, oldconfigFileName, tmpstr: string;
   fConfig: Text;
 
-  // http://wiki.freepascal.org/File_Handling_In_Pascal
-  // LoadStringFromFile: function to load a string of text from a diskfile.
-  //   If the function result equals true, the string was load ok.
-  //   If not then there was some kind of error.
+// http://wiki.freepascal.org/File_Handling_In_Pascal
+// LoadStringFromFile: function to load a string of text from a diskfile.
+//   If the function result equals true, the string was load ok.
+//   If not then there was some kind of error.
   function LoadStringFromFile(theString, filePath: ansistring): boolean;
   var
     fsOut: TFileStream;
@@ -1817,14 +1816,14 @@ begin
     if Assigned(logdatei) then
       logdatei.log('Start readconfig', LLDebug);
     configDir := '';
-  {$IFDEF Windows}
+    {$IFDEF Windows}
     SHGetFolderPath(0, CSIDL_APPDATA, 0, SHGFP_TYPE_CURRENT, configDir);
     configDir := configDir + PathDelim + 'opsi.org' + PathDelim;
     configDirUtf8 := WinCPToUTF8(configDir);
-  {$ELSE}
+    {$ELSE}
     configDir := GetAppConfigDir(False);
     configDirUtf8 := configDir;
-  {$ENDIF WINDOWS}
+    {$ENDIF WINDOWS}
     configDirUtf8 := StringReplace(configDirUtf8, 'opsi-setup-detector',
       'opsi.org', [rfReplaceAll]);
     configDirUtf8 := StringReplace(configDirUtf8, 'opsisetupdetector',
@@ -1856,10 +1855,10 @@ begin
         logdatei.log('read config: ' + JSONString, LLDebug)
       else
         ShowMessage('read config: ' + JSONString);
-    {$IFDEF WINDOWS}
+      {$IFDEF WINDOWS}
       registerForWinExplorer(FregisterInFilemanager);
-    {$ELSE}
-    {$ENDIF WINDOWS}
+      {$ELSE}
+      {$ENDIF WINDOWS}
     end
     else
     begin
@@ -1964,7 +1963,7 @@ var
   numberOfPatternDetected: integer = 0;
   numberOfNotpatternDetected: integer = 0;
   installerPatternCount: integer = 0;
-  tmpstr : string;
+  tmpstr: string;
 begin
   Result := False;
   installerPatternCount := TInstallerData(parent).patterns.Count;
@@ -1989,8 +1988,7 @@ begin
     if numberOfPatterndetected = installerPatternCount then
     begin
       Result := True;
-      tmpstr := 'All patterns found, needed: ' + IntToStr(
-        installerPatternCount);
+      tmpstr := 'All patterns found, needed: ' + IntToStr(installerPatternCount);
       LogDatei.log(tmpstr, LLnotice);
       osdsettings.DetectionSummary.Add(tmpstr);
       if numberOfNotpatternDetected > 0 then
@@ -2081,7 +2079,7 @@ begin
         ExtractFileDir(Application.ExeName) + PathDelim +
         '../Resources/template-files' + PathDelim + 'default' + PathDelim +
         'images' + PathDelim + 'template.png';
-  {$ENDIF DARWIN}
+    {$ENDIF DARWIN}
     osdbasedata.aktProduct.productdata.productImageFullFileName :=
       defaultIconFullFileName;
     targetOSset := [];
@@ -2104,7 +2102,7 @@ begin
   aktProduct.properties := TPProperties.Create(aktProduct);
   // detection count
   osdsettings.DetectionSummary.Clear;
-  osdsettings.DetectCount:= 0;
+  osdsettings.DetectCount := 0;
   //aktProduct.targetOS:= osWin;
 end;
 
@@ -2133,6 +2131,134 @@ begin
   opsiId := LowerCase(opsiId);
   Result := stringReplaceRegex(opsiId, '[^a-z0-9_-]', '_');
   // [^A-Za-z0-9._-]
+end;
+
+procedure reload_installer_info_messages;
+begin
+  // unknown
+  with installerArray[integer(stUnknown)] do
+  begin
+    info_message_html.Text := '';
+  end;
+  // inno
+  with installerArray[integer(stInno)] do
+  begin
+    info_message_html.Text := '';
+  end;
+  // NSIS
+  with installerArray[integer(stNsis)] do
+  begin
+    info_message_html.Text := '';
+  end;
+  // InstallShield
+  with installerArray[integer(stInstallShield)] do
+  begin
+    info_message_html.Text := mdInstallerInfo_Installshield;
+  end;
+  // InstallShieldMSI
+  with installerArray[integer(stInstallShieldMSI)] do
+  begin
+    info_message_html.Text := mdInstallerInfo_Installshield;
+  end;
+  // MSI
+  with installerArray[integer(stMSI)] do
+  begin
+    info_message_html.Text := '';
+  end;
+  // 7zip
+  with installerArray[integer(st7zip)] do
+  begin
+    info_message_html.Text := '';
+  end;
+  // st7zipsfx
+  with installerArray[integer(st7zipsfx)] do
+  begin
+    info_message_html.Text := '';
+  end;
+  // stInstallAware
+  with installerArray[integer(stInstallAware)] do
+  begin
+    info_message_html.Text := '';
+  end;
+  // stMSGenericInstaller
+  with installerArray[integer(stMSGenericInstaller)] do
+  begin
+    info_message_html.Text := '';
+  end;
+  // stWixToolset
+  with installerArray[integer(stWixToolset)] do
+  begin
+    info_message_html.Text := '';
+  end;
+  // stBoxStub
+  with installerArray[integer(stBoxStub)] do
+  begin
+    info_message_html.Text := '';
+  end;
+  // stSFXcab
+  with installerArray[integer(stSFXcab)] do
+  begin
+    info_message_html.Text := '';
+  end;
+  // stBitrock
+  with installerArray[integer(stBitrock)] do
+  begin
+    info_message_html.Text := '';
+  end;
+  // stSelfExtractingInstaller
+  with installerArray[integer(stSelfExtractingInstaller)] do
+  begin
+    info_message_html.Text := '';
+  end;
+  with installerArray[integer(stMacZip)] do
+  begin
+    info_message_html.Text := '';
+  end;
+  with installerArray[integer(stMacDmg)] do
+  begin
+    info_message_html.Text := '';
+  end;
+  with installerArray[integer(stMacPKG)] do
+  begin
+    info_message_html.Text := '';
+  end;
+  with installerArray[integer(stMacApp)] do
+  begin
+    info_message_html.Text := '';
+  end;
+  with installerArray[integer(stLinRPM)] do
+  begin
+    info_message_html.Text := '';
+  end;
+  with installerArray[integer(stLinDeb)] do
+  begin
+    info_message_html.Text := '';
+  end;
+  with installerArray[integer(stPortableApps)] do
+  begin
+    info_message_html.Text := mdInstallerInfo_PortableApps;
+  end;
+  with installerArray[integer(stInstall4J)] do
+  begin
+    info_message_html.Text := '';
+  end;
+  with installerArray[integer(stAdvancedInstaller)] do
+  begin
+    info_message_html.Text := '';
+  end;
+  with installerArray[integer(stInstallAnywhere)] do
+  begin
+    info_message_html.Text := mdInstallerInfo_InstallAnywhere;
+  end;
+  with installerArray[integer(stSetupFactory)] do
+  begin
+    info_message_html.Text := mdInstallerInfo_SetupFactory;
+  end;
+  with installerArray[integer(stQtInstaller)] do
+  begin
+    info_message_html.Text := mdInstallerInfo_QtInstaller;
+  end;
+  // marker for add installers
 end;
 
 
@@ -2219,7 +2345,7 @@ begin
     comment := '';
     uib_exitcode_function := 'isInnoExitcodeFatal';
     detected := @detectedbypatternwithor;
-    info_message_html.Text := '';
+    //info_message_html.Text := '';
   end;
 
   // NSIS
@@ -2244,7 +2370,7 @@ begin
     comment := '';
     uib_exitcode_function := 'isNsisExitcodeFatal';
     detected := @detectedbypatternwithor;
-    info_message_html.Text := '';
+    //info_message_html.Text := '';
   end;
   // InstallShield
   with installerArray[integer(stInstallShield)] do
@@ -2274,7 +2400,7 @@ begin
     comment := '';
     uib_exitcode_function := 'isInstallshieldExitcodeFatal';
     detected := @detectedbypatternwithAnd;
-    info_message_html.Text := mdInstallerInfo_Installshield;
+    //info_message_html.Text := mdInstallerInfo_Installshield;
   end;
   // InstallShieldMSI
   with installerArray[integer(stInstallShieldMSI)] do
@@ -2301,8 +2427,7 @@ begin
     comment := '';
     uib_exitcode_function := 'isInstallshieldExitcodeFatal';
     detected := @detectedbypatternwithAnd;
-    info_message_html.Text := mdInstallerInfo_Installshield;
-
+    //info_message_html.Text := mdInstallerInfo_Installshield;
   end;
   // MSI
   with installerArray[integer(stMSI)] do
@@ -2633,7 +2758,7 @@ begin
     comment := 'selfextracting Executable. Uncompress with 7zip.';
     uib_exitcode_function := 'isGenericExitcodeFatal';
     detected := @detectedbypatternwithand;
-    info_message_html.Text := mdInstallerInfo_PortableApps;
+    //info_message_html.Text := mdInstallerInfo_PortableApps;
   end;
   with installerArray[integer(stInstall4J)] do
   begin
@@ -2650,7 +2775,7 @@ begin
     comment := 'Installs Java based software';
     uib_exitcode_function := 'isGenericExitcodeFatal';
     detected := @detectedbypatternwithand;
-    info_message_html.Text := '';
+    //info_message_html.Text := '';
   end;
   with installerArray[integer(stAdvancedInstaller)] do
   begin
@@ -2676,7 +2801,7 @@ begin
     comment := 'Wrapper around MSI (and others).Included files may extracted with /extract';
     uib_exitcode_function := 'isMsiExitcodeFatal';
     detected := @detectedbypatternwithand;
-    info_message_html.Text := '';
+    //info_message_html.Text := '';
   end;
   with installerArray[integer(stInstallAnywhere)] do
   begin
@@ -2696,7 +2821,7 @@ begin
     comment := 'Multi-Platform Installers';
     uib_exitcode_function := 'isGenericExitcodeFatal';
     detected := @detectedbypatternwithand;
-    info_message_html.Text := mdInstallerInfo_InstallAnywhere;
+    //info_message_html.Text := mdInstallerInfo_InstallAnywhere;
   end;
   with installerArray[integer(stSetupFactory)] do
   begin
@@ -2716,15 +2841,19 @@ begin
     comment := 'SetupFactory';
     uib_exitcode_function := 'isGenericExitcodeFatal';
     detected := @detectedbypatternwithand;
-    info_message_html.Text := mdInstallerInfo_SetupFactory;
+    //info_message_html.Text := mdInstallerInfo_SetupFactory;
   end;
   with installerArray[integer(stQtInstaller)] do
   begin
     description := 'QtInstaller';
-    silentsetup := '--verbose --accept-licenses --default-answer --accept-obligations --confirm-command install --root "$installdir$"';
-    unattendedsetup := '--verbose --accept-licenses --default-answer --accept-obligations --confirm-command install --root "$installdir$"';
-    silentuninstall := '--verbose --accept-licenses --default-answer --accept-obligations --confirm-command purge';
-    unattendeduninstall := '--verbose --accept-licenses --default-answer --accept-obligations --confirm-command purge';
+    silentsetup :=
+      '--verbose --accept-licenses --default-answer --accept-obligations --confirm-command install --root "$installdir$"';
+    unattendedsetup :=
+      '--verbose --accept-licenses --default-answer --accept-obligations --confirm-command install --root "$installdir$"';
+    silentuninstall :=
+      '--verbose --accept-licenses --default-answer --accept-obligations --confirm-command purge';
+    unattendeduninstall :=
+      '--verbose --accept-licenses --default-answer --accept-obligations --confirm-command purge';
     uninstall_waitforprocess := '';
     install_waitforprocess := '';
     uninstallProg := '$Installdir$\Uninstall.exe';
@@ -2738,9 +2867,10 @@ begin
     comment := 'QtInstaller';
     uib_exitcode_function := 'isGenericExitcodeFatal';
     detected := @detectedbypatternwithand;
-    info_message_html.Text := mdInstallerInfo_QtInstaller;
+    //info_message_html.Text := mdInstallerInfo_QtInstaller;
   end;
   // marker for add installers
+  reload_installer_info_messages;
 
   architectureModeList := TStringList.Create;
   architectureModeList.Add('32BitOnly - fix');
@@ -2758,13 +2888,13 @@ begin
   aktProduct := TopsiProduct.Create;
 
   FileVerInfo := TFileVersionInfo.Create(nil);
-  try
-    FileVerInfo.FileName := ParamStr(0);
-    FileVerInfo.ReadFileInfo;
-    myVersion := FileVerInfo.VersionStrings.Values['FileVersion'];
-  finally
-    FileVerInfo.Free;
-  end;
+try
+  FileVerInfo.FileName := ParamStr(0);
+  FileVerInfo.ReadFileInfo;
+  myVersion := FileVerInfo.VersionStrings.Values['FileVersion'];
+finally
+  FileVerInfo.Free;
+end;
 
 
   // initalize channel names
