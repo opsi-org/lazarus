@@ -831,7 +831,7 @@ begin
   {$IFDEF DARWIN}
   //str := getCommandResult('ip -o -4 route get '+target);
   // macos ip has no '-o'
-  str := getCommandResult('/bin/bash -c "python3 /usr/local/bin/ip -4 route get ' +
+  str := getCommandResult('/bin/bash -c "/usr/local/bin/ip -4 route get ' +
     target + ' || exit $?"');
   {$ENDIF DARWIN}
   LogDatei.log('ip out: ' + str, LLInfo);
