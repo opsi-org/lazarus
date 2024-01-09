@@ -931,7 +931,7 @@ begin
   if not Assigned(startupmessages) then startupmessages := TStringList.Create;
   startupmessages.Append('startmessage opsi-script created at CentralForm.FormCreate: ' +
     DateTimeToStr(Now));
-  startupmessages.Append('Detected Language is:' + GetDefaultLang);
+  startupmessages.Append('Detected Language is:' + SetDefaultLang(''));
   toggle := True;
   Memo1.Clear;
   Memo1.Lines.add('');
@@ -1068,7 +1068,7 @@ begin
   MyMessageDlg.WiMessage('opsi-script  ' + OpsiscriptVersionName +
     LineEnding + 'Copyright (c) uib 1995 - 2021' + LineEnding +
     'opsi-script is AGPLv3 licensed Open Source software' + LineEnding +
-    'Detected Language: ' + GetDefaultLang + LineEnding + 'Internet homes: ' +
+    'Detected Language: ' + SetDefaultLang('') + LineEnding + 'Internet homes: ' +
     LineEnding + ' www.uib.de  ' + ' www.opsi.org  ',
     [mrOk]);
 end;

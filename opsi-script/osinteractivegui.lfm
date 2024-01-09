@@ -7,7 +7,7 @@ object CentralForm: TCentralForm
   HorzScrollBar.Visible = False
   VertScrollBar.Visible = False
   Caption = '  opsi - script'
-  ClientHeight = 521
+  ClientHeight = 541
   ClientWidth = 1084
   Font.CharSet = ANSI_CHARSET
   Font.Color = clBlack
@@ -20,7 +20,7 @@ object CentralForm: TCentralForm
   OnCreate = FormCreate
   OnWindowStateChange = FormWindowStateChange
   Position = poScreenCenter
-  LCLVersion = '2.2.6.0'
+  LCLVersion = '3.0.0.3'
   object LabelWinstVersion: TLabel
     Left = 177
     Height = 9
@@ -51,7 +51,7 @@ object CentralForm: TCentralForm
   end
   object Memo1: TMemo
     Left = 0
-    Height = 267
+    Height = 287
     Top = 254
     Width = 1084
     Align = alClient
@@ -78,6 +78,7 @@ object CentralForm: TCentralForm
     ClientHeight = 57
     ClientWidth = 1084
     Color = clWhite
+    ParentBackground = False
     ParentColor = False
     TabOrder = 1
     object Label1: TLabel
@@ -421,9 +422,9 @@ object CentralForm: TCentralForm
       Font.Height = -12
       Font.Name = 'Arial'
       Font.Pitch = fpVariable
-      OnClick = ButtonProcessMemoClick
       ParentFont = False
       TabOrder = 1
+      OnClick = ButtonProcessMemoClick
     end
     object ButtonGetClipboardText: TButton
       Left = 688
@@ -435,9 +436,9 @@ object CentralForm: TCentralForm
       Font.Height = -12
       Font.Name = 'Arial'
       Font.Pitch = fpVariable
-      OnClick = ButtonGetClipboardTextClick
       ParentFont = False
       TabOrder = 2
+      OnClick = ButtonGetClipboardTextClick
     end
     object ComboBox1: TComboBox
       Left = 92
