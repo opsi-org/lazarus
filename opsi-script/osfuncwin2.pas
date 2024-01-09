@@ -82,7 +82,7 @@ function KillProcessbypid(pid: DWORD): boolean;
 function getWinProcessList: TStringList;
 //procedure myimpersontest;
 function getloggedonDomUser: string;
-function GetLoggedInUserSID: string;
+//function GetLoggedInUserSID: string;
 function GetUserName_: string;
 function GetUserNameEx_: string;
 {$IFDEF WIN32}
@@ -581,7 +581,6 @@ var
   mydomain: ansistring = '';
 begin
   Result := '';
-  ;
   h := FindWindow('Progman', nil);// maybe use GetDesktopWindow
   if h <> 0 then
   begin
