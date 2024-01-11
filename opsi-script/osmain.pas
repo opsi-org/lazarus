@@ -99,6 +99,7 @@ uses
   osconf,
   FileUtil,
   LazFileUtils,
+  LazUTF8,
   SysUtils,
   Classes,
   synautil,
@@ -952,7 +953,8 @@ begin
     else
       Verfahren := opsidata.getProductAction;
 
-    SetProductProgress(Verfahren);
+    if Verfahren in [tacDeinstall, tacSetup, tacAlways] then
+      SetProductProgress(Verfahren);
 
     if Verfahren in [tacDeinstall, tacSetup, tacOnce, tacAlways,
       tacCustom, tacLogin] then
@@ -2742,7 +2744,7 @@ begin
 
     for i := 1 to ParamCount do
     begin
-      teststr := reencode(ParamStr(i), 'system');
+      teststr := SysToUTF8(ParamStr(i));
       ParamListe.Add(teststr);
     end;
 
@@ -3025,7 +3027,6 @@ begin
                       ProgramMode := pmInfo;
                       exit;
                     end;
-
                     usercontext := opsiunQuotestr(trim(r), '"');
                     if (usercontext = '') or (usercontext = '\') then
                     begin
@@ -3036,7 +3037,6 @@ begin
                       inUsercontext := True;
                     Inc(i);
                   end
-
                   else
                   begin
                     ProgramMode := pmInfo;
