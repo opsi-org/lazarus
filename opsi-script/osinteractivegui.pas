@@ -995,7 +995,7 @@ begin
   //lang := GetDefaultLang;
   lang := '';
   SetDefaultLang(lang, localedir);
-  startupmessages.Append('Detected Language is:' + GetDefaultLang +
+  startupmessages.Append('Detected Language is:' + SetDefaultLang('') +
     ' for: ' + ExtractFileName(ParamStrUTF8(0)) + ' from dir: ' + localedir);
   {$ENDIF LINUX}
 
