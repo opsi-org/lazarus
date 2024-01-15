@@ -28,7 +28,9 @@ uses
   osdbasedata,
   osdanalyzegeneral,
   oscheckbinarybitness,
-  Controls;
+  osmessagedialog,
+  Controls,
+  osd_md_html_dlg;
 
 procedure get_aktProduct_general_info_win(installerId: TKnownInstaller;
   myfilename: string; var mysetup: TSetupFile);
@@ -38,7 +40,7 @@ procedure get_msi_info(myfilename: string; var mysetup: TSetupFile;
 procedure get_inno_info(myfilename: string; var mysetup: TSetupFile);
 //procedure get_installshield_info(myfilename: string; var mysetup: TSetupFile);
 procedure get_installshieldmsi_info(myfilename: string; var mysetup: TSetupFile);
-procedure get_advancedmsi_info(myfilename: string; var mysetup: TSetupFile);
+//procedure get_advancedmsi_info(myfilename: string; var mysetup: TSetupFile);
 procedure get_null_info(myfilename: string; var mysetup: TSetupFile);
 procedure get_installaware_info(myfilename: string; var mysetup: TSetupFile);
 procedure get_genmsinstaller_info(myfilename: string; var mysetup: TSetupFile);
@@ -48,6 +50,8 @@ procedure get_sfxcab_info(myfilename: string; var mysetup: TSetupFile);
 //procedure get_bitrock_info(myfilename: string; var mysetup: TSetupFile);
 //procedure get_selfextrackting_info(myfilename: string; var mysetup: TSetupFile);
 procedure get_advancedInstaller_info(myfilename: string; var mysetup: TSetupFile);
+procedure get_installAnywhere_info(myfilename: string; var mysetup: TSetupFile);
+procedure get_QtInstaller_info(myfilename: string; var mysetup: TSetupFile);
 // marker for add installers
 procedure Analyze(FileName: string; var mysetup: TSetupFile; verbose: boolean);
 function getProductInfoFromResource(infokey: string; filename: string): string;
@@ -535,6 +539,10 @@ begin
   myoutlines := TStringList.Create;
   destDir := GetTempDir(False);
   destDir := destDir + DirectorySeparator + 'INNO';
+  // cleanup destination
+  if DirectoryExists(destDir) then
+    DeleteDirectory(destDir,true);
+  // create destination
   if not DirectoryExists(destDir) then
     ForceDirectories(destDir);
   destfile := ExtractFileName(myfilename);
@@ -776,7 +784,7 @@ begin
 end;
 
 
-
+(*
 procedure get_advancedmsi_info(myfilename: string; var mysetup: TSetupFile);
 var
   myoutlines: TStringList;
@@ -852,9 +860,9 @@ begin
   {$ENDIF WINDOWS}
 
   write_log_and_memo('get_AdvancedMSI_info finished');
-  write_log_and_memo('Advancd Installer Setup (with embedded MSI) detected');
+  write_log_and_memo('Advanced Installer Setup (with embedded MSI) detected');
 end;
-
+*)
 (*
 procedure get_7zip_info(myfilename: string);
 var
@@ -930,6 +938,10 @@ begin
   myoutlines := TStringList.Create;
   destDir := GetTempDir(False);
   destDir := destDir + DirectorySeparator + 'wixbundle';
+  // cleanup destination
+  if DirectoryExists(destDir) then
+    DeleteDirectory(destDir,true);
+  // create destination
   if not DirectoryExists(destDir) then
     ForceDirectories(destDir);
 
@@ -1037,6 +1049,27 @@ begin
   write_log_and_memo('get_advancedInstaller_info finished');
 end;
 
+procedure get_installAnywhere_info(myfilename: string; var mysetup: TSetupFile);
+var
+  str1, str2: string;
+  pos1, pos2, i: integer;
+begin
+  write_log_and_memo('Analyzing installAnywhere:');
+  write_log_and_memo('get_installAnywhere_info finished');
+end;
+
+procedure get_QtInstaller_info(myfilename: string; var mysetup: TSetupFile);
+var
+  str1, str2: string;
+  pos1, pos2, i: integer;
+begin
+  write_log_and_memo('Analyzing QtInstaller:');
+  mysetup.installDirectory:= '%Programfiles64Dir%\"+$ProductId$+"';
+  write_log_and_memo('get_QtInstaller_info finished');
+end;
+
+// marker for add installers
+
 (*
 procedure get_bitrock_info(myfilename: string; var mysetup: TSetupFile);
 var
@@ -1109,7 +1142,7 @@ begin
       // get additional infos for some installers:
       stInno: get_inno_info(FileName, mysetup);
       stInstallShieldMSI: get_installshieldmsi_info(FileName, mysetup);
-      stAdvancedMSI: get_advancedmsi_info(FileName, mysetup);
+      //stAdvancedMSI: get_advancedmsi_info(FileName, mysetup);
       stMsi: ;// nothing to do here - see above;
       stInstallAware: get_installaware_info(FileName, mysetup);
       stMSGenericInstaller: get_genmsinstaller_info(FileName, mysetup);
@@ -1117,13 +1150,15 @@ begin
       stBoxStub: get_boxstub_info(FileName, mysetup);
       stSFXcab: get_sfxcab_info(FileName, mysetup);
       stAdvancedInstaller: get_advancedInstaller_info(FileName, mysetup);
+      stInstallAnywhere: get_installAnywhere_info(FileName, mysetup);
+      stQtInstaller: get_QtInstaller_info(FileName, mysetup);
       stUnknown: LogDatei.log(
           'Unknown Installer after Analyze.', LLcritical);
       else
         get_null_info(FileName, mysetup);
         {nothing special right now for stBitrock, stSelfExtractingInstaller,
          stPortableApps, stInstall4J, st7zip, stNsis, stInstallShield,
-         st7zipsfx}
+         st7zipsfx,stSetupFactory}
     end;
 
 
@@ -1160,6 +1195,10 @@ begin
   {$IFDEF OSDGUI}
   resultForm1.ProgressBarAnalyze.Position := 100;
   procmess;
+  if osdsettings.DetectCount > 1 then
+    MyMessageDlg.showMessage('Warning','More than one installertype detected:' +LineEnding+
+      osdsettings.DetectionSummary.Text +LineEnding+
+      'Please check log file.', [mrOK]);
   {$ENDIF OSDGUI}
   //sleep(2000);
   mysetup.installerId := setupType;
@@ -1170,6 +1209,13 @@ begin
   begin
     {$IFDEF OSDGUI}
     resultform1.BtAnalyzeNextStepClick(nil);
+    tmpstr := installerArray[integer(setupType)].info_message_html.Text;
+    if tmpstr <> '' then
+    begin
+      //MyMessageDlg.wiMessageSized(tmpstr,[mrOk], 950, 740);
+      OSD_info.mdContent:= tmpstr;
+      OSD_info.ShowModal;
+    end;
     {$ENDIF OSDGUI}
   end;
 end;

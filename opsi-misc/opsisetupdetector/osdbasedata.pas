@@ -60,12 +60,15 @@ type
     FCreateMode: TStrings;
     FCreateModeIndex: integer;
     FCreateModeValue: string;
+    FDetectCount: integer;
+    FDetectionSummary: TStrings;
     procedure SetBuildMode(const AValue: TStrings);
     procedure SetBuildModeValue(const AValue: string);
     procedure SetBuildModeIndex(const AValue: integer);
     procedure SetCreateMode(const AValue: TStrings);
     procedure SetCreateModeValue(const AValue: string);
     procedure SetCreateModeIndex(const AValue: integer);
+    procedure SetDetectionSummary(const AValue: TStrings);
   published
     property runmode: TRunMode read FrunMode write FrunMode;
     property showgui: boolean read Fshowgui write Fshowgui;
@@ -79,6 +82,8 @@ type
     property CreateMode: TStrings read FCreateMode write SetCreateMode;
     property CreateModeIndex: integer read FCreateModeIndex write SetCreateModeIndex;
     property CreateModeValue: string read FCreateModeValue write SetCreateModeValue;
+    property DetectCount: integer read FDetectCount write FDetectCount;
+    property DetectionSummary: TStrings read FDetectionSummary write SetDetectionSummary;
   public
     { public declarations }
     constructor Create;
@@ -92,9 +97,13 @@ type
     amSelectable);
 
   // marker for add installers
-  TKnownInstaller = (stAdvancedInstaller, stInstall4J, stPortableApps, stLinRPM, stLinDeb,
+  TKnownInstaller = (stQtInstaller, stSetupFactory, stInstallAnywhere,
+    stAdvancedInstaller, stInstall4J, stPortableApps,
+    stLinRPM, stLinDeb,
     stMacZip, stMacDmg, stMacPKG, stMacApp,
-    stSFXcab, stBoxStub, stAdvancedMSI, stInstallShield,
+    stSFXcab, stBoxStub,
+    //stAdvancedMSI,
+    stInstallShield,
     stInstallShieldMSI,
     stMsi, stNsis, st7zip, st7zipsfx, stInstallAware, stMSGenericInstaller,
     stWixToolset, stBitrock, stSelfExtractingInstaller, stInno,
@@ -111,9 +120,12 @@ type
     installerId: TKnownInstaller;
     Name: string;
     description: string;
-    patterns: TStringList;         // pattern that indicates this installer type (has to be there)
-    infopatterns: TStringList;     // pattern that indicates a chance for this installer type (not always there)
-    notpatterns: TStringList;      // pattern that indicates it is not this installer type (veto)
+    patterns: TStringList;
+    // pattern that indicates this installer type (has to be there)
+    infopatterns: TStringList;
+    // pattern that indicates a chance for this installer type (not always there)
+    notpatterns: TStringList;
+    // pattern that indicates it is not this installer type (veto)
     silentsetup: string;           // cli parameters for (really) silent setup
     unattendedsetup: string;       // cli parameters for unattended setup
     silentuninstall: string;       // cli parameters for (really) silent uninstall
@@ -126,6 +138,9 @@ type
     uib_exitcode_function: string;
     detected: TdetectInstaller;
     installErrorHandlingLines: TStringList;
+    info_message_html: TStringList;  // Important Information about this Installer.
+    // Displayed after detection
+    // formatted in markdown
     { public declarations }
     constructor Create;
     destructor Destroy;
@@ -235,7 +250,6 @@ type
       write FinstallerSourceDir;
     property preferSilent: boolean read FpreferSilent write FpreferSilent;
     procedure initValues;
-
   public
     { public declarations }
 
@@ -557,6 +571,7 @@ procedure freebasedata;
 procedure activateImportMode;
 procedure deactivateImportMode;
 function cleanOpsiId(opsiid: string): string; // clean up productId
+procedure reload_installer_info_messages;
 
 const
   CONFVERSION = '4.2.0.9';
@@ -663,15 +678,78 @@ resourcestring
     'Allow dependencies for all action request ?. ' + LineEnding +
     'If true, you need opsi 4.3 (or up) ' + LineEnding +
     'Be careful when creating dependencies for other action requests than "setup"';
+  //************************************************
+  //info_message_html.Text
+  //************************************************
+  mdInstallerInfo_Installshield =
+    '## This is a Installshield Installer.' + LineEnding +
+    'So it will be perhaps complicated -' + LineEnding + 'because:' +
+    LineEnding + '' + LineEnding + '1. Installshield exists since 1993.' +
+    LineEnding + 'Over the time some command line parameter have changed' +
+    LineEnding + 'and we could not detect the version of the Installshield that was used.'
+    + LineEnding + '' + LineEnding +
+    '2. Installshield may create two different kinds of Installer:' +
+    LineEnding + 'A kind of classic setup and a kind setup as wrapper around msi.' +
+    LineEnding + 'We could not detect for sure, which kind of installer we have.' +
+    LineEnding + '' + LineEnding + '3. Installshield is flexible.' +
+    LineEnding +
+    'So in fact, the developer may have changed the command line parameter to a totally different style.'
+    + LineEnding + '' + LineEnding +
+    'If you have a MSI-Wrapper then we have as cli parameter:' +
+    LineEnding + '' + LineEnding + '- silent:' + LineEnding +
+    '`/s /v" /qn ALLUSERS=1 REBOOT=ReallySuppress`"' + LineEnding +
+    '' + LineEnding + '- unattended:' + LineEnding +
+    '`/s /v"/qb-! ALLUSERS=1 REBOOT=ReallySuppress`"' + LineEnding +
+    '' + LineEnding + 'If you have a classic setup then we have as cli parameter just:'
+    + LineEnding + '' + LineEnding + '- silent:' + LineEnding + '`/s`' +
+    LineEnding + '' + LineEnding +
+    'If you have a classic setup that is very old (last century or near by), then you perhaps have to add the parameter:'
+    + LineEnding + '`/sms`';
+  mdInstallerInfo_InstallAnywhere =
+    '## This is a InstallAnywhere Installer.' + LineEnding +
+    'If the parameter `-i silent` does not work, try the following:' +
+    '' + LineEnding + LineEnding +
+    'Run the installer interactive with the `-r` switch followed by' +
+    LineEnding + 'the path and file name of the response file you want to generate.' +
+    LineEnding + '' + LineEnding + 'For example:' + LineEnding +
+    '' + LineEnding + '`setup.exe -r "./response.txt"`' + LineEnding +
+    '' + LineEnding + 'Then you have to add at the top of the generated response file the line:'
+    + LineEnding + '' + LineEnding + '`INSTALLER_UI=silent`' +
+    LineEnding + '' + LineEnding + 'Then run silent by calling:' +
+    LineEnding + '`setup.exe -f "./response.txt"`' + LineEnding;
+  mdInstallerInfo_PortableApps =
+    '## This is not a setup program.' + LineEnding +
+    'It is a PortableApps Selfextractor.' + LineEnding +
+    'So there are no unattended / silent modes.' + '' + LineEnding +
+    LineEnding + 'Uncompress with 7zip and copy the files';
+  mdInstallerInfo_SetupFactory =
+    '## This is a Setup Factory Installer.' + LineEnding +
+    'Perhaps the parameter `/S` may work for silent mode.' + LineEnding +
+    '' + LineEnding + 'But often this functionality is not enabled.' +
+    LineEnding + '' + LineEnding +
+    'In this case you have extract / install the content and deploy it on an other way.';
+  mdInstallerInfo_QtInstaller =
+    '## This is a QT Installer.' + LineEnding + '' + LineEnding +
+    'Perhaps the standard parameters may work for silent mode.' +
+    LineEnding + 'In this case you have to give the **installdir** - it will not work without.'
+    + LineEnding + 'Therefore a install dir value will be created and you may have to change it.'
+    + LineEnding + '' + LineEnding +
+    'In other cases, you may call an answer script (*.qs) with the parameter `--script` .'
+    + LineEnding + 'And you should have a look at the following documentation pages:.' +
+    LineEnding + '' + LineEnding +
+    '* <https://doc.qt.io/qtinstallerframework/ifw-cli.html>  ' +
+    LineEnding + '* <https://doc.qt.io/qtinstallerframework/ifw-use-cases-cli.html> ' +
+    LineEnding + '* <https://wiki.qt.io/Online_Installer_4.x> ' +
+    LineEnding + '* <https://gist.github.com/WindAzure/f3bed9e058cdc81eaa357414610c9125> ';
 
 
 implementation
 
 uses
   osdcontrolfile_io
-{$IFDEF OSDGUI}
+  {$IFDEF OSDGUI}
   , osdform
-{$ENDIF OSDGUI}  ;
+  {$ENDIF OSDGUI}  ;
 
 var
   FileVerInfo: TFileVersionInfo;
@@ -693,6 +771,8 @@ begin
   FBuildModeIndex := 0;
   FCreateModeValue := CreateMode.Strings[FCreateModeIndex];
   FBuildModeValue := BuildMode.Strings[FBuildModeIndex];
+  FDetectionSummary := TStringList.Create;
+  DetectCount := 0;
   inherited;
 end;
 
@@ -700,6 +780,7 @@ destructor TOSDSettings.Destroy;
 begin
   FreeAndNil(FBuildMode);
   FreeAndNil(FCreateMode);
+  FreeAndNil(FDetectionSummary);
   inherited;
 end;
 
@@ -737,6 +818,12 @@ begin
   FCreateModeValue := CreateMode.Strings[AValue];
 end;
 
+procedure TOSDSettings.SetDetectionSummary(const AValue: TStrings);
+begin
+  FDetectionSummary.Assign(AValue);
+end;
+
+
 // TInstallerData ************************************
 
 constructor TInstallerData.Create;
@@ -745,6 +832,7 @@ begin
   infopatterns := TStringList.Create;
   notpatterns := TStringList.Create;
   installErrorHandlingLines := TStringList.Create;
+  info_message_html := TStringList.Create;
   inherited;
 end;
 
@@ -754,6 +842,7 @@ begin
   FreeAndNil(infopatterns);
   FreeAndNil(notpatterns);
   FreeAndNil(installErrorHandlingLines);
+  FreeAndNil(info_message_html);
   inherited;
 end;
 
@@ -1065,17 +1154,17 @@ begin
     // deleting the first entry leads to an access violation
     // to avoid this we move the item to delete to the end of the collection
     aktProduct.properties.Exchange(delindex, numberItems - 1);
-  {$IFDEF OSDGUI}
+    {$IFDEF OSDGUI}
     // then we have to sync with the grid
     resultForm1.TIGridProp.ReloadTIList;
-  {$ENDIF OSDGUI}
+    {$ENDIF OSDGUI}
     // now we delete the last element
     aktProduct.properties.Delete(numberItems - 1);
-  {$IFDEF OSDGUI}
+    {$IFDEF OSDGUI}
     // and now we can resync without access violation
     resultForm1.TIGridProp.ReloadTIList;
     resultForm1.TIGridProp.Update;
-  {$ENDIF OSDGUI}
+    {$ENDIF OSDGUI}
   end;
 
 end;
@@ -1274,7 +1363,6 @@ var
   configDir: array[0..MaxPathLen] of char; //Allocate memory
   configDirUtf8: utf8string;
   pfile: TextFile;
-
 begin
   try
     if Assigned(logdatei) then
@@ -1345,7 +1433,6 @@ var
   pfile: TextFile;
   aktproperty: TPProperty;
   i: integer;
-
 begin
   try
     if Assigned(logdatei) then
@@ -1583,10 +1670,10 @@ var
   configDirUtf8: utf8string;
   //myfile: TextFile;
 
-  // http://wiki.freepascal.org/File_Handling_In_Pascal
-  // SaveStringToFile: function to store a string of text into a diskfile.
-  //   If the function result equals true, the string was written ok.
-  //   If not then there was some kind of error.
+// http://wiki.freepascal.org/File_Handling_In_Pascal
+// SaveStringToFile: function to store a string of text into a diskfile.
+//   If the function result equals true, the string was written ok.
+//   If not then there was some kind of error.
   function SaveStringToFile(theString, filePath: ansistring): boolean;
   var
     fsOut: TFileStream;
@@ -1615,14 +1702,14 @@ begin
     if Assigned(logdatei) then
       logdatei.log('Start writeconfig', LLDebug);
     configDir := '';
-  {$IFDEF Windows}
+    {$IFDEF Windows}
     SHGetFolderPath(0, CSIDL_APPDATA, 0, SHGFP_TYPE_CURRENT, configDir);
     configDir := configDir + PathDelim + 'opsi.org' + PathDelim;
     configDirUtf8 := WinCPToUTF8(configDir);
-  {$ELSE}
+    {$ELSE}
     configDir := GetAppConfigDir(False);
     configDirUtf8 := configDir;
-  {$ENDIF WINDOWS}
+    {$ENDIF WINDOWS}
     configDirUtf8 := StringReplace(configDirUtf8, 'opsi-setup-detector',
       'opsi.org', [rfReplaceAll]);
     configDirUtf8 := StringReplace(configDirUtf8, 'opsisetupdetector',
@@ -1662,8 +1749,8 @@ begin
           LogDatei.log('failed save configuration', LLError);
       {$IFDEF WINDOWS}
       registerForWinExplorer(FregisterInFilemanager);
-  {$ELSE}
-  {$ENDIF WINDOWS}
+      {$ELSE}
+      {$ENDIF WINDOWS}
     finally
       Streamer.Destroy;
       FService_pass := decryptStringBlow('opsi-setup-detector' +
@@ -1693,10 +1780,10 @@ var
   oldconfigDir, oldconfigFileName, tmpstr: string;
   fConfig: Text;
 
-  // http://wiki.freepascal.org/File_Handling_In_Pascal
-  // LoadStringFromFile: function to load a string of text from a diskfile.
-  //   If the function result equals true, the string was load ok.
-  //   If not then there was some kind of error.
+// http://wiki.freepascal.org/File_Handling_In_Pascal
+// LoadStringFromFile: function to load a string of text from a diskfile.
+//   If the function result equals true, the string was load ok.
+//   If not then there was some kind of error.
   function LoadStringFromFile(theString, filePath: ansistring): boolean;
   var
     fsOut: TFileStream;
@@ -1729,14 +1816,14 @@ begin
     if Assigned(logdatei) then
       logdatei.log('Start readconfig', LLDebug);
     configDir := '';
-  {$IFDEF Windows}
+    {$IFDEF Windows}
     SHGetFolderPath(0, CSIDL_APPDATA, 0, SHGFP_TYPE_CURRENT, configDir);
     configDir := configDir + PathDelim + 'opsi.org' + PathDelim;
     configDirUtf8 := WinCPToUTF8(configDir);
-  {$ELSE}
+    {$ELSE}
     configDir := GetAppConfigDir(False);
     configDirUtf8 := configDir;
-  {$ENDIF WINDOWS}
+    {$ENDIF WINDOWS}
     configDirUtf8 := StringReplace(configDirUtf8, 'opsi-setup-detector',
       'opsi.org', [rfReplaceAll]);
     configDirUtf8 := StringReplace(configDirUtf8, 'opsisetupdetector',
@@ -1768,10 +1855,10 @@ begin
         logdatei.log('read config: ' + JSONString, LLDebug)
       else
         ShowMessage('read config: ' + JSONString);
-    {$IFDEF WINDOWS}
+      {$IFDEF WINDOWS}
       registerForWinExplorer(FregisterInFilemanager);
-    {$ELSE}
-    {$ENDIF WINDOWS}
+      {$ELSE}
+      {$ENDIF WINDOWS}
     end
     else
     begin
@@ -1876,6 +1963,7 @@ var
   numberOfPatternDetected: integer = 0;
   numberOfNotpatternDetected: integer = 0;
   installerPatternCount: integer = 0;
+  tmpstr: string;
 begin
   Result := False;
   installerPatternCount := TInstallerData(parent).patterns.Count;
@@ -1893,23 +1981,32 @@ begin
   end;
   if numberOfPatterndetected > 0 then
   begin
-    LogDatei.log('Found patterns: ' + IntToStr(numberOfPatterndetected) +
-      ' for ' + TInstallerData(parent).Name, LLnotice);
+    tmpstr := 'Found patterns: ' + IntToStr(numberOfPatterndetected) +
+      ' for ' + TInstallerData(parent).Name;
+    LogDatei.log(tmpstr, LLnotice);
+    osdsettings.DetectionSummary.Add(tmpstr);
     if numberOfPatterndetected = installerPatternCount then
     begin
       Result := True;
-      LogDatei.log('All patterns found, needed: ' + IntToStr(
-        installerPatternCount), LLnotice);
+      tmpstr := 'All patterns found, needed: ' + IntToStr(installerPatternCount);
+      LogDatei.log(tmpstr, LLnotice);
+      osdsettings.DetectionSummary.Add(tmpstr);
       if numberOfNotpatternDetected > 0 then
       begin
         Result := False;
-        LogDatei.log('Not patterns (Veto) found: ' + IntToStr(numberOfPatterndetected) +
-          ' for ' + TInstallerData(parent).Name, LLnotice);
+        tmpstr := 'Not patterns (Veto) found: ' + IntToStr(numberOfPatterndetected) +
+          ' for ' + TInstallerData(parent).Name;
+        LogDatei.log(tmpstr, LLnotice);
+        osdsettings.DetectionSummary.Add(tmpstr);
       end;
     end
     else
-      LogDatei.log('Not all patterns found, needed: ' + IntToStr(
-        installerPatternCount), LLnotice);
+    begin
+      tmpstr := 'Not all patterns found, needed: ' + IntToStr(
+        installerPatternCount);
+      LogDatei.log(tmpstr, LLnotice);
+      osdsettings.DetectionSummary.Add(tmpstr);
+    end;
   end;
 end;
 
@@ -1982,7 +2079,7 @@ begin
         ExtractFileDir(Application.ExeName) + PathDelim +
         '../Resources/template-files' + PathDelim + 'default' + PathDelim +
         'images' + PathDelim + 'template.png';
-  {$ENDIF DARWIN}
+    {$ENDIF DARWIN}
     osdbasedata.aktProduct.productdata.productImageFullFileName :=
       defaultIconFullFileName;
     targetOSset := [];
@@ -2003,6 +2100,9 @@ begin
   aktProduct.dependencies := TCollection.Create(TPDependency);
   // Create Properties
   aktProduct.properties := TPProperties.Create(aktProduct);
+  // detection count
+  osdsettings.DetectionSummary.Clear;
+  osdsettings.DetectCount := 0;
   //aktProduct.targetOS:= osWin;
 end;
 
@@ -2033,6 +2133,134 @@ begin
   // [^A-Za-z0-9._-]
 end;
 
+procedure reload_installer_info_messages;
+begin
+  // unknown
+  with installerArray[integer(stUnknown)] do
+  begin
+    info_message_html.Text := '';
+  end;
+  // inno
+  with installerArray[integer(stInno)] do
+  begin
+    info_message_html.Text := '';
+  end;
+  // NSIS
+  with installerArray[integer(stNsis)] do
+  begin
+    info_message_html.Text := '';
+  end;
+  // InstallShield
+  with installerArray[integer(stInstallShield)] do
+  begin
+    info_message_html.Text := mdInstallerInfo_Installshield;
+  end;
+  // InstallShieldMSI
+  with installerArray[integer(stInstallShieldMSI)] do
+  begin
+    info_message_html.Text := mdInstallerInfo_Installshield;
+  end;
+  // MSI
+  with installerArray[integer(stMSI)] do
+  begin
+    info_message_html.Text := '';
+  end;
+  // 7zip
+  with installerArray[integer(st7zip)] do
+  begin
+    info_message_html.Text := '';
+  end;
+  // st7zipsfx
+  with installerArray[integer(st7zipsfx)] do
+  begin
+    info_message_html.Text := '';
+  end;
+  // stInstallAware
+  with installerArray[integer(stInstallAware)] do
+  begin
+    info_message_html.Text := '';
+  end;
+  // stMSGenericInstaller
+  with installerArray[integer(stMSGenericInstaller)] do
+  begin
+    info_message_html.Text := '';
+  end;
+  // stWixToolset
+  with installerArray[integer(stWixToolset)] do
+  begin
+    info_message_html.Text := '';
+  end;
+  // stBoxStub
+  with installerArray[integer(stBoxStub)] do
+  begin
+    info_message_html.Text := '';
+  end;
+  // stSFXcab
+  with installerArray[integer(stSFXcab)] do
+  begin
+    info_message_html.Text := '';
+  end;
+  // stBitrock
+  with installerArray[integer(stBitrock)] do
+  begin
+    info_message_html.Text := '';
+  end;
+  // stSelfExtractingInstaller
+  with installerArray[integer(stSelfExtractingInstaller)] do
+  begin
+    info_message_html.Text := '';
+  end;
+  with installerArray[integer(stMacZip)] do
+  begin
+    info_message_html.Text := '';
+  end;
+  with installerArray[integer(stMacDmg)] do
+  begin
+    info_message_html.Text := '';
+  end;
+  with installerArray[integer(stMacPKG)] do
+  begin
+    info_message_html.Text := '';
+  end;
+  with installerArray[integer(stMacApp)] do
+  begin
+    info_message_html.Text := '';
+  end;
+  with installerArray[integer(stLinRPM)] do
+  begin
+    info_message_html.Text := '';
+  end;
+  with installerArray[integer(stLinDeb)] do
+  begin
+    info_message_html.Text := '';
+  end;
+  with installerArray[integer(stPortableApps)] do
+  begin
+    info_message_html.Text := mdInstallerInfo_PortableApps;
+  end;
+  with installerArray[integer(stInstall4J)] do
+  begin
+    info_message_html.Text := '';
+  end;
+  with installerArray[integer(stAdvancedInstaller)] do
+  begin
+    info_message_html.Text := '';
+  end;
+  with installerArray[integer(stInstallAnywhere)] do
+  begin
+    info_message_html.Text := mdInstallerInfo_InstallAnywhere;
+  end;
+  with installerArray[integer(stSetupFactory)] do
+  begin
+    info_message_html.Text := mdInstallerInfo_SetupFactory;
+  end;
+  with installerArray[integer(stQtInstaller)] do
+  begin
+    info_message_html.Text := mdInstallerInfo_QtInstaller;
+  end;
+  // marker for add installers
+end;
+
 
 //initialize unit
 
@@ -2041,6 +2269,9 @@ begin
 
   // marker for add installers
   knownInstallerList := TStringList.Create;
+  knownInstallerList.Add('QtInstaller');
+  knownInstallerList.Add('SetupFactory');
+  knownInstallerList.Add('InstallAnywhere');
   knownInstallerList.Add('AdvancedInstaller');
   knownInstallerList.Add('Install4j');
   knownInstallerList.Add('PortableApps');
@@ -2052,7 +2283,7 @@ begin
   knownInstallerList.Add('MacApp');
   knownInstallerList.Add('SFXcab');
   knownInstallerList.Add('BoxStub');
-  knownInstallerList.Add('AdvancedMSI');
+  //knownInstallerList.Add('AdvancedMSI');
   knownInstallerList.Add('InstallShield');
   knownInstallerList.Add('InstallShieldMSI');
   knownInstallerList.Add('MSI');
@@ -2114,6 +2345,7 @@ begin
     comment := '';
     uib_exitcode_function := 'isInnoExitcodeFatal';
     detected := @detectedbypatternwithor;
+    //info_message_html.Text := '';
   end;
 
   // NSIS
@@ -2138,7 +2370,7 @@ begin
     comment := '';
     uib_exitcode_function := 'isNsisExitcodeFatal';
     detected := @detectedbypatternwithor;
-
+    //info_message_html.Text := '';
   end;
   // InstallShield
   with installerArray[integer(stInstallShield)] do
@@ -2160,13 +2392,15 @@ begin
     // only installshieldMSI:
     notpatterns.Add('transforms');
     link :=
-      'https://docs.revenera.com/installshield21helplib/helplibrary/IHelpSetup_EXECmdLine.htm';
+      'https://docs.revenera.com/installshield/helplibrary/IHelpSetup_EXECmdLine.htm';
+    // outdated  'https://docs.revenera.com/installshield21helplib/helplibrary/IHelpSetup_EXECmdLine.htm';
     // 'https://www.ibm.com/docs/en/personal-communications/12.0?topic=guide-installshield-command-line-parameters'
     // 'https://www.itninja.com/static/090770319967727eb89b428d77dcac07.pdf'
     // broken: 'http://helpnet.flexerasoftware.com/installshield19helplib/helplibrary/IHelpSetup_EXECmdLine.htm';
     comment := '';
     uib_exitcode_function := 'isInstallshieldExitcodeFatal';
     detected := @detectedbypatternwithAnd;
+    //info_message_html.Text := mdInstallerInfo_Installshield;
   end;
   // InstallShieldMSI
   with installerArray[integer(stInstallShieldMSI)] do
@@ -2189,10 +2423,11 @@ begin
     patterns.Add('transforms');
     patterns.Add('msiexec.exe');
     link :=
-      'http://helpnet.flexerasoftware.com/installshield19helplib/helplibrary/IHelpSetup_EXECmdLine.htm';
+      'https://docs.revenera.com/installshield/helplibrary/IHelpSetup_EXECmdLine.htm';
     comment := '';
     uib_exitcode_function := 'isInstallshieldExitcodeFatal';
     detected := @detectedbypatternwithAnd;
+    //info_message_html.Text := mdInstallerInfo_Installshield;
   end;
   // MSI
   with installerArray[integer(stMSI)] do
@@ -2233,7 +2468,7 @@ begin
     patterns.Add('7-Zip Installer');
     link := 'https://www.7-zip.org/faq.html';
     comment := '';
-    uib_exitcode_function := 'isMsExitcodeFatal_short';
+    uib_exitcode_function := 'isMsiExitcodeFatal_short';
     detected := @detectedbypatternwithor;
   end;
   // st7zipsfx
@@ -2249,7 +2484,7 @@ begin
     patterns.Add('7zipsfx');
     link := 'https://sourceforge.net/p/s-zipsfxbuilder/code/ci/master/tree/7zSD_EN.chm';
     comment := '';
-    uib_exitcode_function := 'isMsExitcodeFatal_short';
+    uib_exitcode_function := 'isMsiExitcodeFatal_short';
     detected := @detectedbypatternwithor;
   end;
   // stInstallAware
@@ -2269,7 +2504,7 @@ begin
       'includelog "%opsiLogDir%\"+$ProductId$+".install_log.txt" "50" "utf16le"');
     link := 'https://www.installaware.com/mhtml5/desktop/setupcommandlineparameters.htm';
     comment := '';
-    uib_exitcode_function := 'isMsExitcodeFatal_short';
+    uib_exitcode_function := 'isMsiExitcodeFatal_short';
     detected := @detectedbypatternwithor;
   end;
   // stMSGenericInstaller
@@ -2293,7 +2528,7 @@ begin
     link :=
       'https://docs.microsoft.com/en-us/windows/desktop/msi/standard-installer-command-line-options';
     comment := '';
-    uib_exitcode_function := 'isMsExitcodeFatal_short';
+    uib_exitcode_function := 'isMsiExitcodeFatal_short';
     detected := @detectedbypatternwithor;
   end;
   // stWixToolset
@@ -2318,7 +2553,7 @@ begin
     link :=
       'https://docs.microsoft.com/en-us/windows/desktop/msi/standard-installer-command-line-options';
     comment := '';
-    uib_exitcode_function := 'isMsExitcodeFatal_short';
+    uib_exitcode_function := 'isMsiExitcodeFatal_short';
     detected := @detectedbypatternwithand;
   end;
   // stBoxStub
@@ -2342,7 +2577,7 @@ begin
     link :=
       'https://docs.microsoft.com/en-us/windows/desktop/msi/standard-installer-command-line-options';
     comment := '';
-    uib_exitcode_function := 'isMsExitcodeFatal_short';
+    uib_exitcode_function := 'isMsiExitcodeFatal_short';
     detected := @detectedbypatternwithand;
   end;
   // stSFXcab
@@ -2367,7 +2602,7 @@ begin
     link :=
       'https://docs.microsoft.com/en-us/windows/desktop/msi/standard-installer-command-line-options';
     comment := '';
-    uib_exitcode_function := 'isMsExitcodeFatal_short';
+    uib_exitcode_function := 'isMsiExitcodeFatal_short';
     detected := @detectedbypatternwithand;
   end;
   // stBitrock
@@ -2523,6 +2758,7 @@ begin
     comment := 'selfextracting Executable. Uncompress with 7zip.';
     uib_exitcode_function := 'isGenericExitcodeFatal';
     detected := @detectedbypatternwithand;
+    //info_message_html.Text := mdInstallerInfo_PortableApps;
   end;
   with installerArray[integer(stInstall4J)] do
   begin
@@ -2539,12 +2775,15 @@ begin
     comment := 'Installs Java based software';
     uib_exitcode_function := 'isGenericExitcodeFatal';
     detected := @detectedbypatternwithand;
+    //info_message_html.Text := '';
   end;
   with installerArray[integer(stAdvancedInstaller)] do
   begin
     description := 'Advanced Installer';
-    silentsetup := '/exenoui /l* "%opsiLogDir%\$ProductId$.install_log.txt" /qn ALLUSERS=1 REBOOT=ReallySuppress';
-    unattendedsetup := '/exebasicui /l* "%opsiLogDir%\$ProductId$.install_log.txt" /qb-! ALLUSERS=1 REBOOT=ReallySuppress';
+    silentsetup :=
+      '/exenoui /l* "%opsiLogDir%\$ProductId$.install_log.txt" /qn ALLUSERS=1 REBOOT=ReallySuppress';
+    unattendedsetup :=
+      '/exebasicui /l* "%opsiLogDir%\$ProductId$.install_log.txt" /qb-! ALLUSERS=1 REBOOT=ReallySuppress';
     silentuninstall := '/exenoui /qn REMOVE=all /norestart';
     unattendeduninstall := '/exebasicui /qb-! REMOVE=all /norestart';
     uninstall_waitforprocess := '';
@@ -2562,8 +2801,76 @@ begin
     comment := 'Wrapper around MSI (and others).Included files may extracted with /extract';
     uib_exitcode_function := 'isMsiExitcodeFatal';
     detected := @detectedbypatternwithand;
+    //info_message_html.Text := '';
+  end;
+  with installerArray[integer(stInstallAnywhere)] do
+  begin
+    description := 'InstallAnywhere';
+    silentsetup := '-i silent';
+    unattendedsetup := '-i silent';
+    silentuninstall := '-i silent';
+    unattendeduninstall := '-i silent';
+    uninstall_waitforprocess := '';
+    install_waitforprocess := '';
+    uninstallProg := '$Installdir$\Uninstall\Uninstall.exe';
+    patterns.Add('InstallAnywhere');
+    patterns.Add('InstallAnywhere.Setup');
+
+    link :=
+      'https://docs.revenera.com/installanywhere2021/Content/helplibrary/ia_ref_command_line_install_uninstall.htm';
+    comment := 'Multi-Platform Installers';
+    uib_exitcode_function := 'isGenericExitcodeFatal';
+    detected := @detectedbypatternwithand;
+    //info_message_html.Text := mdInstallerInfo_InstallAnywhere;
+  end;
+  with installerArray[integer(stSetupFactory)] do
+  begin
+    description := 'SetupFactory';
+    silentsetup := '/S /NOINIT /W';
+    unattendedsetup := '/S /NOINIT /W';
+    silentuninstall := '/S /U';
+    unattendeduninstall := '/S /U';
+    uninstall_waitforprocess := '';
+    install_waitforprocess := '';
+    uninstallProg := '$Installdir$\Uninstall\Uninstall.exe';
+    patterns.Add('Setup Factory');
+    patterns.Add('Indigo Rose Corporation');
+    infopatterns.Add('<description>Setup Factory Run-time</description>');
+    link :=
+      'https://www.indigorose.com/webhelp/suf9/index.htm';
+    comment := 'SetupFactory';
+    uib_exitcode_function := 'isGenericExitcodeFatal';
+    detected := @detectedbypatternwithand;
+    //info_message_html.Text := mdInstallerInfo_SetupFactory;
+  end;
+  with installerArray[integer(stQtInstaller)] do
+  begin
+    description := 'QtInstaller';
+    silentsetup :=
+      '--verbose --accept-licenses --default-answer --accept-obligations --confirm-command install --root "$installdir$"';
+    unattendedsetup :=
+      '--verbose --accept-licenses --default-answer --accept-obligations --confirm-command install --root "$installdir$"';
+    silentuninstall :=
+      '--verbose --accept-licenses --default-answer --accept-obligations --confirm-command purge';
+    unattendeduninstall :=
+      '--verbose --accept-licenses --default-answer --accept-obligations --confirm-command purge';
+    uninstall_waitforprocess := '';
+    install_waitforprocess := '';
+    uninstallProg := '$Installdir$\Uninstall.exe';
+    patterns.Add('Qt Installer Framework');
+    patterns.Add('QFontDatabase');
+    patterns.Add('QInstaller');
+    patterns.Add('QFileDialog');
+    //infopatterns.Add('<description>Setup Factory Run-time</description>');
+    link :=
+      'https://doc.qt.io/qtinstallerframework/';
+    comment := 'QtInstaller';
+    uib_exitcode_function := 'isGenericExitcodeFatal';
+    detected := @detectedbypatternwithand;
+    //info_message_html.Text := mdInstallerInfo_QtInstaller;
   end;
   // marker for add installers
+  reload_installer_info_messages;
 
   architectureModeList := TStringList.Create;
   architectureModeList.Add('32BitOnly - fix');
@@ -2581,13 +2888,13 @@ begin
   aktProduct := TopsiProduct.Create;
 
   FileVerInfo := TFileVersionInfo.Create(nil);
-  try
-    FileVerInfo.FileName := ParamStr(0);
-    FileVerInfo.ReadFileInfo;
-    myVersion := FileVerInfo.VersionStrings.Values['FileVersion'];
-  finally
-    FileVerInfo.Free;
-  end;
+try
+  FileVerInfo.FileName := ParamStr(0);
+  FileVerInfo.ReadFileInfo;
+  myVersion := FileVerInfo.VersionStrings.Values['FileVersion'];
+finally
+  FileVerInfo.Free;
+end;
 
 
   // initalize channel names

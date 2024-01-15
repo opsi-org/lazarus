@@ -208,6 +208,7 @@ begin
         begin
           Result := TKnownInstaller(i);
           LogDatei.log('Detected: ' + installerToInstallerstr(Result), LLnotice);
+          osdsettings.DetectCount := osdsettings.DetectCount +1;
         end;
       end;
     end;

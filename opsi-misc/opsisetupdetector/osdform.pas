@@ -1,6 +1,6 @@
 unit osdform;
 
- {$mode objfpc}{$H+}
+{$mode objfpc}{$H+}
 
 
 interface
@@ -11,7 +11,7 @@ uses
   Windows,
   {$ENDIF WINDOWS}
   lazfileutils,
-  Classes, SysUtils, FileUtil, RTTICtrls, RTTIGrids,
+  Classes, SysUtils, FileUtil, RTTICtrls, RTTIGrids, IpHtml,
   Forms, Controls, Graphics,
   LCLType,
   LclIntf,
@@ -33,6 +33,11 @@ uses
   Grids,
   PairSplitter,
   ColorBox,
+  //HtmlView,
+  MarkdownUtils,
+  MarkdownProcessor,
+  //HtmlGlobals,
+  //HTMLUn2,
   oslog,
   osdbasedata, osdconfigdlg, osdcreate, fpjsonrtti, osddlgnewdependency,
   osddlgnewproperty, osparserhelper,
@@ -41,7 +46,8 @@ uses
   Contnrs,
   osmessagedialog,
   oswebservice,
-  osdmain;
+  osdmain,
+  osd_md_html_dlg;
 
 type
   TIconDisplay = class(TPersistent)
@@ -129,8 +135,8 @@ type
     FlowPanel6: TFlowPanel;
     FlowPanel8: TFlowPanel;
     FlowPanel9: TFlowPanel;
-    FlowPanelLinuxTitle: TFlowPanel;
     FlowPanelCustomDir: TFlowPanel;
+    FlowPanelLinuxTitle: TFlowPanel;
     FlowPanelLinuxTitle2: TFlowPanel;
     FlowPanelMacosTitle: TFlowPanel;
     FlowPanelMsiId1: TFlowPanel;
@@ -165,6 +171,8 @@ type
     Image6: TImage;
     Image7: TImage;
     ImageList1: TImageList;
+    IpHtmlPanelAdvice: TIpHtmlPanel;
+    IpHtmlPanelDesc: TIpHtmlPanel;
     Label1: TLabel;
     Label100: TLabel;
     Label101: TLabel;
@@ -178,6 +186,8 @@ type
     Label56: TLabel;
     Label6: TLabel;
     Label63: TLabel;
+    Label7: TLabel;
+    Label8: TLabel;
     Label86: TLabel;
     Label88: TLabel;
     Label89: TLabel;
@@ -233,8 +243,7 @@ type
     LabelWorkbenchOK: TLabel;
     LabelWorkbenchNotOK: TLabel;
     MemoDefault: TMemo;
-    MenuHelpOpen: TMenuItem;
-    MenuHelpLog: TMenuItem;
+    MenuItemLog: TMenuItem;
     MenuItemOpenControl: TMenuItem;
     MenuItemOpenProj: TMenuItem;
     MenuItemSaveProj: TMenuItem;
@@ -254,6 +263,13 @@ type
     Panel11: TPanel;
     Panel12: TPanel;
     Panel13: TPanel;
+    Panel14: TPanel;
+    Panel15: TPanel;
+    Panel16: TPanel;
+    Panel17: TPanel;
+    Panel18: TPanel;
+    Panel19: TPanel;
+    PanelChannel: TPanel;
     SpeedButtonHelpMain: TSpeedButton;
     SpeedButtonHelpAnalyze: TSpeedButton;
     SpeedButtonHelpSetup1: TSpeedButton;
@@ -274,7 +290,6 @@ type
     TaskPanelWin: TPanel;
     TaskPanelLinux: TPanel;
     TaskPanelIndep: TPanel;
-    PanelChannel: TPanel;
     PanelNumIcons: TPanel;
     PanelIconPreview: TPanel;
     Panel4: TPanel;
@@ -315,10 +330,10 @@ type
     Panel3: TPanel;
     TabSheetAnalyze: TTabSheet;
     TICheckBoxCustomdir: TTICheckBox;
-    TICheckBoxDesktopIcon: TTICheckBox;
     TICheckBoxCustomizeProfile: TTICheckBox;
-    TICheckBoxInstallFromLocal: TTICheckBox;
+    TICheckBoxDesktopIcon: TTICheckBox;
     TICheckBoxHandleLiceneKey: TTICheckBox;
+    TICheckBoxInstallFromLocal: TTICheckBox;
     TICheckBoxS1Mst: TTICheckBox;
     TICheckBoxS1Silent: TTICheckBox;
     TICheckBoxS3Silent: TTICheckBox;
@@ -439,7 +454,12 @@ type
     procedure FormDeactivate(Sender: TObject);
     procedure FormMouseLeave(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure IpHtmlPanelAdviceHotClick(Sender: TObject);
+    procedure IpHtmlPanelDescClick(Sender: TObject);
+    procedure IpHtmlPanelDescHotClick(Sender: TObject);
     procedure MenuHelpLogClick(Sender: TObject);
+    procedure MenuItem1Click(Sender: TObject);
+    procedure MenuItemLogClick(Sender: TObject);
     procedure MenuItemOpenControlClick(Sender: TObject);
     procedure MenuItemOpenProjClick(Sender: TObject);
     procedure MenuItemSaveProjClick(Sender: TObject);
@@ -503,6 +523,8 @@ type
     procedure TIEditSetup1UnProgramEditingDone(Sender: TObject);
     procedure TIEditSetup2UnProgramEditingDone(Sender: TObject);
     procedure TIEditSetup3UnProgramEditingDone(Sender: TObject);
+    procedure TIMemoAdviceEditingDone(Sender: TObject);
+    procedure TIMemoDescEditingDone(Sender: TObject);
     procedure TimerFirstconfigTimer(Sender: TObject);
     procedure TIRadioGroupBuildModeClick(Sender: TObject);
     procedure TIS1UrlClick(Sender: TObject);
@@ -577,7 +599,7 @@ var
   showNSIS: boolean = True;
   showInstallShield: boolean = True;
   showInstallShieldMSI: boolean = True;
-  showAdvancedMSI: boolean = True;
+  //showAdvancedMSI: boolean = True;
   //*****************************************
   firstshowconfigdone: boolean = False;
   productIds: TStringList;
@@ -660,7 +682,7 @@ resourcestring
     LineEnding + 'use action request "update" to enable mouse and keyboard again.';
   rsErrorLoadingLogViewer = 'An error occured while loading opsi-logviewer';
   rsErrorFindingLogViewer =
-      'Please install the opsi-logviewer product. opsi-logviewer is not installed in ';
+    'Please install the opsi-logviewer product. opsi-logviewer is not installed in ';
   rsRebuildFinished = 'Rebuild opsi package finished.';
   rsRebuildFailedBuild = 'Rebuild opsi package: build / install package failed';
 
@@ -697,8 +719,19 @@ implementation
 
 {$R *.lfm}
 
-procedure initGUI;
+const
+  CSSDecoration = '<style type="text/css">' + 'code{' + '  color: #A00;' +
+    '}' + 'pre{' + '  background: #f4f4f4;' + '  border: 1px solid #ddd;' +
+    '  border-left: 3px solid #f36d33;' + '  color: #555;' +
+    '  overflow: auto;' + '  padding: 1em 1.5em;' + '  display: block;' +
+    '}' + 'pre code{' + '  color: inherit;' + '}' + '</style>';
 
+var
+  md: TMarkdownProcessor;
+  HtmlContent: string;
+
+
+procedure initGUI;
 begin
   LogDatei.log('Start initGUI ... ', LLInfo);
   with resultform1 do
@@ -793,12 +826,12 @@ begin
       osdsettings.CreateMode.Add(rsCreateRadioFilesBuild);
       osdsettings.CreateMode.Add(rsCreateRadioFilesPackageBuilder);
 
-      TIRadioGroupCreateMode.Caption:= rsCreateRadioGroupTitle;
+      TIRadioGroupCreateMode.Caption := rsCreateRadioGroupTitle;
       TIRadioGroupCreateMode.Items.Text := osdsettings.CreateMode.Text;
       TIRadioGroupCreateMode.Link.SetObjectAndProperty(osdsettings, 'CreateModeValue');
 
-      TIRadioGroupBuildMode.Caption:= rsBuildRadioGroupTitle;
-      TIRadioGroupBuildMode.Items.Text:= osdsettings.BuildMode.Text;
+      TIRadioGroupBuildMode.Caption := rsBuildRadioGroupTitle;
+      TIRadioGroupBuildMode.Items.Text := osdsettings.BuildMode.Text;
       TIRadioGroupBuildMode.Link.SetObjectAndProperty(osdsettings, 'BuildModeValue');
 
       // the hints ...
@@ -895,6 +928,7 @@ begin
     EditLogInfo.Caption := 'More info in Log file: ' + LogDatei.FileName;
     Application.ProcessMessages;
   end;
+  reload_installer_info_messages;
   LogDatei.log('Finished initGUI ... ', LLInfo);
 end;
 
@@ -938,6 +972,8 @@ begin
   TIS2Url.Link.TIObject := nil;
   TICheckBoxS1Mst.Link.TIObject := nil;
   TICheckBoxS2Mst.Link.TIObject := nil;
+  OSD_info.Destroy;
+  FreeAndNil(md);
 end;
 
 
@@ -1035,28 +1071,64 @@ begin
     main;
 end;
 
+procedure TResultform1.IpHtmlPanelAdviceHotClick(Sender: TObject);
+var
+  //NodeA: TIpHtmlNodeA;
+  URL: string;
+begin
+  (*
+  if IpHtmlPanelAdvice.HotNode is TIpHtmlNodeA then
+  begin
+    NodeA := TIpHtmlNodeA(IpHtmlPanelAdvice.HotNode);
+    URL := NodeA.HRef;
+    OpenUrl(URL);
+  end;
+  *)
+end;
+
+procedure TResultform1.IpHtmlPanelDescClick(Sender: TObject);
+begin
+  // nothing
+end;
+
+procedure TResultform1.IpHtmlPanelDescHotClick(Sender: TObject);
+var
+  //NodeA: TIpHtmlNodeA;
+  URL: string;
+begin
+(*
+  if IpHtmlPanelDesc.HotNode is TIpHtmlNodeA then
+  begin
+    NodeA := TIpHtmlNodeA(IpHtmlPanelDesc.HotNode);
+    URL := NodeA.HRef;
+    OpenUrl(URL);
+  end;
+  *)
+end;
+
 procedure TResultform1.MenuHelpLogClick(Sender: TObject);
 var
   ErrorMessage: string;
   PathOpsiLogViewer: string;
-  paramstring : string;
-  basepath : string;
+  paramstring: string;
+  basepath: string;
 begin
   {$IFDEF WINDOWS}
   basepath := 'C:\Program Files (x86)';
   if not DirectoryExists(basepath) then basepath := 'C:\Program Files';
   PathOpsiLogViewer :=
-    basepath +'\opsi.org\configed\opsi-logviewer.exe';
+    basepath + '\opsi.org\configed\opsi-logviewer.exe';
   if not FileExists(PathOpsiLogViewer) then
-  PathOpsiLogViewer :=
-    basepath +'\opsi.org\opsi-logviewer\opsi-logviewer.exe';
+    PathOpsiLogViewer :=
+      basepath + '\opsi.org\opsi-logviewer\opsi-logviewer.exe';
   paramstring := LogDatei.FileName;
   {$ENDIF WINDOWS}
   {$IFDEF LINUX}
   // call of logviewer at linux (N.Otto 3.7.2023):
   // /usr/share/opsi-configed/java/jre/bin/java -jar "/usr/share/opsi-configed/configed.jar" --logviewer
   PathOpsiLogViewer := '/usr/share/opsi-configed/java/jre/bin/java';
-  paramstring := ' -jar "/usr/share/opsi-configed/configed.jar" --logviewer -f '+LogDatei.FileName;
+  paramstring := ' -jar "/usr/share/opsi-configed/configed.jar" --logviewer -f ' +
+    LogDatei.FileName;
   (*
   PathOpsiLogViewer := '/usr/share/opsi-logviewer/logviewer'; // '/usr/bin/logviewer'
   paramstring := ' -f '+LogDatei.FileName;
@@ -1064,7 +1136,64 @@ begin
   {$ENDIF LINUX}
   {$IFDEF DARWIN}
   PathOpsiLogViewer := '/Applications/opsi-logviewer.app/Contents/MacOS/opsi-logviewer';
+  paramstring := ' -f ' + LogDatei.FileName;
+  //ShowMessage('Logview is temporary not working. Please use the opsi-logviewer product.');
+  {$ENDIF DARWIN}
+  if FileExists(PathOpsiLogViewer) then
+  begin
+    if ExecuteProcess(PathOpsiLogViewer, paramstring) <> 0 then
+    begin
+      ErrorMessage := rsErrorLoadingLogViewer;
+      LogDatei.log(ErrorMessage, LLInfo);
+      ShowMessage(ErrorMessage);
+    end;
+  end
+  else
+  begin
+    ErrorMessage := rsErrorFindingLogViewer + PathOpsiLogViewer;
+    LogDatei.log(ErrorMessage, LLInfo);
+    ShowMessage(ErrorMessage);
+  end;
+end;
+
+procedure TResultform1.MenuItem1Click(Sender: TObject);
+begin
+  //OSD_info := TOSD_info.Create(resultForm1);
+  OSD_info.ShowModal;
+  //OSD_info.Destroy;
+end;
+
+procedure TResultform1.MenuItemLogClick(Sender: TObject);
+var
+  ErrorMessage: string;
+  PathOpsiLogViewer: string;
+  paramstring: string;
+  basepath: string;
+begin
+  {$IFDEF WINDOWS}
+  basepath := 'C:\Program Files (x86)';
+  if not DirectoryExists(basepath) then basepath := 'C:\Program Files';
+  PathOpsiLogViewer :=
+    basepath + '\opsi.org\configed\opsi-logviewer.exe';
+  if not FileExists(PathOpsiLogViewer) then
+    PathOpsiLogViewer :=
+      basepath + '\opsi.org\opsi-logviewer\opsi-logviewer.exe';
+  paramstring := LogDatei.FileName;
+  {$ENDIF WINDOWS}
+  {$IFDEF LINUX}
+  // call of logviewer at linux (N.Otto 3.7.2023):
+  // /usr/share/opsi-configed/java/jre/bin/java -jar "/usr/share/opsi-configed/configed.jar" --logviewer
+  PathOpsiLogViewer := '/usr/share/opsi-configed/java/jre/bin/java';
+  paramstring := ' -jar "/usr/share/opsi-configed/configed.jar" --logviewer -f ' +
+    LogDatei.FileName;
+  (*
+  PathOpsiLogViewer := '/usr/share/opsi-logviewer/logviewer'; // '/usr/bin/logviewer'
   paramstring := ' -f '+LogDatei.FileName;
+  *)
+  {$ENDIF LINUX}
+  {$IFDEF DARWIN}
+  PathOpsiLogViewer := '/Applications/opsi-logviewer.app/Contents/MacOS/opsi-logviewer';
+  paramstring := ' -f ' + LogDatei.FileName;
   //ShowMessage('Logview is temporary not working. Please use the opsi-logviewer product.');
   {$ENDIF DARWIN}
   if FileExists(PathOpsiLogViewer) then
@@ -1094,17 +1223,19 @@ begin
   if OpenDialog1.Execute then
   begin
     myconfiguration.LastProjectFileDir := ExtractFileDir(OpenDialog1.FileName);
-    LogDatei.log('Start open control file as new project from: ' + OpenDialog1.FileName, LLnotice);
+    LogDatei.log('Start open control file as new project from: ' +
+      OpenDialog1.FileName, LLnotice);
     initaktproduct;
     resultform1.updateGUI;
-    aktProduct.readControlFile(OpenDialog1.FileName,false);
+    aktProduct.readControlFile(OpenDialog1.FileName, False);
     TIGridDep.ListObject := osdbasedata.aktproduct.dependencies;
     TIGridDep.ReloadTIList;
     TIGridDep.Update;
     TIGridProp.ListObject := osdbasedata.aktproduct.properties;
     TIGridProp.ReloadTIList;
     TIGridProp.Update;
-    LogDatei.log('Finished open control file as new project from: ' + OpenDialog1.FileName, LLnotice);
+    LogDatei.log('Finished open control file as new project from: ' +
+      OpenDialog1.FileName, LLnotice);
   end;
 end;
 
@@ -1148,28 +1279,28 @@ end;
 
 procedure TResultform1.MenuItemLangDeClick(Sender: TObject);
 begin
-  osdsettings.mylang:='de';
+  osdsettings.mylang := 'de';
   SetDefaultLang('de', osdsettings.mylocaledir);
   initGUI;
 end;
 
 procedure TResultform1.MenuItemLangEnClick(Sender: TObject);
 begin
-  osdsettings.mylang:='en';
+  osdsettings.mylang := 'en';
   SetDefaultLang('en', osdsettings.mylocaledir);
   initGUI;
 end;
 
 procedure TResultform1.MenuItemLangEsClick(Sender: TObject);
 begin
-  osdsettings.mylang:='en';
+  osdsettings.mylang := 'en';
   SetDefaultLang('es', osdsettings.mylocaledir);
   initGUI;
 end;
 
 procedure TResultform1.MenuItemLangFrClick(Sender: TObject);
 begin
-  osdsettings.mylang:='fr';
+  osdsettings.mylang := 'fr';
   SetDefaultLang('fr', osdsettings.mylocaledir);
   initGUI;
 end;
@@ -1218,8 +1349,8 @@ begin
     //CheckGroupBuildMode.Enabled := False;
 
     // disable build if also no service data
-    if ((myconfiguration.Service_URL = '') or (myconfiguration.Service_user = ''))  then
-    TIRadioGroupBuildMode.Enabled := False;
+    if ((myconfiguration.Service_URL = '') or (myconfiguration.Service_user = '')) then
+      TIRadioGroupBuildMode.Enabled := False;
   end;
   logdatei.log('Finished MenuItemConfigClick', LLDebug2);
 end;
@@ -1228,15 +1359,15 @@ procedure TResultform1.MenuItemKnownInstallersClick(Sender: TObject);
 var
   installerstr: string;
   installer: TKnownInstaller;
-  installerlist : TStringlist;
+  installerlist: TStringList;
 begin
-  installerlist := TStringlist.Create;
+  installerlist := TStringList.Create;
   for installer := Low(TKnownInstaller) to High(TKnownInstaller) do
     if not (installer = stUnknown) then
       installerlist.Add(installerToInstallerstr(installer));
-      //installerstr := installerstr + installerToInstallerstr(installer) + LineEnding;
+  //installerstr := installerstr + installerToInstallerstr(installer) + LineEnding;
   installerlist.Sort;
-  installerstr :=  installerlist.Text;
+  installerstr := installerlist.Text;
   ShowMessage(installerstr);
   installerlist.Free;
 end;
@@ -1434,7 +1565,7 @@ begin
       ExtractFileDir(Application.Params[0]) + PathDelim + 'icons';
     {$ENDIF WINDOWS}
     if DirectoryExists(myconfiguration.LasticonFileDir) then
-    SelectDirectoryDialog1.InitialDir := myconfiguration.LasticonFileDir;
+      SelectDirectoryDialog1.InitialDir := myconfiguration.LasticonFileDir;
     selectDirectory := SelectDirectoryDialog1.Execute;
   except
     on E: Exception do
@@ -1472,17 +1603,17 @@ begin
         // Image.Picture.LoadFromFile(directory + IconSearch.Name) but
         // raise no exceptions because that's disturbing and annoying,
         // so the not-images are sorted out
-        try
-          // IconSearch.Name = name of icon file as string
-          Image.Picture.LoadFromFile(iconDirectory + IconSearch.Name);
-        except
-          on E: Exception do
-          begin
-            //ShowMessage('Exception while load from file: ' + E.Message);
-            loadFromFile := False;
-            Image.Free;
-          end;
+      try
+        // IconSearch.Name = name of icon file as string
+        Image.Picture.LoadFromFile(iconDirectory + IconSearch.Name);
+      except
+        on E: Exception do
+        begin
+          //ShowMessage('Exception while load from file: ' + E.Message);
+          loadFromFile := False;
+          Image.Free;
         end;
+      end;
         if loadFromFile then
         begin
           // create images (name: Image) on panels (name: Background) in FlowPanel
@@ -1696,21 +1827,21 @@ begin
   begin
     // https://specials.rejbrand.se/TTaskDialog/
     with TTaskDialog.Create(self) do
-      try
-        Caption := 'opsi-setup-detector';
-        Title := rscheckEntriesTitle;
-        Text := rscheckEntriesMsg;
-        CommonButtons := [tcbOk];
-        MainIcon := tdiInformation;
-        VerificationText := rscheckEntriesRememberMe;
-        Execute;
-        tmpbool := tfVerificationFlagChecked in Flags;
-        myconfiguration.ShowCheckEntryWarning := not (tmpbool);
-        tmpbool := myconfiguration.ShowCheckEntryWarning;
-        myconfiguration.writeconfig;
-      finally
-        Free;
-      end;
+    try
+      Caption := 'opsi-setup-detector';
+      Title := rscheckEntriesTitle;
+      Text := rscheckEntriesMsg;
+      CommonButtons := [tcbOk];
+      MainIcon := tdiInformation;
+      VerificationText := rscheckEntriesRememberMe;
+      Execute;
+      tmpbool := tfVerificationFlagChecked in Flags;
+      myconfiguration.ShowCheckEntryWarning := not (tmpbool);
+      tmpbool := myconfiguration.ShowCheckEntryWarning;
+      myconfiguration.writeconfig;
+    finally
+      Free;
+    end;
   end;
 end;
 
@@ -1824,7 +1955,7 @@ begin
     mydep := TPDependency(osdbasedata.aktProduct.dependencies.add);
     mydep.init;
     // Action request
-    mydep.action:= FNewDepDlg.ComboBoxDepActionrequest.Text;
+    mydep.action := FNewDepDlg.ComboBoxDepActionrequest.Text;
     // required productId
     mydep.Required_ProductId := FNewDepDlg.ComboBoxproductIds.Text;
     // required State & action
@@ -2248,7 +2379,7 @@ end;
 
 procedure TResultform1.BitBtnImportControlClick(Sender: TObject);
 begin
-    OpenDialog1.FilterIndex := 9;   // control file
+  OpenDialog1.FilterIndex := 9;   // control file
   if DirectoryExists(myconfiguration.LastProjectFileDir) then
     OpenDialog1.InitialDir := myconfiguration.LastProjectFileDir
   else if DirectoryExists(myconfiguration.workbench_Path) then
@@ -2256,20 +2387,22 @@ begin
   if OpenDialog1.Execute then
   begin
     myconfiguration.LastProjectFileDir := ExtractFileDir(OpenDialog1.FileName);
-    LogDatei.log('Start import control file to existing data from: ' + OpenDialog1.FileName, LLnotice);
+    LogDatei.log('Start import control file to existing data from: ' +
+      OpenDialog1.FileName, LLnotice);
     // do not init product data structure here
     // we just want to add the data to the existing data structure
     //initaktproduct;
     resultform1.updateGUI;
     // we do not want to import everything : filter = true
-    aktProduct.readControlFile(OpenDialog1.FileName,true);
+    aktProduct.readControlFile(OpenDialog1.FileName, True);
     TIGridDep.ListObject := osdbasedata.aktproduct.dependencies;
     TIGridDep.ReloadTIList;
     TIGridDep.Update;
     TIGridProp.ListObject := osdbasedata.aktproduct.properties;
     TIGridProp.ReloadTIList;
     TIGridProp.Update;
-    LogDatei.log('Finished import control file to existing data from: ' + OpenDialog1.FileName, LLnotice);
+    LogDatei.log('Finished import control file to existing data from: ' +
+      OpenDialog1.FileName, LLnotice);
   end;
 end;
 
@@ -3174,10 +3307,10 @@ begin
   begin
     OpenDialog1.FilterIndex := 1;   // setup
     if DirectoryExists(myconfiguration.LastSetupFileDir) then
-    OpenDialog1.InitialDir := myconfiguration.LastSetupFileDir;
-  if OpenDialog1.Execute then
-  begin
-    myconfiguration.LastSetupFileDir := ExtractFileDir(OpenDialog1.FileName);
+      OpenDialog1.InitialDir := myconfiguration.LastSetupFileDir;
+    if OpenDialog1.Execute then
+    begin
+      myconfiguration.LastSetupFileDir := ExtractFileDir(OpenDialog1.FileName);
       PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
       Application.ProcessMessages;
       localTOSset := aktProduct.productdata.targetOSset;
@@ -3231,12 +3364,12 @@ end;
 
 procedure TResultform1.FileHelpClick(Sender: TObject);
 var
-  myUrl : string;
+  myUrl: string;
 begin
   if LowerCase(osdsettings.mylang) = 'de' then
-    myUrl := opsidocs_base_url+'opsi-docs-de/4.2/manual/modules/setup-detector.html'
+    myUrl := opsidocs_base_url + 'opsi-docs-de/4.2/manual/modules/setup-detector.html'
   else
-    myUrl := opsidocs_base_url+'opsi-docs-en/4.2/manual/modules/setup-detector.html';
+    myUrl := opsidocs_base_url + 'opsi-docs-en/4.2/manual/modules/setup-detector.html';
   OpenURL(myUrl);
 end;
 
@@ -3332,32 +3465,32 @@ begin
   Result := False;
   // https://specials.rejbrand.se/TTaskDialog/
   with TTaskDialog.Create(self) do
-    try
-      Title := rsCopyFileOnlyOrCompleteDirTitle;
-      Caption := 'opsi-setup-detector';
-      Text := rsCopyFileOnlyOrCompleteDirText;
-      CommonButtons := [];
-      with TTaskDialogButtonItem(Buttons.Add) do
-      begin
-        Caption := rsCopyFileOnlyCap;
-        ModalResult := mrNo;
-      end;
-      with TTaskDialogButtonItem(Buttons.Add) do
-      begin
-        Caption := rsCopyCompleteDirCap;
-        ModalResult := mrYes;
-      end;
-      MainIcon := tdiQuestion;
-      if Execute then
-      begin
-        if ModalResult = mrYes then
-          Result := True;
-        if ModalResult = mrNo then
-          Result := False;
-      end;
-    finally
-      Free;
+  try
+    Title := rsCopyFileOnlyOrCompleteDirTitle;
+    Caption := 'opsi-setup-detector';
+    Text := rsCopyFileOnlyOrCompleteDirText;
+    CommonButtons := [];
+    with TTaskDialogButtonItem(Buttons.Add) do
+    begin
+      Caption := rsCopyFileOnlyCap;
+      ModalResult := mrNo;
     end;
+    with TTaskDialogButtonItem(Buttons.Add) do
+    begin
+      Caption := rsCopyCompleteDirCap;
+      ModalResult := mrYes;
+    end;
+    MainIcon := tdiQuestion;
+    if Execute then
+    begin
+      if ModalResult = mrYes then
+        Result := True;
+      if ModalResult = mrNo then
+        Result := False;
+    end;
+  finally
+    Free;
+  end;
 end;
 
 procedure TResultform1.showMacOS2StepSelectionDLG;
@@ -3368,22 +3501,63 @@ begin
   begin
     // https://specials.rejbrand.se/TTaskDialog/
     with TTaskDialog.Create(self) do
-      try
-        Title := rsMac3stepSelectionTitle;
-        Caption := 'opsi-setup-detector';
-        Text := rsMac3stepSelectionText;
-        CommonButtons := [tcbOk];
-        MainIcon := tdiInformation;
-        VerificationText := rsMacSelectionRememberMe;
-        Execute;
-        tmpbool := tfVerificationFlagChecked in Flags;
-        myconfiguration.Show2StepMacSeletionWarn := not (tmpbool);
-        tmpbool := myconfiguration.Show2StepMacSeletionWarn;
-        myconfiguration.writeconfig;
-      finally
-        Free;
-      end;
+    try
+      Title := rsMac3stepSelectionTitle;
+      Caption := 'opsi-setup-detector';
+      Text := rsMac3stepSelectionText;
+      CommonButtons := [tcbOk];
+      MainIcon := tdiInformation;
+      VerificationText := rsMacSelectionRememberMe;
+      Execute;
+      tmpbool := tfVerificationFlagChecked in Flags;
+      myconfiguration.Show2StepMacSeletionWarn := not (tmpbool);
+      tmpbool := myconfiguration.Show2StepMacSeletionWarn;
+      myconfiguration.writeconfig;
+    finally
+      Free;
+    end;
   end;
+end;
+
+// https://www.lazarusforum.de/viewtopic.php?p=116368#p116368
+function ChangeFileNameFilter(sFilter: string): string;
+  // Filter-String für Linux die Groß/Kleinschreibung als Filter setzen
+  {$ifdef UNIX}
+var
+  sl: TStringList;
+  s, s2: string;
+  i, k: integer;
+  {$endif}
+begin
+  {$ifdef UNIX}
+  // macht aus "*.jpg" ein "*.[jJ][pP][gG]"
+  sl := TStringList.Create;
+  sl.Delimiter := '|';
+  sl.StrictDelimiter := True;
+  sl.DelimitedText := sFilter;
+  for i := 0 to sl.Count - 1 do
+  begin
+    if (i mod 2) = 1 then
+    begin
+      s := sl[i];
+      for k := Length(s) downto 1 do
+      begin
+        s2 := LowerCase(Copy(s, k, 1));
+        if s2[1] in ['a'..'z'] then
+        begin
+          s2 := '[' + s2 + UpperCase(s2) + ']';
+          Delete(s, k, 1);
+          Insert(s2, s, k);
+        end;
+      end;
+      sl[i] := s;
+    end;
+  end;
+  Result := sl.DelimitedText;
+  sl.Free;
+  {$else}// Windows
+  Result := sFilter;
+  {$endif}
 end;
 
 procedure TResultform1.FormCreate(Sender: TObject);
@@ -3406,7 +3580,7 @@ begin
   LogDatei.log('design ppi: 91 , screen: ' + IntToStr(Screen.PixelsPerInch),
     LLessential);
   ;
-   {$IFDEF WINDOWS}
+  {$IFDEF WINDOWS}
   DefaultIcon.Picture.LoadFromFile(ExtractFileDir(Application.Params[0]) +
     PathDelim + 'template-files' + PathDelim + 'default' + PathDelim +
     'images' + PathDelim + 'template.png');
@@ -3488,6 +3662,17 @@ begin
   {$ENDIF UNIX}
   PaintPreview(DefaultIcon);
   DataModule1.SetFontName(TControl(Sender), myFont);
+  OSD_info := TOSD_info.Create(resultForm1);
+  md := TMarkdownProcessor.createDialect(mdDaringFireball);
+  md.UnSafe := True;
+  //HtmlViewerDesc.LoadFromString(CSSDecoration + '');
+  //HtmlViewerAdvice.LoadFromString('');
+  //{$ifdef UNIX}
+  // make opendialog filter case insensitive at Unix
+  // https://www.lazarusforum.de/viewtopic.php?p=116368#p116368
+  OpenDialogSetupfile.Filter := ChangeFileNameFilter(OpenDialogSetupfile.Filter);
+  OpenDialog1.Filter := ChangeFileNameFilter(OpenDialog1.Filter);
+  //{$endif}
   LogDatei.log('Finished FormCreate ', LLInfo);
 end;
 
@@ -3533,134 +3718,156 @@ end;
 
 procedure TResultform1.SpeedButtonHelpAnalyzeClick(Sender: TObject);
 var
-  myUrl : string;
+  myUrl: string;
 begin
   if LowerCase(osdsettings.mylang) = 'de' then
-    myUrl := opsidocs_base_url+'opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-use-single-analyze'
+    myUrl := opsidocs_base_url +
+      'opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-use-single-analyze'
   else
-    myUrl := opsidocs_base_url+'opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-use-single-analyze';
+    myUrl := opsidocs_base_url +
+      'opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-use-single-analyze';
   OpenURL(myUrl);
 end;
 
 procedure TResultform1.SpeedButtonHelpCreateClick(Sender: TObject);
-  var
-  myUrl : string;
+var
+  myUrl: string;
 begin
   if LowerCase(osdsettings.mylang) = 'de' then
-    myUrl := opsidocs_base_url+'opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-product-create'
+    myUrl := opsidocs_base_url +
+      'opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-product-create'
   else
-    myUrl := opsidocs_base_url+'opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-product-create';
+    myUrl := opsidocs_base_url +
+      'opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-product-create';
   OpenURL(myUrl);
   //ShowMessage(rsNotImplemented);
 end;
 
 procedure TResultform1.SpeedButtonHelpIconClick(Sender: TObject);
-  var
-    myUrl : string;
-  begin
-    if LowerCase(osdsettings.mylang) = 'de' then
-      myUrl := opsidocs_base_url+'opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-product-configuration-icon'
-    else
-      myUrl := opsidocs_base_url+'opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-product-configuration-icon';
-    OpenURL(myUrl);
-  end;
+var
+  myUrl: string;
+begin
+  if LowerCase(osdsettings.mylang) = 'de' then
+    myUrl := opsidocs_base_url +
+      'opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-product-configuration-icon'
+  else
+    myUrl := opsidocs_base_url +
+      'opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-product-configuration-icon';
+  OpenURL(myUrl);
+end;
 
 procedure TResultform1.SpeedButtonHelpMainClick(Sender: TObject);
 var
-  myUrl : string;
+  myUrl: string;
 begin
   if LowerCase(osdsettings.mylang) = 'de' then
-    myUrl := opsidocs_base_url+'opsi-docs-de/4.2/manual/modules/setup-detector.html'
+    myUrl := opsidocs_base_url + 'opsi-docs-de/4.2/manual/modules/setup-detector.html'
   else
-    myUrl := opsidocs_base_url+'opsi-docs-en/4.2/manual/modules/setup-detector.html';
+    myUrl := opsidocs_base_url + 'opsi-docs-en/4.2/manual/modules/setup-detector.html';
   OpenURL(myUrl);
 end;
 
 procedure TResultform1.SpeedButtonHelpProd1Click(Sender: TObject);
 var
-  myUrl : string;
+  myUrl: string;
 begin
   if LowerCase(osdsettings.mylang) = 'de' then
-    myUrl := opsidocs_base_url+'opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-product-configuration1'
+    myUrl := opsidocs_base_url +
+      'opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-product-configuration1'
   else
-    myUrl := opsidocs_base_url+'opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-product-configuration1';
+    myUrl := opsidocs_base_url +
+      'opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-product-configuration1';
   OpenURL(myUrl);
 end;
 
 procedure TResultform1.SpeedButtonHelpProd2Click(Sender: TObject);
 var
-  myUrl : string;
+  myUrl: string;
 begin
   if LowerCase(osdsettings.mylang) = 'de' then
-    myUrl := opsidocs_base_url+'opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-product-configuration-priority_dependecy'
+    myUrl := opsidocs_base_url +
+      'opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-product-configuration-priority_dependecy'
   else
-    myUrl := opsidocs_base_url+'opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-product-configuration-priority_dependency';
+    myUrl := opsidocs_base_url +
+      'opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-product-configuration-priority_dependency';
   OpenURL(myUrl);
 end;
 
 procedure TResultform1.SpeedButtonHelpStartOSIndepClick(Sender: TObject);
 var
-  myUrl : string;
+  myUrl: string;
 begin
   if LowerCase(osdsettings.mylang) = 'de' then
-    myUrl := opsidocs_base_url+'opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-tasks-os-independent'
+    myUrl := opsidocs_base_url +
+      'opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-tasks-os-independent'
   else
-    myUrl := opsidocs_base_url+'opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-tasks-os-independent';
+    myUrl := opsidocs_base_url +
+      'opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-tasks-os-independent';
   OpenURL(myUrl);
 end;
 
 procedure TResultform1.SpeedButtonHelpSetup1Click(Sender: TObject);
 var
-  myUrl : string;
+  myUrl: string;
 begin
   if LowerCase(osdsettings.mylang) = 'de' then
-    myUrl := opsidocs_base_url+'opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-use-single-setup-data'
+    myUrl := opsidocs_base_url +
+      'opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-use-single-setup-data'
   else
-    myUrl := opsidocs_base_url+'opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-use-single-setup-data';
+    myUrl := opsidocs_base_url +
+      'opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-use-single-setup-data';
   OpenURL(myUrl);
 end;
 
 procedure TResultform1.SpeedButtonHelpStartLinClick(Sender: TObject);
 var
-  myUrl : string;
+  myUrl: string;
 begin
   if LowerCase(osdsettings.mylang) = 'de' then
-    myUrl := opsidocs_base_url+'opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-tasks-linux'
+    myUrl := opsidocs_base_url +
+      'opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-tasks-linux'
   else
-    myUrl := opsidocs_base_url+'opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-tasks-linux';
+    myUrl := opsidocs_base_url +
+      'opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-tasks-linux';
   OpenURL(myUrl);
 end;
 
 procedure TResultform1.SpeedButtonHelpStartMacClick(Sender: TObject);
 var
-  myUrl : string;
+  myUrl: string;
 begin
   if LowerCase(osdsettings.mylang) = 'de' then
-    myUrl := opsidocs_base_url+'opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-tasks-macos'
+    myUrl := opsidocs_base_url +
+      'opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-tasks-macos'
   else
-    myUrl := opsidocs_base_url+'opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-tasks-macos';
+    myUrl := opsidocs_base_url +
+      'opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-tasks-macos';
   OpenURL(myUrl);
 end;
 
 procedure TResultform1.SpeedButtonHelpStartMultiClick(Sender: TObject);
 var
-  myUrl : string;
+  myUrl: string;
 begin
   if LowerCase(osdsettings.mylang) = 'de' then
-    myUrl := opsidocs_base_url+'opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-tasks-multi'
+    myUrl := opsidocs_base_url +
+      'opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-tasks-multi'
   else
-    myUrl := opsidocs_base_url+'opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-tasks-multi';
+    myUrl := opsidocs_base_url +
+      'opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-tasks-multi';
   OpenURL(myUrl);
 end;
 
 procedure TResultform1.SpeedButtonHelpStartWinClick(Sender: TObject);
 var
-  myUrl : string;
+  myUrl: string;
 begin
   if LowerCase(osdsettings.mylang) = 'de' then
-    myUrl := opsidocs_base_url+'opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-tasks-win'
+    myUrl := opsidocs_base_url +
+      'opsi-docs-de/4.2/manual/modules/setup-detector.html#opsi-setup-detector-tasks-win'
   else
-    myUrl := opsidocs_base_url+'opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-tasks-win';
+    myUrl := opsidocs_base_url +
+      'opsi-docs-en/4.2/manual/modules/setup-detector.html#opsi-setup-detector-tasks-win';
   OpenURL(myUrl);
 end;
 
@@ -3848,6 +4055,57 @@ procedure TResultform1.TIEditSetup3UnProgramEditingDone(Sender: TObject);
 begin
   updateUninstaller(aktProduct.SetupFiles[2]);
 end;
+
+procedure TResultform1.TIMemoAdviceEditingDone(Sender: TObject);
+var
+  fs: TStringStream;
+  pHTML: TIpHtml;
+begin
+  HtmlContent := md.process(TTIMemo(Sender).Text);
+  try
+    fs := TStringStream.Create(CSSDecoration + HtmlContent);
+    try
+      pHTML := TIpHtml.Create; // Beware: Will be freed automatically by IpHtmlPanelDesc
+      pHTML.LoadFromStream(fs);
+    finally
+      fs.Free;
+    end;
+    IpHtmlPanelAdvice.SetHtml(pHTML);
+    //Caption := IpHtmlPanelAdvice.Title;
+  except
+    on E: Exception do
+    begin
+      MessageDlg('Error: ' + E.Message, mtError, [mbCancel], 0);
+    end;
+  end;
+end;
+
+procedure TResultform1.TIMemoDescEditingDone(Sender: TObject);
+var
+  fs: TStringStream;
+  pHTML: TIpHtml;
+begin
+  HtmlContent := md.process(TTIMemo(Sender).Text);
+  //HtmlViewerDesc.LoadFromString(CSSDecoration + HtmlContent);
+  //HtmlViewerDesc.LoadFromString(HtmlContent);
+  try
+    fs := TStringStream.Create(CSSDecoration + HtmlContent);
+    try
+      pHTML := TIpHtml.Create; // Beware: Will be freed automatically by IpHtmlPanelDesc
+      pHTML.LoadFromStream(fs);
+    finally
+      fs.Free;
+    end;
+    IpHtmlPanelDesc.SetHtml(pHTML);
+    //Caption := IpHtmlPanelDesc.Title;
+  except
+    on E: Exception do
+    begin
+      MessageDlg('Error: ' + E.Message, mtError, [mbCancel], 0);
+    end;
+  end;
+end;
+
 
 procedure TResultform1.genRttiEditChange(Sender: TObject);
 var

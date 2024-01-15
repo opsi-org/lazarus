@@ -1,5 +1,5 @@
 object FOSDConfigdlg: TFOSDConfigdlg
-  Left = 793
+  Left = 795
   Height = 625
   Top = 221
   Width = 534

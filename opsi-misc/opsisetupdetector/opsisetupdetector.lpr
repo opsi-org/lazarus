@@ -4,20 +4,17 @@ program opsisetupdetector;
 
 uses {$IFDEF UNIX} {$IFDEF UseCThreads}
   cthreads, {$ENDIF} {$ENDIF}
-  Interfaces,
-  {$IFDEF OSDGUI}
+  Interfaces, {$IFDEF OSDGUI}
   Forms,
   osdform,
   Printers,
-    osdconfigdlg,
+  osdconfigdlg,
   osddlgnewdependency,
   osddlgnewproperty,
-    osmessagedialog,
+  osmessagedialog,
   osdanalyzegeneral,
-  ChooseInstallerDlg,
-  {$ELSE OSDGUI}
-  custapp,
-  {$ENDIF OSDGUI}
+  ChooseInstallerDlg, {$ELSE OSDGUI}
+  custapp, {$ENDIF OSDGUI}
   fileinfo,
   winpeimagereader,
   lcltranslator,
@@ -32,7 +29,9 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
   osjson,
   oswebservice,
   oscrypt,
-osdmain, osdcontrolfile_io;
+  osdmain,
+  osdcontrolfile_io,
+  osd_md_html_dlg;
 
 
 (*
@@ -50,10 +49,10 @@ osdmain, osdcontrolfile_io;
 
 begin
   {$IFDEF OSDGUI}
-  Application.Scaled:=True;
+  Application.Scaled := True;
   RequireDerivedFormResource := True;
   Application.Initialize;
-  Application.Title:='opsi-setup-detector';
+  Application.Title := 'opsi-setup-detector';
   Application.CreateForm(TresultForm1, resultForm1);
   Application.CreateForm(TFNewDepDlg, FNewDepDlg);
   Application.CreateForm(TFNewPropDlg, FNewPropDlg);
@@ -63,11 +62,11 @@ begin
   Application.Run;
   {$ELSE OSDGUI}
   //Application.Scaled:=True;
-Application := TOSD.Create(nil);
-  Application.Title:='opsi-setup-detector';
-Application.Initialize;
-Application.DoRun;
-Application.Free;
+  Application := TOSD.Create(nil);
+  Application.Title := 'opsi-setup-detector';
+  Application.Initialize;
+  Application.DoRun;
+  Application.Free;
 {$ENDIF OSDGUI}
 
 end.
