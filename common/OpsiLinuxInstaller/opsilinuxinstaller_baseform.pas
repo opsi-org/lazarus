@@ -1,5 +1,7 @@
 unit OpsiLinuxInstaller_BaseForm;
 
+// Base form for the welcome and query forms of the installer.
+
 {$mode ObjFPC}{$H+}
 
 interface
@@ -34,7 +36,7 @@ type
     // same size for all info images (squares)
     InfoImageSize = 22;
     // same background image for all forms
-    BackgroundImageFileName = 'opsi.png';
+    BackgroundImageFileName = 'opsibeemix.png';
     // same image for all infos
     InfoImageFileName = 'dialog-information.png';
   end;
@@ -51,7 +53,8 @@ procedure TOpsiLinuxInstallerBaseForm.SetBackgroundImageLayout;
 begin
   BackgroundImage.Picture.LoadFromFile(ExtractFilePath(ParamStr(0)) +
     BackgroundImageFileName);
-  BackgroundImage.BorderSpacing.Top := 10;
+  BackgroundImage.BorderSpacing.Top := 20;
+  BackgroundImage.BorderSpacing.Left := 10;
 end;
 
 procedure TOpsiLinuxInstallerBaseForm.SetPanelLayout(Panel: TPanel);
@@ -78,7 +81,6 @@ var
   compIndex: integer;
 begin
   SetBackgroundImageLayout;
-
   for compIndex := 0 to Sender.ComponentCount - 1 do
   begin
     if (Sender.Components[compIndex].ClassName = 'TPanel') then
@@ -88,15 +90,13 @@ begin
       (Pos('Info', Sender.Components[compIndex].Name) = 1) then
       SetInfoImageLayout(Sender.Components[compIndex] as TImage); // load info icon
   end;
-
   DecorateForm(Sender);
 end;
 
 procedure TOpsiLinuxInstallerBaseForm.SetConstantFormSize;
 begin
   Height := 450;
-  //Width := 730;
-  Width := 675;
+  Width := 675; // 730;
 end;
 
 procedure TOpsiLinuxInstallerBaseForm.FormCreate(Sender: TObject);

@@ -1,5 +1,14 @@
 unit OpsiLinuxInstaller_InstallationScriptExecuter;
 
+(*
+    Base class for downloading opsi-script and executing an opsi package installation script with it.
+    The concept for the installation is:
+    1. Try downloading the latest version of the opsi package to install.
+    2. Try installing the latest version of downloaded and default package.
+        2a. If the installation failed, try installing the older version.
+    So a default version of the package to install must be delivered with the installer.
+*)
+
 {$mode ObjFPC}{$H+}
 
 interface

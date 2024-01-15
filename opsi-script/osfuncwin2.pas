@@ -47,7 +47,8 @@ uses
   JwaWbemCli,
   ostxstringlist,
   LAZUTF8,
-  lazfileutils;
+  lazfileutils,
+  Process;
 
 //JclSecurity,
 //JclWin32;
@@ -59,6 +60,7 @@ const
 
 type
   TConvertSidToStringSidA = function(Sid: PSID; var StringSid: LPSTR): BOOL; stdcall;
+  TProfilesType = (tDirectory, tSID);
 
 
 
@@ -80,6 +82,7 @@ function KillProcessbypid(pid: DWORD): boolean;
 function getWinProcessList: TStringList;
 //procedure myimpersontest;
 function getloggedonDomUser: string;
+//function GetLoggedInUserSID: string;
 function GetUserName_: string;
 function GetUserNameEx_: string;
 {$IFDEF WIN32}
@@ -110,6 +113,7 @@ function mountSmbShare(drive: string; uncPath: string; Username: string;
   Password: string; RestoreAtLogon: boolean): DWORD;
 function unmountSmbShare(driveOrPath: string; force: boolean): DWORD;
 function getProfilesDirListWin: TStringList;
+function getProfilesListWin(ProfilesType:TProfilesType):TStringList;
 
 
 function winCreateHardLink(lpFileName: PChar; lpExistingFileName: PChar;
@@ -365,6 +369,18 @@ begin
   end;
 end;
 
+function GetLoggedInUserSID: string;
+var
+  Output: string;
+  Command: string;
+begin
+  Command := '([System.Security.Principal.NTAccount](Get-WMIObject -class Win32_ComputerSystem ' +
+    '| Select-Object -Property username).username).Translate([System.Security.Principal.SecurityIdentifier]).Value';
+  if RunCommand('powershell',['-c', Command], Output,[poUsePipes], swoHide) then
+    Result := trim(Output)
+  else
+    Result := 'Unkown_SID';
+end;
 
 {:Returns user name of the current thread.
   @author  Miha-R, Lee_Nover
@@ -547,11 +563,8 @@ begin
   RefDomainSize := SizeOf(RefDomain);
   Sid := nil;
   FillChar(RefDomain, SizeOf(RefDomain), 0);
-  LookupAccountName(nil, PChar(UserName), Sid, SidSize, RefDomain,
-    RefDomainSize, Snu);
   Sid := AllocMem(SidSize);
   try
-    RefDomainSize := SizeOf(RefDomain);
     if LookupAccountName(nil, PChar(UserName), Sid, SidSize, RefDomain,
       RefDomainSize, Snu) then
       Result := GetSidStr(Sid);
@@ -568,7 +581,6 @@ var
   mydomain: ansistring = '';
 begin
   Result := '';
-  ;
   h := FindWindow('Progman', nil);// maybe use GetDesktopWindow
   if h <> 0 then
   begin
@@ -999,7 +1011,7 @@ var
   //pid: dword;
   //user, domain,
   //myuser, mydomain,
-  foundexe, domuser: ansistring;
+  foundexe, domuser: string;
   //winstuser, winstdom: ansistring;
   h: HWND;
   proclist: TStringList;
@@ -1028,7 +1040,7 @@ begin
       end;
       foundexe := procdetails.Strings[0];
       domuser := procdetails.Strings[2];
-      if (searchexe = '') or (AnsiLowerCase(searchexe) = AnsiLowerCase(foundexe)) then
+      if (searchexe = '') or (LowerCase(searchexe) = LowerCase(foundexe)) then
         if (domuser = domain + '\' + user) then
         begin
           found := True;
@@ -2144,7 +2156,8 @@ begin
 end;
 
 
-function getProfilesDirListWin: TStringList;
+function getProfilesListWin(ProfilesType:TProfilesType):TStringList;
+
 var
   profileList: TStringList;
   noredirection: boolean;
@@ -2169,10 +2182,22 @@ begin
       (0 = pos('systemprofile', LowerCase(mypath))) and
       // avoid empty path
       (mypath <> '') then
-      Result.Add(mypath);
+        case ProfilesType of
+          tDirectory: Result.Add(mypath);
+          tSID: Result.Add(profileList.Strings[i]);
+        end;
   end;
-  Result.Add(GetDefaultUsersProfilesPath);
+  case ProfilesType of
+    tDirectory: Result.Add(GetDefaultUsersProfilesPath);
+    tSID: Result.Add('defaultprofile');
+  end;
   profileList.Free;
+end;
+
+
+function getProfilesDirListWin: TStringList;
+begin
+  Result := getProfilesListWin(tDirectory);
 end;
 
 (*

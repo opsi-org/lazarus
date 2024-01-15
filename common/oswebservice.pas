@@ -29,6 +29,8 @@ uses
   oslog,
   superobject,
   osjson,
+  fpjson,
+  jsonparser,
   strutils,
   {$IFDEF SYNAPSE}
   httpsend, SSL_OPENSSL_UNIT, SSL_OPENSSL_LIB_UNIT, blcksock,
@@ -130,9 +132,9 @@ type
     tac4Custom,
     tac4Login);
 
-  TProductstate4 = (tps4Installed,
-    tps4Not_installed,
-    tps4Unkown);
+  //TProductstate4 = (tps4Installed,
+  //  tps4Not_installed,
+  //  tps4Unkown);
 
   TTargetConfiguration4 = (ttc4Installed,
     ttc4Forbidden,
@@ -142,8 +144,10 @@ type
   TActionResult4 = (tar4None, tar4Failed, tar4Successful);
 
 
-  TProductState = (tpsUndefined, tpsNotInstalled, tpsInstalling,
-    tpsInstalled, tpsFailed);
+  TProductState = (tpsUndefined, tpsNotInstalled, tpsInstalling, tpsUninstalling,
+    tpsInstalled, tpsFailed, tps4Installed,
+    tps4Not_installed,
+    tps4Unkown);
   //  TProductState4 = (tpsUndefined, tpsNotInstalled, tpsInstalled);
   //  TProductProgress = (tppUndefined, tppInstalling, tppNone);
   //  TProductResult = (tprNone, tprFailed, tprSuccessful);
@@ -279,10 +283,10 @@ type
   protected
     actualProduct: string;
     actualVersion: string;
-    actualClient: string;
     options: string;
     FSortByServer: boolean;
   public
+    actualClient: string;
     {constructor}
     constructor Create;
     {functions}
@@ -342,7 +346,6 @@ type
     FProductStates: TStringList;
     FProductActionRequests: TStringList;
     FSortedProductIDsWhereActionIsSet: TStringList;
-    FInstallableProducts: TStringList;
     ProductVars: TStringList;
     FOpsiModules: ISuperObject;
     FOpsiInformation: ISuperObject;
@@ -356,9 +359,9 @@ type
     FCommunicationMode: integer;
     //Function getMapOfProductSwitches : TStringList;
     //Function getProductRequirements (requirementType : String) : TStringList;
+    function ProductPropertyState_getValues_KeyValueMapp(var error: boolean): TStringList;
     function getProductRequirements(productname: string;
       requirementType: string): TStringList;
-    function getMapOfProductStates: TStringList;
     procedure reverseProductOrderByUninstall(var MapOfProductStates: TStringList);
     //procedure productOnClient_getobject_actualclient;
     function getInstallableProducts: TStringList;
@@ -369,6 +372,8 @@ type
     function GetSortedProductOnClientListFromService: TStringList;
   protected
     FServiceLastErrorInfo: TStringList;
+    function getProductPropertiesOpsi43: TStringList;
+    function getProductPropertiesOpsi42: TStringList;
     //FactualClient: string;
   public
     //actualClient: string;
@@ -406,7 +411,8 @@ type
     function initProduct: boolean; override;
     function getActualProductVersion: string; override;
     function getSpecialScriptPath: string; override;
-    function getProductproperties: TStringList; override;
+    function getProductProperties: TStringList; override;
+    function parse_JSONResult_productPropertyState_getValues(const JSONResult: string): TStringList;
     function getBeforeRequirements: TStringList; override;
     function getAfterRequirements: TStringList; override;
     function getListOfProductIDs: TStringList; override;
@@ -441,7 +447,7 @@ type
     function actionRequest4ToString(actionRequest: TActionRequest4): string;
     function targetConfigurationToString(targetConfiguration: TTargetConfiguration4)
       : string;
-    function installationStatusToString(installationStatus: TProductstate4): string;
+    function installationStatusToString(installationStatus: TProductstate): string;
     function UpdateSwitches(extremeErrorLevel: TErrorLevel): boolean; override; overload;
     function UpdateSwitches(extremeErrorLevel: TErrorLevel; Progress: string): boolean;
       overload;
@@ -459,10 +465,8 @@ type
     function getOpsiServiceConfigs: string;
     function getConfigStateObjectsFromService(ConfigIDsAsJsonArray:string):string;
     function getConfigObjectsFromService(ConfigIDsAsJsonArray:string):string;
+    function getConfigStateValuesFromService(ConfigIDsAsJsonArray:string; WithDefaults:string = 'true'):string;
     function getLogSize: int64;
-    function getProductIds: TStringList;
-    function getLocalbootProductIds: TStringList;
-    function getNetbootProductIds: TStringList;
     function demandLicenseKey(const parameters: array of string; var errorOccured: boolean):string;
     {$IFNDEF SYNAPSE}
     function decreaseSslProtocol: boolean;
@@ -491,7 +495,7 @@ type
     procedure ProductOnClient_update(actionProgressS: string;
       actionResult: TActionResult4; actionRequest: TActionRequest4;
       targetConfiguration: TTargetConfiguration4; lastAction: TActionRequest4;
-      installationStatus: TProductstate4);
+      installationStatus: TProductstate);
     function getOpsiVersion: string;  // get opsiversion from backend_info
     // get list of methods via service:
     function getOpsiServiceMethods(allow_deprecated : boolean) : TStringlist;
@@ -3653,6 +3657,7 @@ begin
   //inherited create;
   actualclient := '';
   FJsonExecutioner := nil;
+  FProductOnClient_aktobject := nil;
   FSortByServer := False;
   FCommunicationMode := -1;
   //Set stringlists to nil, so it can be checked if they are nil
@@ -3665,7 +3670,6 @@ begin
   FProductStates := nil;
   FProductActionRequests := nil;
   FSortedProductIDsWhereActionIsSet := nil;
-  FInstallableProducts := nil;
   ProductVars := nil;
   FProductOnClientIndex := nil;
   mylist := nil;
@@ -3745,6 +3749,8 @@ begin
   try
     if Assigned(FJsonExecutioner) then
       FreeAndNil(FJsonExecutioner);
+    Logdatei.log('init opsi connection (URL,user,password,sessionid,ip,port,agentstring): '
+      +serviceUrl+','+username+','+password+','+sessionid+','+ip+','+port+','+agentstring, LLDebug2);
     FjsonExecutioner := TJsonThroughHTTPS.Create(serviceUrl, username,
       password, sessionid, ip, port, agentstring);
     ProfildateiChange := False;
@@ -4981,7 +4987,80 @@ begin
   Result := '';
 end;
 
-function TOpsi4Data.getProductproperties: TStringList;
+function TOpsi4Data.getProductProperties: TStringList;
+begin
+  if isMethodProvided('productPropertyState_getValues') then
+    Result := getProductPropertiesOpsi43
+  else
+    Result := getProductPropertiesOpsi42;
+end;
+
+function TOpsi4Data.parse_JSONResult_productPropertyState_getValues(const JSONResult: string): TStringList;
+var
+  JSONData: TJSONData;
+  JSONObject: TJSONObject;
+  JSONArray:TJSONArray;
+  i, j: integer;
+  PropertyName: string;
+  PropertyValue: string;
+begin
+  Result := TStringList.Create;
+  JSONData := GetJSON(JSONResult);
+  if (JSONData <> nil) and not(JSONDAta is TJSONNull) and (JSONData.AsJSON <> '{}') then
+    begin
+      JSONObject := JSONData as TJSONObject;
+      JSONData := JSONObject.Find(actualClient);
+      if (JSONData <> nil) and not(JSONDAta is TJSONNull) and (JSONData.AsJSON <> '{}') then
+      begin
+        JSONObject := JSONData as TJSONObject;
+        JSONData := JSONObject.Find(actualProduct);
+         if (JSONData <> nil) and not(JSONDAta is TJSONNull) and (JSONData.AsJSON <> '{}') then
+        begin
+          JSONObject := JSONData as TJSONObject;
+            for i := 0 to JSONObject.Count - 1 do
+            begin
+              PropertyName := JSONObject.Names[i];
+              JSONArray := (JSONObject.Items[i] as TJSONArray);
+              PropertyValue := '';
+              for j := 0 to JSONArray.Count -1 do
+              begin
+                if j = 0 then
+                  PropertyValue := JSONArray.Items[j].AsString
+                else
+                  PropertyValue := PropertyValue + ',' + JSONArray.Items[j].AsString;
+              end;
+              Result.Add(PropertyName + '=' + PropertyValue);
+            end;
+        end;
+      end;
+    end;
+end;
+
+function TOpsi4Data.getProductPropertiesOpsi43: TStringList;
+var
+  error: boolean = False;
+begin
+  Result := nil;
+  Result := ProductPropertyState_getValues_KeyValueMapp(error);
+  if Result = nil then
+  begin
+    LogDatei.log('Error: Opsi4Data.getProductproperties failed: retry',
+      LLWarning);
+    //ProcessMess;
+    Sleep(500);
+    Result := ProductPropertyState_getValues_KeyValueMapp(error);
+  end;
+  if Result = nil then
+  begin
+    Result := TStringList.Create;
+    LogDatei.log('Error: Opsi4Data.getProductproperties failed: giving up',
+      LLError);
+  end
+  else
+    LogDatei.log('Mapped result of productPropertyState_getValues: ' + Result.Text, LLDebug);
+end;
+
+function TOpsi4Data.getProductPropertiesOpsi42: TStringList;
 var
   omc: TOpsiMethodCall;
 begin
@@ -5194,7 +5273,7 @@ begin
       if (Result[0] = 'Empty value') then
       begin
         Result.Text := '';
-        LogDatei.log('Got empty property value from service', LLWarning);
+        LogDatei.log('Got empty property value from service', LLInfo);
       end
       else
       begin
@@ -5219,32 +5298,6 @@ begin
   finally
     if Assigned(omc)then FreeAndNil(omc);
   end;
-end;
-
-function TOpsi4Data.getMapOfProductStates: TStringList;
-var
-  resultlist: TStringList;
-  omc: TOpsiMethodCall;
-  i: integer;
-  productEntry: ISuperObject;
-begin
-  Result := TStringList.Create;
-  omc := TOpsiMethodCall.Create('getProductInstallationStatus_listOfHashes',
-    [actualClient]);
-  resultList := FjsonExecutioner.getListResult(omc);
-  omc.Free;
-  if resultList <> nil then
-    for i := 0 to resultList.Count - 1 do
-    begin
-      productEntry := SO(resultList.Strings[i]);
-      if (productEntry.O['productId'] <> nil) then
-      begin
-        Result.add(
-          productEntry.S['productId']);
-        Result.Values[productEntry.S['productId']] :=
-          productEntry.S['installationStatus'];
-      end;
-    end;
 end;
 
 
@@ -5485,65 +5538,7 @@ begin
   end;
 end;
 
-function TOpsi4Data.getProductIds: TStringList;
-var
-  objectlist: TStringList;
-  omc: TOpsiMethodCall;
-  i: integer;
-begin
-  omc := TOpsiMethodCall.Create('getProductIds_list', []);
-  objectlist := FjsonExecutioner.getListResult(omc);
-  omc.Free;
 
-  Result := TStringList.Create;
-
-  for i := 0 to objectlist.Count - 1 do
-  begin
-    testresult := objectlist.Strings[i];
-    testresult := SO('"' + testresult + '"').AsJSon(False, False);
-    Result.add(testresult);
-  end;
-end;
-
-function TOpsi4Data.getLocalbootProductIds: TStringList;
-var
-  objectlist: TStringList;
-  omc: TOpsiMethodCall;
-  i: integer;
-begin
-  omc := TOpsiMethodCall.Create('getProductIds_list', ['localboot']);
-  objectlist := FjsonExecutioner.getListResult(omc);
-  omc.Free;
-
-  Result := TStringList.Create;
-
-  for i := 0 to objectlist.Count - 1 do
-  begin
-    testresult := objectlist.Strings[i];
-    testresult := SO('"' + testresult + '"').AsJSon(False, False);
-    Result.add(testresult);
-  end;
-end;
-
-function TOpsi4Data.getNetbootProductIds: TStringList;
-var
-  objectlist: TStringList;
-  omc: TOpsiMethodCall;
-  i: integer;
-begin
-  omc := TOpsiMethodCall.Create('getProductIds_list', ['netboot']);
-  objectlist := FjsonExecutioner.getListResult(omc);
-  omc.Free;
-
-  Result := TStringList.Create;
-
-  for i := 0 to objectlist.Count - 1 do
-  begin
-    testresult := objectlist.Strings[i];
-    testresult := SO('"' + testresult + '"').AsJSon(False, False);
-    Result.add(testresult);
-  end;
-end;
 
 function TOpsi4Data.demandLicenseKey(const parameters: array of string;
   var errorOccured: boolean): string;
@@ -5586,6 +5581,22 @@ begin
       end;
     end;
   end;
+end;
+
+function TOpsi4Data.ProductPropertyState_getValues_KeyValueMapp(var error: boolean):TStringList;
+var
+  JSONResult: string;
+  omc: TOpsiMethodCall;
+begin
+  Result := nil;
+  omc := TOpsiMethodCall.Create('productPropertyState_getValues',
+    [actualproduct, '""', actualclient, 'true']);
+  JSONResult := self.checkAndRetrieveString(omc, error);
+  if not error then
+    Result := parse_JSONResult_productPropertyState_getValues(JSONResult)
+  else
+    LogDatei.log('Error while calling API method productPropertyState_getValues: ' + FServiceLastErrorInfo.Text, LLError);
+  omc.Free;
 end;
 
 function TOpsi4Data.getProductState: TProductState;
@@ -5811,18 +5822,21 @@ var
   jO: ISuperObject;
   parastr: string;
 begin
-  FProductOnClient_aktobject.AsObject.S['actionProgress'] := progress;
-  parastr := FProductOnClient_aktobject.asJson(False, False);
-  omc := TOpsiMethodCall.Create('productOnClient_updateObject', [parastr]);
-  jO := FjsonExecutioner.retrieveJSONObject(omc);
-  omc.Free;
-      (*
-  omc := TOpsiMethodCall.Create('setProductActionProgress',
-    [actualProduct, actualClient, progress]);
-
-  jO := FjsonExecutioner.retrieveJSONObject(omc);
-  omc.Free;
-  *)
+  try
+    if Assigned(FProductOnClient_aktobject) then
+    begin
+      FProductOnClient_aktobject.AsObject.S['actionProgress'] := progress;
+      parastr := FProductOnClient_aktobject.asJson(False, False);
+      omc := TOpsiMethodCall.Create('productOnClient_updateObject', [parastr]);
+      jO := FjsonExecutioner.retrieveJSONObject(omc);
+      omc.Free;
+    end
+    else
+      LogDatei.log('Could not set action progress. ProductOnClient not assigned', LLWarning);
+  except
+     LogDatei.log('Exception in opsi4data.setActionProgress , parastr: ' +
+      parastr, LLerror);
+  end;
 end;
 
 procedure TOpsi4Data.setProductState(newState: TProductState);
@@ -5831,38 +5845,26 @@ var
   jO: ISuperObject;
   stateS, parastr: string;
 begin
-  //if FInstallableProducts.IndexOf(actualProduct) = -1 then exit;
   try
-    //stateS := stateToString(newState);
-    if newState = tpsInstalling then
-    begin
-      stateS := 'installing';
-      //FProductOnClient_aktobject.put('actionProgress',stateS);
-      //FProductOnClient_aktobject :=
-      FProductOnClient_aktobject.AsObject.N['modificationTime'] := nil;
-      parastr := FProductOnClient_aktobject.asJson(False, False);
-      //FProductOnClient_aktobject :=
-      FProductOnClient_aktobject.AsObject.N['actionSequence'] := nil;
-      parastr := FProductOnClient_aktobject.asJson(False, False);
-      //FProductOnClient_aktobject :=
-      FProductOnClient_aktobject.AsObject.S['installationStatus'] :=
-        installationStatusToString(tps4Unkown);
-      //.putS('installationStatus',installationStatusToString(tps4Unkown));
-      //FProductOnClient_aktobject :=
-      FProductOnClient_aktobject.AsObject.S['actionProgress'] := stateS;
-      parastr := FProductOnClient_aktobject.asJson(False, False);
-      omc := TOpsiMethodCall.Create('productOnClient_updateObject', [parastr]);
-      //omc := TOpsiMethodCall.create('setProductInstallationStatus',[actualProduct, actualClient, stateS]);
-      jO := FjsonExecutioner.retrieveJSONObject(omc);
-      omc.Free;
-    end;
+    stateS := stateToString(newState);
+    FProductOnClient_aktobject.AsObject.N['modificationTime'] := nil;
+    parastr := FProductOnClient_aktobject.asJson(False, False);
+    FProductOnClient_aktobject.AsObject.N['actionSequence'] := nil;
+    parastr := FProductOnClient_aktobject.asJson(False, False);
+    FProductOnClient_aktobject.AsObject.S['installationStatus'] :=
+      installationStatusToString(newState);
+    FProductOnClient_aktobject.AsObject.S['actionProgress'] := stateS;
+    parastr := FProductOnClient_aktobject.asJson(False, False);
+    omc := TOpsiMethodCall.Create('productOnClient_updateObject', [parastr]);
+    jO := FjsonExecutioner.retrieveJSONObject(omc);
+    omc.Free;
   except
     LogDatei.log('Exception in opsi4data.setProductState , parastr: ' +
       parastr, LLerror);
   end;
   // save the new value in the local cache as well
   if FProductStates.IndexOf(actualProduct) > -1 then
-    FProductStates.Values[actualProduct] := installationStatusToString(tps4Unkown);
+    FProductStates.Values[actualProduct] := installationStatusToString(newState);
 end;
 
 procedure TOpsi4Data.setProductProgress(myprogres: string);
@@ -5874,22 +5876,15 @@ begin
   try
     begin
       stateS := myprogres;
-      //FProductOnClient_aktobject.put('actionProgress',stateS);
-      //FProductOnClient_aktobject :=
       FProductOnClient_aktobject.AsObject.N['modificationTime'] := nil;
       parastr := FProductOnClient_aktobject.asJson(False, False);
-      //FProductOnClient_aktobject :=
       FProductOnClient_aktobject.AsObject.N['actionSequence'] := nil;
       parastr := FProductOnClient_aktobject.asJson(False, False);
-      //FProductOnClient_aktobject :=
       FProductOnClient_aktobject.AsObject.S['installationStatus'] :=
         installationStatusToString(tps4Unkown);
-      //.putS('installationStatus',installationStatusToString(tps4Unkown));
-      //FProductOnClient_aktobject :=
       FProductOnClient_aktobject.AsObject.S['actionProgress'] := stateS;
       parastr := FProductOnClient_aktobject.asJson(False, False);
       omc := TOpsiMethodCall.Create('productOnClient_updateObject', [parastr]);
-      //omc := TOpsiMethodCall.create('setProductInstallationStatus',[actualProduct, actualClient, stateS]);
       jO := FjsonExecutioner.retrieveJSONObject(omc);
       omc.Free;
     end;
@@ -5905,7 +5900,7 @@ end;
 procedure TOpsi4Data.ProductOnClient_update(actionProgressS: string;
   actionResult: TActionResult4; actionRequest: TActionRequest4;
   targetConfiguration: TTargetConfiguration4; lastAction: TActionRequest4;
-  installationStatus: TProductstate4);
+  installationStatus: TProductstate);
 
 var
   omc: TOpsiMethodCall;
@@ -6318,8 +6313,9 @@ begin
 end;
 
 function TOpsi4Data.installationStatusToString(installationStatus:
-  TProductstate4): string;
+  TProductstate): string;
 begin
+  Result := 'unknown';
   case installationStatus of
     tps4Installed: Result := 'installed';
     tps4Not_installed: Result := 'not_installed';
@@ -6393,6 +6389,21 @@ begin
   method :=  'config_getObjects';
   params := ['', '{"id":' + ConfigIDsAsJsonArray + '}'];
   LogErrorMessage := 'Warning: Could not get config defaults from service (oswebservice: TOpsi4Data.getConfigObjectsFromService)';
+  Result := getJSONFromService(method, params, logErrorMessage);
+end;
+
+function TOpsi4Data.getConfigStateValuesFromService(
+  ConfigIDsAsJsonArray: string; WithDefaults: string = 'true'
+  ): string;
+var
+  method: string;
+  params: array of string;
+  LogErrorMessage: string;
+begin
+  Result := '';
+  method :=  'configState_getValues';
+  params := [ConfigIDsAsJsonArray, actualClient, WithDefaults];
+  LogErrorMessage := 'Warning: Could not get config state values from service (oswebservice: TOpsi4Data.getConfigStateValuesFromService)';
   Result := getJSONFromService(method, params, logErrorMessage);
 end;
 

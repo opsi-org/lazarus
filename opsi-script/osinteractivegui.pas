@@ -249,7 +249,6 @@ var
 
 
   toggle: boolean;
-  starttimestr: string;
 
 
 
@@ -742,7 +741,7 @@ begin
     LogDatei.log('', LLessential);
     LogDatei.log('', LLessential);
     Logdatei.Log('opsi-script ' + OpsiscriptVersion +
-      ' started at ' + starttimestr,
+      ' started at ' +  DateTimeToStr(Now),
       LLessential);
     Logdatei.log('opsi-script log file with encoding ' + DefaultEncoding, LLessential);
     Logdatei.Log('======= APPEND   ' + DateTimeToStr(Now), LLessential);
@@ -864,7 +863,7 @@ begin
     Logdatei.Log('', LLessential);
     Logdatei.Log('', LLessential);
     Logdatei.Log('opsi-script ' + OpsiscriptVersion +
-      ' started at ' + starttimestr,
+      ' started at ' +  DateTimeToStr(Now),
       LLessential);
     Logdatei.log('opsi-script log file with encoding ' + DefaultEncoding, LLessential);
     Logdatei.Log('======= APPEND   ' + DateTimeToStr(Now), LLessential);
@@ -932,7 +931,7 @@ begin
   if not Assigned(startupmessages) then startupmessages := TStringList.Create;
   startupmessages.Append('startmessage opsi-script created at CentralForm.FormCreate: ' +
     DateTimeToStr(Now));
-  startupmessages.Append('Detected Language is:' + GetDefaultLang);
+  startupmessages.Append('Detected Language is:' + SetDefaultLang(''));
   toggle := True;
   Memo1.Clear;
   Memo1.Lines.add('');
@@ -996,7 +995,7 @@ begin
   //lang := GetDefaultLang;
   lang := '';
   SetDefaultLang(lang, localedir);
-  startupmessages.Append('Detected Language is:' + GetDefaultLang +
+  startupmessages.Append('Detected Language is:' + SetDefaultLang('') +
     ' for: ' + ExtractFileName(ParamStrUTF8(0)) + ' from dir: ' + localedir);
   {$ENDIF LINUX}
 
@@ -1069,7 +1068,7 @@ begin
   MyMessageDlg.WiMessage('opsi-script  ' + OpsiscriptVersionName +
     LineEnding + 'Copyright (c) uib 1995 - 2021' + LineEnding +
     'opsi-script is AGPLv3 licensed Open Source software' + LineEnding +
-    'Detected Language: ' + GetDefaultLang + LineEnding + 'Internet homes: ' +
+    'Detected Language: ' + SetDefaultLang('') + LineEnding + 'Internet homes: ' +
     LineEnding + ' www.uib.de  ' + ' www.opsi.org  ',
     [mrOk]);
 end;
@@ -1157,6 +1156,5 @@ initialization
  {$i osinteractivegui.lrs}
 {$ELSE}
 {$ENDIF}
-
   opsiserviceSessionId := '';
 end.

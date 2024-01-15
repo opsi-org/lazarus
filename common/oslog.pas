@@ -611,7 +611,7 @@ begin
   end;
   {$IFDEF OPSISCRIPT}
   //LogDatei.FWriteHistFile:=true;
-  Logdatei.log('opsi-script ' + OpsiscriptVersion + ' started at >>' + starttimestr,
+  Logdatei.log('opsi-script ' + OpsiscriptVersion + ' started at >> ' + starttimestr,
     LLessential);
   Logdatei.log('opsi-script log file with encoding ' + DefaultEncoding, LLessential);
   for i := 0 to startupmessages.Count - 1 do

@@ -1,5 +1,7 @@
 unit OpsiLinuxInstaller_WelcomeForm;
 
+// Parent form for the first form shown by the installer, includes language selection.
+
 {$mode ObjFPC}{$H+}
 
 interface

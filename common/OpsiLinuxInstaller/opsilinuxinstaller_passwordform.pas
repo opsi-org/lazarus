@@ -1,5 +1,10 @@
 unit OpsiLinuxInstaller_PasswordForm;
 
+(*
+    Parent form to ask for the identification (sudo/root) and password of the user after the queries
+    since authentication is required for the installation process.
+*)
+
 {$mode ObjFPC}{$H+}
 
 interface

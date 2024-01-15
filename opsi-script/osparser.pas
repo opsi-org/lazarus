@@ -84,7 +84,7 @@ uses
   oszip,
   //DOM,
   //wixml,
-  //Process,
+  Process,
   fileutil,
   LazFileUtils,
   SysUtils,
@@ -348,8 +348,6 @@ type
     FtestSyntax: boolean;  // default=false ; if true then run syntax check
 
 
-    procedure ParseMultilineStatement(var linecounter: integer;
-      var remaining: string; var Sektion: TWorkSection);
     procedure parsePowershellCall(var Command: string; var AccessString: string;
       var HandlePolicy: string; var Option: string; var Remaining: string;
       var syntaxCheck: boolean; var InfoSyntaxError: string;
@@ -606,10 +604,7 @@ type
 {$IFDEF WINDOWS}
     function execPowershellCall(command: string; archparam: string;
       logleveloffset: integer; FetchExitCodePublic, FatalOnFail: boolean;
-      handle_policy: boolean): TStringList; overload;
-    function execPowershellCall(command: string; archparam: string;
-      logleveloffset: integer; FetchExitCodePublic, FatalOnFail: boolean;
-      handle_policy: boolean; optionstr: string): TStringList; overload;
+      optionstr: string = ''): TStringList; overload;
  {$ENDIF WINDOWS}
   end;
 
@@ -4733,12 +4728,19 @@ begin
       GetWord(key, key0, key, ['\']);
       LogDatei.log('Key0 is: ' + key0, LLdebug2);
       if (flag_all_ntuser or flag_ntuser or flag_all_usrclass or runLoginScripts) and
-        (('HKEY_CURRENT_USER' = UpperCase(key0)) or ('HKCU' = UpperCase(key0))) then
+        (('HKEY_CURRENT_USER' = UpperCase(key0)) or ('HKCU' = UpperCase(key0)) or ('HKEY_USERS' = UpperCase(key0)) or
+              ('HKU' = UpperCase(key0))) then
       begin
-        // remove HKCU from the beginning
-        key := key;
+        // remove HKCU/HKU from the beginning and update key accordingly
+        if runLoginScripts and not (flag_all_ntuser or flag_ntuser or flag_all_usrclass) then
+        begin
+          key := 'HKEY_CURRENT_USER\' + key;
+          key_completepath := key;
+        end
+        else
+          key := key;
         LogDatei.log('Running loginscripts: ignoring key0 : ' + key0 +
-          ', using only key : ' + key, LLdebug2);
+          ', using key : ' + key, LLdebug2);
       end
       else
         key := key_completepath;
@@ -5106,10 +5108,17 @@ begin
             LogDatei.log('Key0 is: ' + key0, LLdebug2);
             if (flag_all_ntuser or flag_ntuser or flag_all_usrclass or
               runLoginScripts) and (('HKEY_CURRENT_USER' = UpperCase(key0)) or
-              ('HKCU' = UpperCase(key0))) then
+              ('HKCU' = UpperCase(key0)) or ('HKEY_USERS' = UpperCase(key0)) or
+              ('HKU' = UpperCase(key0))) then
             begin
-              // remove HKCU from the beginning
-              key := key;
+              // remove HKCU/HKU from the beginning and update key accordingly
+              if runLoginScripts and not (flag_all_ntuser or flag_ntuser or flag_all_usrclass) then
+              begin
+                key := 'HKEY_CURRENT_USER\' + key;
+                key_completepath := key;
+              end
+              else
+                key := key;
               LogDatei.log('Running loginscripts: ignoring key0 : ' +
                 key0 + ', using only key : ' + key, LLdebug2);
             end
@@ -5659,10 +5668,6 @@ function TuibInstScript.doRegistryAllNTUserDats(const Sektion: TWorkSection;
   rfSelected: TRegistryFormat; const flag_force64: boolean): TSectionResult;
 
 var
-  //SearchPath : String='';
-  //SearchRec  : TSearchRec;
-  //findresult : Integer=0;
-
   profilename, profilepath: string;
   ProfileList: TStringList;
   hkulist: TStringList;
@@ -5670,6 +5675,7 @@ var
   pc: integer;
   domain: string = '';
   UserPath: string = '';
+  UserName: string = '';
   aktsidStr: string = '';
 
   Errorcode: integer = 0;
@@ -5677,6 +5683,7 @@ var
 
   StartWithErrorNumbers: integer = 0;
   StartWithWarningsNumber: integer = 0;
+  patchViaUsername: boolean = False;
 
   function LoadNTUserDat(const path: string): boolean;
   var
@@ -5707,9 +5714,9 @@ var
     else
     begin
       (* check if NTUser.dat is in use, since the specific user is logged in *)
-      LogDatei.log('Warning: NTUser.dat could not be loaded from path "' +
+      LogDatei.log('NTUser.dat could not be loaded from path "' +
         path + '". ' + 'Code ' + IntToStr(Errorcode) + ': ' +
-        RemoveLineBreaks(SysErrorMessage(Errorcode)), LLWarning);
+        RemoveLineBreaks(SysErrorMessage(Errorcode)), LLNotice);
       Result := False;
     end;
   end;
@@ -5751,38 +5758,40 @@ var
     end;
   end;
 
-  procedure workOnHkuserSid(const Name: string);
+  procedure workOnHkuserSid(const SID: string);
   var
     sidStr: string = '';
   begin
     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+    sidStr := SID;
+    LogDatei.log('sidStr : ' + sidStr, LLDebug);
 
-    //sidStr := GetLocalUserSidStr(GetUserNameEx_);
-    //LogDatei.log('sidStr :'+sidStr,LLDebug);
-    sidStr := GetLocalUserSidStr(Name);
-    LogDatei.log('sidStr :' + sidStr, LLDebug2);
-    sidStr := copy(sidStr, 2, length(sidStr) - 2);
-    LogDatei.log('sidStr :' + sidStr, LLDebug);
-
-
-    case rfSelected of
-      trfRegedit: doRegistryHackRegeditFormat(Sektion, 'HKEY_USERS\' +
-          sidStr, flag_force64);
-      trfWinst: doRegistryHack(Sektion, 'HKEY_USERS\' + sidStr, flag_force64);
-    end;
-
-    LogDatei.log('', LLDebug);
-    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
-
-    ErrorCode := RegFlushKey(HKEY_Users);
-
-    if Errorcode = Error_success then
-      LogDatei.log('Flushed', LLdebug)
+    if not RegKeyExists('HKEY_USERS\' + sidStr, flag_force64) then
+    begin
+      LogDatei.log('RegKey does not exists : HKU\' + sidStr +
+        ' - can not patch', LLError);
+    end
     else
     begin
-      LogDatei.log('Warning: Could not be flushed. Code ' +
-        IntToStr(Errorcode) + ': ' + RemoveLineBreaks(SysErrorMessage(Errorcode)),
-        LLWarning);
+      case rfSelected of
+        trfRegedit: doRegistryHackRegeditFormat(Sektion, 'HKEY_USERS\' +
+            sidStr, flag_force64);
+        trfWinst: doRegistryHack(Sektion, 'HKEY_USERS\' + sidStr, flag_force64);
+      end;
+
+      LogDatei.log('', LLDebug);
+      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
+
+      ErrorCode := RegFlushKey(HKEY_Users);
+
+      if Errorcode = Error_success then
+        LogDatei.log('Flushed', LLdebug)
+      else
+      begin
+        LogDatei.log('Warning: Could not be flushed. Code ' +
+          IntToStr(Errorcode) + ': ' + RemoveLineBreaks(SysErrorMessage(Errorcode)),
+          LLWarning);
+      end;
     end;
   end;
 
@@ -5794,10 +5803,13 @@ begin
   LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
 
   // mount the NTUser.dat in the users profile path , patch them and write them back
-  ProfileList := getProfilesDirList;
+  ProfileList := getProfilesListWin(tSID);
   for pc := 0 to ProfileList.Count - 1 do
   begin
-    profilepath := ProfileList.Strings[pc];
+    if ProfileList.Strings[pc] <> 'defaultprofile' then
+      profilepath := getProfileImagePathfromSid(ProfileList.Strings[pc])
+    else
+      profilepath := GetDefaultUsersProfilesPath;
     profilename := ExtractFileName(profilepath);
 
     LogDatei.log('', LLInfo);
@@ -5821,78 +5833,14 @@ begin
         end
         else
         begin
-          if (GetUserNameEx_ <> '') then
-          begin
-            hkulist := GetRegistryKeyList('HKU\', False);
-            for i := 0 to hkulist.Count - 1 do
-              LogDatei.log('found in hku  ' + hkulist.Strings[i], LLDebug2);
-            hkulist.Free;
-            aktsidStr := GetDomainUserSidS('', GetUserNameEx_, domain);
-            aktsidStr := copy(aktsidStr, 2, length(aktsidStr) - 2);
-            LogDatei.log('sid is: ' + aktsidStr, LLDebug2);
-            LogDatei.log('index is: ' + IntToStr(GetRegistryKeyList(
-              'HKU\', False).IndexOf(aktsidStr)), LLDebug2);
-            if (profilename = GetUserNameEx_) or
-              (profilepath = getProfileImagePathfromSid(
-              GetLocalUserSidStr(GetUserNameEx_))) or
-              (GetRegistryKeyList('HKU\', False).IndexOf(aktsidStr) > -1) then
-            begin
-              LogDatei.log('The Branch for :' + profilename +
-                ' seems to be the logged in user,', LLDebug);
-              LogDatei.log('so let us try to patch it via HKUsers\SID', LLDebug);
-              workOnHkuserSid(GetUserNameEx_);
-            end;
-          end
-          else
-          begin
-            // at XP we have problems to get the username while pcpatch is logged in
-            if GetSystemOSVersionInfoEx('major_version') = '5' then
-            begin
-              LogDatei.log('The Branch for :' + profilename +
-                ' may be the logged in user,', LLDebug);
-              LogDatei.log('so let us try to patch it via HKUsers\SID', LLDebug);
-              workOnHkuserSid(profilename);
-            end;
-          end;
+          LogDatei.log('NTUSER.dat locked for ' +
+            ProfileList.Strings[pc] + '. Thus it is loaded and we can work directly on it.', LLDebug);
+          workOnHkuserSid(ProfileList.Strings[pc]);
         end;
       end;
     end;
   end;
 
-   (*
-     findresult := findnext (SearchRec);
-   End;
-
-   sysutils.findclose (SearchRec);
-   *)
-
-
-  // Patch HKEY_Current_User
-
-  LogDatei.log('', LLinfo);
-  LogDatei.log('Make it for user .DEFAULT', LLinfo);
-  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
-  case rfSelected of
-    trfRegedit: doRegistryHackRegeditFormat(Sektion, 'HKEY_USERS\.DEFAULT',
-        flag_force64);
-    trfWinst: doRegistryHack(Sektion, 'HKEY_USERS\.DEFAULT', flag_force64);
-  end;
-
-  // do not to try the temporary pcpatch account or SYSTEM - sense less and may fail
-  if not ((GetUserName_ = 'pcpatch') or (GetUserName_ = 'SYSTEM')) then
-  begin
-    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
-    LogDatei.log('', LLinfo);
-    LogDatei.log('And finally: The current user: ' + GetUserName_ +
-      ' : ' + GetLocalUserSidStr(GetUserName_), LLInfo);
-    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
-
-    case rfSelected of
-      trfRegedit: doRegistryHackRegeditFormat(Sektion, 'HKEY_CURRENT_USER',
-          flag_force64);
-      trfWinst: doRegistryHack(Sektion, 'HKEY_CURRENT_USER', flag_force64);
-    end;
-  end;
 
   LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
 
@@ -5969,9 +5917,9 @@ var
     else
     begin
       (* check if UsrClass.dat is in use, since the specific user is logged in *)
-      LogDatei.log('Warning: UsrClass.dat could not be loaded from path "' +
+      LogDatei.log('UsrClass.dat could not be loaded from path "' +
         path + '". ' + 'Code ' + IntToStr(Errorcode) + ': ' +
-        RemoveLineBreaks(SysErrorMessage(Errorcode)), LLWarning);
+        RemoveLineBreaks(SysErrorMessage(Errorcode)), LLNotice);
       Result := False;
     end;
   end;
@@ -6013,17 +5961,13 @@ var
     end;
   end;
 
-  procedure workOnHkuserSid(const Name: string);
+  procedure workOnHkuserSid(const SID: string);
   var
     sidStr: string = '';
   begin
     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
 
-    //sidStr := GetLocalUserSidStr(GetUserNameEx_);
-    //LogDatei.log('sidStr :'+sidStr,LLDebug);
-    sidStr := GetLocalUserSidStr(Name);
-    LogDatei.log('sidStr :' + sidStr, LLDebug2);
-    sidStr := copy(sidStr, 2, length(sidStr) - 2);
+    sidStr := SID;
     LogDatei.log('sidStr :' + sidStr, LLDebug);
 
 
@@ -6056,10 +6000,13 @@ begin
   LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
 
   // mount the UsrClass.dat in the users profile path , patch them and write them back
-  ProfileList := getProfilesDirList;
+  ProfileList := getProfilesListWin(tSID);
   for pc := 0 to ProfileList.Count - 1 do
   begin
-    profilepath := ProfileList.Strings[pc];
+    if ProfileList.Strings[pc] <> 'defaultprofile' then
+      profilepath := getProfileImagePathfromSid(ProfileList.Strings[pc])
+    else
+      profilepath := GetDefaultUsersProfilesPath;
     profilename := ExtractFileName(profilepath);
 
     LogDatei.log('', LLInfo);
@@ -6087,76 +6034,11 @@ begin
         end
         else
         begin
-          if (GetUserNameEx_ <> '') then
-          begin
-            hkulist := GetRegistryKeyList('HKU\', False);
-            for i := 0 to hkulist.Count - 1 do
-              LogDatei.log('found in hku  ' + hkulist.Strings[i], LLDebug2);
-            hkulist.Free;
-            aktsidStr := GetDomainUserSidS('', GetUserNameEx_, domain);
-            aktsidStr := copy(aktsidStr, 2, length(aktsidStr) - 2);
-            LogDatei.log('sid is: ' + aktsidStr, LLDebug2);
-            LogDatei.log('index is: ' + IntToStr(GetRegistryKeyList(
-              'HKU\', False).IndexOf(aktsidStr)), LLDebug2);
-            if (profilename = GetUserNameEx_) or
-              (profilepath = getProfileImagePathfromSid(
-              GetLocalUserSidStr(GetUserNameEx_))) or
-              (GetRegistryKeyList('HKU\', False).IndexOf(aktsidStr) > -1) then
-            begin
-              LogDatei.log('The Branch for :' + profilename +
-                ' seems to be the logged in user,', LLDebug);
-              LogDatei.log('so let us try to patch it via HKUsers\SID', LLDebug);
-              workOnHkuserSid(GetUserNameEx_);
-            end;
-          end
-          else
-          begin
-            // at XP we have problems to get the username while pcpatch is logged in
-            if GetSystemOSVersionInfoEx('major_version') = '5' then
-            begin
-              LogDatei.log('The Branch for :' + profilename +
-                ' may be the logged in user,', LLDebug);
-              LogDatei.log('so let us try to patch it via HKUsers\SID', LLDebug);
-              workOnHkuserSid(profilename);
-            end;
-          end;
+          LogDatei.log('UsrClass.dat locked for ' +
+            ProfileList.Strings[pc] + '. Thus it is loaded and we can work directly on it.', LLDebug);
+          workOnHkuserSid(ProfileList.Strings[pc]);
         end;
       end;
-    end;
-  end;
-
-   (*
-     findresult := findnext (SearchRec);
-   End;
-
-   sysutils.findclose (SearchRec);
-   *)
-
-
-  // Patch HKEY_Current_User
-
-  LogDatei.log('', LLinfo);
-  LogDatei.log('Make it for user .DEFAULT', LLinfo);
-  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
-  case rfSelected of
-    trfRegedit: doRegistryHackRegeditFormat(Sektion, 'HKEY_USERS\.DEFAULT',
-        flag_force64);
-    trfWinst: doRegistryHack(Sektion, 'HKEY_USERS\.DEFAULT', flag_force64);
-  end;
-
-  // do not to try the temporary pcpatch account or SYSTEM - sense less and may fail
-  if not ((GetUserName_ = 'pcpatch') or (GetUserName_ = 'SYSTEM')) then
-  begin
-    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
-    LogDatei.log('', LLinfo);
-    LogDatei.log('And finally: The current user: ' + GetUserName_ +
-      ' : ' + GetLocalUserSidStr(GetUserName_), LLInfo);
-    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
-
-    case rfSelected of
-      trfRegedit: doRegistryHackRegeditFormat(Sektion, 'HKEY_CURRENT_USER',
-          flag_force64);
-      trfWinst: doRegistryHack(Sektion, 'HKEY_CURRENT_USER', flag_force64);
     end;
   end;
 
@@ -6852,15 +6734,19 @@ begin
               '\opsi.org\opsi-client-agent\opsiclientd\opsiclientd.conf';
             {$ENDIF WINDOWS}
             {$IFDEF UNIX}
-            opsiclientd_conf := '/etc/opsi/opsiclientd.conf';
-            {$ENDIF LINUX}
+            opsiclientd_conf := '/etc/opsi-client-agent/opsiclientd.conf';
+            {$ENDIF UNIX}
             if FileExists(opsiclientd_conf) then
             begin
+              LogDatei.log('Found opsiclientd.conf: '+ opsiclientd_conf, LLDebug2);
               myconf := TInifile.Create(opsiclientd_conf);
               password := myconf.ReadString('global', 'opsi_host_key', '');
               username := myconf.ReadString('global', 'host_id', '');
               myconf.Free;
-            end;
+            end
+            else
+              LogDatei.log('opsiclientd.conf does not exist or could not accessed at ' + opsiclientd_conf, LLError);
+
             if password = '' then
             begin
               stopIt := True;
@@ -9697,10 +9583,10 @@ begin
               then
               begin
                 s := Remaining;
-              end;
                 {$IFDEF UNIX}
                 logdatei.log('Option window_state is ignored at Linux', LLWarning);
                 {$ENDIF UNIX}
+              end;
               {$IFDEF WIN32}
               if s = '' then
                 link_showwindow := 0
@@ -10342,31 +10228,18 @@ end;
 {$IFDEF WINDOWS}
 function TuibInstScript.execPowershellCall(command: string; archparam: string;
   logleveloffset: integer; FetchExitCodePublic, FatalOnFail: boolean;
-  handle_policy: boolean): TStringList;
-begin
-  Result := execPowershellCall(command, archparam, logleveloffset,
-    FetchExitCodePublic, FatalOnFail, handle_policy, '');
-end;
-
-function TuibInstScript.execPowershellCall(command: string; archparam: string;
-  logleveloffset: integer; FetchExitCodePublic, FatalOnFail: boolean;
-  handle_policy: boolean; optionstr: string): TStringList;
+  optionstr: string = ''): TStringList;
 var
   commandline: string = '';
-  //fullps : string;
   runas: TRunAs;
-  //force64: boolean;
   oldDisableWow64FsRedirectionStatus: pointer = nil;
   output: TXStringList;
-  tmplist: TStringList;
-  //dummybool : boolean;
   filename: string = '';
   parameters: string = '';
   report: string = '';
   errorinfo: string = '';
   i: integer = 0;
   localExitCode: longint = 0;
-  org_execution_policy: string;
   mySektion: TWorkSection;
   ActionResult: TSectionResult;
   shortarch: string;  // for execShellCall
@@ -10378,7 +10251,6 @@ begin
     runAs := traInvoker;
     OldNumberOfErrors := LogDatei.NumberOfErrors;
     OldNumberOfWarnings := LogDatei.NumberOfWarnings;
-    //force64 := false;
     shortarch := 'sysnative';
     {$IFDEF GUI}
     if AutoActivityDisplay then
@@ -10397,22 +10269,6 @@ begin
     LogDatei.log('PowershellCall Executing: ' + command + ' ; mode: ' + shortarch,
       LLNotice + logleveloffset);
 
-
-    if handle_policy then // backup and set execution policy
-    begin
-      // backup
-      commandline := 'powershell.exe get-executionpolicy';
-      tmplist := execShellCall(commandline, shortarch, 1 + logleveloffset, False, True);
-      org_execution_policy := trim(tmplist[0]);
-      LogDatei.log('Powershell excution policy = ' + org_execution_policy, LLinfo);
-      if not (LowerCase(org_execution_policy) = LowerCase('AllSigned')) then
-      begin
-        // set (open)
-        commandline := 'powershell.exe set-executionpolicy ByPass';
-        tmplist := execShellCall(commandline, shortarch, 1 + logleveloffset,
-          False, True);
-      end;
-    end;
 
     mySektion := TWorkSection.Create(NestingLevel, ActiveSection);
     mySektion.Add('trap { write-output $_ ; exit 1 }');
@@ -10442,16 +10298,7 @@ begin
     Result.Text := output.Text;
     output.Free;
 
-    if handle_policy then // restore execution policy
-    begin
-      if not (LowerCase(org_execution_policy) = LowerCase('AllSigned')) then
-      begin
-        // set (close)
-        commandline := 'powershell.exe set-executionpolicy ' + org_execution_policy;
-        tmplist := execShellCall(commandline, shortarch, 1 + logleveloffset,
-          False, True);
-      end;
-    end;
+
   finally
     {$IFDEF GUI}
     FBatchOberflaeche.SetElementVisible(False, eActivityBar);//showAcitvityBar(False);
@@ -11390,7 +11237,6 @@ var
   force64: boolean;
   oldDisableWow64FsRedirectionStatus: pointer = nil;
   Wow64FsRedirectionDisabled, boolresult: boolean;
-  goon: boolean;
   remaining: string;
   expr: string = '';
   onlyWindows: boolean;
@@ -11399,17 +11245,15 @@ var
   use_sp: boolean;
   encodingString: string = '';
   InfoSyntaxError: string = '';
-
   usehookscript: boolean = False;
   hookscriptfile: string;
   exitcode: integer;
   myoutput: TXStringlist;
   powershellpara: string;
-  catcommand: string = 'cat ';
-  //useStdIn: boolean = False;
-  allSignedHack: boolean = False;
   tmplist: TStringList;
-  org_execution_policy: string = '';
+  ExecutionPolicy: string = '';
+  AllSignedHack: boolean = false;
+  catcommand: string = 'cat ';
 
 begin
   try
@@ -11568,33 +11412,49 @@ begin
         // so we shoud remove this (even for AllSigned hack)
         programparas := copy(programparas, 1, rpos(' -file', LowerCase(programparas)));
       end;
-      LogDatei.log('powershell programparas are now: ' + programparas, LLDebug2);
+      LogDatei.log('powershell powershell parameters are: ' + powershellpara, LLDebug);
+      LogDatei.log('powershell programparas are: ' + programparas, LLDebug2);
 
-      commandline := 'powershell.exe get-executionpolicy';
-      tmplist := execShellCall(commandline, 'sysnative', 1 + logleveloffset,
-        False, True);
-      org_execution_policy := trim(tmplist[0]);
-      if LowerCase(org_execution_policy) = LowerCase('AllSigned') then
+      if RunCommandAndCaptureOut('powershell.exe "Get-ExecutionPolicy -Scope MachinePolicy"' , True, output, report, showcmd, FLastExitCodeOfExe) then
       begin
+        ExecutionPolicy := output.Text;
+        output.Clear;
+        report := '';
+        ExecutionPolicy := trim(ExecutionPolicy);
+        LogDatei.log('Get execution policy for scope "MachinePolicy": ' + ExecutionPolicy, LLDebug);
+        if ((LowerCase(ExecutionPolicy) = LowerCase('AllSigned')) or
+          (LowerCase(ExecutionPolicy) = LowerCase('Restricted'))) then
+        begin
+          allSignedHack := True;
+          //useStdIn := True;
+          LogDatei.log('Powershell with AllSigned/Restricted detected - switching to Get-Content Mode',
+            LLinfo);
+          (*if trim(programparas) <> '' then
+            LogDatei.log('Powershell with AllSigned: ignored programparas: ' +
+              programparas, LLinfo);
+              *)
+          if trim(passparas) <> '' then
+            LogDatei.log('Powershell with AllSigned/Restricted: ignored passparas: ' +
+              passparas, LLinfo);
+        end;
+      end
+      else
+      begin
+        LogDatei.log('Could not get execution policy for scope "MachinePolicy": ' + ExecutionPolicy + ' - use Get-Content Mode', LLWarning);
         allSignedHack := True;
-        //useStdIn := True;
-        LogDatei.log('Powershell with AllSigned detected - switching to Get-Content Mode',
-          LLinfo);
-        (*if trim(programparas) <> '' then
-          LogDatei.log('Powershell with AllSigned: ignored programparas: ' +
-            programparas, LLinfo);
-            *)
         if trim(passparas) <> '' then
-          LogDatei.log('Powershell with AllSigned: ignored passparas: ' +
-            passparas, LLinfo);
+          LogDatei.log('Powershell ignored passparas: ' + passparas, LLwarning);
       end;
     end;
+
     //if useStdIn then
     if allSignedHack then
     begin
       //powershellpara := ' -command - ';
       powershellpara := ' -Command ';
     end;
+
+
     tempfilename := winstGetTempFileNameWithExt(useext);
 
     if not Sektion.FuncSaveToFile(tempfilename, encodingString) then
@@ -11719,7 +11579,7 @@ begin
 
       if use_sp then
       begin
-        LogDatei.log_prog('Executing with SP: ' + commandline, LLDebug);
+        LogDatei.log('Executing with SP: ' + commandline, LLDebug);
         if not StartProcess(Commandline, showcmd, showoutput, not
           threaded, False, False, False, False, runas, '', WaitSecs,
           Report, FLastExitCodeOfExe, catchout, output, Sektion.Name) then
@@ -11733,7 +11593,7 @@ begin
       end
       else
       begin
-        LogDatei.log_prog('Executing with RCACO:  ' + commandline, LLDebug);
+        LogDatei.log('Executing with RCACO:  ' + commandline, LLDebug);
         if not RunCommandAndCaptureOut(commandline, True, output,
           report, showcmd, FLastExitCodeOfExe) then
         begin
@@ -12074,7 +11934,7 @@ begin
         begin
           try
             FreeAndNil(list); //free list before assign new TXStringlist object to variable
-            list := TXStringList(execPowershellCall(s1, s2, 1, True, False, tmpbool, s4));
+            list := TXStringList(execPowershellCall(s1, s2, 1, True, False, s4));
           except
             on e: Exception do
             begin
@@ -16765,13 +16625,13 @@ begin
         if not testSyntax then
         begin
           try
-            execPowershellCall(s1, s2, 0, True, False, tmpbool, s4);
+            execPowershellCall(s1, s2, 0, True, False, s4);
             StringResult := IntToStr(FLastExitCodeOfExe);
           except
             on e: Exception do
             begin
               try
-                execPowershellCall(s1, s2, 0, True, False, tmpbool1, s4);
+                execPowershellCall(s1, s2, 0, True, False, s4);
                 StringResult := IntToStr(FLastExitCodeOfExe);
               except
                 on e: Exception do
@@ -21753,32 +21613,6 @@ begin
   end;
 end;
 
-procedure TuibInstScript.ParseMultilineStatement(var linecounter: integer;
-  var remaining: string; var Sektion: TWorkSection);
-var
-  addnextline: boolean = False;
-begin
-  // Handling of multiline statements
-  repeat
-    addnextline := False;
-    Remaining := Remaining + trim(Sektion.strings[linecounter - 1]);
-    LogDatei.log_prog('Readline: ' + Remaining, LLDebug2);
-    // if space or tab and backslash add the next line
-    if (EndsStr(' \', Remaining) or EndsStr(chr(9) + '\', Remaining)) then
-    begin
-      if not ContainsText(Remaining, 'escapestring') then //but not for escapestring
-      begin
-        addnextline := True;
-        Inc(linecounter);
-        Remaining := TrimRightSet(Remaining, ['\']);
-        LogDatei.log_prog('Readline addnext detected: ' + Remaining, LLDebug2);
-      end;
-    end;
-  until (not addnextline) or (linecounter > Sektion.Count);
-  //linecounter must not be out of bounds:
-  if (linecounter > Sektion.Count) then linecounter := Sektion.Count;
-end;
-
 procedure TuibInstScript.SetVariableWithErrors(const Sektion: TWorkSection;
   var Remaining: string; const Expressionstr: string; linecounter: integer;
   var InfoSyntaxError: string; var NestLevel: integer);
@@ -22218,10 +22052,8 @@ begin
     (((actionresult > tsrFatalError) and (FExtremeErrorLevel > levelfatal) and
       not scriptstopped) or testSyntax) do
   begin
-    Remaining := '';
-
-    ParseMultilineStatement(linecounter, remaining, Sektion);
-
+    //writeln(actionresult);
+    Remaining := trim(Sektion.strings[linecounter - 1]);
     // Replace constants on every line in primary section:
     ApplyTextConstantsToString(Remaining, False);
     logdatei.log_prog('Working doAktionen: Remaining:' + remaining, LLDebug2);
@@ -24450,8 +24282,13 @@ begin
                   syntaxCheck := True;
                 if syntaxCheck and not testSyntax then
                 begin
-                  LogDatei.log('set ActionProgress to: ' + Parameter, LLInfo);
-                  opsidata.setActionProgress(Parameter);
+                  if Assigned(opsidata) then
+                  begin
+                    opsidata.setActionProgress(Parameter);
+                    LogDatei.log('set ActionProgress to: ' + Parameter, LLInfo);
+                  end
+                  else
+                    LogDatei.log('Could not set ActionProgress to: ' + Parameter + ', probably no service connection available', LLWarning);
                 end;
               end;
 
@@ -24597,7 +24434,7 @@ begin
                 if syntaxCheck and not testSyntax then
                 begin
                   try
-                    execPowershellCall(s1, s2, 0, True, False, tmpbool, s4);
+                    execPowershellCall(s1, s2, 0, True, False, s4);
                   except
                     on e: Exception do
                     begin
@@ -25058,7 +24895,7 @@ begin
                     if not testSyntax then
                     begin
                       FExtremeErrorLevel := LevelFatal;
-                      LogDatei.log('Error level set to fatal', LLCritical);
+                      LogDatei.log('Error level set to fatal: '+ Parameter, LLCritical);
                       ActionResult := tsrFatalError;
                       LogDatei.ActionProgress := Parameter;
                       scriptstopped := True;

@@ -44,6 +44,7 @@ type
                      Hexadecimal);
 
   { TTOMLData }
+
   ETOMLData = class(Exception);
   TTOMLData = class
     private type
@@ -62,6 +63,8 @@ type
     private
       function GetItem(index: integer): TTOMLData; overload; virtual;
       function GetItem(key: TTOMLKeyType): TTOMLData; overload; virtual;
+      procedure SetItem(index: integer; item: TTOMLData); virtual; overload;
+      procedure SetItem(key: TTOMLKeyType; item: TTOMLData); virtual; overload; 
     public
       parent: TTOMLData;
     public
@@ -69,7 +72,7 @@ type
       function ToFloat: TTOMLFloat; virtual;
       function AsJSON: TJSONData; virtual;
       function Count: integer; virtual;
-      property Items[index: integer]: TTOMLData read GetItem; default;
+      property Items[index: integer]: TTOMLData read GetItem write SetItem; default;
       function GetEnumerator: TEnumerator;
   end;
   TTOMLDataList = specialize TFPGObjectList<TTOMLData>;
@@ -128,13 +131,14 @@ type
       offset: TTime;
     public
       constructor Create(localTime: TTime); overload;
+
       function ToString: ansistring; override;
       function AsJSON: TJSONData; override;
       function ToISO8601String(roundSeconds: boolean = true): string;
       function AsDateTime: TDateTime;
   end;
 
-  { TTOMContainer }
+  { TTOMLContainer }
 
   TTOMLContainer = class(TTOMLData);
   TTOMLContainerList = specialize TFPGList<TTOMLContainer>;
@@ -150,8 +154,10 @@ type
     public
       constructor Create;
       destructor Destroy; override;
+
       procedure Add(const value: TTOMLValueType); overload;
       procedure Add(const data: TTOMLData); overload;
+      
       function Last: TTOMLData;
       function AsJSON: TJSONData; override;
       function AsStrings: TStringList;
@@ -168,6 +174,7 @@ type
       m_name: string;
       function GetItem(key: TTOMLKeyType): TTOMLData; override;
       function GetItem(index: integer): TTOMLData; override;
+      procedure SetItem(key: TTOMLKeyType; item: TTOMLData); override;
       function GetKey(index: integer): TTOMLKeyType;
       function GetHeader : string;
     public
@@ -177,18 +184,19 @@ type
     public
       constructor Create(name: string = '');
       destructor Destroy; override;
-
+      
       function AsTOMLString: ansistring;
       function AsTOMLStringList: TStringList;
       procedure Insert(const key: String; const data: TTOMLData);
       procedure Insert(const key: String; const value: TTOMLValueType);
-      procedure Put(const key: String; const data: TTOMLData);
-      procedure Put(const key: String; const value: TTOMLValueType);
       procedure PutValue(const keyIndex: integer; const data: TTOMLData);
       procedure PutValue(const keyIndex: integer; const value: TTOMLValueType);
       procedure Remove(const key: String);
       procedure Add(const key: TTOMLKeyType; const value: TTOMLValueType); overload;
       procedure Add(const key: TTOMLKeyType; const data: TTOMLData); overload;
+      procedure Put(const key: String; const value: TTOMLValueType); overload;
+      procedure Put(const key: String; const data: TTOMLData); overload;
+
       function Find(const key: TTOMLKeyType): TTOMLData;
       function Contains(const key: TTOMLKeyType; dataType: TTOMLDataClass = nil): boolean;
       function AsJSON: TJSONData; override;
@@ -247,31 +255,47 @@ end;
 function TTOMLData.GetItem(index: integer): TTOMLData;
 begin
   Assert(false, ClassName+' doesn''t implement indexing');
+  result := nil;
 end;
 
 function TTOMLData.GetItem(key: TTOMLKeyType): TTOMLData;
 begin
   Assert(false, ClassName+' doesn''t implement keys');
+  result := nil;
+end;
+
+procedure TTOMLData.SetItem(index: integer; item: TTOMLData);
+begin
+  Assert(false, ClassName+' doesn''t implement setting by index');
+end;
+
+procedure TTOMLData.SetItem(key: TTOMLKeyType; item: TTOMLData);
+begin
+  Assert(false, ClassName+' doesn''t implement setting by key');
 end;
 
 function TTOMLData.Count: integer;
 begin
   Assert(false, ClassName+' doesn''t implement indexing');
+  result := 0;
 end;
 
 function TTOMLData.AsJSON: TJSONData;
 begin
   Assert(false, 'TOML data can''t be converted to JSON');
+  result := nil;
 end;
 
 function TTOMLData.ToInteger: integer;
 begin
   Assert(false, 'TOML data can''t be converted to integer');
+  result := 0;
 end;
 
 function TTOMLData.ToFloat: TTOMLFloat;
 begin
   Assert(false, 'TOML data can''t be converted to float');
+  result := 0;
 end;
 
 { TTOMLValue }
@@ -440,6 +464,7 @@ var
 begin
   result := TStringList.Create;
   for data in list do
+    //result.Add(AnsiString(data));
     result.Add(TTOMLValue(data).ToString);
 end;
 
@@ -481,6 +506,7 @@ function TTOMLArray.AsArray: TStringArray;
 var
   i: integer;
 begin
+  result := nil;
   SetLength(result, Count);
   for i := 0 to Count - 1 do
     result[i] := AnsiString(list[i]);
@@ -549,6 +575,11 @@ end;
 function TTOMLTable.GetItem(index: integer): TTOMLData;
 begin
   result := map.data[index];
+end;
+
+procedure TTOMLTable.SetItem(key: TTOMLKeyType; item: TTOMLData);
+begin
+  Put(key, item);
 end;
 
 function TTOMLTable.Count: integer;
@@ -680,14 +711,34 @@ begin
   Insert(key, TTOMLValue.Create(value));
 end;
 
-procedure TTOMLTable.Put(const key: String; const data: TTOMLData);
-begin
-  map.PutKeyData(key, data);
-end;
+
+
 
 procedure TTOMLTable.Put(const key: String; const value: TTOMLValueType);
 begin
   Put(key, TTOMLValue.Create(value));
+end;
+
+procedure TTOMLTable.Put(const key: String; const data: TTOMLData);
+var
+  index: integer;
+begin
+  data.parent := self;
+
+  // The behaviour of Find is undefined if the map is not sorted. For unsorted maps, use IndexOf instead.
+  // if map.Find(key, index) then
+  // d.oertel 11.9.2023
+  if map.Sorted then
+    map.Find(key, index)
+  else
+    index := map.IndexOf(key);
+  if index >= 0 then
+    begin
+      // replace existing item
+      map.data[index] := data;
+    end
+  else
+    map.Add(key, data);
 end;
 
 procedure TTOMLTable.PutValue(const keyIndex: integer; const data: TTOMLData);
@@ -712,6 +763,7 @@ begin
   data.parent := self;
   map.Add(key, data);
 end;
+
 
 procedure TTOMLTable.Add(const key: String; const value: TTOMLValueType);
 begin
@@ -758,6 +810,10 @@ begin
   m_name := name;
   defined := false;
   map := TTOMLDataMap.Create(true);
+  // sorting the map destroys the original structure of the file
+  // this is not a good idea, if we want to write the modifications back to file
+  // map.Sorted := true;
+  // d.oertel 11.9.2023
 end;
 
 destructor TTOMLTable.Destroy;

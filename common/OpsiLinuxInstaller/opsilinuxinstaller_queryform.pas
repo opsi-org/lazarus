@@ -1,5 +1,7 @@
 unit OpsiLinuxInstaller_QueryForm;
 
+// Parent form for all query forms.
+
 {$mode ObjFPC}{$H+}
 
 interface

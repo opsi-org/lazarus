@@ -825,7 +825,7 @@ var
 begin
   Result := '';
   list := TStringList.Create;
-  {$IFDEF UNIX}
+  {$IFDEF LINUX}
   str := getCommandResult('/bin/bash -c "ip -o -4 route get ' + target + ' || exit $?"');
   {$ENDIF}
   {$IFDEF DARWIN}

@@ -115,6 +115,12 @@ begin
     exitcode := RunCommandCaptureOutGetExitcode(cmd);
     if not which('ip', errstr) then result := false;
     *)
+  end
+  else
+  begin
+    cmd := 'chmod +x /usr/local/bin/ip';
+    exitcode := RunCommandCaptureOutGetExitcode(cmd);
+    if exitcode <> 0 then Result := False;
   end;
 end;
 

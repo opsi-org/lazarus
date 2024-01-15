@@ -99,6 +99,7 @@ uses
   osconf,
   FileUtil,
   LazFileUtils,
+  LazUTF8,
   SysUtils,
   Classes,
   synautil,
@@ -329,6 +330,20 @@ const
   MaxSavedScriptFiles = 20;
   StandardIniFile = 'opsi-script.ini';
 
+function ProgramModeToString(ProgramMode:TProgramMode):string;
+begin
+  case ProgramMode of
+    pmNotSet: Result := 'pmNotSet';
+    pmInfo: Result := 'pmInfo';
+    pmStandard: Result := 'pmStandard';
+    pmHistoDialog: Result := 'pmHistoDialog';
+    pmBuildPC_classic: Result := 'pmBuildPC_classic';
+    pmBuildPC_service: Result := 'pmBuildPC_service';
+    pmBatch:Result := 'pmBatch';
+    pmSilent: Result := 'pmSilent';
+    else Result := 'Unknown ProgramMode';
+  end;
+end;
 
 procedure saveVersionToProfile;
 var
@@ -830,6 +845,19 @@ begin
   end;
 end;
 
+procedure SetProductProgress(const Verfahren: TAction);
+begin
+  case Verfahren of
+    tacSetup: opsidata.setProductProgress('Installing');
+    tacDeinstall: opsidata.setProductProgress('Uninstalling');
+    tacOnce: opsidata.setProductProgress('Installing');
+    tacAlways: opsidata.setProductProgress('Installing');
+    tacCustom: opsidata.setProductProgress('Installing');
+    tacLogin: opsidata.setProductProgress('Installing');
+    tacUpdate: opsidata.setProductProgress('Installing');
+  end;
+end;
+
 
 procedure ProcessProdukt(var extremeErrorLevel: TErrorLevel);
 
@@ -925,6 +953,9 @@ begin
     else
       Verfahren := opsidata.getProductAction;
 
+    if Verfahren in [tacDeinstall, tacSetup, tacAlways] then
+      SetProductProgress(Verfahren);
+
     if Verfahren in [tacDeinstall, tacSetup, tacOnce, tacAlways,
       tacCustom, tacLogin] then
     begin
@@ -932,8 +963,6 @@ begin
       Logdatei.log('scriptname: "' + scriptname + '", special path: "' +
         pfad + '"', LLInfo);
       absscriptname := makeAbsoluteScriptPath(Pfad, scriptname);
-      if Verfahren = tacSetup then
-        opsidata.setProductState(tpsInstalling);
       if (Verfahren in [tacDeinstall, tacSetup, tacOnce, tacAlways, tacCustom]) or
         ((Verfahren = tacLogin) and (scriptname <> '')) then
         if not ProcessNonZeroScript(absscriptname, extremeErrorLevel)
@@ -1411,7 +1440,7 @@ begin
                     tmpstr + ').EncryptionPercentage';
                   tmplist.Text :=
                     buildpcscript.execPowershellCall(cmdstr, 'sysnative',
-                    0, True, False, True).Text;
+                    0, True, False).Text;
                   if buildpcscript.LastExitCodeOfExe = 0 then
                   begin
                     LogDatei.log('Succesful asked for Bitlocker', LLInfo);
@@ -1426,7 +1455,7 @@ begin
                         'Suspend-BitLocker -MountPoint "' +
                         tmpstr + '" -RebootCount 1';
                       buildpcscript.execPowershellCall(cmdstr,
-                        'sysnative', 0, True, False, True);
+                        'sysnative', 0, True, False);
                     end;
                   end
                   else
@@ -1792,7 +1821,7 @@ begin
         if extremeErrorLevel > levelfatal then
         begin
           //successful after setup
-          opsidata.ProductOnClient_update('',
+          opsidata.ProductOnClient_update(LogDatei.ActionProgress,
             tar4Successful,
             tac4None,
             ttc4Installed,
@@ -1802,7 +1831,7 @@ begin
         else //failed
         begin
           //failed after setup
-          opsidata.ProductOnClient_update('',
+          opsidata.ProductOnClient_update(LogDatei.ActionProgress,
             tar4Failed,
             tac4None,
             ttc4Installed,
@@ -1971,8 +2000,8 @@ begin
     {$MACRO ON}
     //(*  comment this block for code formatting
     startupmessages.Append(
-      'Compiled with FPC: ' + {$i %FPCVERSION%} + ' for: ' +
-      {$i %FPCTARGETOS%} + '-' + {$i %FPCTARGETCPU%});
+      'Compiled with FPC ' + {$i %FPCVERSION%} + ' for ' +
+      {$i %FPCTARGETOS%} + '-' + {$i %FPCTARGETCPU%} + ' at ' + {$i %TIME%} + ' on ' + {$i %DATE%});
     //*)
     {$MACRO OFF}
     //writeln('StartProgramModes4');
@@ -1981,9 +2010,8 @@ begin
     FBatchOberflaeche.SetBatchWindowMode(BatchWindowMode);
     //writeln('StartProgramModes5');
     {$ENDIF GUI}
-    LogDatei.log('pm: ' + IntToStr(Ord(ProgramMode)), LLessential);
-    startupmessages.Append('pm: ' + IntToStr(Ord(ProgramMode)) + ' ' +
-      DateTimeToStr(Now));
+    LogDatei.log('program mode: ' + ProgramModeToString(ProgramMode), LLessential);
+    startupmessages.Append('program mode: ' + ProgramModeToString(ProgramMode));
     sessionid := '';
 
     if ProgramMode = pmInfo then
@@ -2716,7 +2744,7 @@ begin
 
     for i := 1 to ParamCount do
     begin
-      teststr := reencode(ParamStr(i), 'system');
+      teststr := SysToUTF8(ParamStr(i));
       ParamListe.Add(teststr);
     end;
 
@@ -2999,7 +3027,6 @@ begin
                       ProgramMode := pmInfo;
                       exit;
                     end;
-
                     usercontext := opsiunQuotestr(trim(r), '"');
                     if (usercontext = '') or (usercontext = '\') then
                     begin
@@ -3010,7 +3037,6 @@ begin
                       inUsercontext := True;
                     Inc(i);
                   end
-
                   else
                   begin
                     ProgramMode := pmInfo;

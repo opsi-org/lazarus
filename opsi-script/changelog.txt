@@ -2,7 +2,53 @@ todo:
 isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-package-requires-a-reboot-of-my-system
 mac getIpByName liefert name von IPnum
 
-opsi-script (4.12.11.0) unreleased; urgency=medium
+
+opsi-script (4.12.12.2) unreleased (4.2/4.3); urgency=medium
+
+ * [change] osmain.pas: update the prodcut status/progress (ProductOnClient_updateObject) for action requests uninstall and always (j.werner, !199, 68c13bd5a6dac3e28becf21d4d148192fe677914)
+ * [change] osparser.pas: isFatalError: additional log the error message in the logfile (j.werner, 8efada26b0380c2e4c382ce711a80dd94be5132a)
+ * [update] opsi-script logging at startup now contains compile date information (j.werner, !200)
+ * [change] GetDefaultLang was depricated and is replaced by SetDefaultLang('') (d.oertel, j.werner, !201, 3daab47afb6470fccd89895255e3c28b32ed7fa5)
+ * [change/fix] Simplify and revise registry section/handling if modifier allntuserdats/allusrclasses are used and/or it is an userlogginscript (j.werner, !203)
+ * [fix] osfunclin.pas, osfuncmac.pas: fix for getting IP address under macos, function getMyIpByTarget (j.werner, !202)
+ * [update] ossslpaths.pas: also serach on MacOS ssl libs in the program directory (j.werner, 9ce415835a0aca49582832dc421b722da7b1a42c)
+ * [change] Revert "Merge branch 'os/feature/multiline_statements' into 'development'" due to problems and it was an hidden feature
+            uib#2023112817000102 — Bug in opsiscript ? - Vorsicht mit Sonderzeichen am Ende einer Kommentarzeile (j.werner, b7ec7afeb19eeec0eafa5cdfa48b90ed767a69d8)
+ * [update] Lazarus to Version 3.0
+
+-- j.werner <j.werner@uib.de> 12 Jan 2024
+
+
+opsi-script (4.12.12.1) experimenatl/testing (4.2/4.3); urgency=medium
+
+ * [fix] osparser.pas: correct path used to read opsiclientd.conf on Unix systems,
+         opsiservicecall modifier opsiclientd/opsiclientd-once (j.werner, !198)
+
+-- j.werner <j.werner@uib.de> 9 Nov 2023
+
+
+opsi-script (4.12.12.0) experimental (4.2/4.3); urgency=medium
+
+ * [fix] patch local NTUSER.dat if logged-in user is not found (d.oertel, !187)
+ * [fix] show an individual error message in report also for the event silent install (j.werner, !188)
+ * [fix] opsi-script will no longer run in an exception, if the setActionProgress command is used and no service is available (j.werner, !193)
+ * [change] use opsi 4.3 API method "configState_getValues"  to read configs from service  (j.werner, !189)
+ * [change] osparser.pas: powershellcall: remove unnecessary policy handling, update AllSigned hack (j.werner, !196)
+ * [change] replace deprecated method getProductProperties_hash with productPropertyState_getValues, opsi4.3 (j.werner, !197)
+ * [change] remove deprecated API method getProdcutIds_list, due to it is not used (j. werner, !195)
+ * [change] remove deprecated method getProductInstallationSatus_listOfHashes, due to it is not used (j. werner, !194)
+ * [update] fpTOML library (https://github.com/genericptr/fpTOML) (d.oertel, !184)
+
+-- j.werner <j.werner@uib.de> 3 Nov 2023
+
+opsi-script (4.12.11.1) testing (4.3)/unreleased (4.2); urgency=medium
+
+ * [new] opsi logo/corporate design (j.schneider, d.oertel, !186)
+ * [fix] oscertificates.pas: correct path for master ca-certificate file on suse distributions (j. werner, !182)
+
+-- j.werner <j.werner@uib.de> 25 Sept 2023
+
+opsi-script (4.12.11.0) stable; urgency=medium
 
  * [change] oswebservice.pas: update synapse to support openssl version 3 (j.werner, d.oertel, !173, #4809)
  * [new] oswebservice.pas: new functions to get an ordered product sequence from service:
