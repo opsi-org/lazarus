@@ -467,6 +467,12 @@ type
     function getConfigObjectsFromService(ConfigIDsAsJsonArray:string):string;
     function getConfigStateValuesFromService(ConfigIDsAsJsonArray:string; WithDefaults:string = 'true'):string;
     function getLogSize: int64;
+    // used by osd:
+    function getProductIds: TStringList;
+    // used by osd:
+    function getLocalbootProductIds: TStringList;
+    // used by osd:
+    function getNetbootProductIds: TStringList;
     function demandLicenseKey(const parameters: array of string; var errorOccured: boolean):string;
     {$IFNDEF SYNAPSE}
     function decreaseSslProtocol: boolean;
@@ -5538,6 +5544,80 @@ begin
   end;
 end;
 
+ function TOpsi4Data.getProductIds: TStringList;
+var
+  objectlist: TStringList;
+  omc: TOpsiMethodCall;
+  i: integer;
+  productEntry: ISuperObject;
+begin
+  omc := TOpsiMethodCall.Create('product_getIdents', ['dict']);
+  objectlist := FjsonExecutioner.getListResult(omc);
+  omc.Free;
+
+  Result := TStringList.Create;
+
+  for i := 0 to objectlist.Count - 1 do
+  begin
+    testresult := objectlist.Strings[i];
+    productEntry := SO(objectlist.Strings[i]);
+    if (productEntry.O['id'] <> nil) then
+    begin
+      testresult := productEntry.S['id'];
+      Result.add(testresult);
+    end;
+  end;
+end;
+
+function TOpsi4Data.getLocalbootProductIds: TStringList;
+var
+  objectlist: TStringList;
+  omc: TOpsiMethodCall;
+  i: integer;
+  productEntry: ISuperObject;
+begin
+  omc := TOpsiMethodCall.Create('product_getObjects', ['[]','{"type":"LocalbootProduct"}']);
+  objectlist := FjsonExecutioner.getListResult(omc);
+  omc.Free;
+
+  Result := TStringList.Create;
+
+  for i := 0 to objectlist.Count - 1 do
+  begin
+    testresult := objectlist.Strings[i];
+    productEntry := SO(objectlist.Strings[i]);
+    if (productEntry.O['id'] <> nil) then
+    begin
+      testresult := productEntry.S['id'];
+      Result.add(testresult);
+    end;
+  end;
+end;
+
+function TOpsi4Data.getNetbootProductIds: TStringList;
+var
+  objectlist: TStringList;
+  omc: TOpsiMethodCall;
+  i: integer;
+  productEntry: ISuperObject;
+begin
+  omc := TOpsiMethodCall.Create('product_getObjects', ['[]','{"type":"NetbootProduct"}']);
+  objectlist := FjsonExecutioner.getListResult(omc);
+  omc.Free;
+
+  Result := TStringList.Create;
+
+  for i := 0 to objectlist.Count - 1 do
+  begin
+    testresult := objectlist.Strings[i];
+    productEntry := SO(objectlist.Strings[i]);
+    if (productEntry.O['id'] <> nil) then
+    begin
+      testresult := productEntry.S['id'];
+      Result.add(testresult);
+    end;
+  end;
+end;
 
 
 function TOpsi4Data.demandLicenseKey(const parameters: array of string;
