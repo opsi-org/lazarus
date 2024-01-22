@@ -27,7 +27,7 @@
       <MinorVersionNr Value="12"/>
       <RevisionNr Value="12"/>
       <BuildNr Value="2"/>
-      <StringTable Comments="Compiled with Lazarus 2.2.6 / FPC 3.2.2" CompanyName="uib gmbh" FileDescription="opsi-script" InternalName="opsi-script" LegalCopyright="AGPL v3" LegalTrademarks="opsi, opsi.org, open pc server integration" OriginalFilename="opsi-script" ProductName="opsi" ProductVersion="4.3"/>
+      <StringTable Comments="Compiled with Lazarus 3.0 / FPC 3.2.2" CompanyName="uib gmbh" FileDescription="opsi-script" InternalName="opsi-script" LegalCopyright="AGPL v3" LegalTrademarks="opsi, opsi.org, open pc server integration" OriginalFilename="opsi-script" ProductName="opsi" ProductVersion="4.3"/>
     </VersionInfo>
     <BuildModes Count="18">
       <Item1 Name="default" Default="True"/>
@@ -251,15 +251,6 @@
 -dGUI
 -dSYNAPSE
 -dSSLPATH"/>
-            <OtherDefines Count="7">
-              <Define0 Value="OPSIWINST"/>
-              <Define1 Value="OPSISCRIPT"/>
-              <Define2 Value="GUI"/>
-              <Define3 Value="OSLOG"/>
-              <Define4 Value="SYNAPSE"/>
-              <Define5 Value="SSLPATH"/>
-              <Define6 Value="OSDEBUG"/>
-            </OtherDefines>
           </Other>
         </CompilerOptions>
       </Item5>
