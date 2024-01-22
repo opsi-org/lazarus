@@ -9,13 +9,18 @@ interface
 // https://forum.lazarus.freepascal.org/index.php?topic=52499.15
 
 uses
-  Classes, SysUtils, Zipper,
+  Classes, SysUtils,
+  // Merge-Request !206 FixFileNameEncoding: Codepage für Umlaute, standard Lazarus zipper.pp patched
+  Zipper in '..\external_libraries\modified\paszlib\changed\zipper.pp',
   fileutil,
   lazFileUtils, strutils,
   //{$IFDEF OSLOG}
   oslog,
   //{$ENDIF OSLOG}
-  LConvEncoding,
+
+  LConvEncoding,   // use encoding from lazutils
+  // osencoding,      // use encoding from opsiscript wrapper
+
   {$IFDEF GUI}
   osGUIControl,
   {$ENDIF GUI}
@@ -70,7 +75,7 @@ type
 function ZipWithDirStruct(sourcepath, searchmask, TargetFile: string): boolean;
 
 // Decompress a zip file while preserving its directory structure.
-function UnzipWithDirStruct(File2Unzip, TargetDir: string): boolean;
+function UnzipWithDirStruct(File2Unzip, TargetDir: string; codepage: string = 'cp437'): boolean;
 
 function getFileListFromZip(zipfilename: string): TStringList;
 
@@ -311,9 +316,12 @@ begin
 end;
 
 
+
+//*****************************************************************************
+
 // unzip to the target directory or to the zip file directory(if target Directory is not mentioned),
 // while preserving its directory structure.
-function UnzipWithDirStruct(File2Unzip, TargetDir: string): boolean;
+function UnzipWithDirStruct(File2Unzip, TargetDir: string; codepage: string = 'cp437'): boolean;
 var
   UnzipperObj: TUnzipperWithProgressHandler;
 begin
@@ -336,6 +344,46 @@ begin
           UnzipperObj.OutputPath := ExtractFileDir(File2Unzip)
         else
           UnzipperObj.OutputPath := TargetDir;
+
+        // UnzipperObj.UseUTF8 := false;
+        UnzipperObj.UseUTF8 := true;     // use UTF-8 Archive Filenames
+
+
+        //**********************************************************************
+        // filename codepage of archive files
+
+        UnzipperObj.codepage := codepage;
+
+        // UnzipperObj.codepage := 'cp437';  // DOS central europe (zip filename default)
+
+        // UnzipperObj.codepage := 'cp850';  // DOS western europe latin-1 (french)
+        // UnzipperObj.codepage := 'cp852';  // DOS central europe
+        // UnzipperObj.codepage := 'cp866';  // DOS and Windows console's cyrillic
+
+        // UnzipperObj.codepage := 'iso88591';  // central europe
+        // UnzipperObj.codepage := 'iso88592';  // eastern europe
+        // UnzipperObj.codepage := 'iso885915'; // western european languages
+
+        // UnzipperObj.codepage := 'cp1250'; // central europe
+        // UnzipperObj.codepage := 'cp1251'; // cyrillic
+        // UnzipperObj.codepage := 'cp1252'; // latin 1
+        // UnzipperObj.codepage := 'cp1253'; // greek
+        // UnzipperObj.codepage := 'cp1254'; // turkish
+        // UnzipperObj.codepage := 'cp1255'; // hebrew
+        // UnzipperObj.codepage := 'cp1256'; // arabic
+        // UnzipperObj.codepage := 'cp1257'; // baltic
+        // UnzipperObj.codepage := 'cp1258'; // vietnam
+
+        // UnzipperObj.codepage := 'cp874';  // thai
+        // UnzipperObj.codepage := 'cp932';  // japanese
+        // UnzipperObj.codepage := 'cp936';  // chinese
+        // UnzipperObj.codepage := 'cp949';  // korea
+        // UnzipperObj.codepage := 'cp950';  // chinese complex
+
+        // UnzipperObj.codepage := 'macintosh'; // Macintosh, alias Mac OS Roman
+        // UnzipperObj.codepage := 'koi8';      // russian cyrillic
+        //**********************************************************************
+
         UnzipperObj.Examine;
         UnzipperObj.UnZipAllFiles;
         Result := True;
@@ -346,7 +394,7 @@ begin
         Sleep(500);
         {$ENDIF OPSISCRIPT}
         {$ENDIF GUI}
-        UnzipperObj.Free;
+        UnZipperObj.Free;
       end;
     end;
   end;

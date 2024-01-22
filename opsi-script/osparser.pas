@@ -8148,7 +8148,10 @@ var
 
   Install: TuibFileInstall;
 
+
   procedure fileActionsMain(const Section: TXStringList; const presetDir: string);
+  const
+    defaultFilenameCodepage: string = 'cp437';  // for non UTF8 zipped filenames
   var
     i: integer = 0;
     j: integer = 0;
@@ -8162,6 +8165,7 @@ var
     go_on: boolean;
     tmpstr, searchmask: string;
     retryOnReboot: boolean = False;
+    FilenameCodepage: string = '';  // for non UTF8 zipped filenames
 
   begin
     targetDirectory := presetDir;
@@ -8727,14 +8731,44 @@ var
           if not GetString(Remaining, Expressionstr, Remaining, errorinfo, False)
           then
           begin
+            DivideAtFirst(' ', Remaining, Expressionstr,
+              remaining_with_leading_blanks);
+            Remaining := cutLeftBlanks(remaining_with_leading_blanks);
+          end;
+          Expressionstr := cutRightBlanks(cutLeftBlanks(Expressionstr));
+          Source := Expressionstr;
+          LogDatei.log('unzip source: ' + Source, lldebug3);
+          Source := ExpandFileNameUTF8(Source);
+
+          Remaining := cutLeftBlanks(Remaining);
+          if not GetString(Remaining, Expressionstr, Remaining, errorinfo, False)
+          then
+          begin
             DivideAtFirst(' ', remaining, Expressionstr,
               remaining_with_leading_blanks);
             remaining := cutLeftBlanks(remaining_with_leading_blanks);
           end;
+          Target := Expressionstr;
 
-          Source := Expressionstr;
-          LogDatei.log('unzip source: ' + Source, lldebug3);
-          Source := ExpandFileNameUTF8(Source);
+          // codepage as optional third parameter?
+          FilenameCodepage := defaultFilenameCodepage;
+          remaining := cutRightBlanks(cutLeftBlanks(remaining));
+          if remaining <> '' then
+          begin
+            if not GetString(Remaining, Expressionstr, Remaining, errorinfo, False)
+            then
+               Expressionstr := remaining;
+            if Expressionstr <> '' then
+            begin
+              Expressionstr := osNormalizeEncoding(Expressionstr);
+              if isSupportedEncoding(Expressionstr) then
+                 FilenameCodepage := Expressionstr
+              else
+                 LogDatei.log('UNZIPFILE: codepage ' + Expressionstr + ' not supported.', LLWarning);
+            end;
+          end;
+          LogDatei.log('non UTF8 filenames will be converted to UTF8 assuming codepage ' + FilenameCodepage, lldebug3);
+
 
           if not testSyntax then
           begin
@@ -8749,9 +8783,7 @@ var
 
             if syntaxcheck and go_on then
             begin
-              if not GetString(Remaining, Target, Remaining, errorinfo, False)
-              then
-                Target := Remaining;
+
               LogDatei.log('source: ' + Source + ' - target: ' + target, LLDebug3);
               target := trim(target);
               Target := opsiUnquoteStr(target, '"');
@@ -8777,7 +8809,7 @@ var
                 begin
                   LogDatei.log('we try to unzip: ' + Source + ' to ' + target, LLInfo);
                   try
-                    if UnzipWithDirStruct(Source, target) then
+                    if UnzipWithDirStruct(Source, target, FilenameCodepage) then
                       LogDatei.log('unzipped: ' + Source + ' to ' + target, LLInfo)
                     else
                       LogDatei.log('Failed to unzip: ' + Source +
