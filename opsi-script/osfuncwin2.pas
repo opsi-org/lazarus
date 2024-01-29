@@ -563,8 +563,11 @@ begin
   RefDomainSize := SizeOf(RefDomain);
   Sid := nil;
   FillChar(RefDomain, SizeOf(RefDomain), 0);
+  LookupAccountName(nil, PChar(UserName), Sid, SidSize, RefDomain,
+    RefDomainSize, Snu);
   Sid := AllocMem(SidSize);
   try
+    RefDomainSize := SizeOf(RefDomain);
     if LookupAccountName(nil, PChar(UserName), Sid, SidSize, RefDomain,
       RefDomainSize, Snu) then
       Result := GetSidStr(Sid);
