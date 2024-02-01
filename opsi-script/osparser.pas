@@ -11425,12 +11425,13 @@ begin
     // we need .ps1 as extension
     // we need to call the script with the parameter -file in order to get the exitcode
     // https://community.idera.com/database-tools/powershell/powertips/b/tips/posts/correctly-returning-exit-codes
-    if pos('powershell.exe', LowerCase(programfilename)) > 0 then
+    if (pos('powershell.exe', LowerCase(programfilename)) > 0)
+      or (pos('pwsh.exe', LowerCase(programfilename)) > 0) then
     begin
       powershellpara := ' -ExecutionPolicy ByPass -file ';
       useext := '.ps1';
     end;
-    if LowerCase(programfilename) = 'powershell' then
+    if (LowerCase(programfilename) = 'powershell') or (LowerCase(programfilename) = 'pwsh') then
     begin
       // we add '-file ' as last param for powershell
       powershellpara := ' -ExecutionPolicy ByPass -file ';
