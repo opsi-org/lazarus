@@ -8804,6 +8804,8 @@ var
                     ' is not a valid file directory', LLError);
                 end;
 
+                // AllFiles := getFileListFromZip(Source);
+
 
                 if SyntaxCheck and go_on then
                 begin
@@ -19086,10 +19088,10 @@ var
   // function for FileExists32
   function handleFileExists32(s1: string): boolean;
   begin
-    LogDatei.log('  Starting query if file exists ...', LLInfo);
     //s2 := TrimAndExpandFilename(s1);
     // call the osfunc.expandfilname to handle quotes
     s2 := Trim(ExpandFilename(s1));
+    LogDatei.log('  Starting query if file '+s2+' exists ...', LLInfo);
     OldWinapiErrorMode := SetErrorMode(SEM_FAILCRITICALERRORS);
     try
       try
@@ -19113,10 +19115,10 @@ var
   // function for FileExists64
   function handleFileExists64(s1: string): boolean;
   begin
-    LogDatei.log('  Starting query if file exists (64 Bit mode)...', LLInfo);
     //s2 := TrimAndExpandFilename(s1);
     // call the osfunc.expandfilname to handle quotes
     s2 := Trim(ExpandFilename(s1));
+    LogDatei.log('  Starting query if file '+s2+' exists (64 Bit mode)...', LLInfo);
     try
       if DSiDisableWow64FsRedirection(oldDisableWow64FsRedirectionStatus) then
       begin
@@ -19278,10 +19280,10 @@ begin
             {$IFDEF WINDOWS}
             BooleanResult := handleFileExists32(s1);
            {$ELSE WINDOWS}
-            LogDatei.log('Starting query if file exists ...', LLInfo);
             //s2 := TrimAndExpandFilename(s1);
             // call the osfunc.expandfilname to handle quotes
             s2 := Trim(ExpandFilename(s1));
+            LogDatei.log('Starting query if file '+s2+' exists ...', LLInfo);
             BooleanResult := FileExists(s2) or DirectoryExists(s2);
             if (not BooleanResult) and (not (trim(s2) = '')) then
             begin
@@ -19444,8 +19446,8 @@ begin
     begin
       if not testSyntax then
       begin
-        LogDatei.log('Starting query if directory exist ...', LLInfo);
         tmpstr := TrimAndExpandFilename(s1);
+        LogDatei.log('Starting query if directory '+tmpstr+' exists ...', LLInfo);
       {$IFDEF WIN32}
         try
           tmpbool1 := True;
