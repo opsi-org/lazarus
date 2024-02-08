@@ -217,8 +217,8 @@ opsi-laz-gui-test to binaryindex:
   script:
     - echo "deploy to binaryindex"
     - cd helper/opsi-laz-gui-test
-    - opsi-dev-tool -l info --binary-push /binarys/linux/opsi-laz-gui-test opsi-laz-gui-test linux x64 "${BINARY_VERSION}"
-    - opsi-dev-tool -l info --binary-push /binarys/mac/opsi-laz-gui-test opsi-laz-gui-test darwin x64 "${BINARY_VERSION}"
+    - opsi-dev-tool -l info --binary-push binarys/linux/opsi-laz-gui-test opsi-laz-gui-test linux x64 "${BINARY_VERSION}"
+    - opsi-dev-tool -l info --binary-push binarys/mac/opsi-laz-gui-test opsi-laz-gui-test darwin x64 "${BINARY_VERSION}"
 
 
 
