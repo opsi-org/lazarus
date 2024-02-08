@@ -69,7 +69,6 @@ compile opsi-script windows:
       - $PROJECT_REPOSITORY_PATH\compiler_out\binarys\x86_64-win64\
    
 
-
 compile opsi-script linux:
   stage: build
   tags:
@@ -91,7 +90,6 @@ compile opsi-script linux:
     name: "opsi-script $BINARY_VERSION linux"
     paths:
       - $PROJECT_REPOSITORY_PATH/compiler_out/binarys/x86_64-linux/
-
 
 
 compile opsi-script macos:
@@ -165,6 +163,64 @@ opsi-script to binaryindex:
     - opsi-dev-tool -l info --binary-push upload/lin64/opsi-script opsi-script-bin linux x64 "${VERSION}"
     - opsi-dev-tool -l info --binary-push upload/mac64/opsi-script opsi-script-bin darwin x64 "${VERSION}"
 
+#*********************************
+# opsi-laz-gui-test
+#*********************************
+
+compile opsi-laz-gui-test linux:
+  stage: build
+  tags:
+    - laz-linux
+  variables:
+    PROJECT_REPOSITORY_PATH: "helper/opsi-laz-gui-test"
+  rules:
+    - if: ($PROJECT_NAME == "opsiscript") && ($PLATFORM == "all" || $PLATFORM == "Linux")
+      when: always
+  script:
+    - LAZ_PROJECT_FILE=${PROJECT_REPOSITORY_PATH}/opsi_laz_gui_test.lpi
+    - echo "$LAZ_PROJECT_FILE"
+    - echo "Compiling opsi-laz-gui-testE for Linux"
+    - /usr/bin/lazbuild $LAZ_PROJECT_FILE --build-all --build-mode=Release
+    # - $BINARY_OUT_PATH = $PROJECT_NAME -eq "opsiscript")
+  artifacts:
+    name: "opsi-laz-gui-test linux"
+    paths:
+      - $PROJECT_REPOSITORY_PATH/binarys/linux/opsi-laz-gui-test
+
+
+compile opsi-laz-gui-test macos:
+  stage: build
+  tags:
+    - laz-macos
+  variables:
+    PROJECT_REPOSITORY_PATH: "helper/opsi-laz-gui-test"
+  rules:
+    - if: ($PROJECT_NAME == "opsi_laz_gui_test") && ($PLATFORM == "all" || $PLATFORM == "MacOS")
+      when: always
+  script:
+    #---BUILD BINARIES---
+    - LAZ_PROJECT_FILE=${PROJECT_REPOSITORY_PATH}/${PROJECT_NAME}.lpi
+    - echo "$LAZ_PROJECT_FILE"
+    - echo "Compiling $PROJECT_NAME for MacOS"
+    - /Library/Lazarus/lazbuild $LAZ_PROJECT_FILE --build-all --build-mode=Release_mac --ws=cocoa
+    # - $BINARY_OUT_PATH = $PROJECT_NAME -eq "opsiscript")
+  artifacts:
+    name: "opsi-laz-gui-test $BINARY_VERSION macos"
+    paths:
+      - $PROJECT_REPOSITORY_PATH/binarys/mac/opsi-laz-gui-test
+
+opsi-laz-gui-test to binaryindex:
+  stage: binaryindex
+  tags:
+    - laz-linux
+  when: manual
+  script:
+    - echo "deploy to binaryindex"
+    - cd helper/opsi-laz-gui-test
+    - opsi-dev-tool -l info --binary-push /binarys/linux/opsi-laz-gui-test opsi-laz-gui-test linux x64 "${VERSION}"
+    - opsi-dev-tool -l info --binary-push /binarys/mac/opsi-laz-gui-test opsi-laz-gui-test darwin x64 "${VERSION}"
+
+
 
 #***************************************#
 #  opsi-client-systray pipline                  #
@@ -174,7 +230,7 @@ compile opsi-client-systray windows:
   tags:
     - laz-win10
   variables:
-    PROJECT_REPOSITORY_PATH: "helper\\opsi-client-systray"
+    PROJECT_REPOSITORY_PATH: "helper/opsi-client-systray"
     BINARY_NAME: "opsi-client-systray"
   rules:
     - if: ($PROJECT_NAME == "opsi_client_systray") && ($PLATFORM == "all" || $PLATFORM == "Windows")
