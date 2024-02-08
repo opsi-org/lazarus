@@ -37,7 +37,7 @@ pull-binaries:
     post-script: []
     os: linux
     architecture: x64
-    version: 4.1.0.0
+    version: 4.3.0.0
     branch: development
     server-url: http://binaryindex.uib.gmbh
   - name: opsi-laz-gui-test
@@ -47,6 +47,6 @@ pull-binaries:
     post-script: []
     os: darwin
     architecture: x64
-    version: 4.1.0.0
+    version: 4.3.0.0
     branch: development
     server-url: http://binaryindex.uib.gmbh
