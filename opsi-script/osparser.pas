@@ -4732,13 +4732,13 @@ begin
               ('HKU' = UpperCase(key0))) then
       begin
         // remove HKCU/HKU from the beginning and update key accordingly
-        if runLoginScripts and not (flag_all_ntuser or flag_ntuser or flag_all_usrclass) then
-        begin
-          key := 'HKEY_CURRENT_USER\' + key;
-          key_completepath := key;
-        end
-        else
-          key := key;
+        //if runLoginScripts and not (flag_all_ntuser or flag_ntuser or flag_all_usrclass) then
+        //begin
+        //  key := 'HKEY_CURRENT_USER\' + key;
+        //  key_completepath := key;
+        //end
+        //else
+        key := key;
         LogDatei.log('Running loginscripts: ignoring key0 : ' + key0 +
           ', using key : ' + key, LLdebug2);
       end
@@ -5112,13 +5112,13 @@ begin
               ('HKU' = UpperCase(key0))) then
             begin
               // remove HKCU/HKU from the beginning and update key accordingly
-              if runLoginScripts and not (flag_all_ntuser or flag_ntuser or flag_all_usrclass) then
-              begin
-                key := 'HKEY_CURRENT_USER\' + key;
-                key_completepath := key;
-              end
-              else
-                key := key;
+              //if runLoginScripts and not (flag_all_ntuser or flag_ntuser or flag_all_usrclass) then
+              //begin
+              //  key := 'HKEY_CURRENT_USER\' + key;
+              //  key_completepath := key;
+              //end
+              //else
+              key := key;
               LogDatei.log('Running loginscripts: ignoring key0 : ' +
                 key0 + ', using only key : ' + key, LLdebug2);
             end
