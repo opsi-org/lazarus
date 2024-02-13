@@ -1,20 +1,21 @@
 object Form1: TForm1
-  Left = 580
-  Height = 96
-  Top = 179
-  Width = 127
+  Left = 828
+  Height = 1
+  Top = 428
+  Width = 1
   BorderIcons = []
   BorderStyle = bsNone
   Caption = 'Form1'
-  ClientHeight = 96
-  ClientWidth = 127
+  ClientHeight = 1
+  ClientWidth = 1
   OnShow = FormShow
-  LCLVersion = '2.2.4.0'
+  ShowInTaskBar = stNever
+  LCLVersion = '3.0.0.3'
   object Image1: TImage
     Left = 0
-    Height = 96
+    Height = 1
     Top = 0
-    Width = 127
+    Width = 1
     Align = alClient
     Picture.Data = {
       1754506F727461626C654E6574776F726B477261706869636142000089504E47
@@ -551,6 +552,7 @@ object Form1: TForm1
       B6996D66BB88DBFF07D5D6761A0E7C67530000000049454E44AE426082
     }
     Stretch = True
+    Visible = False
   end
   object Timer1: TTimer
     Enabled = False
