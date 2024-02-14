@@ -1,16 +1,16 @@
 object Form1: TForm1
   Left = 828
   Height = 1
-  Top = 428
+  Top = 27
   Width = 1
   BorderIcons = []
   BorderStyle = bsNone
-  Caption = 'Form1'
   ClientHeight = 1
   ClientWidth = 1
   OnShow = FormShow
   ShowInTaskBar = stNever
   LCLVersion = '3.0.0.3'
+  Visible = True
   object Image1: TImage
     Left = 0
     Height = 1
@@ -552,7 +552,6 @@ object Form1: TForm1
       B6996D66BB88DBFF07D5D6761A0E7C67530000000049454E44AE426082
     }
     Stretch = True
-    Visible = False
   end
   object Timer1: TTimer
     Enabled = False
