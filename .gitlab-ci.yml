@@ -141,7 +141,9 @@ opsi-script to binaryindex:
   stage: binaryindex
   tags:
     - laz-linux
-  when: manual
+  rules:
+    - if: ($PROJECT_NAME == "opsiscript")
+      when: manual
   script:
     - echo "deploy to binaryindex"
     - rm -rf upload
@@ -213,7 +215,9 @@ opsi-laz-gui-test to binaryindex:
   stage: binaryindex
   tags:
     - laz-linux
-  when: manual
+  rules:
+  - if: ($PROJECT_NAME == "opsi_laz_gui_test")
+    when: manual
   script:
     - echo "deploy to binaryindex"
     - cd helper/opsi-laz-gui-test
