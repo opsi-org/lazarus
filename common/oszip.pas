@@ -77,7 +77,7 @@ function ZipWithDirStruct(sourcepath, searchmask, TargetFile: string): boolean;
 // Decompress a zip file while preserving its directory structure.
 function UnzipWithDirStruct(File2Unzip, TargetDir: string; codepage: string = 'cp437'): boolean;
 
-function getFileListFromZip(zipfilename: string): TStringList;
+function getFileListFromZip(zipfilename: string; codepage: string = 'cp437'): TStringList;
 
 implementation
 
@@ -182,7 +182,7 @@ end;
 
 
 
-function getFileListFromZip(zipfilename: string): TStringList;
+function getFileListFromZip(zipfilename: string; codepage: string = 'cp437'): TStringList;
   // inspired by http://lazplanet.blogspot.com/2013/05/how-to-get-filesfolders-inside-zip-file.html
 var
   myunzip: TUnZipper;
@@ -192,12 +192,14 @@ begin
     try
       myunzip := TUnZipper.Create;
       myunzip.FileName := zipfilename;
+      myunzip.codepage := codepage;
       myunzip.Examine;
 
       Result := TStringList.Create;
       for i := 0 to myunzip.Entries.Count - 1 do
       begin
-        Result.Add(myunzip.Entries.Entries[i].ArchiveFileName);
+        // Result.Add(myunzip.Entries.Entries[i].ArchiveFileName);
+        Result.Add(myunzip.Entries.Entries[i].UTF8ArchiveFileName);
       end;
     except
     end;
