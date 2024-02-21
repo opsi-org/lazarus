@@ -23,7 +23,7 @@ Uses
   {$ENDIF}
 
   //*******************************************************************
-  // filename language encoding patch 1/10
+  // filename language encoding patch 1/15
   LConvEncoding,   // use encoding from lazutils
   //*******************************************************************
 
@@ -545,7 +545,7 @@ Type
     FUseUTF8    : Boolean;
 
     //*******************************************************************
-    // filename language encoding patch 2/10
+    // filename language encoding patch 2/15
     FCodepage   : RawByteString;       {codepage for filename encoding}
     //*******************************************************************
 
@@ -623,7 +623,7 @@ Type
     Property UseUTF8 : Boolean Read FUseUTF8 Write FUseUTF8;
 
     //*******************************************************************
-    // filename language encoding patch 3/10
+    // filename language encoding patch 3/15
     Property Codepage : RawByteString Read FCodepage Write FCodepage;
     //*******************************************************************
 
@@ -1606,7 +1606,7 @@ Begin
     Extract_Version_Reqd := 20; //default value, v2.0
     Bit_Flag := 0;
     //*******************************************************************
-    // filename language encoding patch 4/10
+    // filename language encoding patch 4/15
     Bit_Flag := Bit_Flag or EFS_LANGUAGE_ENCODING_FLAG;   // set filename UTF-8 Flag
     //*******************************************************************
     Compress_Method := 1;
@@ -2327,7 +2327,7 @@ Var
   Infozip_Unicode_Path_Ver:Byte;
   Infozip_Unicode_Path_CRC32:DWord;
   //*******************************************************************
-  // filename language encoding patch 5/10
+  // filename language encoding patch 5/15
   fUTF8valid : boolean;  // valid UTF8 filename found from bitflag or extended field entry?
   encoded    : boolean;  // encoding from ConvertEncodingToUTF8() successful?
   //*******************************************************************
@@ -2342,7 +2342,7 @@ Begin
     begin
 
       //*******************************************************************
-      // filename language encoding patch 6/10
+      // filename language encoding patch 6/15
       fUTF8valid := false;
       //*******************************************************************
 
@@ -2353,7 +2353,7 @@ Begin
         SetCodePage(S, CP_UTF8, False);
 
       //*******************************************************************
-      // filename language encoding patch 7/10
+      // filename language encoding patch 7/15
       if Bit_Flag and EFS_LANGUAGE_ENCODING_FLAG <> 0 then
         fUTF8valid := true;  // detected that filename is marked as UTF8
       //*******************************************************************
@@ -2396,7 +2396,7 @@ Begin
                   Item.UTF8DiskFileName:=U;
 
                   //*******************************************************************
-                  // filename language encoding patch 8/10
+                  // filename language encoding patch 8/15
                   fUTF8valid := true;  // UTF8 filename found in ExtraField
                   //*******************************************************************
 
@@ -2421,7 +2421,7 @@ Begin
       AMethod:=Compress_method;
 
       //*******************************************************************
-      // filename language encoding patch 9/10
+      // filename language encoding patch 9/15
       if fUTF8valid = false then
         begin
         // no valid UTF8 filename found
@@ -2598,6 +2598,11 @@ Var
   // infozip unicode path
   Infozip_unicode_path_ver : byte; // always 1
   Infozip_unicode_path_crc32 : DWord;
+  //*******************************************************************
+  // filename language encoding patch 10/15
+  fUTF8valid : boolean;  // valid UTF8 filename found from bitflag or extended field entry?
+  encoded    : boolean;  // encoding from ConvertEncodingToUTF8() successful?
+  //*******************************************************************
 Begin
   FindEndHeaders(EndHdr, EndHdrPos,
     EndZip64Hdr, EndZip64HdrPos);
@@ -2642,6 +2647,11 @@ Begin
       begin
       if Signature<>CENTRAL_FILE_HEADER_SIGNATURE then
         raise EZipError.CreateFmt(SErrCorruptZIP,[FileName]);
+      //*******************************************************************
+      // filename language encoding patch 11/15
+      fUTF8valid := false;
+      //*******************************************************************
+
       NewNode:=FEntries.Add as TFullZipFileEntry;
       // Header position will be corrected later with zip64 version, if needed..
       NewNode.HdrPos := Local_Header_Offset;
@@ -2650,6 +2660,13 @@ Begin
       FZipStream.ReadBuffer(S[1],Filename_Length);
       if Bit_Flag and EFS_LANGUAGE_ENCODING_FLAG <> 0 then
         SetCodePage(S, CP_UTF8, False);
+
+      //*******************************************************************
+      // filename language encoding patch 12/15
+      if Bit_Flag and EFS_LANGUAGE_ENCODING_FLAG <> 0 then
+        fUTF8valid := true;  // detected that filename is marked as UTF8
+      //*******************************************************************
+
       SavePos:=FZipStream.Position; //After fixed part of central directory...
       // and the filename; before any extra field(s)
       NewNode.ArchiveFileName:=S;
@@ -2704,8 +2721,12 @@ Begin
               if CRC32Str(S)=Infozip_unicode_path_crc32 then
                 begin
                 SetLength(U,ExtraFieldHeader.Data_Size-5);
-				FZipStream.ReadBuffer(U[1],Length(U));
+                FZipStream.ReadBuffer(U[1],Length(U));
                 NewNode.UTF8ArchiveFileName:=U;
+                //*******************************************************************
+                // filename language encoding patch 13/15
+                fUTF8valid := true;  // UTF8 filename found in ExtraField
+                //*******************************************************************
                 end
               else
                 FZipStream.Seek(ExtraFieldHeader.Data_Size-5,soFromCurrent);
@@ -2720,6 +2741,24 @@ Begin
             end;
           end;
         end;
+
+        //*******************************************************************
+        // filename language encoding patch 14/15
+        if fUTF8valid = false then
+          begin
+          // no valid UTF8 filename found
+          // => convert from 8bit codepage to UTF8
+          s := NewNode.ArchiveFileName;
+          // s := CP437ToUTF8(s);
+          s := ConvertEncodingToUTF8(s, codepage, encoded);
+          if encoded = true then
+            begin
+              NewNode.UTF8ArchiveFileName:=s;
+              NewNode.UTF8DiskFileName:=s;
+            end;
+          end;
+      //*******************************************************************
+
       // Move past extra fields and file comment to next header
       if File_Comment_Length > 0 then
           FZipStream.Seek(File_Comment_Length,soFromCurrent);
@@ -3144,7 +3183,7 @@ begin
   FOnPercent:=1;
 
   //*******************************************************************
-  // filename language encoding patch 10/10
+  // filename language encoding patch 15/15
   // default codepage of 8bit archive filenames
 
   FCodepage := 'cp437';  // DOS central europe (zip filename default)
