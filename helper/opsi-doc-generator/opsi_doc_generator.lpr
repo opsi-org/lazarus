@@ -13,7 +13,8 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
   FileUtil,
   oslog,
   LCLIntf,
-  odg_main;
+  odg_main,
+  lazfileutils;
 
 type
   { opsidocgenerator }

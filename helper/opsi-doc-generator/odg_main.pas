@@ -19,7 +19,8 @@ uses
   process,
   LCLIntf,
   Classes,
-  SysUtils;
+  SysUtils,
+  lazfileutils;
 
 function convertOslibToAsciidoc(): boolean;
 function convertPylibToAsciidoc(): boolean;
