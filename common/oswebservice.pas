@@ -1265,7 +1265,10 @@ begin
   FResultLines := TStringList.Create;
   FErrorInfo := TStringList.Create;
   {$IFDEF OPSISCRIPT}
-  createSocket(osconf.selfProductName + ' / ' + osconf.OpsiscriptVersion, ip, port);
+  if agent = '' then
+    createSocket(osconf.selfProductName + ' / ' + osconf.OpsiscriptVersion, ip, port)
+  else
+    createSocket(agent, ip, port);
   {$ELSE OPSIWINST}
     {$IFDEF OCASIMP}
   createSocket('ocasimp ', ip, port);
