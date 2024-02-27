@@ -6241,7 +6241,7 @@ var
   username: string = '';
   password: string = '';
   sessionid: string = '';
-  UserAgent: string = '';
+  UserAgent: string = 'opsiServiceCall';
   r: string = '';
   Expressionstr: string = '';
   param: string = '';
@@ -6273,6 +6273,16 @@ var
 
 begin
   try
+    // set user agent to the product calling the opsiserviecall
+    try
+      if Assigned(opsidata) then
+        opsidata.setUserAgent(opsidata.getActualProductName + ' (opsiservicecall)');
+    except
+      on ex: Exception do
+      begin
+        LogDatei.log('Exception in doOpsiServiceCall: setting user agent' + ex.message, LLError);
+      end;
+    end;
     // initializing
     tmplist := TStringList.Create;
     Result := tsrPositive;
@@ -6575,7 +6585,7 @@ begin
                   local_opsidata := TOpsi4Data(opsidata);
                 LogDatei.log_prog('Calling opsi service at ' +
                   local_opsidata.serviceUrl, LLDebug);
-                UserAgent := local_opsidata.getActualProductId + ' (opsiservcicall:global)';
+                UserAgent := local_opsidata.getActualProductName + ' (opsiservciecall:global)';
               except
                 errorOccured := True;
                 testresult := 'not in service mode';
@@ -6594,7 +6604,7 @@ begin
             begin
               LogDatei.log_prog('Calling opsi service at ' +
                 local_opsidata.serviceUrl, LLDebug);
-              UserAgent := local_opsidata.getActualProductId + ' (opsiservcicall:reuse)';
+              UserAgent := local_opsidata.getActualProductName + ' (opsiservciecall:reuse)';
             end;
           end;
 
@@ -6606,7 +6616,7 @@ begin
               if opsiServiceVersion = '4' then
               begin
                 local_opsidata := TOpsi4Data.Create;
-                UserAgent := local_opsidata.getActualProductId + ' (opsiservcicall:login)';
+                UserAgent := local_opsidata.getActualProductName + ' (opsiservciecall:login)';
                 local_opsidata.initOpsiConf(serviceurl, username, password, sessionid, '', '', UserAgent);
                 //Topsi4data(local_opsidata).initOpsiConf(serviceurl, username, password);
                 //OpsiData.setOptions (opsiclientd_serviceoptions);
@@ -6663,7 +6673,7 @@ begin
                 if opsiServiceVersion = '4' then
                 begin
                   local_opsidata := TOpsi4Data.Create;
-                  UserAgent := local_opsidata.getActualProductId + ' (opsiservcicall:InteractiveLogin)';
+                  UserAgent := local_opsidata.getActualProductName + ' (opsiservciecall:InteractiveLogin)';
                   local_opsidata.initOpsiConf(serviceurl, username, password, sessionid, '', '', UserAgent);
                   //Topsi4data(local_opsidata).initOpsiConf(serviceurl, username, password);
                   //OpsiData.setOptions (opsiclientd_serviceoptions);
@@ -6710,7 +6720,7 @@ begin
                 if opsiServiceVersion = '4' then
                 begin
                   local_opsidata := TOpsi4Data.Create;
-                  UserAgent := local_opsidata.getActualProductId + ' (opsiservcicall:InteractiveLogin)';
+                  UserAgent := local_opsidata.getActualProductName + ' (opsiservciecall:InteractiveLogin)';
                   local_opsidata.initOpsiConf(serviceurl, username, password, sessionid, '', '', UserAgent);
                   omc := TOpsiMethodCall.Create('backend_info', []);
                   testresult := local_opsidata.CheckAndRetrieve(omc, errorOccured);
@@ -6762,7 +6772,7 @@ begin
             else
             begin
               local_opsidata := TOpsi4Data.Create;
-              UserAgent := local_opsidata.getActualProductId + ' (opsiservcicall:opsiclientd)';
+              UserAgent := local_opsidata.getActualProductName + ' (opsiservciecall:opsiclientd)';
               local_opsidata.initOpsiConf(serviceurl, username, password, '', '', '', UserAgent);
               omc := TOpsiMethodCall.Create('backend_info', []);
               testresult := local_opsidata.CheckAndRetrieve(omc, errorOccured);
@@ -6893,6 +6903,17 @@ begin
       end;
 
     end; // testsyntax
+
+    try
+      // after opsiservicecall set user agent back to opsi-script
+      if Assigned(opsidata) then
+        opsidata.setUserAgent(osconf.selfProductName + ' / ' + osconf.OpsiscriptVersion);
+    except
+      on ex: Exception do
+      begin
+        LogDatei.log('Exception in doOpsiServiceCall: setting user agent' + ex.message, LLError);
+      end;
+    end;
 
     // finishing our section
     finishSection(Sektion, OldNumberOfErrors, OldNumberOfWarnings,
