@@ -4146,7 +4146,7 @@ end;
 procedure TOpsi4Data.setUserAgent(UserAgent: string);
 begin
   try
-    if Assigned(FjsonExecutioner) then
+    if Assigned(FJsonExecutioner) then
       if Assigned(FJsonExecutioner.HTTPSender) then
         FJsonExecutioner.HTTPSender.UserAgent := UserAgent;
   except
@@ -5794,7 +5794,9 @@ end;
 function TOpsi4Data.getActualProductName: string;
 begin
   if Assigned(Productvars) then
-     Result := Productvars.Values['name'];
+     Result := Productvars.Values['name']
+  else
+     Result := '';
 end;
 
 function TOpsi4Data.getActualProductProductVersion: string;
