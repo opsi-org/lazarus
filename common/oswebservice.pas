@@ -507,6 +507,7 @@ type
     function getOpsiServiceMethods(allow_deprecated : boolean) : TStringlist;
     // is a given method well known:
     function isMethodProvided(Method : string): boolean;
+    procedure setUserAgent(UserAgent:string);
     { properties }
     //property sslProtocol: TIdSSLVersion read FSslProtocol write FSslProtocol;
     property serviceUrl: string read FServiceURL;
@@ -1265,7 +1266,10 @@ begin
   FResultLines := TStringList.Create;
   FErrorInfo := TStringList.Create;
   {$IFDEF OPSISCRIPT}
-  createSocket(osconf.selfProductName + ' / ' + osconf.OpsiscriptVersion, ip, port);
+  if agent = '' then
+    createSocket(osconf.selfProductName + ' / ' + osconf.OpsiscriptVersion, ip, port)
+  else
+    createSocket(agent, ip, port);
   {$ELSE OPSIWINST}
     {$IFDEF OCASIMP}
   createSocket('ocasimp ', ip, port);
@@ -4139,6 +4143,17 @@ begin
   end;
 end;
 
+procedure TOpsi4Data.setUserAgent(UserAgent: string);
+begin
+  try
+    if Assigned(FJsonExecutioner) then
+      if Assigned(FJsonExecutioner.HTTPSender) then
+        FJsonExecutioner.HTTPSender.UserAgent := UserAgent;
+  except
+     LogDatei.log('Exeception while setting user agent', LLerror);
+  end;
+end;
+
 function TOpsi4Data.isConnected: boolean;
 var
   omc: TOpsiMethodCall;
@@ -5778,7 +5793,10 @@ end;
 
 function TOpsi4Data.getActualProductName: string;
 begin
-  Result := Productvars.Values['name'];
+  if Assigned(Productvars) then
+     Result := Productvars.Values['name']
+  else
+     Result := '';
 end;
 
 function TOpsi4Data.getActualProductProductVersion: string;
