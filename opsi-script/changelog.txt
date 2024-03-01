@@ -28,7 +28,7 @@ opsi-script (4.12.13.0) unreleased/stable (4.2/4.3); urgency=medium
 -- j.werner <j.werner@uib.de> 09 Feb 2024
 
 
-opsi-script (4.12.12.1) experimenatl/testing (4.2/4.3); urgency=medium
+opsi-script (4.12.12.1) stable/stable (4.2/4.3); urgency=medium
 
  * [fix] osparser.pas: correct path used to read opsiclientd.conf on Unix systems,
          opsiservicecall modifier opsiclientd/opsiclientd-once (j.werner, !198)
