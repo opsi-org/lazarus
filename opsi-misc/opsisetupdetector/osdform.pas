@@ -84,6 +84,7 @@ type
     BtCreateEmptyTemplateMac: TBitBtn;
     BtCreateEmptyTemplateMulti: TBitBtn;
     BtCreateEmptyTemplateWin: TBitBtn;
+    BtCreateEmptyTemplateWithUserWin: TBitBtn;
     BtCreateMeta: TBitBtn;
     BtnOpenIconFolder: TBitBtn;
     BitBtnAddProp: TBitBtn;
@@ -429,6 +430,7 @@ type
     procedure BtATwonalyzeAndCreateClick(Sender: TObject);
     procedure BtCreateEmptyTemplateMultiClick(Sender: TObject);
     procedure BtCreateEmptyTemplateWinClick(Sender: TObject);
+    procedure BtCreateEmptyTemplateWithUserWinClick(Sender: TObject);
     procedure BtCreateEmptyTemplateLinClick(Sender: TObject);
     procedure BtCreateEmptyTemplateMacClick(Sender: TObject);
     procedure BtCreateMetaClick(Sender: TObject);
@@ -1016,7 +1018,7 @@ begin
       TabSheetCreate.Enabled := True;
       BtSetup1NextStep.Enabled := True;
     end;
-    createTemplate:
+    createTemplate, createTemplateWithUser:
     begin
       TabSheetStart.Enabled := True;
       TabSheetAnalyze.Enabled := False;
@@ -1898,8 +1900,8 @@ begin
     gmUnknown:
     begin
       // we should never be here
-      logdatei.log('Error: in BtSetup1NextStepClick osdsettings.runmode: gmUnknown',
-        LLError);
+      logdatei.log('Error: in BtSetup1NextStepClick osdsettings.runmode: '
+      +GetEnumName(TypeInfo(TRunMode), ord(osdsettings.runmode)), LLError);
     end;
   end;
 end;
@@ -2659,6 +2661,25 @@ begin
   aktProduct.productdata.description := 'A template for opsi products for Windows';
 end;
 
+procedure TResultform1.BtCreateEmptyTemplateWithUserWinClick(Sender: TObject);
+begin
+  osdsettings.runmode := createTemplateWithUser;
+  setRunMode;
+  MemoAnalyze.Clear;
+  PageControl1.ActivePage := resultForm1.TabSheetProduct;
+  Application.ProcessMessages;
+  initaktproduct;
+  makeProperties;
+  resultform1.updateGUI;
+  aktProduct.productdata.targetOSset := [osWin];
+  aktProduct.productdata.productId := 'opsi-template-with-ueser';
+  aktProduct.productdata.productName := 'opsi template for Windows - Install with user';
+  aktProduct.productdata.productversion := '1.0.0';
+  aktProduct.productdata.packageversion := 1;
+  aktProduct.productdata.description := 'A template for opsi products for Windows - Install with user';
+end;
+
+
 procedure TResultform1.BtCreateEmptyTemplateMacClick(Sender: TObject);
 begin
   begin
@@ -2792,6 +2813,7 @@ begin
         'Error: in BtProductNextStepClick RunMode: analyzeOnly', LLError);
     end;
     createTemplate,
+    createTemplateWithUser,
     createMultiTemplate,
     singleAnalyzeCreate,
     analyzeCreateWithUser,
@@ -2804,17 +2826,12 @@ begin
       PageControl1.ActivePage := resultForm1.TabSheetCreate;
       Application.ProcessMessages;
     end;
-    createMeta:
+    createMeta, gmUnknown:
     begin
       // we should never be here
       logdatei.log(
-        'Error: in BtProductNextStepClick RunMode: gmUnknown', LLError);
-    end;
-    gmUnknown:
-    begin
-      // we should never be here
-      logdatei.log(
-        'Error: in BtProductNextStepClick RunMode: gmUnknown', LLError);
+        'Error: in BtProductNextStepClick RunMode: '
+        +GetEnumName(TypeInfo(TRunMode), ord(osdsettings.runmode)), LLError);
     end;
   end;
 end;
@@ -2845,6 +2862,7 @@ begin
       analyzeCreateWithUser,
       createMeta,
       createTemplate,
+      createTemplateWithUser,
       createMultiTemplate,
       singleAnalyzeCreate,
       twoAnalyzeCreate_1,
@@ -2860,8 +2878,8 @@ begin
       gmUnknown:
       begin
         // we should never be here
-        logdatei.log(
-          'Error: in BtProductNextStepClick RunMode: gmUnknown', LLError);
+        logdatei.log('Error: in BtProductNextStepClick RunMode: '
+                     +GetEnumName(TypeInfo(TRunMode), ord(osdsettings.runmode)), LLError);
       end;
     end;
   end;
@@ -2870,13 +2888,15 @@ end;
 procedure TResultform1.BtProduct2NextStepClick(Sender: TObject);
 begin
   case osdsettings.runmode of
-    analyzeOnly:
+    analyzeOnly, gmUnknown:
     begin
       // we should never be here
-      logdatei.log('Error: in BtProductNextStepClick RunMode: analyzeOnly', LLError);
+      logdatei.log('Error: in BtProductNextStepClick RunMode: '
+      +GetEnumName(TypeInfo(TRunMode), ord(osdsettings.runmode)), LLError);
     end;
     analyzeCreateWithUser,
     createTemplate,
+    createTemplateWithUser,
     createMultiTemplate,
     singleAnalyzeCreate,
     twoAnalyzeCreate_1,
@@ -2893,11 +2913,6 @@ begin
     begin
       PageControl1.ActivePage := resultForm1.TabSheetCreate;
       Application.ProcessMessages;
-    end;
-    gmUnknown:
-    begin
-      // we should never be here
-      logdatei.log('Error: in BtProductNextStepClick RunMode: gmUnknown', LLError);
     end;
   end;
 end;
@@ -2978,24 +2993,12 @@ begin
         if not installerselected then
           BtSetup2NextStepClick(Sender);
       end;
-      createTemplate:
+      createTemplate, createTemplateWithUser, createMeta, gmUnknown:
       begin
         // we should never be here
         logdatei.log(
-          'Error: in BtSetup1NextStepClick RunMode: createTemplate', LLError);
-      end;
-      createMeta:
-      begin
-        // we should never be here
-        logdatei.log(
-          'Error: in BtSetup1NextStepClick RunMode: createMeta', LLError);
-      end;
-
-      gmUnknown:
-      begin
-        // we should never be here
-        logdatei.log(
-          'Error: in BtSetup1NextStepClick RunMode: gmUnknown', LLError);
+          'Error: in BtSetup1NextStepClick RunMode: '
+          +GetEnumName(TypeInfo(TRunMode), ord(osdsettings.runmode)), LLError);
       end;
     end;
   end;
@@ -3020,22 +3023,14 @@ begin
   if checkok then
   begin
     case osdsettings.runmode of
-      analyzeOnly:
+      analyzeOnly, singleAnalyzeCreate,analyzeCreateWithUser,
+      createTemplate,
+      createTemplateWithUser,
+      createMeta, gmUnknown:
       begin
         // we should never be here
-        logdatei.log('Error: in BtSetup2NextStepClick RunMode: analyzeOnly', LLError);
-      end;
-      singleAnalyzeCreate:
-      begin
-        // we should never be here
-        logdatei.log('Error: in BtSetup2NextStepClick RunMode: singleAnalyzeCreate',
-          LLError);
-      end;
-      analyzeCreateWithUser:
-      begin
-        // we should never be here
-        logdatei.log('Error: in BtSetup2NextStepClick RunMode: analyzeCreateWithUser',
-          LLError);
+        logdatei.log('Error: in BtSetup2NextStepClick RunMode: '
+        +GetEnumName(TypeInfo(TRunMode), ord(osdsettings.runmode)), LLError);
       end;
       twoAnalyzeCreate_2:
       begin
@@ -3103,23 +3098,6 @@ begin
         else
           BtSetup3NextStepClick(Sender);
       end;
-      createTemplate:
-      begin
-        // we should never be here
-        logdatei.log('Error: in BtSetup1NextStepClick RunMode: createTemplate', LLError);
-      end;
-      createMeta:
-      begin
-        // we should never be here
-        logdatei.log(
-          'Error: in BtSetup1NextStepClick RunMode: createMeta', LLError);
-      end;
-
-      gmUnknown:
-      begin
-        // we should never be here
-        logdatei.log('Error: in BtSetup2NextStepClick RunMode: gmUnknown', LLError);
-      end;
     end;
   end;
 end;
@@ -3141,50 +3119,20 @@ begin
   begin
 
     case osdsettings.runmode of
-      analyzeOnly:
+      analyzeOnly, singleAnalyzeCreate,analyzeCreateWithUser,
+      twoAnalyzeCreate_2,
+      createTemplate,
+      createTemplateWithUser,
+      createMeta, gmUnknown:
       begin
         // we should never be here
-        logdatei.log('Error: in BtSetup2NextStepClick RunMode: analyzeOnly', LLError);
-      end;
-      singleAnalyzeCreate:
-      begin
-        // we should never be here
-        logdatei.log('Error: in BtSetup2NextStepClick RunMode: singleAnalyzeCreate',
-          LLError);
-      end;
-      analyzeCreateWithUser:
-      begin
-        // we should never be here
-        logdatei.log('Error: in BtSetup2NextStepClick RunMode: analyzeCreateWithUser',
-          LLError);
-      end;
-      twoAnalyzeCreate_2:
-      begin
-        // we should never be here
-        logdatei.log('Error: in BtSetup2NextStepClick RunMode: singleAnalyzeCreate',
-          LLError);
+        logdatei.log('Error: in BtSetup2NextStepClick RunMode:'
+        +GetEnumName(TypeInfo(TRunMode), ord(osdsettings.runmode)), LLError);
       end;
       threeAnalyzeCreate_3:
       begin
         PageControl1.ActivePage := resultForm1.TabSheetProduct;
         Application.ProcessMessages;
-      end;
-      createTemplate:
-      begin
-        // we should never be here
-        logdatei.log('Error: in BtSetup1NextStepClick RunMode: createTemplate', LLError);
-      end;
-      createMeta:
-      begin
-        // we should never be here
-        logdatei.log(
-          'Error: in BtSetup1NextStepClick RunMode: createMeta', LLError);
-      end;
-
-      gmUnknown:
-      begin
-        // we should never be here
-        logdatei.log('Error: in BtSetup2NextStepClick RunMode: gmUnknown', LLError);
       end;
     end;
   end;

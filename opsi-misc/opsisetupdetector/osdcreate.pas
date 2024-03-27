@@ -311,7 +311,7 @@ begin
     pre_id := 'mac';
   if (osMulti in aktProduct.productdata.targetOSset) then
     pre_id := 'multi';
-  if (osdsettings.runmode = analyzeCreateWithUser) then
+  if (osdsettings.runmode in [analyzeCreateWithUser, createTemplateWithUser]) then
     pre_id := 'with-user';
 
   try
@@ -654,7 +654,7 @@ begin
     pre_id := 'mac';
   if (osMulti in aktProduct.productdata.targetOSset) then
     pre_id := 'multi';
-  if (osdsettings.runmode = analyzeCreateWithUser) then
+  if (osdsettings.runmode in [analyzeCreateWithUser, createTemplateWithUser]) then
     pre_id := 'with-user';
 
   try
@@ -718,7 +718,7 @@ begin
           infilelist.Add('mac_delinctempl.opsiinc');
           infilelist.Add('mac_uninstalltempl.opsiscript');
         end;
-        analyzeCreateWithUser:
+        analyzeCreateWithUser, createTemplateWithUser:
         begin
           infilelist.Add('setup.opsiscript');
           infilelist.Add('sections.opsiinc');
@@ -773,7 +773,7 @@ begin
           begin
             infilelist.Add('declarations.opsiinc');
           end;
-          analyzeCreateWithUser:
+          analyzeCreateWithUser, createTemplateWithUser:
           begin
           end;
         end;
@@ -811,7 +811,7 @@ begin
             infilelist.Add('declarations.opsiinc');
             infilelist.Add('sections.opsiinc');
           end;
-          analyzeCreateWithUser:
+          analyzeCreateWithUser, createTemplateWithUser:
           begin
           end;
         end;
@@ -866,14 +866,14 @@ begin
             infilelist.Add('declarations.opsiinc');
             infilelist.Add('sections.opsiinc');
           end;
-          analyzeCreateWithUser:
+          analyzeCreateWithUser, createTemplateWithUser:
           begin
           end;
         end;
       end;
 
-      // we did it for analyzeCreateWithUser right now
-      if not (osdsettings.runmode = analyzeCreateWithUser) then
+      // we did it for analyzeCreateWithUser, createTemplateWithUser right now
+      if not (osdsettings.runmode in [analyzeCreateWithUser, createTemplateWithUser]) then
         for i := 0 to infilelist.Count - 1 do
         begin
           tmpname := ExtractFileNameOnly(infilelist.Strings[i]);
@@ -918,11 +918,11 @@ begin
 
       subdir := '';
       // at 'with user' we need osd-lib also at the 'localsetup' dir
-      if osdsettings.runmode = analyzeCreateWithUser then
+      if osdsettings.runmode in [analyzeCreateWithUser, createTemplateWithUser] then
         subdir := pathdelim + 'localsetup';
       // No need to copy installer for templates or Meta
       if not (osdsettings.runmode in [createTemplate, createMultiTemplate,
-        createMeta]) then
+        createTemplateWithUser, createMeta]) then
         // loop over setups
         for i := 0 to 2 do
         begin
@@ -978,7 +978,7 @@ begin
         copyfile(infilename, outfilename, [cffOverwriteFile,
           cffCreateDestDirectory, cffPreserveTime], True);
         // at 'with user' we need osd-lib also at the base dir (without subdir)
-        if osdsettings.runmode = analyzeCreateWithUser then
+        if osdsettings.runmode in [analyzeCreateWithUser, createTemplateWithUser] then
         begin
           outfilename := clientpath + PathDelim + 'osd-lib.opsiscript';
           copyfile(infilename, outfilename, [cffOverwriteFile,

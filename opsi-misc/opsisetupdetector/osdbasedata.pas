@@ -33,7 +33,7 @@ type
     singleAnalyzeCreate, twoAnalyzeCreate_1,
     twoAnalyzeCreate_2, createTemplate, threeAnalyzeCreate_1,
     threeAnalyzeCreate_2, threeAnalyzeCreate_3, createMultiTemplate, createMeta,
-    analyzeCreateWithUser, gmUnknown);
+    analyzeCreateWithUser, createTemplateWithUser, gmUnknown);
 
   TTemplateChannels = (training, default, structured, custom);
 
@@ -1263,7 +1263,8 @@ begin
   // start 'with-user' properties
 
   propexists := aktProduct.properties.propExists('copy_files_locally');
-  if (myrunmode = analyzeCreateWithUser) and not propexists then
+  if (myrunmode in [analyzeCreateWithUser, createTemplateWithUser])
+    and not propexists then
   begin
     myprop := TPProperty(aktProduct.properties.add);
     myprop.init;
@@ -1276,7 +1277,8 @@ begin
   end;
 
   propexists := aktProduct.properties.propExists('debug');
-  if (myrunmode = analyzeCreateWithUser) and not propexists then
+  if (myrunmode  in [analyzeCreateWithUser, createTemplateWithUser])
+    and not propexists then
   begin
     myprop := TPProperty(aktProduct.properties.add);
     myprop.init;
@@ -1290,7 +1292,8 @@ begin
   end;
 
   propexists := aktProduct.properties.propExists('uninstall_before_install');
-  if (myrunmode = analyzeCreateWithUser) and not propexists then
+  if (myrunmode  in [analyzeCreateWithUser, createTemplateWithUser])
+    and not propexists then
   begin
     myprop := TPProperty(aktProduct.properties.add);
     myprop.init;
@@ -1304,7 +1307,8 @@ begin
 
 
   propexists := aktProduct.properties.propExists('execution_method');
-  if (myrunmode = analyzeCreateWithUser) and not propexists then
+  if (myrunmode  in [analyzeCreateWithUser, createTemplateWithUser])
+    and not propexists then
   begin
     myprop := TPProperty(aktProduct.properties.add);
     myprop.init;
