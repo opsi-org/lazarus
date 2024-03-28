@@ -4384,7 +4384,7 @@ object resultForm1: TresultForm1
                 FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
                 FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00
               }
-              OnClick = BtCreateEmptyTemplateWinClick
+              OnClick = BtCreateEmptyTemplateWithUserWinClick
               ParentFont = False
               TabOrder = 6
             end
@@ -11513,10 +11513,10 @@ object resultForm1: TresultForm1
                 TIOptions = [tgoStartIndexAtOne, tgoShowOnlyProperties]
                 ColWidths = (
                   64
-                  132
-                  131
-                  131
-                  131
+                  136
+                  136
+                  135
+                  135
                 )
               end
               object PanelDepBtns: TPanel
@@ -11939,10 +11939,10 @@ object resultForm1: TresultForm1
                 TIOptions = [tgoStartIndexAtOne, tgoShowOnlyProperties]
                 ColWidths = (
                   64
-                  245
-                  245
-                  244
-                  244
+                  249
+                  249
+                  249
+                  248
                 )
               end
             end

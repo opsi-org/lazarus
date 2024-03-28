@@ -148,6 +148,7 @@ todo:
 
 ### Added
 - new task: template-with-loggedin-user (createTemplateWithUser)
+- disable checkboxes for 'with user': desktopicon, customdir install_from_local
 
 ## [4.3.1.4-1] - 2024-01-17
 
