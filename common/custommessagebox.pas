@@ -292,24 +292,67 @@ begin
   end;
 end;
 
+
+// Seconds will be converted to hh:mm:ss
+function ConvertToTimeFormatIfSeconds(Timeout: String): String;
+const
+  SecPerHour = 3600;
+  SecPerMinute = 60;
+var ms, ss, mm, hh: Cardinal;
+  Seconds: Cardinal;
+  newTimeout: string;
+begin
+  // check if Timeout is given as hh:mm:ss or as seconds
+  if Pos(':',Timeout) = 0 then
+  begin
+    // no ':' found => assume Timeout is given in seconds, convert to hh:mm:ss
+    // see https://www.swissdelphicenter.ch/en/showcode.php?id=1163
+    try
+      Seconds := StrToInt(Timeout);
+      hh :=  Seconds div SecPerHour;                    // hours
+      mm := (Seconds mod SecPerHour) div SecPerMinute;  // minutes
+      ss := (Seconds mod SecPerHour) mod SecPerMinute;  // seconds
+      ms := 0;                                          // milliseconds
+
+      if hh > 23 then
+      begin
+        newTimeout := '23:59:59';
+        LogDatei.log('maximum timeout is ' + newTimeout,LLWarning);
+      end
+      else
+      begin
+        newTimeout := FormatDateTime('hh:mm:ss', EncodeTime(hh, mm, ss, ms));
+      end;
+      Timeout := newTimeout;
+    except
+       LogDatei.log('converting MessageBox timeout from seconds "' + Timeout +
+            '" to hh:mm:ss failed.',LLWarning)
+    end;
+  end;
+  Result := Timeout;
+end;
+
+
 // The timeout must have the format hh:mm:ss
 procedure CheckTimeFormat(var Timeout: string);
 begin
   if not ((Timeout.Length = 'hh:mm:ss'.Length) and isRegexMatch(Timeout,
-    '[0-9][0-9]:[0-5][0-9]:[0-5][0-9]')) then
+    '(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]')) then
   begin
     LogDatei.log('The string "' + Timeout +
-      '" does not match the required time format hh:mm:ss for the timeout! ' +
+      '" does not match the required time format hh:mm:ss (max 23:59:59) for the timeout! ' +
       'Therefore we will show the message box without timeout.',
       LLError);
     Timeout := '00:00:00';
   end;
 end;
 
+
 procedure TCustomMessageForm.ShowBox(Title: string;
   Message: TStringList; Buttons: TStringList; TimeoutMessage: string; Timeout: string);
 begin
   CheckNumberOfButtons(Buttons);
+  Timeout := ConvertToTimeFormatIfSeconds(Timeout);
   CheckTimeFormat(Timeout);
 
   CenterFormOnScreen(self);
