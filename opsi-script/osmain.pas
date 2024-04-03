@@ -2388,7 +2388,7 @@ begin
                       omc.Free;
                       *)
                     opsidata.setActualProductName(batchproductid);
-                    opsidata.setActualClient(opsiserviceUser);
+                    opsidata.setActualClient(opsiserviceClientId);
                     ProductvarsForPC := opsidata.getProductproperties;
                     if not opsidata.initProduct then
                     begin
@@ -2476,6 +2476,49 @@ begin
           end;
 
 
+          //*****************************************************************************************
+          // Are we in batch with /productid (opsi-template-with-admin) ?  or /ServiceBatch (part 1)
+          //*****************************************************************************************
+          // we have to read the logging configuration from the service now and
+          // configure logging, before the opsi-script is being processed.
+
+          if (runningAsAdmin and (not (batchproductid = ''))) or
+            ((not (batchproductid = '')) and batchUpdatePOC and not
+            (opsidata = nil)) then
+          begin
+            try
+              if batchUpdatePOC and not (opsidata = nil) then
+              begin
+                // we are in /serviceBatch mode and get logging parameters from service
+                LogDatei.log(readConfigsFromService, LLessential);
+
+                LogDatei.force_min_loglevel := osconf.force_min_loglevel;
+                LogDatei.debug_prog := osconf.debug_prog;
+                LogDatei.LogLevel := osconf.default_loglevel;
+                LogDatei.debug_lib := osconf.debug_lib;
+                LogDatei.WriteComponentFile := osconf.configWriteProductLogFile;
+                LogDatei.log('serviceBatch force_min_loglevel: ' + IntToStr(osconf.force_min_loglevel),LLessential);
+                LogDatei.log('serviceBatch default_loglevel: ' + IntToStr(osconf.default_loglevel),LLessential);
+                LogDatei.log('serviceBatch debug_prog: ' + booleantostr(osconf.debug_prog), LLessential);
+                LogDatei.log('serviceBatch debug_lib: ' + booleantostr(osconf.debug_lib), LLessential);
+              end
+            except
+              on e: Exception do
+              begin
+                LogDatei.log(
+                  'exception in StartProgramModes: [pmBatch, pmSilent]: reg.Write: with-admin-fatal '
+                  + e.message, LLError);
+
+                {$IFDEF WINDOWS}
+                SystemCritical.IsCritical := False;
+                {$ENDIF WINDOWS}
+              end;
+            end;
+          end;
+
+          //***************************************************************
+          //** processing the opsi-script ...
+          //***************************************************************
           if extremeErrorLevel <> levelFatal then
           begin
             for scriptindex := 0 to scriptlist.Count - 1 do
@@ -2495,7 +2538,14 @@ begin
             end;
           end;
 
-          // Are we in batch with /productid (opsi-template-with-admin) ?  or /ServiceBatch
+          //*****************************************************************************************
+          // Are we in batch with /productid (opsi-template-with-admin) ?  or /ServiceBatch  (part 2)
+          //*****************************************************************************************
+          // At this point it would be too late to get and configure the logging,
+          // because the opsi-script has already been processed above in CreateAndProcessScript.
+          // So the logging has been configured in  "/ServiceBatch (part 1)" above.
+          // This part has to be done AFTER processing the opsi-script file:
+
           if (runningAsAdmin and (not (batchproductid = ''))) or
             ((not (batchproductid = '')) and batchUpdatePOC and not
             (opsidata = nil)) then
@@ -2504,6 +2554,7 @@ begin
               if batchUpdatePOC and not (opsidata = nil) then
               begin
                 // we are in /serviceBatch mode and so we have to update the productOnClient via service
+
                 LogDatei.log('serviceBatch: update switches .....', LLDebug);
                 if (PerformExitWindows < txrImmediateLogout) and
                   (not scriptsuspendstate) then
@@ -2511,7 +2562,7 @@ begin
                   LogDatei.log_prog('serviceBatch: update switches 2.....', LLDebug);
                   // we are in /serviceBatch mode and so we act like having a actionrequest=setup
                   opsidata.setActualProductActionRequest('setup');
-                  opsidata.UpdateSwitches(extremeErrorLevel, logdatei.actionprogress);
+                  opsidata.UpdateSwitches(extremeErrorLevel, Logdatei.actionprogress);
                 end;
                 LogDatei.log_prog('serviceBatch: finishProduct .....', LLDebug);
                 // free productVars
@@ -2907,8 +2958,9 @@ begin
                   Inc(i);
                   if i <= ParamListe.Count then
                   begin
-                    opsiserviceUser :=
-                      ParamListe.Strings[i - 1];
+                    opsiserviceUser := ParamListe.Strings[i - 1];
+                    //  opsiserviceUser might be the clientid (with hostkey as pw)
+                    if opsiserviceClientId = '' then opsiserviceClientId := opsiserviceUser;
                     if (length(opsiserviceUser) = 0) or
                       (opsiserviceUser[1] = ParamDelim) then
                     begin
