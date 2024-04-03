@@ -7,7 +7,7 @@ object CustomMessageForm: TCustomMessageForm
   ClientHeight = 232
   ClientWidth = 500
   OnClose = FormClose
-  LCLVersion = '2.2.4.0'
+  LCLVersion = '3.0.0.3'
   object ButtonLeft: TButton
     AnchorSideLeft.Control = Owner
     AnchorSideBottom.Control = Owner
@@ -21,8 +21,8 @@ object CustomMessageForm: TCustomMessageForm
     BorderSpacing.Left = 15
     BorderSpacing.Bottom = 15
     Caption = 'ButtonLeft'
-    OnClick = ButtonLeftClick
     TabOrder = 0
+    OnClick = ButtonLeftClick
   end
   object ButtonMiddle: TButton
     AnchorSideLeft.Side = asrBottom
@@ -36,8 +36,8 @@ object CustomMessageForm: TCustomMessageForm
     AutoSize = True
     BorderSpacing.Bottom = 15
     Caption = 'ButtonMiddle'
-    OnClick = ButtonMiddleClick
     TabOrder = 1
+    OnClick = ButtonMiddleClick
   end
   object ButtonRight: TButton
     AnchorSideLeft.Control = ButtonMiddle
@@ -56,8 +56,8 @@ object CustomMessageForm: TCustomMessageForm
     BorderSpacing.Right = 15
     BorderSpacing.Bottom = 15
     Caption = 'ButtonRight'
-    OnClick = ButtonRightClick
     TabOrder = 2
+    OnClick = ButtonRightClick
   end
   object Countdown: TLabel
     AnchorSideBottom.Control = ButtonRight

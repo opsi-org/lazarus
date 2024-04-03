@@ -3,5 +3,5 @@
 {"hash":191346532,"name":"tcustommessageform.buttonleft.caption","sourcebytes":[66,117,116,116,111,110,76,101,102,116],"value":"ButtonLeft"},
 {"hash":128127557,"name":"tcustommessageform.buttonmiddle.caption","sourcebytes":[66,117,116,116,111,110,77,105,100,100,108,101],"value":"ButtonMiddle"},
 {"hash":108082756,"name":"tcustommessageform.buttonright.caption","sourcebytes":[66,117,116,116,111,110,82,105,103,104,116],"value":"ButtonRight"},
-{"hash":3421043,"name":"tcustommessageform.countdown.caption","sourcebytes":[49,48,48,48,115],"value":"1000s"}
+{"hash":64175616,"name":"tcustommessageform.countdown.caption","sourcebytes":[48,48,58,48,48,58,48,48],"value":"00:00:00"}
 ]}
