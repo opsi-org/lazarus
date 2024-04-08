@@ -596,6 +596,7 @@ procedure SectionnameAbspalten(const s: string; var Sektion, Rest: string);
 
 procedure str2jsonstr(var str: string; var errorstr: string);
 function getProcessList: TStringList;
+function getProcessListWithPath: TStringList;
 function getLoggedInUser: string;
 function randomstr(usespecialchars: boolean): string;
 function randomstrWithParameters(minLength, nLowerCases, nUpperCases,
@@ -1379,6 +1380,22 @@ begin
   {$ENDIF LINUX}
   {$IFDEF DARWIN}
   Result := getMacosProcessList;
+  {$ENDIF DARWIN}
+end;
+
+
+function getProcessListWithPath: TStringList;
+begin
+  {$IFDEF WINDOWS}
+  {$IFDEF WIN32}
+  Result := getWinProcessListWithPath;
+  {$ENDIF WIN32}
+  {$ENDIF WINDOWS}
+  {$IFDEF LINUX}
+  // Result := getLinProcessListWithPath;
+ {$ENDIF LINUX}
+  {$IFDEF DARWIN}
+  // Result := getMacosProcessListWithPath;
   {$ENDIF DARWIN}
 end;
 
