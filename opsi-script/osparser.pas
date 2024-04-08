@@ -14954,6 +14954,20 @@ begin
       end;
     end
 
+    else if LowerCase(s) = LowerCase('getProcesslistWithPath') then
+    begin
+      //   if r = '' then
+      begin
+        syntaxcheck := True;
+        if not testSyntax then
+        begin
+          templist := getProcessListWithPath;
+          list.Text := templist.Text;
+          FreeAndNil(templist);
+        end;
+      end;
+    end
+
     else if LowerCase(s) = LowerCase('getProfilesDirList') then
     begin
       //   if r = '' then
