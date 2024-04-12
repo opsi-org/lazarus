@@ -97,7 +97,7 @@ type
     amSelectable);
 
   // marker for add installers
-  TKnownInstaller = (stQtInstaller, stSetupFactory, stInstallAnywhere,
+  TKnownInstaller = (stWise,stQtInstaller, stSetupFactory, stInstallAnywhere,
     stAdvancedInstaller, stInstall4J, stPortableApps,
     stLinRPM, stLinDeb,
     stMacZip, stMacDmg, stMacPKG, stMacApp,
@@ -741,7 +741,15 @@ resourcestring
     LineEnding + '* <https://doc.qt.io/qtinstallerframework/ifw-use-cases-cli.html> ' +
     LineEnding + '* <https://wiki.qt.io/Online_Installer_4.x> ' +
     LineEnding + '* <https://gist.github.com/WindAzure/f3bed9e058cdc81eaa357414610c9125> ';
-
+  mdInstallerInfo_Wise =
+    '## This is a Wise Installer.' + LineEnding +
+    'This is an old dicontinued Installer framework 1995 - 2009.' + LineEnding +
+    'If you are lucky it is an msi wrapper.' + LineEnding +
+    'in this case you may start the installation and look for a new msi in:' + LineEnding +
+    '"C:\Program Files (x86)\Common Files\Wise Installation Wizard"' + LineEnding +
+    'You may use this msi as install file.' + LineEnding +
+    'You may perhaps also pass the msi parameters as arguments to your setup.exe.';
+// marker for add installers
 
 implementation
 
@@ -2262,6 +2270,10 @@ begin
   begin
     info_message_html.Text := mdInstallerInfo_QtInstaller;
   end;
+  with installerArray[integer(stWise)] do
+  begin
+    info_message_html.Text := mdInstallerInfo_Wise;
+  end;
   // marker for add installers
 end;
 
@@ -2273,6 +2285,7 @@ begin
 
   // marker for add installers
   knownInstallerList := TStringList.Create;
+  knownInstallerList.Add('Wise');
   knownInstallerList.Add('QtInstaller');
   knownInstallerList.Add('SetupFactory');
   knownInstallerList.Add('InstallAnywhere');
@@ -2872,6 +2885,44 @@ begin
     uib_exitcode_function := 'isGenericExitcodeFatal';
     detected := @detectedbypatternwithand;
     //info_message_html.Text := mdInstallerInfo_QtInstaller;
+  end;
+  with installerArray[integer(stWise)] do
+  begin
+    description := 'Wise';
+    silentsetup := '/quiet /norestart /log "%opsiLogDir%\$ProductId$.install_log.txt"';
+    unattendedsetup :=
+      '/passive /norestart /log "%opsiLogDir%\$ProductId$.install_log.txt"';
+    silentuninstall := '/quiet /norestart /log "%opsiLogDir%\$ProductId$.install_log.txt"';
+    unattendeduninstall :=
+      '/passive /norestart /log "%opsiLogDir%\$ProductId$.install_log.txt"';
+    uninstall_waitforprocess := '';
+    install_waitforprocess := '';
+    uninstallProg := '';
+    patterns.Add('Wise Installation Wizard');
+    patterns.Add('Wise for Windows');
+    patterns.Add('InstallTailor');
+    infopatterns.Add('WiseApi');
+    infopatterns.Add('Wise Installation Wizard prepares the Windows Installer');
+    infopatterns.Add('WiseForWindowsInstaller');
+    (* also found patterns
+    WiseDialogStackWiseNextDialogWiseCurrentWizardWiseCurrentDialog
+    WiseDlgSequence
+    PalmUsersWiseInstallMobileDeviceWiseInstallPalmWiseInstallnetcfWiseIsoCompEditRegWiseIsoCompInfoWisePalmInfoWiseSQLExecuteWiseSetAssemblyFrameworkPropertiesWiseUninstallMobileDeviceWiseVerifyUser
+    WiseDocumentCustomActionsWiseFindSqlClientToolsWiseGetServerFeaturesWiseGetSqlServersWiseGetWinEditionWiseLaunchConditionsWiseRegComPlusAddRemoveWiseRegComPlusInitWiseSqlServerCheckWiseTest
+    WiseMDACSuppressReboot /c:"setup.exe /qnt""%s" /r:n /q:a
+    WiseDialog
+    MsiLogFileLocation
+    WiseEditor
+    WiseDebugMode
+    Wise for Windows Installer
+    MsiAssemblyName
+    *)
+    link :=
+      'https://en.wikipedia.org/wiki/Wise_Solutions';
+    comment := 'Wise';
+    uib_exitcode_function := 'isMsiExitcodeFatal';
+    detected := @detectedbypatternwithand;
+    //info_message_html.Text := mdInstallerInfo_SetupFactory;
   end;
   // marker for add installers
   reload_installer_info_messages;

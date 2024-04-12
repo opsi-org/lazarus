@@ -14,7 +14,7 @@ object resultForm1: TresultForm1
   OnMouseLeave = FormMouseLeave
   OnShow = FormShow
   Position = poScreenCenter
-  LCLVersion = '3.0.0.3'
+  LCLVersion = '3.2.0.0'
   object Panel1: TPanel
     Left = 0
     Height = 40
@@ -3599,6 +3599,7 @@ object resultForm1: TresultForm1
               OnClick = BtAnalyzeOnlyClick
               ParentFont = False
               TabOrder = 4
+              Visible = False
             end
             object BtSingleAnalyzeAndCreateWithUser: TBitBtn
               Left = 5
@@ -11513,10 +11514,10 @@ object resultForm1: TresultForm1
                 TIOptions = [tgoStartIndexAtOne, tgoShowOnlyProperties]
                 ColWidths = (
                   64
-                  136
-                  136
-                  135
-                  135
+                  132
+                  131
+                  131
+                  131
                 )
               end
               object PanelDepBtns: TPanel
@@ -11939,10 +11940,10 @@ object resultForm1: TresultForm1
                 TIOptions = [tgoStartIndexAtOne, tgoShowOnlyProperties]
                 ColWidths = (
                   64
-                  249
-                  249
-                  249
-                  248
+                  245
+                  245
+                  244
+                  244
                 )
               end
             end

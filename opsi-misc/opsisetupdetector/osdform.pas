@@ -3755,7 +3755,7 @@ var
 begin
   if LowerCase(osdsettings.mylang) = 'de' then
     myUrl := opsidocs_base_url +
-      'opsi-docs-de/4.3/opsi-modules/setup-detector.html#opsi-setup-detector-product-configuration-priority_dependecy'
+      'opsi-docs-de/4.3/opsi-modules/setup-detector.html#opsi-setup-detector-product-configuration-priority_dependency'
   else
     myUrl := opsidocs_base_url +
       'opsi-docs-en/4.3/opsi-modules/setup-detector.html#opsi-setup-detector-product-configuration-priority_dependency';

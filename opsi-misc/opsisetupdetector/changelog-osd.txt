@@ -146,9 +146,16 @@ todo:
 
 ## [4.3.2.1-1] - 2024-03-27
 
+### Fixed
+- fixed Link to fixed in docu: opsi-setup-detector-product-configuration-priority_dependency
+
 ### Added
 - new task: template-with-loggedin-user (createTemplateWithUser)
 - disable checkboxes for 'with user': desktopicon, customdir install_from_local
+- support for wise installer
+
+### removed
+- Analyze only button now invisible
 
 ## [4.3.1.4-1] - 2024-01-17
 
