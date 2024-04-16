@@ -606,6 +606,8 @@ var
   //*****************************************
   firstshowconfigdone: boolean = False;
   productIds: TStringList;
+  designPPI : integer;
+  screenPPI : integer;
 
 
 resourcestring
@@ -1455,6 +1457,7 @@ begin
     (Sender as TPanel).Color := clSkyBlue;
 end;
 
+
 // paint icon preview with selected background
 procedure TResultform1.PaintPreview(Image: TImage);
 var
@@ -1464,11 +1467,28 @@ var
   // chess background as no background
   ChessColors: array[0..1] of TColor = (clMedGray, clSilver);
   picturesize: integer;
+  scalefactor: double;
+  TempImage: TImage;
 begin
+  scalefactor := screenPPI / designPPI;
+  LogDatei.log('scalefactor: ' + FloatToStr(scalefactor), LLnotice);
+  // scale TIImageIconPreview only the first call
+  if TIImageIconPreview.Width = 160 then
+    with TIImageIconPreview do
+    begin
+      Top := round(top * scalefactor);
+      Left := round(left * scalefactor);
+      Width := round(Width * scalefactor);
+      Height := round(Height * scalefactor);
+    end;
+  LogDatei.log('TIImageIconPreview.width : ' + IntToStr(
+    TIImageIconPreview.Width), LLnotice);
   with TIImageIconPreview.Canvas do
   begin
     // paint chess background
     squaresize := 22;
+    // scale background
+    squaresize := round(squaresize * scalefactor);
     for row := 0 to 9 do
     begin
       for col := 0 to 9 do
@@ -1480,23 +1500,35 @@ begin
       end;
     end;
     // paint chess board
-    //RectBackgr := Rect(0, 0, ImageIconPreview.Width, ImageIconPreview.Height);
+
+    // get scaled picturesize
     picturesize := TIImageIconPreview.Width;
-    //picturesize := round(picturesize * (Screen.PixelsPerInch / 91));
+
     {$IFDEF LINUX}
     // scale rect
-    picturesize := round(picturesize * (91 / Screen.PixelsPerInch));
+    picturesize := round(picturesize * (screenPPI / designPPI));
     {$ENDIF LINUX}
-    RectBackgr := Rect(0, 0, picturesize, picturesize);
+    // rect we want to paint to (with border of 2 pixel)
+    RectBackgr := Rect(2, 2, picturesize - 2, picturesize - 2);
     // paint icon on chess board
-    // stretched:
-    //StretchDraw(RectBackgr, Image.Picture.Bitmap);
-    // original size:
+    // copy the image
+    TempImage := TImage.Create(nil);
+    //TempImage.Picture.Bitmap := Image.Picture.Bitmap;
+    TempImage.Picture.Assign(Image.Picture);
+    // paint stretched:
+    TIImageIconPreview.Proportional := True;
+    TIImageIconPreview.Center := True;
+    TIImageIconPreview.Canvas.StretchDraw(RectBackgr, TempImage.Picture.Bitmap);
+
+  (*
+  // original size:
     Draw(round((picturesize - Image.Picture.Width) / 2), round(
       (picturesize - Image.Picture.Height) / 2), Image.Picture.Bitmap);
+    //end;
+  *)
+
   end;
 end;
-
 
 procedure TResultform1.IconDisplayOnClick(Sender: TObject);
 var
@@ -3540,6 +3572,8 @@ begin
   Application.OnIdle := @ApplicationEventIdle;
   // TabSheetIcons presets
   BtnOpenIconFolder.Font.Size := 12;
+  designPPI := DesignTimePPI;
+  screenPPI := screen.PixelsPerInch;
   DefaultIcon := TImage.Create(TabSheetIcons);
   {$IFDEF LINUX}
   // scale form
@@ -4024,6 +4058,7 @@ procedure TResultform1.TIEditSetup3UnProgramEditingDone(Sender: TObject);
 begin
   updateUninstaller(aktProduct.SetupFiles[2]);
 end;
+
 
 procedure TResultform1.TIMemoAdviceEditingDone(Sender: TObject);
 var

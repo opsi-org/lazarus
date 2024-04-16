@@ -12,6 +12,7 @@
       </Flags>
       <SessionStorage Value="InProjectDir"/>
       <Title Value="opsi-setup-detector"/>
+      <Scaled Value="True"/>
       <ResourceType Value="res"/>
       <UseXPManifest Value="True"/>
       <XPManifest>
