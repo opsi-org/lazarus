@@ -148,11 +148,14 @@ todo:
 
 ### Fixed
 - fixed Link to fixed in docu: opsi-setup-detector-product-configuration-priority_dependency
+- HighDPI problem on Icon tab. Fix in osdform :procedure TResultform1.PaintPreview(Image: TImage);
+  fixes #4858
 
 ### Added
 - new task: template-with-loggedin-user (createTemplateWithUser)
 - disable checkboxes for 'with user': desktopicon, customdir install_from_local
 - support for wise installer
+- support for install via sefe mode boot in 'with user': prop 'install_at_safe_mode_boot'
 
 ### removed
 - Analyze only button now invisible

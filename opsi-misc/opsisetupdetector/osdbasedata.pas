@@ -1338,6 +1338,21 @@ begin
     myprop.boolDefault := False;
   end;
 
+  propexists := aktProduct.properties.propExists('install_at_safe_mode_boot');
+  if (myrunmode  in [analyzeCreateWithUser, createTemplateWithUser])
+    and not propexists then
+  begin
+    myprop := TPProperty(aktProduct.properties.add);
+    myprop.init;
+    myprop.Property_Name := lowercase('install_at_safe_mode_boot');
+    myprop.description := 'Install after boot to safe mode';
+    myprop.Property_Type := bool;
+    myprop.multivalue := False;
+    myprop.editable := False;
+    myprop.boolDefault := False;
+  end;
+
+
   // END 'with-user' properties
 end;
 
