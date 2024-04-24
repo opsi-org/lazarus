@@ -2388,7 +2388,7 @@ begin
                       omc.Free;
                       *)
                     opsidata.setActualProductName(batchproductid);
-                    opsidata.setActualClient(opsiserviceClientId);
+                    opsidata.setActualClient(opsiserviceUser);
                     ProductvarsForPC := opsidata.getProductproperties;
                     if not opsidata.initProduct then
                     begin
