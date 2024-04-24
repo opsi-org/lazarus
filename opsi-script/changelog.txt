@@ -2,10 +2,18 @@ todo:
 isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-package-requires-a-reboot-of-my-system
 mac getIpByName liefert name von IPnum
 
-opsi-script (4.12.14.0) unreleased/unreleased (4.2/4.3); urgency=medium
+opsi-script (4.12.14.1) unreleased/unreleased (4.2/4.3); urgency=medium
+
+* [fix]  readConfigsFromService in /ServiceBatch: fix for opsi-script running in the context of opsi-template-with-userlogin
+        (fqdn/clientdid was empty) (j.werner, !222)
+
+-- j.werner <j.werner@uib.de> 24 April 2024
+
+opsi-script (4.12.14.0) unreleased/stable (4.2/4.3); urgency=medium
 
 * [update] opsiservicecall now specifies its own user agent: ProductID + ' (opsiservicecall:<typeofcall>)' (j.werner, !214)
 * [update] set UTF8 filename encoding for getFileListFromZip (m.michaelis, !211)
+* [update] readConfigsFromService in /ServiceBatch (m.michaelis, !218)
 
 -- j.werner <j.werner@uib.de> 1 Mar 2024
 
