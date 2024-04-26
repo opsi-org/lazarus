@@ -150,6 +150,7 @@ todo:
 - fixed Link to fixed in docu: opsi-setup-detector-product-configuration-priority_dependency
 - HighDPI problem on Icon tab. Fix in osdform :procedure TResultform1.PaintPreview(Image: TImage);
   fixes #4858
+- control.toml: all backslashes and double quotes has to be escaped with backslash ; fixes #4862
 
 ### Added
 - new task: template-with-loggedin-user (createTemplateWithUser)

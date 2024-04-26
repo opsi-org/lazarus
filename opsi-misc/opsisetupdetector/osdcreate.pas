@@ -1288,10 +1288,15 @@ begin
               myprop.Property_Name, LLerror);
         end;
       end;
+      // escape backslashes and quotes
+      for i:= 0 to textlist.Count -1 do
+      begin
+        textlist[i] := StringReplace(textlist[i],'\','\\"',[rfReplaceAll, rfIgnoreCase]);
+        textlist[i] := StringReplace(textlist[i],'"','\"',[rfReplaceAll, rfIgnoreCase]);
+      end;
       textlist.SaveToFile(opsipath + pathdelim + 'control.toml');
       // END: create control file (4.3 toml style)
     end;
-
 
 
     // changelog
