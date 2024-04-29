@@ -353,6 +353,7 @@ begin
 
     str := '';
     patchlist.add('#@productId*#=' + aktProduct.productdata.productId);
+    patchlist.add('#@productName*#=' + aktProduct.productdata.productName);
     patchlist.add('#@productVersion*#=' + aktProduct.productdata.productversion);
     for i := 0 to myconfiguration.import_libraries.Count - 1 do
       str := str + 'importlib "' + myconfiguration.import_libraries[i] +
@@ -1059,6 +1060,17 @@ begin
         ForceDirectories(clientpath + subdir + PathDelim + 'custom');
         infilename := genericTemplatePath + Pathdelim + 'customdir_readme.txt';
         outfilename := clientpath + subdir + PathDelim + 'custom' +
+          PathDelim + 'readme.txt';
+        copyfile(infilename, outfilename, [cffOverwriteFile,
+          cffCreateDestDirectory, cffPreserveTime], True);
+      end;
+
+      //customdir
+      if aktProduct.productdata.customizeProfile then
+      begin
+        ForceDirectories(clientpath + subdir + PathDelim + 'profile_files');
+        infilename := genericTemplatePath + Pathdelim + 'profiledir_readme.txt';
+        outfilename := clientpath + subdir + PathDelim + 'profile_files' +
           PathDelim + 'readme.txt';
         copyfile(infilename, outfilename, [cffOverwriteFile,
           cffCreateDestDirectory, cffPreserveTime], True);

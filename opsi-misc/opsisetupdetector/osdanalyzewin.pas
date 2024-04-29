@@ -117,46 +117,51 @@ var
   {$IFDEF WINDOWS}
   VerInf: verinfo.TVersionInfo;
   {$ENDIF WINDOWS}
+  extension : string;
 begin
-  try
-    FileVerInfo := TFileVersionInfo.Create(nil);
-    try
-      FileVerInfo.FileName := filename;
-      FileVerInfo.ReadFileInfo;
-      Result := FileVerInfo.VersionStrings.Values[infokey];
-    except
-      on E: Exception do
-      begin
-        LogDatei.log('Exception while reading fileversion2: ' +
-          E.ClassName + ': ' + E.Message, LLError);
-        Result := '';
-      end;
-      else // close the 'on else' block here;
-    end;
-  finally
-    FileVerInfo.Free;
-  end;
-  {$IFDEF WINDOWS}
-  if Result = '' then
+  extension := ExtractFileExt(filename);
+  if extension = '.exe' then
   begin
     try
-      VerInf := verinfo.TVersionInfo.Create(filename);
-      if infokey = 'FileVersion' then
-        Result := trim(VerInf[CviFileVersion]);
-      if infokey = 'ProductName' then
-        Result := trim(VerInf[CviProductName]);
-      VerInf.Free;
-    except
-      on E: Exception do
-      begin
-        LogDatei.log('Exception while reading fileversion2: ' +
-          E.ClassName + ': ' + E.Message, LLError);
-        Result := '';
+      FileVerInfo := TFileVersionInfo.Create(nil);
+      try
+        FileVerInfo.FileName := filename;
+        FileVerInfo.ReadFileInfo;
+        Result := FileVerInfo.VersionStrings.Values[infokey];
+      except
+        on E: Exception do
+        begin
+          LogDatei.log('Exception while reading fileversion2: ' +
+            E.ClassName + ': ' + E.Message, LLError);
+          Result := '';
+        end;
+        else // close the 'on else' block here;
       end;
-      else // close the 'on else' block here;
+    finally
+      FileVerInfo.Free;
     end;
+    {$IFDEF WINDOWS}
+    if Result = '' then
+    begin
+      try
+        VerInf := verinfo.TVersionInfo.Create(filename);
+        if infokey = 'FileVersion' then
+          Result := trim(VerInf[CviFileVersion]);
+        if infokey = 'ProductName' then
+          Result := trim(VerInf[CviProductName]);
+        VerInf.Free;
+      except
+        on E: Exception do
+        begin
+          LogDatei.log('Exception while reading fileversion2: ' +
+            E.ClassName + ': ' + E.Message, LLError);
+          Result := '';
+        end;
+        else // close the 'on else' block here;
+      end;
+    end;
+    {$ENDIF WINDOWS}
   end;
-  {$ENDIF WINDOWS}
 end;
 
 procedure get_aktProduct_general_info_win(installerId: TKnownInstaller;

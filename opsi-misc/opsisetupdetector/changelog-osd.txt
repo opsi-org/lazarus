@@ -151,6 +151,7 @@ todo:
 - HighDPI problem on Icon tab. Fix in osdform :procedure TResultform1.PaintPreview(Image: TImage);
   fixes #4858
 - control.toml: all backslashes and double quotes has to be escaped with backslash ; fixes #4862
+- setup tab: open button für installdir nicht erreichbar bei 1024x768 ; fixes #4864
 
 ### Added
 - new task: template-with-loggedin-user (createTemplateWithUser)
@@ -158,6 +159,8 @@ todo:
 - support for wise installer
 - support for install via safe mode boot in 'with user': prop 'install_at_safe_mode_boot'
 - support for msix packages
+- customize_profiles: directory profiles_files erzeugen  ; fixes #4865
+- $ProductName$ mit Wert bereitstellen  ; fixes #4863
 
 ### removed
 - Analyze only button now invisible
