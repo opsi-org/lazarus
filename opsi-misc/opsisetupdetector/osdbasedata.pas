@@ -97,7 +97,7 @@ type
     amSelectable);
 
   // marker for add installers
-  TKnownInstaller = (stWise,stQtInstaller, stSetupFactory, stInstallAnywhere,
+  TKnownInstaller = (stMsix,stWise,stQtInstaller, stSetupFactory, stInstallAnywhere,
     stAdvancedInstaller, stInstall4J, stPortableApps,
     stLinRPM, stLinDeb,
     stMacZip, stMacDmg, stMacPKG, stMacApp,
@@ -743,12 +743,13 @@ resourcestring
     LineEnding + '* <https://gist.github.com/WindAzure/f3bed9e058cdc81eaa357414610c9125> ';
   mdInstallerInfo_Wise =
     '## This is a Wise Installer.' + LineEnding +
-    'This is an old dicontinued Installer framework 1995 - 2009.' + LineEnding +
+    'This is an old discontinued Installer framework 1995 - 2009.' + LineEnding +
     'If you are lucky it is an msi wrapper.' + LineEnding +
-    'in this case you may start the installation and look for a new msi in:' + LineEnding +
+    'In this case you may start the installation and look for a new msi in:' + LineEnding +
     '"C:\Program Files (x86)\Common Files\Wise Installation Wizard"' + LineEnding +
     'You may use this msi as install file.' + LineEnding +
     'You may perhaps also pass the msi parameters as arguments to your setup.exe.';
+  mdInstallerInfo_Msix = '';
 // marker for add installers
 
 implementation
@@ -2164,131 +2165,77 @@ procedure reload_installer_info_messages;
 begin
   // unknown
   with installerArray[integer(stUnknown)] do
-  begin
     info_message_html.Text := '';
-  end;
   // inno
   with installerArray[integer(stInno)] do
-  begin
     info_message_html.Text := '';
-  end;
   // NSIS
   with installerArray[integer(stNsis)] do
-  begin
     info_message_html.Text := '';
-  end;
   // InstallShield
   with installerArray[integer(stInstallShield)] do
-  begin
     info_message_html.Text := mdInstallerInfo_Installshield;
-  end;
   // InstallShieldMSI
   with installerArray[integer(stInstallShieldMSI)] do
-  begin
     info_message_html.Text := mdInstallerInfo_Installshield;
-  end;
   // MSI
   with installerArray[integer(stMSI)] do
-  begin
     info_message_html.Text := '';
-  end;
   // 7zip
   with installerArray[integer(st7zip)] do
-  begin
     info_message_html.Text := '';
-  end;
   // st7zipsfx
   with installerArray[integer(st7zipsfx)] do
-  begin
     info_message_html.Text := '';
-  end;
   // stInstallAware
   with installerArray[integer(stInstallAware)] do
-  begin
     info_message_html.Text := '';
-  end;
   // stMSGenericInstaller
   with installerArray[integer(stMSGenericInstaller)] do
-  begin
     info_message_html.Text := '';
-  end;
   // stWixToolset
   with installerArray[integer(stWixToolset)] do
-  begin
     info_message_html.Text := '';
-  end;
   // stBoxStub
   with installerArray[integer(stBoxStub)] do
-  begin
     info_message_html.Text := '';
-  end;
   // stSFXcab
   with installerArray[integer(stSFXcab)] do
-  begin
     info_message_html.Text := '';
-  end;
   // stBitrock
   with installerArray[integer(stBitrock)] do
-  begin
     info_message_html.Text := '';
-  end;
   // stSelfExtractingInstaller
   with installerArray[integer(stSelfExtractingInstaller)] do
-  begin
     info_message_html.Text := '';
-  end;
   with installerArray[integer(stMacZip)] do
-  begin
     info_message_html.Text := '';
-  end;
   with installerArray[integer(stMacDmg)] do
-  begin
     info_message_html.Text := '';
-  end;
   with installerArray[integer(stMacPKG)] do
-  begin
     info_message_html.Text := '';
-  end;
   with installerArray[integer(stMacApp)] do
-  begin
     info_message_html.Text := '';
-  end;
   with installerArray[integer(stLinRPM)] do
-  begin
     info_message_html.Text := '';
-  end;
   with installerArray[integer(stLinDeb)] do
-  begin
     info_message_html.Text := '';
-  end;
   with installerArray[integer(stPortableApps)] do
-  begin
     info_message_html.Text := mdInstallerInfo_PortableApps;
-  end;
   with installerArray[integer(stInstall4J)] do
-  begin
     info_message_html.Text := '';
-  end;
   with installerArray[integer(stAdvancedInstaller)] do
-  begin
     info_message_html.Text := '';
-  end;
   with installerArray[integer(stInstallAnywhere)] do
-  begin
     info_message_html.Text := mdInstallerInfo_InstallAnywhere;
-  end;
   with installerArray[integer(stSetupFactory)] do
-  begin
     info_message_html.Text := mdInstallerInfo_SetupFactory;
-  end;
   with installerArray[integer(stQtInstaller)] do
-  begin
     info_message_html.Text := mdInstallerInfo_QtInstaller;
-  end;
   with installerArray[integer(stWise)] do
-  begin
     info_message_html.Text := mdInstallerInfo_Wise;
-  end;
+  with installerArray[integer(stMsix)] do
+    info_message_html.Text := mdInstallerInfo_Msix;
   // marker for add installers
 end;
 
@@ -2300,6 +2247,7 @@ begin
 
   // marker for add installers
   knownInstallerList := TStringList.Create;
+  knownInstallerList.Add('Msix');
   knownInstallerList.Add('Wise');
   knownInstallerList.Add('QtInstaller');
   knownInstallerList.Add('SetupFactory');
@@ -2901,6 +2849,7 @@ begin
     detected := @detectedbypatternwithand;
     //info_message_html.Text := mdInstallerInfo_QtInstaller;
   end;
+
   with installerArray[integer(stWise)] do
   begin
     description := 'Wise';
@@ -2939,6 +2888,30 @@ begin
     detected := @detectedbypatternwithand;
     //info_message_html.Text := mdInstallerInfo_SetupFactory;
   end;
+
+  with installerArray[integer(stMsix)] do
+  begin
+    // https://www.advancedinstaller.com/per-machine-msix.html
+    description :=
+      'Msix Package';
+    silentsetup :=
+      'powershell.exe Add-AppProvisionedPackage -online -packagepath <#packagePath#> -skiplicense';
+    unattendedsetup :=
+      'powershell.exe Add-AppProvisionedPackage -online -packagepath <#packagePath#> -skiplicense';
+    silentuninstall :=
+      'powershell.exe Remove-AppPackage -AllUsers -package <#packageFullName#>';
+    unattendeduninstall :=
+      'powershell.exe Remove-AppPackage -AllUsers -package <#packageFullName#>';
+    uninstall_waitforprocess := '';
+    uninstallProg := '';
+    installErrorHandlingLines.Add('');
+    link :=
+      'https://learn.microsoft.com/en-us/windows/msix/overview';
+    comment := '';
+    uib_exitcode_function := 'isGenericExitcodeFatal';
+    detected := @detectedbypatternwithor;
+  end;
+
   // marker for add installers
   reload_installer_info_messages;
 
@@ -2958,6 +2931,8 @@ begin
   aktProduct := TopsiProduct.Create;
 
   FileVerInfo := TFileVersionInfo.Create(nil);
+
+
 try
   FileVerInfo.FileName := ParamStr(0);
   FileVerInfo.ReadFileInfo;

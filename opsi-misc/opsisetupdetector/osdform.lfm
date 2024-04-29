@@ -13459,7 +13459,7 @@ object resultForm1: TresultForm1
     OnClose = OpenDialog1Close
     OnCanClose = OpenDialog1CanClose
     DefaultExt = '.*.msi'
-    Filter = 'Setup|*.exe;*.msi;*.mst|EXE|*.exe|MSI|*.msi|MST|*.mst|MacOS|*.dmg;*.pkg;*.app;*.zip|Linux|*.deb;*.rpm;*.tgz;*.tar.gz|Any File|*.*|OSD Project file|*.osd|control|control;control.toml'
+    Filter = 'Setup|*.exe;*.msi;*.mst;*.msix|EXE|*.exe|MSI|*.msi|MST|*.mst|MacOS|*.dmg;*.pkg;*.app;*.zip|Linux|*.deb;*.rpm;*.tgz;*.tar.gz|Any File|*.*|OSD Project file|*.osd|control|control;control.toml|MSIX|*.msix'
     FilterIndex = 2
     Options = [ofAllowMultiSelect, ofPathMustExist, ofEnableSizing, ofViewDetail]
     OnFolderChange = OpenDialog1FolderChange

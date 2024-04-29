@@ -156,7 +156,8 @@ todo:
 - new task: template-with-loggedin-user (createTemplateWithUser)
 - disable checkboxes for 'with user': desktopicon, customdir install_from_local
 - support for wise installer
-- support for install via sefe mode boot in 'with user': prop 'install_at_safe_mode_boot'
+- support for install via safe mode boot in 'with user': prop 'install_at_safe_mode_boot'
+- support for msix packages
 
 ### removed
 - Analyze only button now invisible
