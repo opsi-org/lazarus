@@ -34,6 +34,7 @@ type
     procedure IpHtmlPanel1HotClick(Sender: TObject);
     *)
     procedure IpHtmlPanel1HotURL(Sender: TObject; const URL: String);
+    procedure FormSizeReset;
 
   private
 
@@ -153,6 +154,7 @@ procedure TOSD_info.FormCreate(Sender: TObject);
 begin
   md := TMarkdownProcessor.createDialect(mdCommonMark);
   md.UnSafe := False;
+  FormSizeReset;
   (*
   HtmlViewer.DefBackground := clWhite;
   HtmlViewer.DefFontColor := clBlack;
@@ -167,6 +169,13 @@ begin
   //MStream := TMemoryStream.Create;
   //B_ConvertClick(Self);
   *)
+end;
+
+procedure TOSD_info.FormSizeReset;
+begin
+  Height:= 375 * round(screen.PixelsPerInch / DesignTimePPI);
+  width := 700 * round(screen.PixelsPerInch / DesignTimePPI);
+  Application.ProcessMessages;
 end;
 
 end.

@@ -2642,37 +2642,35 @@ begin
 end;
 
 procedure TResultform1.BitBtnRebuildClick(Sender: TObject);
-var
-  radioindex: integer;
-  done: boolean = False;
 begin
   // reset exitcode before (repeated) build:
   system.ExitCode := 0;
   logdatei.log('Start BtRebuildClick', LLDebug2);
+  OSD_info.Height := 150 * round(screen.PixelsPerInch / DesignTimePPI);
+  OSD_info.Width := 400 * round(screen.PixelsPerInch / DesignTimePPI);
   if not DirectoryExists(myconfiguration.workbench_Path) then
   begin
-    //checkok := False;
-    ShowMessage(sErrPacketBaseDirNotFound);
+    //ShowMessage(sErrPacketBaseDirNotFound);
+    OSD_info.mdContent:= '<span style="color:red"> **Failed**  '+sErrPacketBaseDirNotFound+'</span>';
+    OSD_info.ShowModal;
   end;
   try
     PanelProcess.Visible := True;
     procmess;
     callServiceOrPackageBuilder;
-    (*
-    case TIRadioGroupCreateMode.ItemIndex of
-      0: ; // do nothing else
-      1: callServiceOrPackageBuilder;
-      2: ; // do nothing else
-    end;
-    *)
     procmess;
     PanelProcess.Visible := False;
     if (system.ExitCode = 0) then
-      ShowMessage(rsRebuildFinished)
+      //ShowMessage(rsRebuildFinished)
+      OSD_info.mdContent:= '<span style="color:green"> **OK**  '+rsRebuildFinished+'</span>';
     else
-      ShowMessage(rsRebuildFailedBuild);
+      OSD_info.mdContent:= '<span style="color:red"> **Failed**  '+rsRebuildFailedBuild+'</span>';
+      //ShowMessage(rsRebuildFailedBuild);
+
+    OSD_info.ShowModal;
   finally
     PanelProcess.Visible := False;
+    OSD_info.FormSizeReset;
     procmess;
   end;
   logdatei.log('Finished BtRebuildClick', LLDebug2);
@@ -2797,10 +2795,14 @@ begin
   // reset exitcode before (repeated) build:
   system.ExitCode := 0;
   logdatei.log('Start BtCreateProductClick', LLDebug2);
+  OSD_info.Height := 150 * round(screen.PixelsPerInch / DesignTimePPI);
+  OSD_info.Width := 400 * round(screen.PixelsPerInch / DesignTimePPI);
   if not DirectoryExists(myconfiguration.workbench_Path) then
   begin
     //checkok := False;
-    ShowMessage(sErrPacketBaseDirNotFound);
+    //ShowMessage(sErrPacketBaseDirNotFound);
+    OSD_info.mdContent:= '<span style="color:red"> **Failed**  '+sErrPacketBaseDirNotFound+'</span>';
+    OSD_info.ShowModal;
   end;
   try
     PanelProcess.Visible := True;
@@ -2823,13 +2825,18 @@ begin
     procmess;
     PanelProcess.Visible := False;
     if done and (system.ExitCode = 0) then
-      ShowMessage(sInfoFinished)
+      OSD_info.mdContent:= '<span style="color:green"> **OK**  '+sInfoFinished+'</span>';
+      //ShowMessage(sInfoFinished)
     else if done and (system.ExitCode = 1) then
-      ShowMessage(sInfoFailedBuild)
+      //ShowMessage(sInfoFailedBuild)
+      OSD_info.mdContent:= '<span style="color:red"> **Failed**  '+sInfoFailedBuild+'</span>';
     else
-      ShowMessage(sInfoFailedCreate);
+      OSD_info.mdContent:= '<span style="color:red"> **Failed**  '+sInfoFailedCreate+'</span>';
+      //ShowMessage(sInfoFailedCreate);
+    OSD_info.ShowModal;
   finally
     PanelProcess.Visible := False;
+    OSD_info.FormSizeReset;
     procmess;
   end;
   // we do not want to sav the actual readio button selection in the configuration

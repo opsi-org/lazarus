@@ -161,6 +161,7 @@ todo:
 - support for msix packages
 - customize_profiles: directory profiles_files erzeugen  ; fixes #4865
 - $ProductName$ mit Wert bereitstellen  ; fixes #4863
+- Besseres Feedback im Erfolgsmeldungsfenster beim Paketieren: Farbe / Fett   ; fixes #4866
 
 ### removed
 - Analyze only button now invisible

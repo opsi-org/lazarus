@@ -165,11 +165,11 @@ object resultForm1: TresultForm1
       Height = 610
       Top = 1
       Width = 1062
-      ActivePage = TabSheetSetup2
+      ActivePage = TabSheetCreate
       Align = alClient
       Images = ImageList1
       ParentFont = False
-      TabIndex = 3
+      TabIndex = 8
       TabOrder = 0
       OnChange = PageControl1Change
       object TabSheetStart: TTabSheet
@@ -11514,10 +11514,10 @@ object resultForm1: TresultForm1
                 TIOptions = [tgoStartIndexAtOne, tgoShowOnlyProperties]
                 ColWidths = (
                   64
-                  133
-                  133
-                  133
-                  132
+                  129
+                  129
+                  128
+                  128
                 )
               end
               object PanelDepBtns: TPanel
@@ -11940,10 +11940,10 @@ object resultForm1: TresultForm1
                 TIOptions = [tgoStartIndexAtOne, tgoShowOnlyProperties]
                 ColWidths = (
                   64
-                  246
-                  246
-                  246
-                  246
+                  242
+                  242
+                  242
+                  241
                 )
               end
             end

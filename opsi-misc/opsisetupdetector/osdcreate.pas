@@ -1807,15 +1807,11 @@ end;
 
 procedure callServiceOrPackageBuilder;
 var
-  callOpB: boolean = False;
+  callOpB: boolean = True;
 begin
   if startOpsiServiceConnection then
-  begin
-    if CompareDotSeparatedNumbers(opsiserviceversion, '<', '4.2.0.311') then
-      callOpB := True;
-  end
-  else
-    callOpB := True;
+    if CompareDotSeparatedNumbers(opsiserviceversion, '>', '4.2.0.311') then
+      callOpB := False;
 
   if callOpB then callOpsiPackageBuilder
   else
