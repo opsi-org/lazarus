@@ -2662,7 +2662,7 @@ begin
     PanelProcess.Visible := False;
     if (system.ExitCode = 0) then
       //ShowMessage(rsRebuildFinished)
-      OSD_info.mdContent:= '<span style="color:green"> **OK**  '+rsRebuildFinished+'</span>';
+      OSD_info.mdContent:= '<span style="color:green"> **OK**  '+rsRebuildFinished+'</span>'
     else
       OSD_info.mdContent:= '<span style="color:red"> **Failed**  '+rsRebuildFailedBuild+'</span>';
       //ShowMessage(rsRebuildFailedBuild);
@@ -2825,11 +2825,11 @@ begin
     procmess;
     PanelProcess.Visible := False;
     if done and (system.ExitCode = 0) then
-      OSD_info.mdContent:= '<span style="color:green"> **OK**  '+sInfoFinished+'</span>';
+      OSD_info.mdContent:= '<span style="color:green"> **OK**  '+sInfoFinished+'</span>'
       //ShowMessage(sInfoFinished)
     else if done and (system.ExitCode = 1) then
       //ShowMessage(sInfoFailedBuild)
-      OSD_info.mdContent:= '<span style="color:red"> **Failed**  '+sInfoFailedBuild+'</span>';
+      OSD_info.mdContent:= '<span style="color:red"> **Failed**  '+sInfoFailedBuild+'</span>'
     else
       OSD_info.mdContent:= '<span style="color:red"> **Failed**  '+sInfoFailedCreate+'</span>';
       //ShowMessage(sInfoFailedCreate);
