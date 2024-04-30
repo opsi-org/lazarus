@@ -346,8 +346,8 @@ begin
         str := str + 'DefVar $' + proptmpstr + '$' + LineEnding;
     end;
     // special msix
-    if aktProduct.SetupFiles[0].installerId = stMsix then
-       str := str + 'DefVar $MsixPackageName$' + LineEnding;
+    if aktProduct.SetupFiles[0].installerId = stMsixAppx then
+       str := str + 'DefVar $MsixAppxPackageName$' + LineEnding;
 
     patchlist.add('#@stringVars*#=' + str);
 

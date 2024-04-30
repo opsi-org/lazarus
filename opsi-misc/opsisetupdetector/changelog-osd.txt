@@ -158,7 +158,7 @@ todo:
 - disable checkboxes for 'with user': desktopicon, customdir install_from_local
 - support for wise installer
 - support for install via safe mode boot in 'with user': prop 'install_at_safe_mode_boot'
-- support for msix packages
+- support for msix / appx packages
 - customize_profiles: directory profiles_files erzeugen  ; fixes #4865
 - $ProductName$ mit Wert bereitstellen  ; fixes #4863
 - Besseres Feedback im Erfolgsmeldungsfenster beim Paketieren: Farbe / Fett   ; fixes #4866

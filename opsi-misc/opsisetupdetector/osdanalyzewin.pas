@@ -54,7 +54,7 @@ procedure get_sfxcab_info(myfilename: string; var mysetup: TSetupFile);
 procedure get_advancedInstaller_info(myfilename: string; var mysetup: TSetupFile);
 procedure get_installAnywhere_info(myfilename: string; var mysetup: TSetupFile);
 procedure get_QtInstaller_info(myfilename: string; var mysetup: TSetupFile);
-procedure get_Msix_info(myfilename: string; var mysetup: TSetupFile);
+procedure get_MsixAppx_info(myfilename: string; var mysetup: TSetupFile);
 // marker for add installers
 procedure Analyze(FileName: string; var mysetup: TSetupFile; verbose: boolean);
 function getProductInfoFromResource(infokey: string; filename: string): string;
@@ -1076,7 +1076,7 @@ begin
   write_log_and_memo('get_QtInstaller_info finished');
 end;
 
-procedure get_Msix_info(myfilename: string; var mysetup: TSetupFile);
+procedure get_MsixAppx_info(myfilename: string; var mysetup: TSetupFile);
 var
   str1, str2: string;
   pos1, pos2, i: integer;
@@ -1084,13 +1084,13 @@ var
   destDir : string;
   xmlLines, nodeLines : TStringlist;
 begin
-  write_log_and_memo('Analyzing Msix Package:');
+  write_log_and_memo('Analyzing MsixAppx Package:');
   // Analyze
   // unzip package
   xmlLines := TStringList.Create;
   // nodeLines is created by call
   destDir := GetTempDir(False);
-  destDir := destDir + DirectorySeparator + 'msix';
+  destDir := destDir + DirectorySeparator + 'msixAppx';
   // cleanup destination
   if DirectoryExists(destDir) then
     DeleteDirectory(destDir,true);
@@ -1149,7 +1149,7 @@ begin
   cmdStr := 'Get-AppxPackage -AllUsers -Name '+ fullNameStr +' | select -expandProperty PackageFullName';
   mysetup.uninstallCheck.Add('set $UninstallList$ = powershellCall("'+cmdStr+'")');
   mysetup.uninstallCheck.Add('if count($UninstallList$) int> "0"');
-  mysetup.uninstallCheck.Add('	set $MsixPackageName$ = takeString(0,$UninstallList$)');
+  mysetup.uninstallCheck.Add('	set $MsixAppxPackageName$ = takeString(0,$UninstallList$)');
   mysetup.uninstallCheck.Add('	set $oldProgFound$ = "true"');
   mysetup.uninstallCheck.Add('endif');
 
@@ -1158,10 +1158,10 @@ begin
       cmdStr := installerArray[integer(mysetup.installerId)].silentuninstall
     else
        cmdStr :=  installerArray[integer(mysetup.installerId)].unattendeduninstall;
-  cmdStr := StringReplace(cmdStr,'<#packageFullName#>','$MsixPackageName$',[rfIgnoreCase]);
+  cmdStr := StringReplace(cmdStr,'<#packageFullName#>','$MsixAppxPackageName$',[rfIgnoreCase]);
   mysetup.uninstallCommandLine := cmdStr;
 
-  write_log_and_memo('get_Msix_info finished');
+  write_log_and_memo('get_MsixAppx_info finished');
 end;
 
 
@@ -1211,9 +1211,17 @@ begin
   else if '.msix' = lowercase(ExtractFileExt(FileName)) then
   begin
     mysetup.analyze_progess := 10;
-    setupType := stMsix;
-    get_aktProduct_general_info_win(stMsix, Filename, mysetup);
-    get_Msix_info(FileName, mysetup);
+    setupType := stMsixAppx;
+    get_aktProduct_general_info_win(stMsixAppx, Filename, mysetup);
+    get_MsixAppx_info(FileName, mysetup);
+    write_log_and_memo('Found installer= ' + installerToInstallerstr(setupType));
+  end
+  else if '.appx' = lowercase(ExtractFileExt(FileName)) then
+  begin
+    mysetup.analyze_progess := 10;
+    setupType := stMsixAppx;
+    get_aktProduct_general_info_win(stMsixAppx, Filename, mysetup);
+    get_MsixAppx_info(FileName, mysetup);
     write_log_and_memo('Found installer= ' + installerToInstallerstr(setupType));
   end
   else
@@ -1249,7 +1257,7 @@ begin
       stInstallShieldMSI: get_installshieldmsi_info(FileName, mysetup);
       //stAdvancedMSI: get_advancedmsi_info(FileName, mysetup);
       stMsi: ;// nothing to do here - see above;
-      stMsix: ;// nothing to do here - see above;
+      stMsixAppx: ;// nothing to do here - see above;
       stInstallAware: get_installaware_info(FileName, mysetup);
       stMSGenericInstaller: get_genmsinstaller_info(FileName, mysetup);
       stWixToolset: get_wixtoolset_info(FileName, mysetup);
@@ -1272,7 +1280,7 @@ begin
     tmpstr := installerToInstallerstr(setupType);
     case setupType of
       stMsi: ;// nothing to do here - see above;
-      stMsix: ;// nothing to do here - see above;
+      stMsixAppx: ;// nothing to do here - see above;
 (*
       stInno: write_log_and_memo('Found installer= ' + tmpstr);
       stNsis: write_log_and_memo('Found installer= ' + tmpstr);

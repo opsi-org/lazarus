@@ -97,7 +97,7 @@ type
     amSelectable);
 
   // marker for add installers
-  TKnownInstaller = (stMsix,stWise,stQtInstaller, stSetupFactory, stInstallAnywhere,
+  TKnownInstaller = (stMsixAppx,stWise,stQtInstaller, stSetupFactory, stInstallAnywhere,
     stAdvancedInstaller, stInstall4J, stPortableApps,
     stLinRPM, stLinDeb,
     stMacZip, stMacDmg, stMacPKG, stMacApp,
@@ -749,7 +749,7 @@ resourcestring
     '"C:\Program Files (x86)\Common Files\Wise Installation Wizard"' + LineEnding +
     'You may use this msi as install file.' + LineEnding +
     'You may perhaps also pass the msi parameters as arguments to your setup.exe.';
-  mdInstallerInfo_Msix = '';
+  mdInstallerInfo_MsixAppx = '';
 // marker for add installers
 
 implementation
@@ -2234,8 +2234,8 @@ begin
     info_message_html.Text := mdInstallerInfo_QtInstaller;
   with installerArray[integer(stWise)] do
     info_message_html.Text := mdInstallerInfo_Wise;
-  with installerArray[integer(stMsix)] do
-    info_message_html.Text := mdInstallerInfo_Msix;
+  with installerArray[integer(stMsixAppx)] do
+    info_message_html.Text := mdInstallerInfo_MsixAppx;
   // marker for add installers
 end;
 
@@ -2247,7 +2247,7 @@ begin
 
   // marker for add installers
   knownInstallerList := TStringList.Create;
-  knownInstallerList.Add('Msix');
+  knownInstallerList.Add('Msix_Appx');
   knownInstallerList.Add('Wise');
   knownInstallerList.Add('QtInstaller');
   knownInstallerList.Add('SetupFactory');
@@ -2889,11 +2889,11 @@ begin
     //info_message_html.Text := mdInstallerInfo_SetupFactory;
   end;
 
-  with installerArray[integer(stMsix)] do
+  with installerArray[integer(stMsixAppx)] do
   begin
     // https://www.advancedinstaller.com/per-machine-msix.html
     description :=
-      'Msix Package';
+      'Msix / Appx Package';
     silentsetup :=
       'powershell.exe Add-AppProvisionedPackage -online -packagepath <#packagePath#> -skiplicense';
     unattendedsetup :=
