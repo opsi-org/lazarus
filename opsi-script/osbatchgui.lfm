@@ -20,7 +20,7 @@ object FBatchOberflaeche: TFBatchOberflaeche
   OnShow = FormShow
   OnWindowStateChange = FormWindowStateChange
   Position = poScreenCenter
-  LCLVersion = '2.2.6.0'
+  LCLVersion = '3.2.0.0'
   object PanelFillScreen: TPanel
     Left = 0
     Height = 520
@@ -34,6 +34,7 @@ object FBatchOberflaeche: TFBatchOberflaeche
     Font.Height = 14
     Font.Name = 'System'
     Font.Pitch = fpVariable
+    ParentBackground = False
     ParentColor = False
     ParentFont = False
     TabOrder = 0
@@ -60,6 +61,7 @@ object FBatchOberflaeche: TFBatchOberflaeche
       Font.Height = 14
       Font.Name = 'System'
       Font.Pitch = fpVariable
+      ParentBackground = False
       ParentColor = False
       ParentFont = False
       TabOrder = 0
@@ -131,9 +133,9 @@ object FBatchOberflaeche: TFBatchOberflaeche
         Font.Name = 'Arial'
         Font.Pitch = fpVariable
         Font.Style = [fsBold]
+        OptimalFill = True
         ParentColor = False
         ParentFont = False
-        OptimalFill = True
       end
       object LabelInfo: TLabel
         Left = 49
@@ -255,5 +257,12 @@ object FBatchOberflaeche: TFBatchOberflaeche
     OnTimer = TimerProcessMessTimer
     Left = 652
     Top = 198
+  end
+  object TimerOnTop: TTimer
+    Enabled = False
+    Interval = 500
+    OnTimer = TimerOnTopTimer
+    Left = 663
+    Top = 277
   end
 end
