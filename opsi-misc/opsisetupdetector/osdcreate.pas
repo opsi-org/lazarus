@@ -28,8 +28,8 @@ uses
   oswebservice;
 
 function createProductStructure: boolean;
-procedure callOpsiPackageBuilder;
-procedure callServiceOrPackageBuilder;
+function callOpsiPackageBuilder: boolean;
+function callServiceOrPackageBuilder: boolean;
 
 function opsiquotestr(s1, s2: string): string;
 // returns s1 quoted with s2 (if it is quoted right now, nothing will be changed)
@@ -1625,7 +1625,7 @@ begin
 end;
 
 
-procedure callOpsiPackageBuilder;
+function callOpsiPackageBuilder : boolean;
 var
   msg1: string;
   description: string;
@@ -1640,6 +1640,7 @@ var
   paramlist: TStringList;
 
 begin
+  result := true;
   {$IFDEF OSDGUI}
   logdatei.log('Start callOpsiPackageBuilder', LLDebug2);
   buildCallparams := TStringList.Create;
@@ -1704,6 +1705,7 @@ begin
     on E: Exception do
     begin
       errorstate := True;
+      result := false;
       LogDatei.log('Exception while calling ' + buildCallbinary +
         ' Message: ' + E.message, LLerror);
       if osdsettings.showgui then
@@ -1725,6 +1727,7 @@ begin
       if osdsettings.showgui then
         ShowMessage(sErrOpsiPackageBuilderStart);
     end;
+    result := false;
   end;
   logdatei.log('Here comes the OpsiPackageBuilder log', LLnotice);
   logdatei.includelogtail('c:\opsi.org\applog\opb-call.log', 50, 'utf8');
@@ -1732,7 +1735,7 @@ begin
   {$ENDIF OSDGUI}
 end;   // execute OPSIPackageBuilder
 
-procedure buildWithOpsiService;
+function buildWithOpsiService: boolean;
 var
   omc: TOpsiMethodCall;
   params: array of string;
@@ -1761,6 +1764,7 @@ var
 
 begin
   LogDatei.log('Try to call opsi service', LLnotice);
+  result := false;
   {$IFDEF OSDGUI}
   resultForm1.PanelProcess.Visible := True;
   resultForm1.processStatement.Caption := 'invoke opsi service ...';
@@ -1778,7 +1782,10 @@ begin
   if osdsettings.BuildModeIndex = 0 then
   begin
     if servicecall('workbench_buildPackage', packagedir) then
-      LogDatei.log('Package ' + packagefile + ' successful build', LLnotice)
+    begin
+      result := true;
+      LogDatei.log('Package ' + packagefile + ' successful build', LLnotice);
+    end
     else
     begin
       LogDatei.log('Package ' + packagefile + ' failed to build', LLerror);
@@ -1791,7 +1798,10 @@ begin
   begin
 
     if servicecall('workbench_installPackage', packagedir) then
-      LogDatei.log('Package ' + packagefile + ' successful build + installed', LLnotice)
+    begin
+      result := true;
+      LogDatei.log('Package ' + packagefile + ' successful build + installed', LLnotice);
+    end
     else
     begin
       LogDatei.log('Package ' + packagefile + ' failed to build +install', LLerror);
@@ -1805,17 +1815,23 @@ begin
 end;
 
 
-procedure callServiceOrPackageBuilder;
+function callServiceOrPackageBuilder : boolean;
 var
   callOpB: boolean = True;
 begin
   if startOpsiServiceConnection then
+  begin
+    LogDatei.log('opsi-service connected', LLinfo);
     if CompareDotSeparatedNumbers(opsiserviceversion, '>', '4.2.0.311') then
+    begin
+      LogDatei.log('opsi-service can be used for build & install', LLinfo);
       callOpB := False;
+    end;
+  end;
 
-  if callOpB then callOpsiPackageBuilder
+  if callOpB then result := callOpsiPackageBuilder
   else
-    buildWithOpsiService;
+    result := buildWithOpsiService;
 end;
 
 end.

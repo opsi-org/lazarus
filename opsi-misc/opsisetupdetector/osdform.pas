@@ -2642,6 +2642,8 @@ begin
 end;
 
 procedure TResultform1.BitBtnRebuildClick(Sender: TObject);
+var
+  buildSuccess : boolean = false;
 begin
   // reset exitcode before (repeated) build:
   system.ExitCode := 0;
@@ -2657,10 +2659,10 @@ begin
   try
     PanelProcess.Visible := True;
     procmess;
-    callServiceOrPackageBuilder;
+    buildSuccess := callServiceOrPackageBuilder;
     procmess;
     PanelProcess.Visible := False;
-    if (system.ExitCode = 0) then
+    if (system.ExitCode = 0) and buildSuccess then
       //ShowMessage(rsRebuildFinished)
       OSD_info.mdContent:= '<span style="color:green"> **OK**  '+rsRebuildFinished+'</span>'
     else
