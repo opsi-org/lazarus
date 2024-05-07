@@ -477,6 +477,12 @@ begin
       readFileToList('HandleCustomizeProfilesSections.opsiscript', sectionlist);
     end;
 
+    if aktProduct.productdata.uninstallBeforeInstall then
+    begin
+      str := ' and ($uninstall_before_install$ = "true")';
+      patchlist.add('#@preDelIncCondition*#=' + str);
+    end;
+
     // loop over setups
     for i := 0 to 2 do
     begin

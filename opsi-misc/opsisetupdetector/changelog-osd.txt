@@ -143,6 +143,12 @@ todo:
    *
 
 # Changelog opsi-setup-detector
+## [4.3.2.2-1] - 2024-05-07
+
+### Added
+- new checkbox 'Uninstall_before_install'
+
+(Detlef Oertel <d.oertel@uib.de> 2024-05-07)
 
 ## [4.3.2.1-1] - 2024-03-27
 
@@ -165,6 +171,8 @@ todo:
 
 ### removed
 - Analyze only button now invisible
+
+(Detlef Oertel <d.oertel@uib.de> 2024-03-27)
 
 ## [4.3.1.4-1] - 2024-01-17
 

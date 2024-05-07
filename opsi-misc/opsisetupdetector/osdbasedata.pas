@@ -406,6 +406,7 @@ default: ["xenial_bionic"]
     FhandleLicensekey: boolean;
     Fdesktopicon: boolean;
     FcustomizeProfile: boolean;
+    FuninstallBeforeInstall : boolean;
     procedure SetPriority(const AValue: TPriority);
   published
     property architectureMode: TArchitectureMode
@@ -438,6 +439,7 @@ default: ["xenial_bionic"]
     property handleLicensekey: boolean read FhandleLicensekey write FhandleLicensekey;
     property desktopicon: boolean read Fdesktopicon write Fdesktopicon;
     property customizeProfile: boolean read FcustomizeProfile write FcustomizeProfile;
+    property uninstallBeforeInstall: boolean read FuninstallBeforeInstall write FuninstallBeforeInstall;
 
   public
     { public declarations }
@@ -1301,7 +1303,8 @@ begin
   end;
 
   propexists := aktProduct.properties.propExists('uninstall_before_install');
-  if (myrunmode  in [analyzeCreateWithUser, createTemplateWithUser])
+  if ((myrunmode  in [analyzeCreateWithUser, createTemplateWithUser]) or
+      (aktProduct.productdata.uninstallBeforeInstall))
     and not propexists then
   begin
     myprop := TPProperty(aktProduct.properties.add);
@@ -2123,6 +2126,7 @@ begin
     else
       desktopicon := False;
     customizeProfile := False;
+    uninstallBeforeInstall := False;
   end;
   // Create Dependencies
   aktProduct.dependencies := TCollection.Create(TPDependency);

@@ -332,6 +332,7 @@ type
     TabSheetAnalyze: TTabSheet;
     TICheckBoxCustomdir: TTICheckBox;
     TICheckBoxCustomizeProfile: TTICheckBox;
+    TICheckBoxUninstallBefore: TTICheckBox;
     TICheckBoxDesktopIcon: TTICheckBox;
     TICheckBoxHandleLiceneKey: TTICheckBox;
     TICheckBoxInstallFromLocal: TTICheckBox;
@@ -700,6 +701,8 @@ resourcestring
     'Should we add code to copy the installer locally before the installation ?';
   rsCustomizeProfileHint =
     'Should we add code to customize the installation in user profiles ?';
+  rsUninstallBeforeInstallHint =
+    'Should we add code to check if we uninstall before the installation ?';
   rsInstalldirHint =
     'The (unquoted) directory path where the software will be installed.' +
     LineEnding +
@@ -818,6 +821,8 @@ begin
         'desktopicon');
       TICheckBoxCustomizeProfile.Link.SetObjectAndProperty(productdata,
         'customizeProfile');
+      TICheckBoxUninstallBefore.Link.SetObjectAndProperty(productdata,
+        'uninstallBeforeInstall');
       TIComboBoxChannel.Link.SetObjectAndProperty(productdata, 'channelDir');
       // initialize drop down
       TIComboBoxChannel.Items.Text := templateChannelList.Text;
@@ -846,6 +851,7 @@ begin
       TICheckBoxCustomdir.Hint := rsSupportCustomDirectoryHint;
       TICheckBoxDesktopIcon.Hint := rsUsePropDesktopicon;
       TICheckBoxCustomizeProfile.Hint := rsCustomizeProfileHint;
+      TICheckBoxUninstallBefore.Hint := rsUninstallBeforeInstallHint;
       TIEditInstallDir1.Hint := rsInstalldirHint;
       TIEditInstallDir2.Hint := rsInstalldirHint;
       TIEditInstallDir3.Hint := rsInstalldirHint;
@@ -949,6 +955,7 @@ begin
     TICheckBoxHandleLiceneKey.Enabled := True;
     TICheckBoxDesktopIcon.Enabled := True;
     TICheckBoxCustomizeProfile.Enabled := True;
+    TICheckBoxUninstallBefore.Enabled := True;
     // the tabsheets
     TabSheetStart.Enabled := True;
     TabSheetAnalyze.Enabled := True;
@@ -1051,6 +1058,7 @@ begin
       TICheckBoxCustomdir.Enabled := False;
       TICheckBoxInstallFromLocal.Enabled := False;
       TICheckBoxDesktopIcon.Enabled := False;
+      TICheckBoxUninstallBefore.Enabled := False;
     end;
   end;
 end;

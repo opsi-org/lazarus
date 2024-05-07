@@ -11020,6 +11020,11 @@ object resultForm1: TresultForm1
                 Control = TICheckBoxCustomizeProfile
                 WrapAfter = waAuto
                 Index = 4
+              end            
+              item
+                Control = TICheckBoxUninstallBefore
+                WrapAfter = waAuto
+                Index = 5
               end>
             FlowLayout = tlTop
             FlowStyle = fsLeftRightTopBottom
@@ -11037,7 +11042,7 @@ object resultForm1: TresultForm1
               ParentShowHint = False
               PropertyNameAsCaption = False
               ShowHint = True
-              TabOrder = 3
+              TabOrder = 4
               TabStop = True
             end
             object TICheckBoxInstallFromLocal: TTICheckBox
@@ -11053,7 +11058,7 @@ object resultForm1: TresultForm1
               ParentShowHint = False
               PropertyNameAsCaption = False
               ShowHint = True
-              TabOrder = 4
+              TabOrder = 5
               TabStop = True
             end
             object TICheckBoxHandleLiceneKey: TTICheckBox
@@ -11070,7 +11075,7 @@ object resultForm1: TresultForm1
               ParentShowHint = False
               PropertyNameAsCaption = False
               ShowHint = True
-              TabOrder = 2
+              TabOrder = 3
               TabStop = True
             end
             object TICheckBoxDesktopIcon: TTICheckBox
@@ -11087,7 +11092,7 @@ object resultForm1: TresultForm1
               ParentShowHint = False
               PropertyNameAsCaption = False
               ShowHint = True
-              TabOrder = 1
+              TabOrder = 2
               TabStop = True
             end
             object TICheckBoxCustomizeProfile: TTICheckBox
@@ -11100,6 +11105,23 @@ object resultForm1: TresultForm1
               BorderSpacing.Right = 11
               BorderSpacing.Around = 5
               Caption = 'Customize Profile'
+              OnChange = CallMakeProperties
+              ParentShowHint = False
+              PropertyNameAsCaption = False
+              ShowHint = True
+              TabOrder = 1
+              TabStop = True
+            end
+            object TICheckBoxUninstallBefore: TTICheckBox
+              Left = 5
+              Height = 19
+              Top = 34
+              Width = 139
+              Anchors = []
+              AutoSize = True
+              BorderSpacing.Right = 11
+              BorderSpacing.Around = 5
+              Caption = 'Uninstall_before_install'
               OnChange = CallMakeProperties
               ParentShowHint = False
               PropertyNameAsCaption = False
@@ -11514,10 +11536,10 @@ object resultForm1: TresultForm1
                 TIOptions = [tgoStartIndexAtOne, tgoShowOnlyProperties]
                 ColWidths = (
                   64
-                  127
-                  127
-                  127
-                  127
+                  123
+                  123
+                  123
+                  122
                 )
               end
               object PanelDepBtns: TPanel
@@ -11940,10 +11962,10 @@ object resultForm1: TresultForm1
                 TIOptions = [tgoStartIndexAtOne, tgoShowOnlyProperties]
                 ColWidths = (
                   64
-                  241
-                  240
-                  240
-                  240
+                  236
+                  236
+                  236
+                  236
                 )
               end
             end
