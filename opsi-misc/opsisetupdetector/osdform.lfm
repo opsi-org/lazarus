@@ -976,12 +976,12 @@ object resultForm1: TresultForm1
               Height = 58
               Hint = 'Analyze a single existing Setupfile '#13#10'and create a multiplatform opsi Product'
               Top = 40
-              Width = 500
+              Width = 495
               Align = alTop
               AutoSize = True
               BorderSpacing.Around = 4
               Caption = 'Analyze File and Create Opsi Package'
-              Constraints.MinWidth = 500
+              Constraints.MinWidth = 495
               Font.Height = -17
               Glyph.Data = {
                 F6390000424DF63900000000000036000000280000004D000000300000000100
@@ -1458,12 +1458,12 @@ object resultForm1: TresultForm1
               Height = 58
               Hint = 'Create an empty '#13#10'opsi Product Directory Structure'
               Top = 102
-              Width = 500
+              Width = 495
               Align = alTop
               AutoSize = True
               BorderSpacing.Around = 4
               Caption = 'Create an opsi Package Template'
-              Constraints.MinWidth = 500
+              Constraints.MinWidth = 495
               Font.Height = -17
               Glyph.Data = {
                 36240000424D3624000000000000360000002800000030000000300000000100
@@ -6988,17 +6988,17 @@ object resultForm1: TresultForm1
             Left = 17
             Height = 21
             Top = 8
-            Width = 67
+            Width = 59
             Anchors = []
             BorderSpacing.Left = 9
             BorderSpacing.Around = 4
-            Caption = 'MST File  '
+            Caption = 'MST File'
             Font.Height = -16
             ParentColor = False
             ParentFont = False
           end
           object BitBtnOpenMst1: TBitBtn
-            Left = 854
+            Left = 746
             Height = 30
             Top = 4
             Width = 126
@@ -7048,15 +7048,15 @@ object resultForm1: TresultForm1
             TabOrder = 0
           end
           object TIEditMstFile1: TTIEdit
-            Left = 99
+            Left = 91
             Height = 27
             Top = 6
-            Width = 750
+            Width = 650
             Anchors = []
             BorderSpacing.Left = 9
             BorderSpacing.Around = 2
             BorderSpacing.InnerBorder = 2
-            Constraints.MinWidth = 750
+            Constraints.MinWidth = 650
             OnChange = genRttiEditChange
             ParentFont = False
             TabOrder = 1
@@ -7152,25 +7152,25 @@ object resultForm1: TresultForm1
             Left = 17
             Height = 21
             Top = 8
-            Width = 66
+            Width = 38
             Anchors = []
             BorderSpacing.Left = 9
             BorderSpacing.Around = 4
-            Caption = 'MsiId       '
+            Caption = 'MsiId'
             Font.Height = -16
             ParentColor = False
             ParentFont = False
           end
           object TIEditMsiId1: TTIEdit
-            Left = 98
+            Left = 70
             Height = 27
             Top = 6
-            Width = 400
+            Width = 300
             Anchors = []
             BorderSpacing.Left = 9
             BorderSpacing.Around = 2
             BorderSpacing.InnerBorder = 2
-            Constraints.MinWidth = 400
+            Constraints.MinWidth = 300
             Enabled = False
             OnChange = genRttiEditChange
             ParentFont = False
@@ -7178,7 +7178,7 @@ object resultForm1: TresultForm1
             TabOrder = 0
           end
           object Label56: TLabel
-            Left = 513
+            Left = 385
             Height = 21
             Top = 8
             Width = 67
@@ -7191,7 +7191,7 @@ object resultForm1: TresultForm1
             ParentFont = False
           end
           object TIEditMsiName1: TTIEdit
-            Left = 595
+            Left = 467
             Height = 27
             Top = 6
             Width = 400
@@ -8126,17 +8126,17 @@ object resultForm1: TresultForm1
             Left = 17
             Height = 21
             Top = 8
-            Width = 63
+            Width = 59
             Anchors = []
             BorderSpacing.Left = 9
             BorderSpacing.Around = 4
-            Caption = 'MST File '
+            Caption = 'MST File'
             Font.Height = -16
             ParentColor = False
             ParentFont = False
           end
           object BitBtnOpenMst2: TBitBtn
-            Left = 850
+            Left = 746
             Height = 30
             Top = 4
             Width = 126
@@ -8186,16 +8186,16 @@ object resultForm1: TresultForm1
             TabOrder = 0
           end
           object TIEditMstFile2: TTIEdit
-            Left = 95
+            Left = 91
             Height = 28
             Top = 6
-            Width = 750
+            Width = 650
             Anchors = []
             AutoSize = False
             BorderSpacing.Left = 9
             BorderSpacing.Around = 2
             BorderSpacing.InnerBorder = 2
-            Constraints.MinWidth = 750
+            Constraints.MinWidth = 650
             OnChange = genRttiEditChange
             ParentFont = False
             TabOrder = 1
@@ -8252,12 +8252,12 @@ object resultForm1: TresultForm1
             Left = 70
             Height = 27
             Top = 6
-            Width = 400
+            Width = 300
             Anchors = []
             BorderSpacing.Left = 9
             BorderSpacing.Around = 2
             BorderSpacing.InnerBorder = 2
-            Constraints.MinWidth = 400
+            Constraints.MinWidth = 300
             Enabled = False
             OnChange = genRttiEditChange
             ParentFont = False
@@ -8265,7 +8265,7 @@ object resultForm1: TresultForm1
             TabOrder = 0
           end
           object Label98: TLabel
-            Left = 485
+            Left = 385
             Height = 21
             Top = 8
             Width = 67
@@ -8278,7 +8278,7 @@ object resultForm1: TresultForm1
             ParentFont = False
           end
           object TIEditMsiName2: TTIEdit
-            Left = 567
+            Left = 467
             Height = 27
             Top = 6
             Width = 400
@@ -9316,17 +9316,17 @@ object resultForm1: TresultForm1
             Left = 17
             Height = 21
             Top = 8
-            Width = 63
+            Width = 59
             Anchors = []
             BorderSpacing.Left = 9
             BorderSpacing.Around = 4
-            Caption = 'MST File '
+            Caption = 'MST File'
             Font.Height = -16
             ParentColor = False
             ParentFont = False
           end
           object BitBtnOpenMst3: TBitBtn
-            Left = 850
+            Left = 746
             Height = 30
             Top = 4
             Width = 126
@@ -9376,16 +9376,16 @@ object resultForm1: TresultForm1
             TabOrder = 0
           end
           object TIEditMstFile3: TTIEdit
-            Left = 95
+            Left = 91
             Height = 28
             Top = 6
-            Width = 750
+            Width = 650
             Anchors = []
             AutoSize = False
             BorderSpacing.Left = 9
             BorderSpacing.Around = 2
             BorderSpacing.InnerBorder = 2
-            Constraints.MinWidth = 750
+            Constraints.MinWidth = 650
             OnChange = genRttiEditChange
             ParentFont = False
             TabOrder = 1
@@ -9443,18 +9443,18 @@ object resultForm1: TresultForm1
             Left = 70
             Height = 27
             Top = 6
-            Width = 400
+            Width = 300
             Anchors = []
             BorderSpacing.Left = 9
             BorderSpacing.Around = 2
             BorderSpacing.InnerBorder = 2
-            Constraints.MinWidth = 400
+            Constraints.MinWidth = 300
             OnChange = genRttiEditChange
             ParentFont = False
             TabOrder = 0
           end
           object Label99: TLabel
-            Left = 485
+            Left = 385
             Height = 21
             Top = 8
             Width = 67
@@ -9467,7 +9467,7 @@ object resultForm1: TresultForm1
             ParentFont = False
           end
           object TIEditMsiName3: TTIEdit
-            Left = 567
+            Left = 467
             Height = 27
             Top = 6
             Width = 400
@@ -10416,18 +10416,18 @@ object resultForm1: TresultForm1
             Left = 674
             Height = 27
             Top = 6
-            Width = 300
+            Width = 250
             Anchors = []
             BorderSpacing.Left = 9
             BorderSpacing.Around = 2
             BorderSpacing.InnerBorder = 2
-            Constraints.MinWidth = 201
+            Constraints.MinWidth = 250
             OnChange = genRttiEditChange
             ParentFont = False
             TabOrder = 1
           end
           object SpeedButtonHelpProd1: TSpeedButton
-            Left = 996
+            Left = 946
             Height = 22
             Hint = 'Show Help'
             Top = 9
