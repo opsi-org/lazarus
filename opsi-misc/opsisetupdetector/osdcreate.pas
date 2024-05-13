@@ -477,11 +477,13 @@ begin
       readFileToList('HandleCustomizeProfilesSections.opsiscript', sectionlist);
     end;
 
+    // Checkbox uninstallBeforeInstall
+    str := '';
     if aktProduct.productdata.uninstallBeforeInstall then
     begin
       str := ' and ($uninstall_before_install$ = "true")';
-      patchlist.add('#@preDelIncCondition*#=' + str);
     end;
+    patchlist.add('#@preDelIncCondition*#=' + str);
 
     // loop over setups
     for i := 0 to 2 do
