@@ -143,6 +143,18 @@ todo:
    *
 
 # Changelog opsi-setup-detector
+
+## [4.3.2.5-1] - 2024-05-12
+
+### Fixe
+- control.toml: again: all backslashes and double quotes has to be escaped with backslash
+- import control toml:
+at unit TOMLParser
+in function TTOMLScanner.ParseString: TTOMLStringType;
+add handling of escaped backslash
+
+(Detlef Oertel <d.oertel@uib.de> 2024-05-17)
+
 ## [4.3.2.4-1] - 2024-05-12
 
 ### Fixe

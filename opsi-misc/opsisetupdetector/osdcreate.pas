@@ -1103,6 +1103,24 @@ begin
   end;
 end;
 
+// escape backslashes and quotes for string
+function escapeStringForToml(instring : string) : string;
+begin
+  result := StringReplace(instring,'\','\\',[rfReplaceAll, rfIgnoreCase]);
+  result := StringReplace(result,'"','\"',[rfReplaceAll, rfIgnoreCase]);
+end;
+
+// escape backslashes and quotes for stringlist
+function escapeListForToml(inlist : TStringlist) : TStringlist;
+var
+  i : integer;
+begin
+  escapeListForToml := TStringlist.Create;
+  for i:= 0 to inlist.Count -1 do
+    escapeListForToml.Add(escapeStringForToml(inlist[i]));
+end;
+
+
 function createOpsiFiles: boolean;
 var
   textlist, helplist: TStringList;
@@ -1225,24 +1243,24 @@ begin
       textlist.Add('[Product]');
       textlist.Add('type = "' + aktProduct.productdata.producttype + '"');
       textlist.Add('id = "' + aktProduct.productdata.productId + '"');
-      textlist.Add('name = "' + aktProduct.productdata.productName + '"');
-      textlist.Add('description = """' + aktProduct.productdata.description + '"""');
-      textlist.Add('advice = """' + aktProduct.productdata.advice + '"""');
-      textlist.Add('version = "' + aktProduct.productdata.productversion + '"');
+      textlist.Add('name = "' + escapeStringForToml(aktProduct.productdata.productName) + '"');
+      textlist.Add('description = """' + escapeStringForToml(aktProduct.productdata.description) + '"""');
+      textlist.Add('advice = """' + escapeStringForToml(aktProduct.productdata.advice) + '"""');
+      textlist.Add('version = "' + escapeStringForToml(aktProduct.productdata.productversion) + '"');
       textlist.Add('priority = ' + IntToStr(aktProduct.productdata.priority));
       textlist.Add('licenseRequired = false');
       textlist.Add('productClasses = []');
-      textlist.Add('setupScript = "' + aktProduct.productdata.setupscript + '"');
+      textlist.Add('setupScript = "' + escapeStringForToml(aktProduct.productdata.setupscript) + '"');
       // No uninstall for Meta
       if not (osdsettings.runmode in [createMeta]) then
         textlist.Add('uninstallScript = "' +
-          aktProduct.productdata.uninstallscript + '"');
-      textlist.Add('updateScript = "' + aktProduct.productdata.updatescript + '"');
+          escapeStringForToml(aktProduct.productdata.uninstallscript) + '"');
+      textlist.Add('updateScript = "' + escapeStringForToml(aktProduct.productdata.updatescript) + '"');
       textlist.Add('alwaysScript = ""');
       textlist.Add('onceScript = ""');
       textlist.Add('customScript = ""');
       if aktProduct.productdata.customizeProfile then
-        textlist.Add('userLoginScript = "' + aktProduct.productdata.setupscript + '"')
+        textlist.Add('userLoginScript = "' + escapeStringForToml(aktProduct.productdata.setupscript) + '"')
       else
         textlist.Add('userLoginScript = ""');
       // the next line avoids a bug in  opsi-makepackage 4.3.0.36 [python-opsi=4.3.0.14]
@@ -1286,7 +1304,7 @@ begin
           unicode: textlist.Add('type = "unicode"');
         end;
         textlist.Add('name = "' + myprop.Property_Name + '"');
-        textlist.Add('description = "' + myprop.description + '"');
+        textlist.Add('description = "' + escapeStringForToml(myprop.description) + '"');
         if myprop.Property_Type = bool then
         begin
           textlist.Add('default = [' + lowercase(
@@ -1296,14 +1314,16 @@ begin
         begin
           textlist.Add('multivalue = ' + lowercase(BoolToStr(myprop.multivalue, True)));
           textlist.Add('editable = ' + lowercase(BoolToStr(myprop.editable, True)));
-          helplist.Text := myprop.GetValueLines.Text;
+          FreeAndNil(helplist);
+          helplist := escapeListForToml(TStringList(myprop.GetValueLines));
           opsiquotelist(helplist, '"');
           if stringListToJsonArray(helplist, tmpstr) then
             textlist.Add('values = ' + tmpstr)
           else
             LogDatei.log('Failed to write property values entry for property: ' +
               myprop.Property_Name, LLerror);
-          helplist.Text := myprop.GetDefaultLines.Text;
+          FreeAndNil(helplist);
+          helplist := escapeListForToml(TStringList(myprop.GetDefaultLines));
           opsiquotelist(helplist, '"');
           if stringListToJsonArray(helplist, tmpstr) then
             textlist.Add('default = ' + tmpstr)
@@ -1311,12 +1331,6 @@ begin
             LogDatei.log('Failed to write property default entry for property: ' +
               myprop.Property_Name, LLerror);
         end;
-      end;
-      // escape backslashes and quotes
-      for i:= 0 to textlist.Count -1 do
-      begin
-        textlist[i] := StringReplace(textlist[i],'\','\\"',[rfReplaceAll, rfIgnoreCase]);
-        textlist[i] := StringReplace(textlist[i],'"','\"',[rfReplaceAll, rfIgnoreCase]);
       end;
       textlist.SaveToFile(opsipath + pathdelim + 'control.toml');
       // END: create control file (4.3 toml style)
@@ -1388,8 +1402,12 @@ begin
     FreeAndNil(textlist);
     Result := True;
   except
-    LogDatei.log('Error in createOpsiFiles', LLError);
-    FreeAndNil(textlist);
+    on E: Exception do
+    begin
+      LogDatei.log('Error in createOpsiFiles', LLError);
+      LogDatei.log('Error: '+e.Message, LLError);
+      FreeAndNil(textlist);
+    end;
   end;
 end;
 
