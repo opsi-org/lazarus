@@ -12456,13 +12456,13 @@ object resultForm1: TresultForm1
             Left = 199
             Height = 36
             Top = 10
-            Width = 527
+            Width = 500
             Anchors = []
             AutoSize = False
             BorderSpacing.Left = 9
             BorderSpacing.Around = 9
             BorderSpacing.InnerBorder = 2
-            Constraints.MinWidth = 527
+            Constraints.MinWidth = 500
             ParentFont = False
             TabOrder = 0
           end
@@ -12480,7 +12480,7 @@ object resultForm1: TresultForm1
             ParentFont = False
           end
           object BitBtnWorkBenchPath: TBitBtn
-            Left = 747
+            Left = 720
             Height = 30
             Top = 10
             Width = 170
@@ -12531,14 +12531,14 @@ object resultForm1: TresultForm1
             TabOrder = 1
           end
           object SpeedButtonHelpCreate: TSpeedButton
-            Left = 101
+            Left = 949
             Height = 22
             Hint = 'Show Help'
-            Top = 65
+            Top = 11
             Width = 23
             Align = alRight
             Anchors = [akTop, akLeft, akBottom]
-            BorderSpacing.Left = 100
+            BorderSpacing.Left = 50
             BorderSpacing.Top = 10
             Flat = True
             Glyph.Data = {
@@ -13665,8 +13665,7 @@ object resultForm1: TresultForm1
     Top = 6
   end
   object ImageList1: TImageList
-    Left = 1040
-    Top = 8
+    Left = 448
     Bitmap = {
       4C7A070000001000000010000000220500000000000078DAED99796C55451487
       5F05148A96A249E3C21223161414492D5A1023FEA1061225C1C45D71C7D08848
@@ -13719,7 +13718,6 @@ object resultForm1: TresultForm1
   end
   object SaveDialogProj: TSaveDialog
     Filter = 'OSD Project file|*.osd'
-    Left = 318
-    Top = 9
+    Left = 256
   end
 end
