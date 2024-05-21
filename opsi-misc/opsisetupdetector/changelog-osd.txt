@@ -149,9 +149,11 @@ todo:
 ### Fixe
 - control.toml: again: all backslashes and double quotes has to be escaped with backslash
 - import control toml:
-at unit TOMLParser
-in function TTOMLScanner.ParseString: TTOMLStringType;
-add handling of escaped backslash
+  at unit TOMLParser
+  in function TTOMLScanner.ParseString: TTOMLStringType;
+  add handling of escaped backslash
+- syntax error in uninstall strings for advanced installer:
+  fix in osdanalyzewin: get_advancedInstaller_info
 
 (Detlef Oertel <d.oertel@uib.de> 2024-05-17)
 

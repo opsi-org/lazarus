@@ -1044,15 +1044,15 @@ var
   pos1, pos2, i: integer;
 begin
   write_log_and_memo('Analyzing advancedInstaller:');
-  mysetup.uninstallDirectory:= '"$installerSourceDir$\';
+  mysetup.uninstallDirectory:= '$installerSourceDir$';
   mysetup.uninstallProg:= mysetup.uninstallDirectory + mysetup.setupFileName;
   if mysetup.preferSilent then
       mysetup.uninstallCommandLine :=
-        '"' + mysetup.uninstallProg + '" ' +
+        '"' + mysetup.uninstallDirectory + '/'+mysetup.setupFileName+'" ' +
         installerArray[integer(mysetup.installerId)].silentuninstall
     else
       mysetup.uninstallCommandLine :=
-        '"' + mysetup.uninstallProg + '" ' +
+        '"' + mysetup.uninstallDirectory + '/'+mysetup.setupFileName+'" ' +
         installerArray[integer(mysetup.installerId)].unattendeduninstall;
   write_log_and_memo('get_advancedInstaller_info finished');
 end;
