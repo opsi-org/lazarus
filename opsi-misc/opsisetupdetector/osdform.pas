@@ -2565,6 +2565,13 @@ begin
     uninstcheckstr := StringReplace(uninstcheckstr, '$installdir$',
       '"+$installdir$+"', [rfIgnoreCase]);
 
+    // the use of the  $installerSourceDir$ variable for the primary section function fileexists
+    // will for example result to:
+    // if fileexists($installerSourceDir$+"\uninst.exe")
+    uninstcheckstr := StringReplace(uninstcheckstr, '$installerSourceDir$',
+      '"+$installerSourceDir$+"', [rfIgnoreCase]);
+
+
     mysetup.uninstallCheck.Add('if fileexists("' + uninstcheckstr + '")');
     mysetup.uninstallCheck.Add('	set $oldProgFound$ = "true"');
     mysetup.uninstallCheck.Add('endif');

@@ -261,6 +261,11 @@ begin
     // if fileexists(""+$installdir$+"\uninst.exe")
     uninstcheckstr := StringReplace(uninstcheckstr, '$installdir$',
       '"+$installdir$+"', [rfIgnoreCase]);
+    // the use of the  $installerSourceDir$ variable for the primary section function fileexists
+    // will for example result to:
+    // if fileexists($installerSourceDir$+"\uninst.exe")
+    uninstcheckstr := StringReplace(uninstcheckstr, '$installerSourceDir$',
+      '"+$installerSourceDir$+"', [rfIgnoreCase]);
     mysetup.uninstallCheck.Add('if fileexists("' + uninstcheckstr + '")');
     mysetup.uninstallCheck.Add('	set $oldProgFound$ = "true"');
     mysetup.uninstallCheck.Add('endif');
@@ -1044,16 +1049,38 @@ var
   pos1, pos2, i: integer;
 begin
   write_log_and_memo('Analyzing advancedInstaller:');
+  (*
+  todo:
+  create temp dir
+  copy setup to tmp dir
+  call setup with /extract
+  search for msi file
+  get msiid and display name from msi
+  force msi uninstall
+
+  destDir := GetTempDir(False);
+  destDir := destDir + DirectorySeparator + 'msixAppx';
+  // cleanup destination
+  if DirectoryExists(destDir) then
+    DeleteDirectory(destDir,true);
+  // create destination
+  if not DirectoryExists(destDir) then
+    ForceDirectories(destDir);
+    *)
   mysetup.uninstallDirectory:= '$installerSourceDir$';
-  mysetup.uninstallProg:= mysetup.uninstallDirectory + mysetup.setupFileName;
+  mysetup.uninstallProg:= mysetup.uninstallDirectory +'\'+ mysetup.setupFileName;
+
   if mysetup.preferSilent then
       mysetup.uninstallCommandLine :=
-        '"' + mysetup.uninstallDirectory + '/'+mysetup.setupFileName+'" ' +
+        '"' + mysetup.uninstallDirectory + '\'+mysetup.setupFileName+'" ' +
         installerArray[integer(mysetup.installerId)].silentuninstall
     else
       mysetup.uninstallCommandLine :=
-        '"' + mysetup.uninstallDirectory + '/'+mysetup.setupFileName+'" ' +
+        '"' + mysetup.uninstallDirectory + '\'+mysetup.setupFileName+'" ' +
         installerArray[integer(mysetup.installerId)].unattendeduninstall;
+
+  resultForm1.updateUninstaller(mysetup);
+
   write_log_and_memo('get_advancedInstaller_info finished');
 end;
 
