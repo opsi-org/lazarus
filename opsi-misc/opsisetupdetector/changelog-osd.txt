@@ -149,6 +149,7 @@ todo:
 ### Fixe
 - syntax error in uninstall strings for advanced installer:
   fix in osdanalyzewin: get_advancedInstaller_info
+-  fix advanced installer unattended uninstall parameter : only /qb
 
 (Detlef Oertel <d.oertel@uib.de> 2024-05-22)
 

@@ -2769,7 +2769,8 @@ begin
     unattendedsetup :=
       '/exebasicui /l* "%opsiLogDir%\$ProductId$.install_log.txt" /qb-! ALLUSERS=1 REBOOT=ReallySuppress';
     silentuninstall := '/exenoui /qn REMOVE=all /norestart';
-    unattendeduninstall := '/exebasicui /qb-! REMOVE=all /norestart';
+    // /qb-! führt bei uninstall bei shiluette studio zu 'invalid command line'
+    unattendeduninstall := '/exebasicui /qb REMOVE=all /norestart';
     uninstall_waitforprocess := '';
     install_waitforprocess := '';
     uninstallProg := '<setup-file>';
