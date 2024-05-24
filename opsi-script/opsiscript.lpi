@@ -59,6 +59,9 @@
             <SmallerCode Value="True"/>
           </CodeGeneration>
           <Linking>
+            <Debugging>
+              <DebugInfoType Value="dsDwarf3"/>
+            </Debugging>
             <Options>
               <Win32>
                 <GraphicApplication Value="True"/>
