@@ -110,6 +110,7 @@ uses
   osparser,
   osparserhelper,
   osfunc,
+  osnetutil,
   //IdSysLog,
   strutils,
   inifiles;
@@ -2385,7 +2386,10 @@ begin
                       omc.Free;
                       *)
                     opsidata.setActualProductName(batchproductid);
-                    opsidata.setActualClient(opsiserviceUser);
+                    if isValidFQDN(opsiserviceClientId) then
+                       opsidata.setActualClient(opsiserviceClientId)
+                    else
+                       opsidata.setActualClient(opsiserviceUser);
                     ProductvarsForPC := opsidata.getProductproperties;
                     if not opsidata.initProduct then
                     begin
@@ -2422,7 +2426,10 @@ begin
                         omc.Free;
                         *)
                       opsidata.setActualProductName(batchproductid);
-                      opsidata.setActualClient(opsiserviceUser);
+                      if isValidFQDN(opsiserviceClientId) then
+                         opsidata.setActualClient(opsiserviceClientId)
+                      else
+                         opsidata.setActualClient(opsiserviceUser);
                       ProductvarsForPC := opsidata.getProductproperties;
                       if not opsidata.initProduct then
                       begin
