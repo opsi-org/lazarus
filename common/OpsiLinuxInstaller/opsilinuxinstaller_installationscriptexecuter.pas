@@ -176,7 +176,7 @@ begin
   // Get opsi-script_*.tar.gz from download.opensuse.org and extract it
   FInstallRunCommand.Run(FPackageManagementShellCommand + 'update', Output);
   FInstallRunCommand.Run(FPackageManagementShellCommand + 'install wget tar', Output);
-  FInstallRunCommand.Run('wget -A opsi-script_*.tar.gz -r -l 1 ' +
+  FInstallRunCommand.Run('wget -A opsi-script_*.opsi -r -l 1 ' +
     'https://opsipackages.43.opsi.org/stable/linux/localboot/'
     + ' -nd', Output);
   FInstallRunCommand.Run('tar -xvf opsi-script_*.opsi CLIENT_DATA.tar.gz', Output);
