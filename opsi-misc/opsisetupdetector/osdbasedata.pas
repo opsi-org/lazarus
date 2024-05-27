@@ -29,11 +29,20 @@ uses
 
 type
 
-  TRunMode = (analyzeOnly,
-    singleAnalyzeCreate, twoAnalyzeCreate_1,
-    twoAnalyzeCreate_2, createTemplate, threeAnalyzeCreate_1,
-    threeAnalyzeCreate_2, threeAnalyzeCreate_3, createMultiTemplate, createMeta,
-    analyzeCreateWithUser, createTemplateWithUser, gmUnknown);
+  TRunMode = (
+    analyzeOnly,         // only analyze installer
+    singleAnalyzeCreate, // analyze one installer and create opsi package
+    twoAnalyzeCreate_1,  // analyze two installers and create opsi package (part win32)
+    twoAnalyzeCreate_2,  // analyze two installers and create opsi package (part win64)
+    createTemplate,      // create standard template
+    threeAnalyzeCreate_1,// analyze multi installers and create multi opsi package (part win)
+    threeAnalyzeCreate_2,// analyze multi installers and create multi opsi package (part lin)
+    threeAnalyzeCreate_3,// analyze multi installers and create multi opsi package (part mac)
+    createMultiTemplate, // create multi platform template
+    createMeta,          // create meta packeage
+    analyzeCreateWithUser,  // analyze one installer and create opsi package with loggedin user
+    createTemplateWithUser, // create template for opsi package with loggedin user
+    gmUnknown);
 
   TTemplateChannels = (training, default, structured, custom);
 
@@ -114,7 +123,7 @@ type
   TdetectInstaller = function(parent: TClass; markerlist: TStrings): boolean;
 
 
-  TInstallerData = class
+  TInstallerData = class    // Information about a type of installer
   private
   public
     installerId: TKnownInstaller;
@@ -130,15 +139,15 @@ type
     unattendedsetup: string;       // cli parameters for unattended setup
     silentuninstall: string;       // cli parameters for (really) silent uninstall
     unattendeduninstall: string;   // cli parameters for unattended uninstall
-    uninstall_waitforprocess: string;
-    install_waitforprocess: string;
-    uninstallProg: string;
-    comment: string;
-    Link: string;
-    uib_exitcode_function: string;
-    detected: TdetectInstaller;
-    installErrorHandlingLines: TStringList;
-    info_message_html: TStringList;  // Important Information about this Installer.
+    uninstall_waitforprocess: string;  // process name to wait for after uninstall program is started (_Au.exe)
+    install_waitforprocess: string; // process name to wait for after install program is started
+    uninstallProg: string;         // typical path + name of the uninstall.prog
+    comment: string;               // comment to this installer type
+    Link: string;                  // Link to further inormation to this installer type
+    uib_exitcode_function: string; // name of the exitcode function in the library uib_exitcode, that matches to this installer type
+    detected: TdetectInstaller;    // pointer to detection function
+    installErrorHandlingLines: TStringList;  // aditional opsi-script code to run after a failed installation was detected
+    info_message_html: TStringList;  // Important Information about this installer type
     // Displayed after detection
     // formatted in markdown
     { public declarations }
@@ -150,42 +159,42 @@ type
 
   TSetupFile = class(TPersistent)
   private
-    Factive: boolean;
-    FID: integer; // 1 = first setup file, 2 = second setup file
-    FsetupFileNamePath: string;
-    FsetupFileName: string;
-    FsetupFullFileName: string;
-    FsetupFileSize: cardinal;     // MB
-    Farchitecture: TArchitecture;
-    FmsiId: string;
-    FmsiProductName: string;
-    FmstAllowed: boolean;
-    FMstFullFileName: string;
-    FmstFileNamePath: string;
-    FmstFileName: string;
-    FmsiFullFileName: string;
-    FinstallerId: TKnownInstaller;
-    FrequiredSpace: cardinal;      // MB
-    FinstallDirectory: string;
-    Fmarkerlist: TStrings;
-    Finfolist: TStrings;
-    Flink: string;
-    FSoftwareVersion: string;
-    Fwinbatch_del_argument: string;
-    FinstallCommandLine: string;
-    FuninstallCommandLine: string;
-    FuninstallProg: string;
-    FuninstallDirectory: string;
-    FtargetProg: string;
-    FuninstallCheck: TStrings;
-    FisExitcodeFatalFunction: string;
-    Funinstall_waitforprocess: string;
-    Finstall_waitforprocess: string;
-    FinstallErrorHandlingLines: TStrings;
-    Fanalyze_progess: integer;
-    FcopyCompleteDir: boolean;
-    FtargetOS: TTargetOS;
-    FinstallerSourceDir: string;
+    Factive: boolean;             // is this instance active
+    FID: integer;                 // 1 = first setup file, 2 = second setup file
+    FsetupFileNamePath: string;   // path only of the installer file source
+    FsetupFileName: string;       // file name of the installer file source
+    FsetupFullFileName: string;   // path + file name of the installer file source
+    FsetupFileSize: cardinal;     // MB size of the installer file
+    Farchitecture: TArchitecture; // architecture of installer if known
+    FmsiId: string;               // msi ID of installer if known
+    FmsiProductName: string;      // msi Display name of installer if known
+    FmstAllowed: boolean;         // Is it allowed to add mst file
+    FMstFullFileName: string;     // path + file name of the mst file source
+    FmstFileNamePath: string;     // path only of the mst file source
+    FmstFileName: string;         // file name of the mst file source
+    //FmsiFullFileName: string;
+    FinstallerId: TKnownInstaller; // type of detected installer
+    FrequiredSpace: cardinal;      // MB size of the required space to run this installer
+    FinstallDirectory: string;     // target directory where this installer will install to
+    Fmarkerlist: TStrings;         // list of detected markers (patterns) for installer type detection
+    Finfolist: TStrings;           // list of detected info markers (patterns) for installer type detection
+    Flink: string;                 // link to further inormation to the detected installer type
+    FSoftwareVersion: string;      // version of the software that would be installed
+    //Fwinbatch_del_argument: string;
+    FinstallCommandLine: string;   // command line to install the software
+    FuninstallCommandLine: string; // command line to uninstall the software
+    FuninstallProg: string;        // path + name of the uninstall.prog
+    FuninstallDirectory: string;   // dir of the uninstall.prog
+    FtargetProg: string;           // file name of the main program (used for desktop icons)
+    FuninstallCheck: TStrings;     // list of opsi-script code to detect an existing installation
+    FisExitcodeFatalFunction: string;  // name of the exitcode function in the library uib_exitcode, that matches to this installer type
+    Funinstall_waitforprocess: string; // process name to wait for after uninstall program is started (_Au.exe)
+    Finstall_waitforprocess: string;   // process name to wait for after install program is started
+    FinstallErrorHandlingLines: TStrings; // additional opsi-script code to run after a failed installation was detected (e.g.: load installer log)
+    Fanalyze_progess: integer;         // state of the analyze progress in percent
+    FcopyCompleteDir: boolean;         // should we copy only the installer file or the complete directory
+    FtargetOS: TTargetOS;              // on which OS can this installer install
+    FinstallerSourceDir: string;       // directory of the installer inside the opsi package (%scriptpath%\files1)
     FpreferSilent: boolean;
     procedure SetMarkerlist(const AValue: TStrings);
     procedure SetInfolist(const AValue: TStrings);
@@ -195,10 +204,7 @@ type
     procedure SetTargetProg(const AValue: string);
     procedure SetInstallDirectory(const AValue: string);
     procedure SetUninstallDirectory(const AValue: string);
-    //procedure OnRestoreProperty(Sender: TObject; AObject: TObject;
-    //  Info: PPropInfo; AValue: TJSONData; var Handled: Boolean);
   published
-    // proc
     procedure SetArchitecture(const AValue: TArchitecture);
     procedure SetSetupFullFileName(const AValue: string);
     procedure SetMstFullFileName(const AValue: string);
@@ -215,7 +221,7 @@ type
     property mstFullFileName: string read FMstFullFileName write SetMstFullFileName;
     property mstFileNamePath: string read FmstFileNamePath write FmstFileNamePath;
     property mstFileName: string read FmstFileName write FmstFileName;
-    property msiFullFileName: string read FmsiFullFileName write FmsiFullFileName;
+    //property msiFullFileName: string read FmsiFullFileName write FmsiFullFileName;
     property installerId: TKnownInstaller read FinstallerId write FinstallerId;
     property requiredSpace: cardinal read FrequiredSpace write FrequiredSpace;
     property installDirectory: string read FinstallDirectory write SetInstallDirectory;
@@ -223,8 +229,8 @@ type
     property infolist: TStrings read Finfolist write SetInfolist;
     property link: string read Flink write Flink;
     property SoftwareVersion: string read FSoftwareVersion write FSoftwareVersion;
-    property winbatch_del_argument: string read Fwinbatch_del_argument
-      write Fwinbatch_del_argument;
+    //property winbatch_del_argument: string read Fwinbatch_del_argument
+    //  write Fwinbatch_del_argument;
     property installCommandLine: string read FinstallCommandLine
       write FinstallCommandLine;
     property isExitcodeFatalFunction: string
@@ -378,7 +384,7 @@ default: ["xenial_bionic"]
 
   TProductData = class(TPersistent)
   private
-    FarchitectureMode: TArchitectureMode;
+    FarchitectureMode: TArchitectureMode; // how to handle 32/64 bit (32only, 64only, both,...)
     Fcomment: string;
     Fdescription: string;
     Fadvice: string;
@@ -398,15 +404,15 @@ default: ["xenial_bionic"]
     FuserLoginscript: string;
     Fdelsubscript: string;
     Flicenserequired: boolean;
-    FproductImageFullFileName: string;
-    FtargetOSset: TTargetOSset;
-    FuseCustomDir: boolean;
-    FchannelDir: string;
-    FinstallFromLocal: boolean;
-    FhandleLicensekey: boolean;
-    Fdesktopicon: boolean;
-    FcustomizeProfile: boolean;
-    FuninstallBeforeInstall : boolean;
+    FproductImageFullFileName: string;    // path + name of the product icon source file
+    FtargetOSset: TTargetOSset;           // set of OS this product will work for (win,lin,mac)
+    FuseCustomDir: boolean;               // should we add code for custom dir handling
+    FchannelDir: string;                  // which template channel should be used
+    FinstallFromLocal: boolean;           // should we add code to install from temporary local dir
+    FhandleLicensekey: boolean;           // should we add code for license handling
+    Fdesktopicon: boolean;                // should we add code for desktop icon handling
+    FcustomizeProfile: boolean;           // should we add code for user profile cutomizing
+    FuninstallBeforeInstall : boolean;    // should we add code for uninstall before install by property
     procedure SetPriority(const AValue: TPriority);
   published
     property architectureMode: TArchitectureMode
@@ -453,7 +459,6 @@ default: ["xenial_bionic"]
   public
     SetupFiles: array[0..2] of TSetupFile;
     productdata: TProductData;
-    //dependeciesCount : integer;
     dependencies: TCollection;
     properties: TPProperties;
 
@@ -980,7 +985,7 @@ begin
   FmstFullFileName := '';
   FmstFileNamePath := '';
   FmstFileName := '';
-  FmsiFullFileName := '';
+  //FmsiFullFileName := '';
   FinstallerId := stUnknown;
   FrequiredSpace := 0;
   FinstallDirectory := 'unknown';
@@ -989,7 +994,7 @@ begin
   Finfolist.Clear;
   Flink := '';
   FSoftwareVersion := '0.0';
-  Fwinbatch_del_argument := '';
+  //Fwinbatch_del_argument := '';
   FinstallCommandLine := '';
   FuninstallCommandLine := '';
   FuninstallProg := '';
