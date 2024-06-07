@@ -1193,8 +1193,7 @@ begin
     {$ENDIF WINDOWS}
     goOn := True;
     {$IFDEF GUI}
-    // in build pc mode we want stay on top
-    FBatchOberflaeche.SetForceStayOnTop(True);
+    FBatchOberflaeche.SetForceStayOnTop(False);
     {$ENDIF GUI}
     DontUpdateMemo := True;
     FlagReloadProductList := False;
@@ -1625,6 +1624,8 @@ begin
   goOn := True;
   {$IFDEF GUI}
   FBatchOberflaeche.SetForceStayOnTop(False);
+  //BatchWindowMode := bwmNormalWindow;
+  //FBatchOberflaeche.setWindowState(BatchWindowMode);
   {$ENDIF GUI}
   maxtries := 10;
   trycounter := 0;
@@ -1765,7 +1766,9 @@ begin
   LogDatei.LogProduktId := False;
   goOn := True;
   {$IFDEF GUI}
-  FBatchOberflaeche.SetForceStayOnTop(True);
+  FBatchOberflaeche.SetForceStayOnTop(False);
+  //BatchWindowMode := bwmNormalWindow;
+  //FBatchOberflaeche.setWindowState(BatchWindowMode);
   {$ENDIF GUI}
   DontUpdateMemo := True;
 

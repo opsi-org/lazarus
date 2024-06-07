@@ -68,7 +68,6 @@ type
     ImageOpsiBackground: TImage;
     LabelInfo: TLabel;
     ActivityBar: TProgressBar;
-    TimerOnTop: TTimer;
     TimerProcessMess: TTimer;
     TimerActivity: TTimer;
     TimerDetail: TTimer;
@@ -99,7 +98,6 @@ type
     procedure TimerCommandTimer(Sender: TObject);
     procedure TimerActivityTimer(Sender: TObject);
     procedure TimerDetailTimer(Sender: TObject);
-    procedure TimerOnTopTimer(Sender: TObject);
     procedure TimerProcessMessTimer(Sender: TObject);
 
   private
@@ -160,7 +158,7 @@ var
   //FBatchOberflaeche: TosGUIControl;//TFBatchOberflaeche;
   LableInfoDefaultFontSize: integer;
 
-  BatchWindowMode, SavedBatchWindowMode, aktBatchWindowMode: TBatchWindowMode;
+  BatchWindowMode, SavedBatchWindowMode: TBatchWindowMode;
   FormMoving: boolean;
   MousePos: TPoint;
   z: TBitmap;
@@ -241,9 +239,10 @@ begin
 
 
   Panel.DoubleBuffered := True;
+  { will be set in osmain accourding to cli parameters -> runSilent }
+  //Visible := True;
 
-  // window state is controlled commandline parameters
-  //setWindowState(bwmNormalWindow);
+  setWindowState(bwmNormalWindow);
   Position := poScreenCenter;
   if ScaleDesignToForm(Height) < ScaleDesignToForm(InnerHeight) + ScaleDesignToForm(StartTop) then
     StartTop := (ScaleDesignToForm(Height) - ScaleDesignToForm(InnerHeight)) div ScaleDesignToForm(2);
@@ -607,30 +606,23 @@ end;
 
 procedure TFBatchOberflaeche.ForceStayOnTop(YesNo: boolean);
 begin
-    if Assigned(LogDatei) then
-  LogDatei.log_prog('ForceStayOnTop start: '+BoolToStr(YesNo,true), LLnotice);
   if YesNo then
   begin
+    setWindowState(bwmMaximized);
     { make to system wide top most window }
     FormStyle := fsSystemStayOnTop;
     BringToFront;
+    Application.ProcessMessages;
     { now allow new started windows (setup) to get the system wide top most position }
     FormStyle := fsStayOnTop;
     BatchScreenOnTop := True;
-    // call onTopTimer event
-    TimerOnTopTimer(TimerOnTop);
-    // enable onTopTimer
-    TimerOnTop.Enabled:= true;
   end
   else
   begin
     FormStyle := fsnormal;
     BatchScreenOnTop := False;
-    // disable onTopTimer
-    TimerOnTop.Enabled:= false;
+    Application.ProcessMessages;
   end;
-  setWindowState(aktBatchWindowMode);
-  Application.ProcessMessages;
 end;
 
 
@@ -774,23 +766,14 @@ begin
 end;
 
 procedure TFBatchOberflaeche.SetBatchWindowMode(BatchWindowMode: TBatchWindowMode);
-var
-  BWModeStr: string;
 begin
-  if Assigned(LogDatei) then
-  begin
-    WriteStr(BWModeStr, BatchWindowMode);
-    LogDatei.log_prog('SetBatchWindowMode start: ' + BWModeStr, LLinfo);
-  end;
   setWindowState(BatchWindowMode);
-  aktBatchWindowMode := BatchWindowMode;
 end;
 
 procedure TFBatchOberflaeche.FormCloseQuery(Sender: TObject; var CanClose: boolean);
 begin
   CanClose := False;
-  // SetBatchWindowMode also store the mode in aktBatchWindowMode;
-  SetBatchWindowMode(bwmNormalWindow);
+  setWindowState(bwmNormalWindow);
   Position := poScreenCenter;
   SetBounds(StartLeft, StartTop, InnerWidth, InnerHeight);
 end;
@@ -988,17 +971,6 @@ procedure TFBatchOberflaeche.TimerDetailTimer(Sender: TObject);
 begin
   timeDetailLabel := True;
   TimerDetail.Enabled := False;
-end;
-
-procedure TFBatchOberflaeche.TimerOnTopTimer(Sender: TObject);
-begin
-  if TTimer(Sender).Enabled then
-  begin
-    if Assigned(LogDatei) then
-      LogDatei.log_prog('TimerOnTopTimer start ', LLnotice);
-    BringToFront;
-    Application.ProcessMessages;
-  end;
 end;
 
 procedure TFBatchOberflaeche.TimerProcessMessTimer(Sender: TObject);
