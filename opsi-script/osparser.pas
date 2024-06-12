@@ -348,6 +348,8 @@ type
     FtestSyntax: boolean;  // default=false ; if true then run syntax check
 
 
+    function IsPowershellExecutionPolicyRestricted: boolean;
+    function GetPowershellExecutionPolicy(Scope:string='EffectiveExecutionPolicy'): string;
     procedure parsePowershellCall(var Command: string; var AccessString: string;
       var HandlePolicy: string; var Option: string; var Remaining: string;
       var syntaxCheck: boolean; var InfoSyntaxError: string;
@@ -11319,7 +11321,6 @@ var
   myoutput: TXStringlist;
   powershellpara: string;
   tmplist: TStringList;
-  ExecutionPolicy: string = '';
   AllSignedHack: boolean = false;
   catcommand: string = 'cat ';
 
@@ -11484,45 +11485,8 @@ begin
       LogDatei.log('powershell powershell parameters are: ' + powershellpara, LLDebug);
       LogDatei.log('powershell programparas are: ' + programparas, LLDebug2);
 
-      if RunCommandAndCaptureOut('powershell.exe "Get-ExecutionPolicy -Scope MachinePolicy"' , True, output, report, showcmd, FLastExitCodeOfExe) then
-      begin
-        ExecutionPolicy := output.Text;
-        output.Clear;
-        report := '';
-        ExecutionPolicy := trim(ExecutionPolicy);
-        LogDatei.log('Get execution policy for scope "MachinePolicy": ' + ExecutionPolicy, LLDebug);
-        if ((LowerCase(ExecutionPolicy) = LowerCase('AllSigned')) or
-          (LowerCase(ExecutionPolicy) = LowerCase('Restricted'))) then
-        begin
-          allSignedHack := True;
-          //useStdIn := True;
-          LogDatei.log('Powershell with AllSigned/Restricted detected - switching to Get-Content Mode',
-            LLinfo);
-          (*if trim(programparas) <> '' then
-            LogDatei.log('Powershell with AllSigned: ignored programparas: ' +
-              programparas, LLinfo);
-              *)
-          if trim(passparas) <> '' then
-            LogDatei.log('Powershell with AllSigned/Restricted: ignored passparas: ' +
-              passparas, LLinfo);
-        end;
-      end
-      else
-      begin
-        LogDatei.log('Could not get execution policy for scope "MachinePolicy": ' + ExecutionPolicy + ' - use Get-Content Mode', LLWarning);
-        allSignedHack := True;
-        if trim(passparas) <> '' then
-          LogDatei.log('Powershell ignored passparas: ' + passparas, LLwarning);
-      end;
+      AllSignedHack := IsPowershellExecutionPolicyRestricted();
     end;
-
-    //if useStdIn then
-    if allSignedHack then
-    begin
-      //powershellpara := ' -command - ';
-      powershellpara := ' -Command ';
-    end;
-
 
     tempfilename := winstGetTempFileNameWithExt(useext);
 
@@ -11577,6 +11541,10 @@ begin
 
       if allSignedHack then
       begin
+        powershellpara := ' -Command ';
+        if trim(passparas) <> '' then
+           LogDatei.log('Powershell with AllSigned/Restricted: ignored passparas: ' +
+             passparas, LLinfo);
         {$IFDEF WINDOWS}
         catcommand := 'type ';
         {$ENDIF WINDOWS}
@@ -21693,6 +21661,70 @@ begin
       SyntaxCheck := True
     else
       SyntaxCheck := False;
+  end;
+end;
+
+function TuibInstScript.GetPowershellExecutionPolicy(Scope:string='EffectiveExecutionPolicy'): string;
+//Possible (Microsoft) Scopes: MachinePolicy, UserPolicy, Process, CurrentUser, LocalMachine
+//see https:/go.microsoft.com/fwlink/?LinkID=135170
+//If Scope is 'EffectiveExecutionPolicy' no Scope is set and the effective execution policy is given back
+var
+  ExecutionPolicy: string;
+  Output: TXStringList;
+  Report: string;
+  Command: string;
+begin
+  ExecutionPolicy := 'Unknown';
+  Output := TXStringList.Create;
+  if LowerCase(Scope) = LowerCase('EffectiveExecutionPolicy') then
+    Command := 'powershell.exe "Get-ExecutionPolicy"'
+  else
+    Command := 'powershell.exe "Get-ExecutionPolicy -Scope ' + Scope +'"';
+  try
+    if RunCommandAndCaptureOut(Command , True, Output, Report, SW_SHOWMINIMIZED, FLastExitCodeOfExe) then
+    begin
+      ExecutionPolicy := Trim(Output.Text);
+      LogDatei.log('Get execution policy for scope "'+Scope+'": ' +
+        ExecutionPolicy, LLDebug);
+    end
+    else
+    begin
+      LogDatei.log('Could not get execution policy for scope "'+Scope+'": ' +
+        ExecutionPolicy, LLWarning);
+    end;
+  finally
+    if Assigned(Output) then FreeAndNil(Output);
+    Result:= ExecutionPolicy;
+  end;
+end;
+
+
+function TuibInstScript.IsPowershellExecutionPolicyRestricted: boolean;
+//checks if there are any restrictions(AllSigned, Restricted) running powershell scripts
+//see https:/go.microsoft.com/fwlink/?LinkID=135170
+var
+  AllSignedHack: boolean;
+  ExecutionPolicy: string;
+begin
+  AllSignedHack := true;
+  try
+    ExecutionPolicy := GetPowershellExecutionPolicy('MachinePolicy');
+    if (LowerCase(ExecutionPolicy) = LowerCase('Undefined')) then
+      ExecutionPolicy := GetPowershellExecutionPolicy('UserPolicy');
+    if ((LowerCase(ExecutionPolicy) = LowerCase('AllSigned')) or
+      (LowerCase(ExecutionPolicy) = LowerCase('Restricted')) or
+      (LowerCase(ExecutionPolicy) = LowerCase('Unknown'))) then
+    begin
+      allSignedHack := True;
+      //useStdIn := True;
+      LogDatei.log('Powershell with ' + ExecutionPolicy + ' detected - switching '
+        +'to Get-Content Mode',
+        LLinfo);
+    end
+    else
+      AllSignedHack := false;
+  finally
+    Result:=AllSignedHack;
   end;
 end;
 
