@@ -1242,6 +1242,8 @@ begin
 end;
 
 function LoadLib(const Value: String): HModule;
+var
+  GetOpenSSLVersion: TOpenSSLversion = nil;
 begin
   Result := LoadLibrary(PChar(Value));
 {$IFDEF OPSISCRIPT}
@@ -1253,7 +1255,16 @@ begin
   else
   begin
     StartupMessages.Append('Load library: ' + Value);
-    StartupMessages.Append('OpenSSL version: ' + OpenSSLversion(0));
+    try
+      GetOpenSSLVersion := GetProcAddress(SSLUtilHandle, PChar('OpenSSL_version'));
+      if Assigned(GetOpenSSLVersion) then
+      begin
+        StartupMessages.Append('OpenSSL version: ' + GetOpenSSLversion(0));
+        GetOpenSSLVersion := nil;
+      end;
+    except
+      StartupMessages.Append('WARNING: Could not get OpenSSL version.');
+    end;
   end;
 {$ENDIF OPSISCRIPT}
 end;
