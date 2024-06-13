@@ -1253,6 +1253,7 @@ begin
   else
   begin
     StartupMessages.Append('Load library: ' + Value);
+    StartupMessages.Append('OpenSSL version: ' + OpenSSLversion(0));
   end;
 {$ENDIF OPSISCRIPT}
 end;
