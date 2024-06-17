@@ -2,6 +2,11 @@ todo:
 isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-package-requires-a-reboot-of-my-system
 mac getIpByName liefert name von IPnum
 
+* [fix] osjson : FPJson based implementation for:
+    * jsonAsArrayToStringList
+    * jsonAsArrayPutObjectByIndex
+    * jsonAsArrayGetElementByIndex
+
 opsi-script (4.12.15.0) unreleased/unreleased (4.2/4.3); urgency=medium
 
 * [fix] osbatchgui: batchgui via timer nach vorne schieben, configurierbar ?

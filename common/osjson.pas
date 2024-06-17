@@ -30,6 +30,7 @@ uses
   SysUtils,
   superobject,
   FpJson,
+  jsonscanner,  // used by GetJSON
   JsonParser,
   RegExpr,
   strutils;
@@ -299,6 +300,8 @@ begin
       Result := -1;
 end;
 
+(*
+//super object based implementation
 function jsonAsArrayGetElementByIndex(str: string; index: cardinal;
   var elemstr: string): boolean;
 var
@@ -315,7 +318,31 @@ begin
         Result := True;
       end;
 end;
+*)
 
+//FPJson based implementation
+function jsonAsArrayGetElementByIndex(str: string; index: cardinal;
+  var elemstr: string): boolean;
+var
+  new_data: TJSONData;
+begin
+  elemstr := '';
+  Result := False;
+  new_data := GetJSON(str);
+  if new_data <> nil then
+    if new_data.JSONType = jtArray then
+      if ((index >= 0) or (index < new_data.Count)) then
+      begin
+        if new_data.Items[index].JSONType = jtString then
+          elemstr := new_data.Items[index].AsString
+        else
+          elemstr := new_data.Items[index].AsJSON;
+        Result := True;
+      end;
+end;
+
+(*
+//super object based implementation
 function jsonAsArrayPutObjectByIndex(elemstr: string; var arraystr: string;
   index: cardinal): boolean;
 var
@@ -331,6 +358,27 @@ begin
       begin
         new_obj.AsArray.O[index] := new_elem;
         arraystr := new_obj.AsString;
+        Result := True;
+      end;
+end;
+*)
+
+//FPJson based implementation
+function jsonAsArrayPutObjectByIndex(elemstr: string; var arraystr: string;
+  index: cardinal): boolean;
+var
+  new_data: TJSONData;
+  new_elem: TJSONData;
+begin
+  Result := False;
+  new_data := GetJSON(arraystr);
+  new_elem := GetJSON(elemstr);
+  if (new_data <> nil) and (new_elem <> nil) then
+    if new_data.JSONType = jtArray then
+      if ((index >= 0) or (index < new_data.Count)) then
+      begin
+        new_data.Items[index] := new_elem;
+        arraystr := new_data.AsString;
         Result := True;
       end;
 end;
@@ -382,6 +430,8 @@ begin
   end;
 end;
 
+(*
+//super object based implementation
 function jsonAsArrayToStringList(str: string; var strListResult: TStringList): boolean;
 var
   new_obj: ISuperObject;
@@ -407,6 +457,34 @@ begin
       end;
     end;
 end;
+*)
+
+//FPJson based implementation
+function jsonAsArrayToStringList(str: string; var strListResult: TStringList): boolean;
+var
+  new_data: TJSONData;
+  i: integer;
+  objstr: string;
+begin
+  Result := False;
+  strListResult := TStringList.Create;
+  new_data := GetJSON(str);
+  if new_data <> nil then
+    if new_data.JSONType = jtArray then
+    begin
+      Result := True;
+      for i := 0 to new_data.Count - 1 do
+      begin
+        if new_data.Items[i].JSONType = jtString then
+          objstr := new_data.Items[i].AsString
+        else
+          objstr := new_data.Items[i].AsJSON;
+        objstr := stringreplace(objstr, #10, '\n', [rfReplaceAll, rfIgnoreCase]);
+        strListResult.Append(objstr);
+      end;
+    end;
+end;
+
 
 function jsonIsObject(str: string): boolean;
 var
