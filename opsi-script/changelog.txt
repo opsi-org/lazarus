@@ -4,6 +4,11 @@ mac getIpByName liefert name von IPnum
 
 opsi-script (4.12.15.0) unreleased/unreleased (4.2/4.3); urgency=medium
 
+* [fix] osbatchgui: batchgui via timer nach vorne schieben, configurierbar ?
+          (#47, , d.oertel 2024-04-30)
+          call FBatchOberflaeche.SetForceStayOnTop with false before and with true after running a process
+          SetForceStayOnTop will also switch the TimerOnTop on / off
+
 
 -- j.werner <j.werner@uib.de> 07 June 2024
 
