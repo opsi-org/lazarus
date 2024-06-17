@@ -10078,6 +10078,8 @@ begin
     {$IFDEF GUI}
     if AutoActivityDisplay then
       FBatchOberflaeche.SetElementVisible(True, eActivityBar);//showAcitvityBar(True);
+    // do not force on top while running external programs
+    FBatchOberflaeche.SetForceStayOnTop(false);
 
     if not WaitForReturn then
       showoutput := False;
@@ -10282,6 +10284,9 @@ from defines.inc
     {$IFDEF GUI}
     FBatchOberflaeche.SetElementVisible(False, eActivityBar);//showAcitvityBar(False);
 
+    // force on top after running external programs
+    FBatchOberflaeche.SetForceStayOnTop(true);
+
     if showoutput then
     begin
       SystemInfo.Free;
@@ -10325,6 +10330,8 @@ begin
     {$IFDEF GUI}
     if AutoActivityDisplay then
       FBatchOberflaeche.SetElementVisible(True, eActivityBar); //showAcitvityBar(True);
+    // do not force on top while running external programs
+    FBatchOberflaeche.SetForceStayOnTop(false);
     {$ENDIF GUI}
 
     if (lowercase(archparam) = '64bit') and Is64BitSystem then
@@ -10372,6 +10379,8 @@ begin
   finally
     {$IFDEF GUI}
     FBatchOberflaeche.SetElementVisible(False, eActivityBar);//showAcitvityBar(False);
+    // force on top after running external programs
+    FBatchOberflaeche.SetForceStayOnTop(true);
     {$ENDIF GUI}
   end;
 end;
@@ -10519,6 +10528,8 @@ begin
     {$IFDEF GUI}
     if AutoActivityDisplay then
       FBatchOberflaeche.SetElementVisible(True, eActivityBar);//showAcitvityBar(True);
+    // do not force on top while running external programs
+    FBatchOberflaeche.SetForceStayOnTop(false);
     {$ENDIF GUI}
 
     commandline := FileName + ' ' + trim(Parameters);
@@ -10574,6 +10585,8 @@ begin
   finally
     {$IFDEF GUI}
     FBatchOberflaeche.SetElementVisible(False, eActivityBar);//showAcitvityBar(False);
+    // force on top after running external programs
+    FBatchOberflaeche.SetForceStayOnTop(true);
     {$ENDIF GUI}
   end;
 end;
@@ -11597,6 +11610,8 @@ begin
       {$IFDEF GUI}
       if AutoActivityDisplay then
         FBatchOberflaeche.SetElementVisible(True, eActivityBar); //showActivityBar(True);
+      // do not force on top while running external programs
+      FBatchOberflaeche.SetForceStayOnTop(false);
       {$ENDIF GUI}
       if threaded then
       begin
@@ -11712,6 +11727,8 @@ begin
   finally
     {$IFDEF GUI}
     FBatchOberflaeche.SetElementVisible(False, eActivityBar);//showAcitvityBar(False);
+    // force on top after running external programs
+    FBatchOberflaeche.SetForceStayOnTop(true);
     {$ENDIF GUI}
   end;
 end;
