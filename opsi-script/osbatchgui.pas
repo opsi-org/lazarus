@@ -82,6 +82,7 @@ type
     procedure FormActivate(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
+    procedure FormShow(Sender: TObject);
     procedure FormWindowStateChange(Sender: TObject);
     procedure ProgressBarActive(YesNo: boolean);
     procedure ShowProgress(Prozente: integer);
@@ -293,6 +294,44 @@ begin
   ForceStayOnTop(true);
   {$ENDIF DARWIN}
    LoadSkin('');
+   ProcessMess;
+end;
+
+procedure TFBatchOberflaeche.FormShow(Sender: TObject);
+begin
+
+  // window state is controlled commandline parameters
+  //setWindowState(bwmNormalWindow);
+  Position := poScreenCenter;
+  if ScaleDesignToForm(Height) < ScaleDesignToForm(InnerHeight) + ScaleDesignToForm(StartTop) then
+    StartTop := (ScaleDesignToForm(Height) - ScaleDesignToForm(InnerHeight)) div ScaleDesignToForm(2);
+  if ScaleDesignToForm(Width) < ScaleDesignToForm(InnerWidth) + ScaleDesignToForm(StartLeft) then
+    StartLeft := (ScaleDesignToForm(Width) - ScaleDesignToForm(InnerWidth)) div ScaleDesignToForm(2);
+
+  Panel.Left := ScaleDesignToForm(StartLeft);
+  Panel.Top := ScaleDesignToForm(StartTop);
+  Panel.Width := ScaleDesignToForm(InnerWidth);
+  Panel.Height := ScaleDesignToForm(InnerHeight);
+  Left := ScaleDesignToForm(StartLeft);
+  Top := ScaleDesignToForm(StartTop);
+  Width := ScaleDesignToForm(InnerWidth);
+  Height := ScaleDesignToForm(InnerHeight);
+  MoveToDefaultPosition;
+
+
+
+  {$IFDEF WINDOWS}
+  EnableFontSmoothing(LabelVersion);
+  EnableFontSmoothing(LabelProduct);
+  EnableFontSmoothing(LabelInfo);
+  EnableFontSmoothing(LabelDetail);
+  EnableFontSmoothing(LabelCommand);
+  EnableFontSmoothing(LabelProgress);
+
+  {$ENDIF WINDOWS}
+  {$IFDEF DARWIN}
+  ForceStayOnTop(true);
+  {$ENDIF DARWIN}
    ProcessMess;
 end;
 
