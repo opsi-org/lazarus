@@ -7,7 +7,6 @@ object FBatchOberflaeche: TFBatchOberflaeche
   ClientHeight = 1040
   ClientWidth = 1564
   Color = cl3DDkShadow
-  DesignTimePPI = 192
   Font.Height = 28
   Font.Name = 'System'
   Font.Pitch = fpVariable
