@@ -98,15 +98,17 @@ object FBatchOberflaeche: TFBatchOberflaeche
       end
       object LabelVersion: TLabel
         Left = 152
-        Height = 20
+        Height = 16
         Top = 32
-        Width = 105
+        Width = 85
+        AutoSize = False
         Caption = 'LabelVersion'
         Font.Color = clBlack
-        Font.Height = 22
+        Font.Height = 28
         Font.Name = 'System'
         Font.Pitch = fpVariable
         Font.Style = [fsBold]
+        OptimalFill = True
         ParentColor = False
         ParentFont = False
       end
