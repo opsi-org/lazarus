@@ -243,24 +243,6 @@ begin
 
   Panel.DoubleBuffered := True;
 
-  // window state is controlled commandline parameters
-  //setWindowState(bwmNormalWindow);
-  Position := poScreenCenter;
-  if ScaleDesignToForm(Height) < ScaleDesignToForm(InnerHeight) + ScaleDesignToForm(StartTop) then
-    StartTop := (ScaleDesignToForm(Height) - ScaleDesignToForm(InnerHeight)) div ScaleDesignToForm(2);
-  if ScaleDesignToForm(Width) < ScaleDesignToForm(InnerWidth) + ScaleDesignToForm(StartLeft) then
-    StartLeft := (ScaleDesignToForm(Width) - ScaleDesignToForm(InnerWidth)) div ScaleDesignToForm(2);
-
-  Panel.Left := ScaleDesignToForm(StartLeft);
-  Panel.Top := ScaleDesignToForm(StartTop);
-  Panel.Width := ScaleDesignToForm(InnerWidth);
-  Panel.Height := ScaleDesignToForm(InnerHeight);
-  Left := ScaleDesignToForm(StartLeft);
-  Top := ScaleDesignToForm(StartTop);
-  Width := ScaleDesignToForm(InnerWidth);
-  Height := ScaleDesignToForm(InnerHeight);
-  MoveToDefaultPosition;
-
   Color := clBlue;
   Panel.Color := clBlue;
 
@@ -281,25 +263,11 @@ begin
   LabelProgress.Caption := '';
   //LabelProgress1.Caption := '';
 
-  {$IFDEF WINDOWS}
-  EnableFontSmoothing(LabelVersion);
-  EnableFontSmoothing(LabelProduct);
-  EnableFontSmoothing(LabelInfo);
-  EnableFontSmoothing(LabelDetail);
-  EnableFontSmoothing(LabelCommand);
-  EnableFontSmoothing(LabelProgress);
-
-  {$ENDIF WINDOWS}
-  {$IFDEF DARWIN}
-  ForceStayOnTop(true);
-  {$ENDIF DARWIN}
-   LoadSkin('');
-   ProcessMess;
+  LoadSkin('');
 end;
 
 procedure TFBatchOberflaeche.FormShow(Sender: TObject);
 begin
-
   // window state is controlled commandline parameters
   //setWindowState(bwmNormalWindow);
   Position := poScreenCenter;
