@@ -3948,8 +3948,9 @@ begin
       FProductStates.Clear;
     If not Assigned(FSortedProductIDsWhereActionIsSet) then
       FSortedProductIDsWhereActionIsSet := TStringList.Create
-    else
-      FSortedProductIDsWhereActionIsSet.Clear;
+    else  // Why ever - we have to recreate here
+      FSortedProductIDsWhereActionIsSet := TStringList.Create;
+      //FSortedProductIDsWhereActionIsSet.Clear;
     if (ProductOnClientData <> nil) then
     begin
       for i := 0 to ProductOnClientData.Count - 1 do

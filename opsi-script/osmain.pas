@@ -1344,8 +1344,10 @@ begin
           opsidata.finishProduct;
           LogDatei.LogProduktId := False;
         end;
-
-        Inc(i);
+        // At the recursive call to BuildPC we have lost the Produkte list
+        // as a dirty hack we always reload here and do not increment the counter
+        Produkte := OpsiData.getListOfProductIDs;
+        //Inc(i);
       end;
       LogDatei.log('BuildPC: saveOpsiConf .....', LLDebug3);
       opsidata.saveOpsiConf;
