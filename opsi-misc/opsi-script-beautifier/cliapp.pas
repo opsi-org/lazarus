@@ -167,7 +167,8 @@ begin
   writeln('Options:');
   writeln('-h, --help : print this help');
   writeln('-b, --beautiprams : path to beautiparams file * optional, default program dir');
-  writeln('-f, --file : path to file.opsiscript * optional, default last param');
+  writeln('-f, --file : path to file.opsiscript * optional, default last param. May not used together with -s');
+  writeln('-s, --stdinout : read from stdin and write to stdout. May not used together with -f');
   writeln('-l, --logpath : set log path * optional, default userdir');
 end;
 

@@ -1,3 +1,9 @@
+opsi-script-beautifier (4.3.0.1-1)
+
+ * command line -h / --help shows now help to -s / --stdinout parameters
+
+-- d.oertel <d.oertel@uib.de> 2024-07-11
+
 opsi-script-beautifier (4.3.0.0-1)
 
  * command line opsi-script-beautifier.exe is now stdin and stdout enabled
