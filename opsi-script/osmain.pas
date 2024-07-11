@@ -1289,7 +1289,6 @@ begin
         processProduct := False;
         Produkt := Produkte.Strings[i - 1];
         opsidata.setActualProductName(Produkt);
-        opsidata.InitProduct;
         // get the actionrequest from the original productlist created at startup
         orgAction := opsidata.getProductAction;
         if (orgAction <> tacNull) then
@@ -1297,7 +1296,7 @@ begin
 
           if trim(Produkt) = '' then
             LogDatei.log('product ' + IntToStr(i - 1) + ' is "" ', LLWarning);
-
+          opsidata.InitProduct;
           // check if there is still an action request if we had one at startup
           // get the actual (live) actionrequest
           aktActionRequestStr := opsidata.getActualProductActionRequest;
