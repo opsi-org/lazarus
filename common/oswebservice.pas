@@ -405,8 +405,10 @@ type
     function actionRequestToString(actionRequest: TActionRequest): string;
       overload; override;
     function stateStringToState(s: string): TProductState;
+    function stateStringToState4(s: string): TProductState;
     function actionRequestStringToActionRequest(s: string): TActionRequest;
     function actionRequestStringToAction(s: string): TAction;
+    function actionRequestStringToAction4(s: string): TActionRequest4;
     function getMethodSignature(const methodname: string): TStringList;
     function initProduct: boolean; override;
     function getActualProductVersion: string; override;
@@ -4533,6 +4535,19 @@ begin
   //else if sValue = 'failed' then result := tpsFailed
 end;
 
+function TOpsi4Data.stateStringToState4(s: string): TProductState;
+var
+  sValue: string;
+begin
+  Result := tps4Unkown;
+
+  sValue := lowercase(s);
+  if sValue = 'installed' then
+    Result := tps4Installed
+  else if sValue = 'not_installed' then
+    Result := tps4Not_installed;
+end;
+
 
 function TOpsi4Data.actionRequestStringToAction(s: string): TAction;
 var
@@ -4563,6 +4578,32 @@ begin
     Result := tacLogin;
 
 end;
+
+function TOpsi4Data.actionRequestStringToAction4(s: string): TActionRequest4;
+var
+  sValue: string;
+begin
+  Result := tac4None;
+  sValue := lowercase(s);
+
+  if (sValue = 'none') then
+    Result := tac4None
+  else if (sValue = 'setup') then
+    Result := tac4Setup
+  else if (sValue = 'update') then
+    Result := tac4Update
+  else if (sValue = 'uninstall') then
+    Result := tac4Uninstall
+  else if (sValue = 'always') then
+    Result := tac4Always
+  else if (sValue = 'once') then
+    Result := tac4Once
+  else if (sValue = 'custom') then
+    Result := tac4Custom
+  else if (sValue = 'login') then
+    Result := tac4Login;
+end;
+
 
 function TOpsi4Data.actionRequestStringToActionRequest(s: string): TActionRequest;
 var
