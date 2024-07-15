@@ -296,7 +296,7 @@ uses osshowsysinfo
 
 var
   ///SaveddeText :   Textfile;
-  TimerWait_waitedIntervals: word;
+  //TimerWait_waitedIntervals: word;
 
   ///connected :   Boolean;
   LogDateiName: string;
@@ -311,7 +311,7 @@ var
 var
   IniFileLocalization: string;
 
-  Profildateiname: string;
+  //Profildateiname: string;
 
   Produkt: string;
 
@@ -328,7 +328,7 @@ var
 
 
 const
-  MaxSavedScriptFiles = 20;
+  //MaxSavedScriptFiles = 20;
   StandardIniFile = 'opsi-script.ini';
 
 function ProgramModeToString(ProgramMode:TProgramMode):string;
@@ -539,8 +539,8 @@ end;
 
 function determinateRemoteLogging: boolean;
 
-var
-  registval: longint;
+//var
+  //registval: longint;
   ///properties  :   TStringList;
 begin
   Result := True;
@@ -1020,7 +1020,7 @@ procedure BuildPC;
 
 var
   i: integer;
-  KorrektSortierte: integer;
+  //KorrektSortierte: integer;
   Bootmode: string;
   bootmodeFromRegistry: boolean;
   Fehler: string;
@@ -1028,8 +1028,9 @@ var
   errorNumber: integer;
   extremeErrorLevel: TErrorLevel;
   showErrorMessages: boolean;
-  ps, tmpstr, cmdstr: string;
-  TheExitMode: TExitMode;
+  //ps,
+  tmpstr, cmdstr: string;
+  //TheExitMode: TExitMode;
   buildpcscript: TuibInstScript;
   tmplist: TStringList;
 
@@ -1161,7 +1162,7 @@ var
 
 var
   goOn: boolean;
-  problemString: string;
+  //problemString: string;
   aktActionRequestStr: string;
   aktAction, orgAction: TActionRequest;
   processProduct: boolean;
@@ -1169,10 +1170,10 @@ var
   {$IFDEF UNIX}
   filehandle: cint;
   {$ENDIF LINUX}
-  list: TStringList;
+  //list: TStringList;
   excludedProducts: TStringList;
   productscopy: TStringList;
-  opsiclientd: boolean;
+  //opsiclientd: boolean;
 
 begin
   try
@@ -1588,24 +1589,25 @@ procedure Loginscripts;
 
 var
   i: integer;
-  KorrektSortierte: integer;
-  Bootmode: string;
-  bootmodeFromRegistry: boolean;
-  Fehler: string;
-  numberValue: string;
-  errorNumber: integer;
+  //KorrektSortierte: integer;
+  //Bootmode: string;
+  //bootmodeFromRegistry: boolean;
+  //Fehler: string;
+  //numberValue: string;
+  //errorNumber: integer;
   extremeErrorLevel: TErrorLevel;
   showErrorMessages: boolean;
-  ps: string;
+  //ps: string;
   itemlist: TXStringlist;
-  user, dom, s4, sid: string;
-  ErrorInfo: string;
+  user, dom, sid: string;
+  //s4: string;
+  //ErrorInfo: string;
   goOn: boolean;
-  problemString: string;
+  //problemString: string;
   ///val :   Integer;
   trycounter, maxtries: integer;
   {$IFDEF WINDOWS}
-  regDataType: tuibRegDataType;
+  //regDataType: tuibRegDataType;
   {$ENDIF WINDOWS}
 
 begin
@@ -1729,25 +1731,25 @@ procedure Productlist;
 
 var
   i: integer;
-  KorrektSortierte: integer;
-  Bootmode: string;
-  bootmodeFromRegistry: boolean;
-  Fehler: string;
-  numberValue: string;
-  errorNumber: integer;
+  //KorrektSortierte: integer;
+  //Bootmode: string;
+  //bootmodeFromRegistry: boolean;
+  //Fehler: string;
+  //numberValue: string;
+  //errorNumber: integer;
   extremeErrorLevel: TErrorLevel;
   showErrorMessages: boolean;
-  ps: string;
-  itemlist: TXStringlist;
-  user, dom, s4, sid: string;
-  ErrorInfo: string;
+  //ps: string;
+  //itemlist: TXStringlist;
+  //user, dom, s4, sid: string;
+  //ErrorInfo: string;
   goOn: boolean;
-  problemString: string;
+  //problemString: string;
   ///val :   Integer;
-  trycounter, maxtries: integer;
-  {$IFDEF WINDOWS}
-  regDataType: tuibRegDataType;
-  {$ENDIF WINDOWS}
+  //trycounter, maxtries: integer;
+  //{$IFDEF WINDOWS}
+  //regDataType: tuibRegDataType;
+  //{$ENDIF WINDOWS}
 
 begin
   LogDatei.LogProduktId := False;
@@ -1953,11 +1955,11 @@ var
   Fehler: string;
   TheExitMode: TExitMode;
   extremeErrorLevel: TErrorLevel;
-  omc: TOpsiMethodCall;
+  //omc: TOpsiMethodCall;
   errorOccured: boolean;
   ipAddress, ipName: string;
   scriptindex: integer;
-  path: string;
+  //path: string;
   opsiServiceVersion, sessionid, opsiclientdconf: string;
   myconf: TIniFile;
   {$IFDEF WINDOWS}

@@ -209,7 +209,7 @@ type
     constructor Create(const method: string; hashlist: TStringList;
       parameters: array of string); overload;
     { destructor }
-    destructor Destroy; override;
+    destructor Destroy;
     { functions }
     function getJsonUrlString: string;
     function getJsonHashListString: string;
@@ -267,7 +267,7 @@ type
     constructor Create(const serviceURL, username, password, sessionid,
       ip, port, agent: string); overload;
     { destructor }
-    destructor Destroy; override;
+    destructor Destroy;
     { function }
     (*
     function retrieveJSONObject(const omc: TOpsiMethodCall;
@@ -307,7 +307,7 @@ type
   (****************************** Opsi Data *************************************)
 
   { TOpsiData}
-
+(*
   TOpsiData = class
   protected
     actualProduct: string;
@@ -356,10 +356,10 @@ type
     {Properties}
     property sortByServer: boolean read FSortByServer;
   end;
-
+*)
   { TOpsi4Data }
 
-  TOpsi4Data = class(TOpsiData)
+  TOpsi4Data = class
   private
     FjsonExecutioner: TJsonThroughHTTPS;
     ProfildateiChange: boolean;
@@ -380,7 +380,7 @@ type
     FOpsiInformation: ISuperObject;
     FOpsiServiceVersion: string;
     //FactualClient: string;
-    FProductOnClient_objects: TSuperArray;
+    //FProductOnClient_objects: TSuperArray;
     FProductOnClient_aktobject: ISuperObject;
     FProductOnClientIndex: TStringList;
     //FSslProtocol: TIdSSLVersion;
@@ -400,16 +400,20 @@ type
     procedure SetProductOnClientData(const ProductOnClientData: TStringList);
     function GetSortedProductOnClientListFromService: TStringList;
   protected
+    actualProduct: string;
+    actualVersion: string;
+    options: string;
+    FSortByServer: boolean;
     FServiceLastErrorInfo: TStringList;
     function getProductPropertiesOpsi43: TStringList;
     function getProductPropertiesOpsi42: TStringList;
     //FactualClient: string;
   public
-    //actualClient: string;
+    actualClient: string;
     { constructor }
     constructor Create;
     { destructor }
-    destructor Destroy; override;
+    destructor Destroy;
     { function }
     function checkAndRetrieve(const omc: TOpsiMethodCall;
       var errorOccured: boolean): string;
@@ -424,13 +428,13 @@ type
       var errorOccured: boolean): TStringList;
     function checkAndRetrieveString(const omc: TOpsiMethodCall;
       var errorOccured: boolean): string;
-    function getLogFileName(const LogFilename: string): string; override;
+    function getLogFileName(const LogFilename: string): string;
     //uses the parameter LogFilename as default
     function sendLog: boolean; overload;
     function sendLog(logtype: string): boolean; overload;
     function sendLog(logtype: string; appendmode: boolean): boolean; overload;
-    function stateToString(state: TProductState): string; override;
-    //function actionToString(action: TAction): string; override;
+    function stateToString(state: TProductState): string;
+    //function actionToString(action: TAction): string;
     function actionRequestToString(actionRequest: TActionRequest): string;
     function stateStringToState(s: string): TProductState;
     //function stateStringToState4(s: string): TProductState;
@@ -439,31 +443,31 @@ type
     //function actionRequestStringToAction4(s: string): TActionRequest;
     function actionProgressToString(actionProgress: TActionProgress) : string;
     function getMethodSignature(const methodname: string): TStringList;
-    function initProduct: boolean; override;
-    function getActualProductVersion: string; override;
-    function getSpecialScriptPath: string; override;
-    function getProductProperties: TStringList; override;
+    function initProduct: boolean;
+    function getActualProductVersion: string;
+    function getSpecialScriptPath: string;
+    function getProductProperties: TStringList;
     function parse_JSONResult_productPropertyState_getValues(const JSONResult: string): TStringList;
-    function getBeforeRequirements: TStringList; override;
-    function getAfterRequirements: TStringList; override;
-    function getListOfProductIDs: TStringList; override;
+    function getBeforeRequirements: TStringList;
+    function getAfterRequirements: TStringList;
+    function getListOfProductIDs: TStringList;
     function getProductPropertyList(myproperty: string;
       defaultlist: TStringList; var usedefault: boolean): TStringList; overload;
     function getProductPropertyList(myproperty: string;
       defaultlist: TStringList; myClientId: string; myProductId: string;
       var usedefault: boolean): TStringList; overload;
     // getInstallableLocalBootProductIds_list
-    function getProductState: TProductState; override;
-    //function getProductAction: TAction; override;
-    function getProductActionRequest: TActionRequest; override;
+    function getProductState: TProductState;
+    //function getProductAction: TAction;
+    function getProductActionRequest: TActionRequest;
     function getProductPackagageVersion: string; virtual;
-    function getOpsiServiceVersion: string; override;
+    function getOpsiServiceVersion: string;
     function getActualProductDescription: string;
     function getActualProductAdvice: string;
     function getActualProductPriority: string;
     function getActualProductPackageVersion: string;
     function getActualProductId: string;
-    function getActualProductName: string; override;
+    function getActualProductName: string;
     function getActualProductProductVersion: string;
     function getActualProductInstallationState: string;
     function getActualProductLastActionRequest: string;
@@ -472,8 +476,8 @@ type
     function getActualProductInstalledPackage: string;
     function getActualProductInstalledModificationTime: string;
     function getActualProductActionRequest: string;
-    function getProductScriptPath(actionType: TActionRequest): string; override;
-    function getInstallationPriority: integer; override;
+    function getProductScriptPath(actionType: TActionRequest): string;
+    function getInstallationPriority: integer;
     function actionResultToString(actionResult: TActionResult): string;
     //function actionRequest4ToString(actionRequest: TActionRequest): string;
     //function targetConfigurationToString(targetConfiguration: TTargetConfiguration4)
@@ -481,7 +485,7 @@ type
     function installationStatusToString(installationStatus: TProductstate): string;
     function UpdateSwitches(extremeErrorLevel: TErrorLevel): boolean; overload;
     function UpdateSwitches(extremeErrorLevel: TErrorLevel; Progress: string): boolean; overload;
-    function withLicenceManagement: boolean; override;
+    function withLicenceManagement: boolean;
     function withRoamingProfiles: boolean;
     function linuxAgentActivated: boolean;
     function macosAgentActivated: boolean;
@@ -515,14 +519,14 @@ type
     procedure initOpsiConf(serviceURL, username, password, sessionid,
       ip, port, agentstring: string);
       overload;
-    procedure saveOpsiConf; override;
-    procedure finishOpsiConf; override;
-    procedure setActualClient(computername: string); override;
-    procedure setActualProductName(const productname: string); override;
+    procedure saveOpsiConf;
+    procedure finishOpsiConf;
+    procedure setActualClient(computername: string);
+    procedure setActualProductName(const productname: string);
     procedure setActionProgress(const progress: string);
-    procedure finishProduct; override;
+    procedure finishProduct;
     procedure setActualProductActionRequest(request: string);
-    procedure setProductActionRequest(newAction: TActionRequest); override;
+    procedure setProductActionRequest(newAction: TActionRequest);
     procedure setProductActionRequestWithDependencies(newAction: TActionRequest);
     //procedure setProductState(newState: TProductState; newProgress: TActionProgress);
     procedure setProductState(newState: TProductState);
@@ -553,6 +557,7 @@ type
     //property actualclient: string read FactualClient write FactualClient;
     property CommunicationMode: integer read FCommunicationMode
       write FCommunicationMode;
+    property sortByServer: boolean read FSortByServer;
   end;
 
 var
@@ -589,13 +594,14 @@ uses
 
 {$ENDIF}
 
-const
+//const
   // fuer opsiClassic
-  ProduktestatusSektionsname = 'Products-installed';
-  Produktsektionskennzeichnung = '-install';
+  //ProduktestatusSektionsname = 'Products-installed';
+  //Produktsektionskennzeichnung = '-install';
 
 var
   testresult: string;
+ {$IFDEF SYNAPSE}
   ContentTypeCompress: string = 'application/json';
   ContentTypeNoCompress: string = 'application/json';
   //ContentEncodingCommpress: string = 'gzip, deflate';
@@ -609,6 +615,7 @@ var
   //AcceptEncodingCompress: string = 'deflate, gzip';
   AcceptEncodingCompress: string = 'deflate';
   AcceptEncodingNoCompress: string = 'plain';
+  {$ENDIF SYNAPSE}
   OpsiVersion: string = '';
 
 {$IFNDEF OPSISCRIPT}
@@ -773,9 +780,6 @@ end;
 
 function getOpsiServiceVersion(const serviceUrl: string; const username: string;
   const password: string; var sessionid: string): string;
-var
-  sign: integer;
-  InfoSyntaxError: string;
 begin
   Result := '4'; //default to opsi 4.x
   OpsiVersion := getOpsiServerVersion(serviceUrl, username, password, sessionid);
@@ -847,6 +851,7 @@ end;
 (*                    Implementation of class TOpsiData                       *)
 (*                                                                            *)
 (******************************************************************************)
+(*
 constructor TOpsiData.Create;
 begin
   FSortByServer := False;
@@ -884,7 +889,7 @@ begin
   Result := actualVersion;
 end;
 
-(*
+
 function TOpsi4Data.UpdateSwitches(extremeErrorLevel: TErrorLevel): boolean;
 var
   //ar: TActionRequest;
@@ -948,13 +953,13 @@ begin
 
 
 end;
-*)
+
 
 function TOpsiData.withLicenceManagement: boolean;
 begin
   Result := False;
 end;
-
+*)
 //========== opsidata-Service ==================================================
 
 { helper classes }
@@ -1572,12 +1577,13 @@ var
   errorOccured: boolean;
   cookieVal: string;
   posColon: integer;
-  s, t, teststring: string;
+  s, t: string;
+  //teststring: string;
   jO: ISuperObject;
   utf8str: string;//UTF8String;
   SendStream, ReceiveStream: TMemoryStream;
-  InStream: TMemoryStream;
-  CompressionSendStream: TCompressionStream;
+  //InStream: TMemoryStream;
+  //CompressionSendStream: TCompressionStream;
   DeCompressionReceiveStream: TDeCompressionStream;
   //IdCompressorZLib.CompressStream(tmpStream,AResponseInfo.ContentStream,9,GZIP_WINBITS,9,0);
   // IdCompressorZLib.DecompressGZipStream(ARequestInfo.PostStream,tmpStream);
@@ -1591,7 +1597,7 @@ var
   ContentType, Accept, ContentEncoding, AcceptEncoding: string;
   {$IFDEF SYNAPSE}
   //HTTPSenderResult: boolean;
-  testresultSyn: string;
+  //testresultSyn: string;
   i: integer;
   //sendresultcode: integer;
   //sendresultstring: string;
@@ -2895,7 +2901,7 @@ var
   posColon: integer;
   //  s,t : String;
   SendStream, ReceiveStream: TMemoryStream;
-  CompressionSendStream: TCompressionStream;
+  //CompressionSendStream: TCompressionStream;
   DeCompressionReceiveStream: TDeCompressionStream;
   buffer: ^byte;
   readcount: integer;
@@ -2903,7 +2909,7 @@ var
   ContentType, Accept, ContentEncoding, AcceptEncoding: string;
   {$IFDEF SYNAPSE}
   //HTTPSenderResult: boolean;
-  testresultSyn: string;
+  //testresultSyn: string;
   i: integer;
   //sendresultcode: integer;
   //sendresultstring: string;
@@ -3633,7 +3639,8 @@ end;
 function TJsonThroughHTTPS.getFileFromDepot(filename: string;
   toStringList: boolean; var ListResult: TStringList): boolean;
 var
-  resultstring, localurl: string;
+  //resultstring,
+  localurl: string;
   utf8str: string;//UTF8String;
 begin
   try
@@ -4887,7 +4894,7 @@ end;
 function TOpsi4Data.getLogSize: int64;
 var
   omc: TOpsiMethodCall;
-  str: string;
+ // str: string;
   jo: ISuperObject;
 begin
   Result := -1;
@@ -4954,7 +4961,7 @@ var
   s, t, t2: string;
   found: boolean;
   errorinfo: string;
-  Count: longint;
+  //Count: longint;
   maxlogsizebyte: int64;
   aktlogsize: int64;
   //scan: TUTF8Scanner;
@@ -6026,7 +6033,7 @@ procedure TOpsi4Data.setProductState(newState: TProductState);
 var
   omc: TOpsiMethodCall;
   jO: ISuperObject;
-  stateS, parastr: string;
+  parastr: string;
 begin
   try
     FProductOnClient_aktobject.AsObject.N['modificationTime'] := nil;
@@ -6052,7 +6059,7 @@ procedure TOpsi4Data.setProductProgress(newProgress: TActionProgress);
 var
   omc: TOpsiMethodCall;
   jO: ISuperObject;
-  stateS, parastr: string;
+  parastr: string;
 begin
   try
     begin
