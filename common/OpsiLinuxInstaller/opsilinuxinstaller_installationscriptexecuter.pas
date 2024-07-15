@@ -176,11 +176,16 @@ begin
   // Get opsi-script_*.tar.gz from download.opensuse.org and extract it
   FInstallRunCommand.Run(FPackageManagementShellCommand + 'update', Output);
   FInstallRunCommand.Run(FPackageManagementShellCommand + 'install wget tar', Output);
-  FInstallRunCommand.Run('wget -A opsi-script_*.tar.gz -r -l 1 ' +
-    'https://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.2:/testing/xUbuntu_22.04/'
+  FInstallRunCommand.Run('wget -A opsi-script_*.opsi -r -l 1 ' +
+    'https://opsipackages.43.opsi.org/stable/linux/localboot/'
     + ' -nd', Output);
-  FInstallRunCommand.Run('tar -xvf opsi-script_*.tar.gz', Output);
-  FInstallRunCommand.Run('rm robots.* opsi-script_*.tar.gz', Output);
+  FInstallRunCommand.Run('tar -xvf opsi-script_*.opsi CLIENT_DATA.tar.gz', Output);
+  FInstallRunCommand.Run('tar -xvf CLIENT_DATA.tar.gz linux common', Output);
+  FInstallRunCommand.Run('mkdir opsi-script', Output);
+  FInstallRunCommand.Run('cp -r linux/x64/* opsi-script', Output);
+  FInstallRunCommand.Run('cp -r common/* opsi-script', Output);
+  FInstallRunCommand.Run('rm -r opsi-script/skin-old', Output);
+  FInstallRunCommand.Run('rm -r opsi-script_*.opsi CLIENT_DATA.tar.gz linux common', Output);
 end;
 
 procedure TInstallationScriptExecuter.ExecuteInstallationScript;
@@ -204,7 +209,7 @@ end;
 
 procedure TInstallationScriptExecuter.RemoveOpsiScript;
 begin
-  FInstallRunCommand.Run('rm -r BUILD/', Output);
+  FInstallRunCommand.Run('rm -r opsi-script/', Output);
 end;
 
 procedure TInstallationScriptExecuter.InstallOpsiProduct;

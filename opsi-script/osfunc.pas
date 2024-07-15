@@ -596,6 +596,7 @@ procedure SectionnameAbspalten(const s: string; var Sektion, Rest: string);
 
 procedure str2jsonstr(var str: string; var errorstr: string);
 function getProcessList: TStringList;
+function getProcessListWithPath: TStringList;
 function getLoggedInUser: string;
 function randomstr(usespecialchars: boolean): string;
 function randomstrWithParameters(minLength, nLowerCases, nUpperCases,
@@ -620,6 +621,9 @@ function isBoolean(s: string): boolean;
 
 function GetFQDN: string;
 procedure noLockSleep(const Milliseconds: DWord);
+{$IFDEF WINDOWS}
+function DeleteFileWithRetries(filename: string): boolean;
+{$ENDIF WINDOWS}
 
 const
 
@@ -1379,6 +1383,22 @@ begin
   {$ENDIF LINUX}
   {$IFDEF DARWIN}
   Result := getMacosProcessList;
+  {$ENDIF DARWIN}
+end;
+
+
+function getProcessListWithPath: TStringList;
+begin
+  {$IFDEF WINDOWS}
+  {$IFDEF WIN32}
+  Result := getWinProcessListWithPath;
+  {$ENDIF WIN32}
+  {$ENDIF WINDOWS}
+  {$IFDEF LINUX}
+  // Result := getLinProcessListWithPath;
+ {$ENDIF LINUX}
+  {$IFDEF DARWIN}
+  // Result := getMacosProcessListWithPath;
   {$ENDIF DARWIN}
 end;
 
@@ -9523,6 +9543,7 @@ var
     shallDelete: boolean;
     ddiff: integer = 0;
     errorno: integer = 0;
+    isdeleted: boolean;
 
   begin
     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
@@ -9618,7 +9639,13 @@ var
 
       if shallDelete then
       begin
-        if SysUtils.DeleteFile(Filename) then
+        {$IFDEF WINDOWS}
+        isdeleted := DeleteFileWithRetries(Filename);
+        {$ELSE}
+        isdeleted := SysUtils.DeleteFile(filename);
+        {$ENDIF WINDOWS}
+
+        if isdeleted then
         begin
           LogS := 'The file ' + Filename + ' has been deleted';
           LogDatei.log(LogS, LLInfo + logleveloffset);
@@ -10709,5 +10736,62 @@ end;
   var ErrorInfo: string): boolean;
   GetFinalPathNameByHandle()
 *)
+
+{$IFDEF WINDOWS}
+function DeleteFileWithRetries(filename: string): boolean;
+
+const
+  maxretries: integer = 10;     // maximum number of (re)tries
+  sleepms:    integer = 2;      // milliseconds sleep time
+  retryErrorNumbers   = [5,32]; // retry if one of these errors
+
+var
+  countdown: integer;           // for retries
+  errorNo:   integer;           // from GetLastError
+  logtext:   string = '';       // for debug logging
+begin
+  Result := False;
+  countdown := maxretries;
+  // delete with retries
+  while ((not SysUtils.DeleteFile(filename)) and (countdown > 0)) do
+  begin
+    // delete failed
+    errorNo := GetLastError;  // get error code
+    if errorNo in retryErrorNumbers then
+    begin
+      countdown := countdown-1;
+      if (countdown > 0) then Sleep(sleepms); // sleep before next retry
+    end
+    else
+    begin
+       // other error code => stop retries
+       countdown := -1;
+    end;
+  end;
+  if (countdown > 0) then Result := True;
+  //generate log
+  if LogDatei.debug_prog then
+  begin
+    logtext   := 'delete file ' + filename;
+    case countdown of
+      -1: logtext += ' - failed with error code ' + IntToStr(errorNo);
+       0: logtext += ' - still failed after doing retries for '
+                       + IntToStr((maxretries-1) * sleepms) +' ms';
+      else
+      begin
+        logtext += ' - was successful';
+        // logging if retries were needed
+        if (countdown < maxretries) then
+        begin
+          logtext += ', retries: '+IntToStr(maxretries - countdown)+' with '
+                     + IntToStr(sleepms) +' ms sleep, total: '
+                     + IntToStr((maxretries - countdown) * sleepms) +' ms';
+        end;
+      end;
+    end;
+    Logdatei.log_prog(logtext, LLDebug);
+  end;
+end;
+{$ENDIF WINDOWS}
 
 end.

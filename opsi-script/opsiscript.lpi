@@ -25,7 +25,8 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="12"/>
-      <RevisionNr Value="14"/>
+      <RevisionNr Value="15"/>
+      <BuildNr Value="3"/>
       <StringTable Comments="Compiled with Lazarus 3.0 / FPC 3.2.2" CompanyName="uib gmbh" FileDescription="opsi-script" InternalName="opsi-script" LegalCopyright="AGPL v3" LegalTrademarks="opsi, opsi.org, open pc server integration" OriginalFilename="opsi-script" ProductName="opsi" ProductVersion="4.3"/>
     </VersionInfo>
     <BuildModes Count="18">
@@ -58,6 +59,9 @@
             <SmallerCode Value="True"/>
           </CodeGeneration>
           <Linking>
+            <Debugging>
+              <DebugInfoType Value="dsDwarf3"/>
+            </Debugging>
             <Options>
               <Win32>
                 <GraphicApplication Value="True"/>

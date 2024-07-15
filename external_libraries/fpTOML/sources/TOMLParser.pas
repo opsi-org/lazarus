@@ -179,6 +179,11 @@ begin
           // escaped quotes
           if c = quote then
             pattern += c
+          // escaped backslash
+          else if  c = '\' then
+            pattern += c
+          // forward slash '/' had also been escaped in TOML v0.3.0,
+          // but is not escaped anymore in TOML v1.0.0
           else if c in ['b', 't', 'n', 'f', 'r', 'u', 'U'] then
             begin
               case c of

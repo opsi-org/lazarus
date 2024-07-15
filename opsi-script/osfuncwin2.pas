@@ -80,6 +80,7 @@ function GetProcessUserBypid(pid: DWORD; var UserName, Domain: ansistring): bool
 function KillProcessbyname(const exename: string; var found: integer): integer;
 function KillProcessbypid(pid: DWORD): boolean;
 function getWinProcessList: TStringList;
+function getWinProcessListWithPath: TStringList;
 //procedure myimpersontest;
 function getloggedonDomUser: string;
 //function GetLoggedInUserSID: string;
@@ -822,6 +823,128 @@ begin
   end;
   CloseHandle(FSnapshotHandle);
 end;
+
+//**********************************************************************************************************************
+// https://wiki.lazarus.freepascal.org/Windows_Programming_Tips#Showing.2Ffinding_processes
+// https://learn.microsoft.com/de-de/windows/win32/api/winbase/nf-winbase-queryfullprocessimagenamew
+// https://github.com/alrieckert/lazarus/blob/master/components/fpdebug/fpdbgwinclasses.pas
+// an external reference nust be declared as a global function (cannot be declared as a local function):
+function QueryFullProcessImageName(hProcess:HANDLE; dwFlags: DWord; lpExeName:LPWSTR;
+  var lpdwSize:DWORD):BOOL; stdcall; external 'kernel32' name 'QueryFullProcessImageNameW';
+
+function getWinProcessListWithPath: TStringList;
+var
+  ContinueLoop: boolean;
+  FSnapshotHandle: THandle;
+  FProcessEntry32: TProcessEntry32;
+  resultstring: string;
+  UserName, Domain: ansistring;
+
+  //**************************************************************************
+  //** alternative 1 with GetModuleFileNameEx
+  //**
+  //** according to https://swissdelphicenter.ch/en/showcode.php?id=2010
+  //** see also https://learn.microsoft.com/de-de/windows/win32/api/psapi/nf-psapi-getmodulefilenameexa
+  //** GetModuleFileNameEx can be used since WinXP.
+  //** It is said to be not as performant as QueryFullProcessImageName.
+  //** GetModuleFileNameEx uses the standard Lazarus wrapper.
+
+  function GetFullProcessFileNameV1(PID: DWORD): string;
+  var
+    Handle: THandle;
+    Warning: String;
+  begin
+    Result := '';
+    Handle := OpenProcess(PROCESS_QUERY_INFORMATION or PROCESS_VM_READ, False, PID);
+    if Handle <> 0 then
+      try
+        SetLength(Result, MAX_PATH);
+        if GetModuleFileNameEx(Handle, 0, PChar(Result), MAX_PATH) > 0 then
+          SetLength(Result, StrLen(PChar(Result)))
+        else
+          LogDatei.log('WARNING: GetFullProcessFileName: GetModuleFileNameEx of process '
+            +IntToStr(PID)+' failed.', LLWarning);
+      finally
+        CloseHandle(Handle);
+      end
+    else
+      begin
+        LogDatei.log('WARNING: GetFullProcessFileName: could not open process '
+           +IntToStr(PID)+' (probably insufficient privileges of opsi-script process)', LLWarning);
+      end
+  end;
+
+  //**************************************************************************
+  //** alternative 2 with QueryFullProcessImageName
+  //**
+  //** from https://github.com/alrieckert/lazarus/blob/master/components/fpdebug/fpdbgwinclasses.pas
+  //** see also https://learn.microsoft.com/de-de/windows/win32/api/winbase/nf-winbase-queryfullprocessimagenamea
+  //** QueryFullProcessImageName can be used since Win10
+  //** QueryFullProcessImageName can be accessed as external reference to kernel32.dll
+  //** (no Lazarus wrapper available)
+
+  function GetFullProcessImageName(AProcessHandle: THandle): string;
+  var
+    u: UnicodeString;
+    len: DWORD;
+  begin
+    len := MAX_PATH;
+    SetLength(u, len);
+    if QueryFullProcessImageName(AProcessHandle, 0, @u[1], len)
+    then begin
+      SetLength(u, len);
+      Result:=UTF8Encode(u);
+    end else begin
+      Result := '';
+    end;
+  end;
+
+  function GetFullProcessFileNameV2(PID: DWORD): string;
+  var
+    Handle: THandle;
+  begin
+    Result := '';
+    Handle := OpenProcess(PROCESS_QUERY_INFORMATION or PROCESS_VM_READ, False, PID);
+    if Handle <> 0 then
+      try
+        Result := GetFullProcessImageName(Handle);
+      finally
+        CloseHandle(Handle);
+      end
+    else
+      begin
+        LogDatei.log('WARNING: GetFullProcessFileName: could not open process '
+           +IntToStr(PID)+' (probably insufficient privileges of opsi-script process)', LLWarning);
+      end;
+  end;
+  //**************************************************************************
+
+begin
+  Result := TStringList.Create;
+  FSnapshotHandle := CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+  FProcessEntry32.dwSize := Sizeof(FProcessEntry32);
+  ContinueLoop := Process32First(FSnapshotHandle, FProcessEntry32);
+  while ContinueLoop do
+  begin
+    resultstring := '';
+    UserName := '';
+    domain := '';
+
+    resultstring := FProcessEntry32.szExeFile + ';' + IntToStr(
+      FProcessEntry32.th32ProcessID) + ';';
+    if GetProcessUserBypid(FProcessEntry32.th32ProcessID, UserName, Domain) then
+      resultstring := resultstring + Domain + '\' + UserName;
+
+    // GetFullProcessFileNameV1 - uses GetModuleFileNameEx() - WinXP and above
+    // GetFullProcessFileNameV2 - uses GetFullProcessImageName() Win10 and above
+    resultstring := resultstring + ';' + GetFullProcessFileNameV1(FProcessEntry32.th32ProcessID);
+    resultstring := WinCPToUTF8(resultstring);
+    Result.add(resultstring);
+    ContinueLoop := Process32Next(FSnapshotHandle, FProcessEntry32);
+  end;
+  CloseHandle(FSnapshotHandle);
+end;
+
 
 (*
 function getWinProcessList:TStringList;
