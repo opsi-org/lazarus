@@ -621,7 +621,9 @@ function isBoolean(s: string): boolean;
 
 function GetFQDN: string;
 procedure noLockSleep(const Milliseconds: DWord);
+{$IFDEF WINDOWS}
 function DeleteFileWithRetries(filename: string): boolean;
+{$ENDIF WINDOWS}
 
 const
 
@@ -9541,6 +9543,7 @@ var
     shallDelete: boolean;
     ddiff: integer = 0;
     errorno: integer = 0;
+    isdeleted: boolean;
 
   begin
     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
@@ -9636,7 +9639,13 @@ var
 
       if shallDelete then
       begin
-        if DeleteFileWithRetries(Filename) then
+        {$IFDEF WINDOWS}
+        isdeleted := DeleteFileWithRetries(Filename);
+        {$ELSE}
+        isdeleted := SysUtils.DeleteFile(filename);
+        {$ENDIF WINDOWS}
+
+        if isdeleted then
         begin
           LogS := 'The file ' + Filename + ' has been deleted';
           LogDatei.log(LogS, LLInfo + logleveloffset);
@@ -10728,8 +10737,7 @@ end;
   GetFinalPathNameByHandle()
 *)
 
-
-
+{$IFDEF WINDOWS}
 function DeleteFileWithRetries(filename: string): boolean;
 
 const
@@ -10784,6 +10792,6 @@ begin
     Logdatei.log_prog(logtext, LLDebug);
   end;
 end;
-
+{$ENDIF WINDOWS}
 
 end.
