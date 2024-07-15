@@ -846,24 +846,12 @@ begin
   end;
 end;
 
-procedure SetProductProgress(const Verfahren: TAction);
-begin
-  case Verfahren of
-    tacSetup: opsidata.setProductProgress('Installing');
-    tacDeinstall: opsidata.setProductProgress('Uninstalling');
-    tacOnce: opsidata.setProductProgress('Installing');
-    tacAlways: opsidata.setProductProgress('Installing');
-    tacCustom: opsidata.setProductProgress('Installing');
-    tacLogin: opsidata.setProductProgress('Installing');
-    tacUpdate: opsidata.setProductProgress('Installing');
-  end;
-end;
 
 
 procedure ProcessProdukt(var extremeErrorLevel: TErrorLevel);
 
 var
-  Verfahren: TAction;
+  Verfahren: TActionRequest;
   Pfad: string;
   scriptname, absscriptname: string;
 
@@ -904,10 +892,10 @@ begin
   if runproductlist then
     Verfahren := tacSetup
   else
-    Verfahren := opsidata.getProductAction;
+    Verfahren := opsidata.getProductActionRequest;
   Logdatei.log('Actionrequest for Product: ' + Produkt + ' is: ' +
-    opsidata.actionToString(Verfahren), LLInfo);
-  if Verfahren = tacNull then
+    opsidata.actionRequestToString(Verfahren), LLInfo);
+  if Verfahren = tacNone then
     exit;
 
   ProductvarsForPC := opsidata.getProductproperties;
@@ -952,10 +940,10 @@ begin
     if runproductlist then
       Verfahren := tacSetup
     else
-      Verfahren := opsidata.getProductAction;
+      Verfahren := opsidata.getProductActionRequest;
 
     if Verfahren in [tacDeinstall, tacSetup, tacAlways] then
-      SetProductProgress(Verfahren);
+      opsidata.SetProductProgressByActionrequest(Verfahren);
 
     if Verfahren in [tacDeinstall, tacSetup, tacOnce, tacAlways,
       tacCustom, tacLogin] then
@@ -972,7 +960,7 @@ begin
         begin
           extremeErrorLevel := LevelFatal;
           LogDatei.log('Error level set to fatal, action type ' +
-            sayActionType(Verfahren), LLCritical);
+            opsidata.actionRequestToString(Verfahren), LLCritical);
         end;
     end;
     LogDatei.log('First ProcessNonZeroScript finished', LLDebug2);
@@ -994,7 +982,7 @@ begin
           LLnotice)
       else
       begin
-        opsidata.setProductActionRequest(tapUpdate);
+        opsidata.setProductActionRequest(tacUpdate);
         LogDatei.log('product ' + Produkt + ' set to update', LLessential);
         LogDatei.log('get Update script name ...', LLdebug2);
         scriptname := opsidata.getProductScriptPath(tacUpdate);
@@ -1058,7 +1046,7 @@ var
     i: integer;
     Zeile: string;
     SaveProductname: string;
-    requestedAction: TAction;
+    requestedAction: TActionRequest;
   begin
     LogDatei.LogProduktId := False;
     SaveProductname := Topsi4data(opsidata).getActualProductId;
@@ -1080,14 +1068,14 @@ var
       // set productname to get action via opsidata
       opsidata.setActualProductName(produkte.strings[i]);
 
-      requestedAction := opsidata.getProductAction;
+      requestedAction := opsidata.getProductActionRequest;
       LogDatei.log_prog(IntToStr(i)+' productId ' + produkte.strings[i]+
-      ' : ' + opsidata.actionToString(requestedAction),
+      ' : ' + opsidata.actionRequestToString(requestedAction),
         LLinfo);
-      if errorfound or (requestedAction <> tacNull) then
+      if errorfound or (requestedAction <> tacNone) then
       begin
         Zeile := 'Product ' + IntToStr(i) + ' ' + #9 + Produkte.Strings[i] +
-          ' : ' + opsidata.actionToString(requestedAction);
+          ' : ' + opsidata.actionRequestToString(requestedAction);
         LogDatei.log(Zeile, LLinfo);
       end;
 
@@ -1135,12 +1123,12 @@ var
 
         if (produkt <> selfProductName) and (produkt <> 'opsi-winst') then
         begin
-          if (productState in [tpsInstalled, tpsInstalling, tpsFailed]) then
+          if (productState in [tpsInstalled, tpsUnkown]) then
           begin
             opsidata.setProductState(tpsNotInstalled);
-            if productActionRequest in [tapNull, tapUpdate] then
+            if productActionRequest in [tacNone, tacUpdate] then
             begin
-              opsidata.setProductActionRequestWithDependencies(tapSetup);
+              opsidata.setProductActionRequestWithDependencies(tacSetup);
               LogDatei.log('product "' + Produkt + '" set to setup',
                 LLessential);
             end;
@@ -1175,7 +1163,7 @@ var
   goOn: boolean;
   problemString: string;
   aktActionRequestStr: string;
-  aktAction, orgAction: TAction;
+  aktAction, orgAction: TActionRequest;
   processProduct: boolean;
   ///val :   Integer;
   {$IFDEF UNIX}
@@ -1291,8 +1279,8 @@ begin
         Produkt := Produkte.Strings[i - 1];
         opsidata.setActualProductName(Produkt);
         // get the actionrequest from the original productlist created at startup
-        orgAction := opsidata.getProductAction;
-        if (orgAction <> tacNull) then
+        orgAction := opsidata.getProductActionRequest;
+        if (orgAction <> tacNone) then
         begin
 
           if trim(Produkt) = '' then
@@ -1305,12 +1293,12 @@ begin
           // check if there is still an action request if we had one at startup
           // get the actual (live) actionrequest
           aktActionRequestStr := opsidata.getActualProductActionRequest;
-          aktAction := opsidata.actionRequestStringToAction(aktActionRequestStr);
+          aktAction := opsidata.actionRequestStringToActionRequest(aktActionRequestStr);
           Logdatei.log('Actionrequest for product: ' + Produkt +
-            ' is (original/actual): (' + opsidata.actionToString(
+            ' is (original/actual): (' + opsidata.actionRequestToString(
             orgAction) + ' / ' + aktActionRequestStr + ')', LLInfo);
           // process product only if we have a original action request which is still set
-          if (aktAction <> tacNull) and (orgAction <> tacNull) then
+          if (aktAction <> tacNone) and (orgAction <> tacNone) then
             processProduct := True
           else
             processProduct := False;
@@ -1820,21 +1808,21 @@ begin
         begin
           //successful after setup
           opsidata.ProductOnClient_update(LogDatei.ActionProgress,
-            tar4Successful,
-            tac4None,
-            ttc4Installed,
-            tac4Setup,
-            tps4Installed);
+            tarSuccessful,
+            tacNone,
+           // ttc4Installed,
+            tacSetup,
+            tpsInstalled);
         end
         else //failed
         begin
           //failed after setup
           opsidata.ProductOnClient_update(LogDatei.ActionProgress,
-            tar4Failed,
-            tac4None,
-            ttc4Installed,
-            tac4Setup,
-            tps4Unkown);
+            tarFailed,
+            tacNone,
+            //ttc4Installed,
+            tacSetup,
+            tpsUnkown);
         end; // failed
         opsidata.finishProduct;
       end;
@@ -2529,7 +2517,10 @@ begin
             begin
               NestingLevel := 0;
               if batchUpdatePOC and not (opsidata = nil) then
-                opsidata.setProductState(tpsInstalling);
+              begin
+                opsidata.setProductProgress(tppInstalling);
+                opsidata.setProductState(tpsUnkown);
+              end;
               CreateAndProcessScript(scriptlist.Strings[scriptindex],
                 NestingLevel, False, extremeErrorLevel);
             end;

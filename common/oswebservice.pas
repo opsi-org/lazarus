@@ -103,7 +103,11 @@ const
   logtype = 'instlog';
 
 type
+
+
   //TArtProduktbehandlung = (tapSet, tapSetup, tapDeinstall, tapUpdate, tapOnce, tapAlways, tapNull);
+
+    (* old opsi 3 states and actions
   TAction = (tacNull,
     tacSetup,
     tacUpdate,
@@ -112,6 +116,7 @@ type
     tacOnce,
     tacCustom,
     tacLogin);
+
 
   TActionRequest = (tapNull, tapUndefined, tapNull_byPolicy,
     tapSetup, tapSetup_byPolicy,
@@ -123,6 +128,8 @@ type
     tapCustom,
     tapLogin);
 
+
+
   TActionRequest4 = (tac4None,
     tac4Setup,
     tac4Update,
@@ -132,22 +139,44 @@ type
     tac4Custom,
     tac4Login);
 
+      *)
+
+  TActionRequest = (tacNone,
+    tacSetup,
+    tacUpdate,
+    tacDeinstall,
+    tacAlways,
+    tacOnce,
+    tacCustom,
+    tacLogin);
+
   //TProductstate4 = (tps4Installed,
   //  tps4Not_installed,
   //  tps4Unkown);
 
+(* not used since opsi 3:
   TTargetConfiguration4 = (ttc4Installed,
     ttc4Forbidden,
     ttc4Always,
     ttc4undefined);
+    *)
 
-  TActionResult4 = (tar4None, tar4Failed, tar4Successful);
+  TActionResult = (tarNone, tarFailed, tarSuccessful);
 
+  TProductState = (tpsUndefined,
+     tpsNotInstalled,
+     tpsInstalled,
+     tpsUnkown);
 
+  TActionProgress = (tppNone,
+     tppInstalling,
+     tppUnInstalling);
+  (*
   TProductState = (tpsUndefined, tpsNotInstalled, tpsInstalling, tpsUninstalling,
     tpsInstalled, tpsFailed, tps4Installed,
     tps4Not_installed,
     tps4Unkown);
+  *)
   //  TProductState4 = (tpsUndefined, tpsNotInstalled, tpsInstalled);
   //  TProductProgress = (tppUndefined, tppInstalling, tppNone);
   //  TProductResult = (tprNone, tprFailed, tprSuccessful);
@@ -291,11 +320,11 @@ type
     constructor Create;
     {functions}
     function stateToString(state: TProductState): string; virtual; abstract;
-    function actionToString(action: TAction): string; virtual; abstract;
-    function actionRequestToString(actionRequest: TActionRequest): string;
-      virtual; abstract;
+    //function actionToString(action: TAction): string; virtual; abstract;
+    //function actionRequestToString(actionRequest: TActionRequest4): string;
+    //  virtual; abstract;
     function getLogFileName(const LogFilename: string): string; virtual; abstract;
-    function UpdateSwitches(extremeErrorLevel: TErrorLevel): boolean; virtual;
+    //function UpdateSwitches(extremeErrorLevel: TErrorLevel): boolean; virtual;
     function getActualProductName: string; virtual;
     function getActualProductVersion: string; virtual;
     function initProduct: boolean; virtual; abstract;
@@ -304,10 +333,10 @@ type
     function getBeforeRequirements: TStringList; virtual; abstract;
     function getAfterRequirements: TStringList; virtual; abstract;
     function getProductState: TProductState; virtual; abstract;
-    function getProductAction: TAction; virtual; abstract;
+    //function getProductAction: TAction; virtual; abstract;
     function getProductActionRequest: TActionRequest; virtual; abstract;
     function getListOfProductIDs: TStringList; virtual; abstract;
-    function getProductScriptPath(actionType: TAction): string;
+    function getProductScriptPath(actionType: TActionRequest): string;
       virtual; abstract;
     function getInstallationPriority: integer; virtual; abstract;
     function withLicenceManagement: boolean; virtual;
@@ -320,10 +349,10 @@ type
     procedure saveOpsiConf; virtual; abstract;
     procedure finishOpsiConf; virtual;
     procedure setProductActionRequest(newAction: TActionRequest); virtual; abstract;
-    procedure setProductState(newState: TProductState); virtual; abstract;
-    procedure setProductStateActionRequest(newState: TProductState;
-      newActiont: TActionRequest);
-      virtual; abstract;
+    //procedure setProductState(newState: TProductState); virtual; abstract;
+    //procedure setProductStateActionRequest(newState: TProductState;
+    //  newActiont: TActionRequest);
+    //  virtual; abstract;
     {Properties}
     property sortByServer: boolean read FSortByServer;
   end;
@@ -401,14 +430,14 @@ type
     function sendLog(logtype: string): boolean; overload;
     function sendLog(logtype: string; appendmode: boolean): boolean; overload;
     function stateToString(state: TProductState): string; override;
-    function actionToString(action: TAction): string; override;
+    //function actionToString(action: TAction): string; override;
     function actionRequestToString(actionRequest: TActionRequest): string;
-      overload; override;
     function stateStringToState(s: string): TProductState;
-    function stateStringToState4(s: string): TProductState;
+    //function stateStringToState4(s: string): TProductState;
     function actionRequestStringToActionRequest(s: string): TActionRequest;
-    function actionRequestStringToAction(s: string): TAction;
-    function actionRequestStringToAction4(s: string): TActionRequest4;
+    //function actionRequestStringToAction(s: string): TAction;
+    //function actionRequestStringToAction4(s: string): TActionRequest;
+    function actionProgressToString(actionProgress: TActionProgress) : string;
     function getMethodSignature(const methodname: string): TStringList;
     function initProduct: boolean; override;
     function getActualProductVersion: string; override;
@@ -425,7 +454,7 @@ type
       var usedefault: boolean): TStringList; overload;
     // getInstallableLocalBootProductIds_list
     function getProductState: TProductState; override;
-    function getProductAction: TAction; override;
+    //function getProductAction: TAction; override;
     function getProductActionRequest: TActionRequest; override;
     function getProductPackagageVersion: string; virtual;
     function getOpsiServiceVersion: string; override;
@@ -443,16 +472,15 @@ type
     function getActualProductInstalledPackage: string;
     function getActualProductInstalledModificationTime: string;
     function getActualProductActionRequest: string;
-    function getProductScriptPath(actionType: TAction): string; override;
+    function getProductScriptPath(actionType: TActionRequest): string; override;
     function getInstallationPriority: integer; override;
-    function actionResultToString(actionResult: TActionResult4): string;
-    function actionRequest4ToString(actionRequest: TActionRequest4): string;
-    function targetConfigurationToString(targetConfiguration: TTargetConfiguration4)
-      : string;
+    function actionResultToString(actionResult: TActionResult): string;
+    //function actionRequest4ToString(actionRequest: TActionRequest): string;
+    //function targetConfigurationToString(targetConfiguration: TTargetConfiguration4)
+    //  : string;
     function installationStatusToString(installationStatus: TProductstate): string;
-    function UpdateSwitches(extremeErrorLevel: TErrorLevel): boolean; override; overload;
-    function UpdateSwitches(extremeErrorLevel: TErrorLevel; Progress: string): boolean;
-      overload;
+    function UpdateSwitches(extremeErrorLevel: TErrorLevel): boolean; overload;
+    function UpdateSwitches(extremeErrorLevel: TErrorLevel; Progress: string): boolean; overload;
     function withLicenceManagement: boolean; override;
     function withRoamingProfiles: boolean;
     function linuxAgentActivated: boolean;
@@ -496,14 +524,21 @@ type
     procedure setActualProductActionRequest(request: string);
     procedure setProductActionRequest(newAction: TActionRequest); override;
     procedure setProductActionRequestWithDependencies(newAction: TActionRequest);
-    procedure setProductState(newState: TProductState); override;
-    procedure setProductProgress(myprogres: string);
+    //procedure setProductState(newState: TProductState; newProgress: TActionProgress);
+    procedure setProductState(newState: TProductState);
+    procedure setProductProgress(newProgress: TActionProgress);
     procedure setProductStateActionRequest(newState: TProductState;
-      newAction: TActionRequest); override;
+      newAction: TActionRequest);
+    procedure SetProductProgressByActionrequest(const Verfahren: TActionRequest);
+    (*
     procedure ProductOnClient_update(actionProgressS: string;
       actionResult: TActionResult4; actionRequest: TActionRequest4;
       targetConfiguration: TTargetConfiguration4; lastAction: TActionRequest4;
       installationStatus: TProductstate);
+      *)
+    procedure ProductOnClient_update(actionProgressS: string;
+      actionResult: TActionResult; actionRequest: TActionRequest;
+      lastAction: TActionRequest; installationStatus: TProductstate);
     function getOpsiVersion: string;  // get opsiversion from backend_info
     // get list of methods via service:
     function getOpsiServiceMethods(allow_deprecated : boolean) : TStringlist;
@@ -526,7 +561,7 @@ var
   opsidata: TOpsi4Data = nil;
   FValidCredentials: boolean;
 
-function sayActionType(action: TAction): string;
+//function sayActionType(action: TAction): string;
 function getOpsiServerVersion(const serviceUrl: string; const username: string;
   const password: string; var sessionid: string): string;
 function getOpsiServiceVersion(const serviceUrl: string; const username: string;
@@ -746,6 +781,7 @@ begin
   OpsiVersion := getOpsiServerVersion(serviceUrl, username, password, sessionid);
 end;
 
+(*
 function sayActionType(action: TAction): string;
 begin
   Result := '';
@@ -758,7 +794,7 @@ begin
     tacOnce: Result := 'once';
   end;
 end;
-
+*)
 function getJsonObjectStringfromList(const inlist: TStringList): WideString;
 var
   i: integer;
@@ -848,29 +884,33 @@ begin
   Result := actualVersion;
 end;
 
-function TOpsiData.UpdateSwitches(extremeErrorLevel: TErrorLevel): boolean;
+(*
+function TOpsi4Data.UpdateSwitches(extremeErrorLevel: TErrorLevel): boolean;
 var
-  ar: TActionRequest;
-  action: TAction;
+  //ar: TActionRequest;
+  action: TActionRequest;
   newState: TProductState;
   newActionRequest: TActionRequest;
+  newActionProgress: TActionProgress = tppNone;
 begin
   Result := False;
-  ar := getProductActionRequest;
-  action := getProductAction;
+  //ar := getProductActionRequest;
+  action := getProductActionRequest;
 
-  newActionRequest := tapNull;
+  newActionRequest := tacNone;
 
 
 
   if extremeErrorLevel > levelfatal then
   begin
 
+    newActionProgress:= tppNone;
+    newActionRequest := tacNone;
+
     case action of
       tacDeinstall:
       begin
         newState := tpsNotInstalled;
-        newActionRequest := tapNull;
         Result := True;
       end;
 
@@ -879,46 +919,36 @@ begin
         //NeuerProduktschalter := 'on';
         Result := True;
         newState := tpsInstalled;
-        newActionRequest := tapNull;
       end;
 
       tacOnce:
       begin
         Result := True;
-        //newState := tpsUndefined;
         newState := tpsNotInstalled;
-        newActionRequest := tapNull;
       end;
 
       tacAlways:
       begin
         Result := True;
         newState := tpsInstalled;
-        newActionRequest := tapAlways;
+        newActionRequest := tacAlways;
       end;
     end;
-
-    (*
-    // but if we did the action on hehalf of a policy we stay on following policies and reset new the action request:
-
-    if ar in [tapNull_byPolicy, tapSetup_byPolicy, tapUpdate_byPolicy,
-      tapDeinstall_byPolicy] then
-    begin
-      newActionRequest := tap_byPolicy;
-    end;
-    *)
-
   end
   else
   begin
     Result := True;
-    newState := tpsFailed;
-    newActionRequest := tapNull;
+    newState := tpsUnkown;
+    newActionRequest := tacNone;
+    newActionProgress:= tppNone;
   end;
 
   setProductStateActionRequest(newState, newActionRequest);
+  setProductProgress(newActionProgress);
+
 
 end;
+*)
 
 function TOpsiData.withLicenceManagement: boolean;
 begin
@@ -4465,6 +4495,7 @@ begin
   end;
 end;
 
+(*
 function TOpsi4Data.actionToString(action: TAction): string;
 begin
   Result := 'undefined';
@@ -4479,27 +4510,32 @@ begin
     tacLogin: Result := 'login';
   end;
 end;
+*)
 
 function TOpsi4Data.actionRequestToString(actionRequest: TActionRequest): string;
 begin
   Result := '';
   case actionRequest of
-    tapNull: Result := 'none';
-    tapNull_byPolicy: Result := 'none_by_policy';
-    tapUndefined: Result := 'undefined';
-    tapSetup: Result := 'setup';
-    tapSetup_byPolicy: Result := 'setup_by_policy';
-    tapUpdate: Result := 'update';
-    tapUpdate_byPolicy: Result := 'update_by_policy';
-    tapDeinstall: Result := 'uninstall';
-    tapDeinstall_byPolicy: Result := 'uninstall_by_policy';
-    tapAlways: Result := 'always';
-    tapOnce: Result := 'once';
-    tapCustom: Result := 'custom';
-    tap_byPolicy: Result := 'by_policy';
+    tacNone: Result := 'none';
+    tacSetup: Result := 'setup';
+    tacUpdate: Result := 'update';
+    tacDeinstall: Result := 'uninstall';
+    tacAlways: Result := 'always';
+    tacOnce: Result := 'once';
+    tacCustom: Result := 'custom';
+    tacLogin: Result := 'login';
   end;
 end;
 
+function TOpsi4Data.actionProgressToString(actionProgress: TActionProgress) : string;
+begin
+  Result := '';
+  case actionProgress of
+    tppNone : Result := '';
+    tppInstalling : Result := 'installing';
+    tppUnInstalling : Result := 'uninstalling';
+  end;
+end;
 
 
 procedure TOpsi4Data.setActualClient(computername: string);
@@ -4535,6 +4571,7 @@ begin
   //else if sValue = 'failed' then result := tpsFailed
 end;
 
+(*
 function TOpsi4Data.stateStringToState4(s: string): TProductState;
 var
   sValue: string;
@@ -4547,22 +4584,23 @@ begin
   else if sValue = 'not_installed' then
     Result := tps4Not_installed;
 end;
+*)
 
-
-function TOpsi4Data.actionRequestStringToAction(s: string): TAction;
+(*
+function TOpsi4Data.actionRequestStringToActionRequest(s: string): TActionRequest;
 var
   sValue: string;
 begin
-  Result := tacNull;
+  Result := tacNone;
   sValue := lowercase(s);
 
-  if (sValue = 'setup') or (sValue = 'setup_by_policy') then
+  if (sValue = 'setup') then
     Result := tacSetup
 
-  else if (sValue = 'update') or (sValue = 'update_by_policy') then
+  else if (sValue = 'update') then
     Result := tacUpdate
 
-  else if (sValue = 'uninstall') or (sValue = 'uninstall_by_policy') then
+  else if (sValue = 'uninstall') then
     Result := tacDeinstall
 
   else if (sValue = 'always') then
@@ -4578,33 +4616,36 @@ begin
     Result := tacLogin;
 
 end;
+*)
 
-function TOpsi4Data.actionRequestStringToAction4(s: string): TActionRequest4;
+
+function TOpsi4Data.actionRequestStringToActionRequest(s: string): TActionRequest;
 var
   sValue: string;
 begin
-  Result := tac4None;
+  Result := tacNone;
   sValue := lowercase(s);
 
   if (sValue = 'none') then
-    Result := tac4None
+    Result := tacNone
   else if (sValue = 'setup') then
-    Result := tac4Setup
+    Result := tacSetup
   else if (sValue = 'update') then
-    Result := tac4Update
+    Result := tacUpdate
   else if (sValue = 'uninstall') then
-    Result := tac4Uninstall
+    Result := tacDeinstall
   else if (sValue = 'always') then
-    Result := tac4Always
+    Result := tacAlways
   else if (sValue = 'once') then
-    Result := tac4Once
+    Result := tacOnce
   else if (sValue = 'custom') then
-    Result := tac4Custom
+    Result := tacCustom
   else if (sValue = 'login') then
-    Result := tac4Login;
+    Result := tacLogin;
 end;
 
 
+(*
 function TOpsi4Data.actionRequestStringToActionRequest(s: string): TActionRequest;
 var
   sValue: string;
@@ -4630,6 +4671,7 @@ begin
   else if (sValue = 'custom') then
     Result := tapCustom;
 end;
+*)
 
 function TOpsi4Data.getMethodSignature(const methodname: string): TStringList;
 var
@@ -5740,11 +5782,13 @@ begin
   Result := stateStringToState(FProductStates.Values[ActualProduct]);
 end;
 
+(*
 function TOpsi4Data.getProductAction: TAction;
 begin
   testresult := FProductActionRequests.Values[ActualProduct];
   Result := actionRequestStringToAction(FProductActionRequests.Values[ActualProduct]);
 end;
+*)
 
 function TOpsi4Data.getProductActionRequest: TActionRequest;
 begin
@@ -5752,7 +5796,7 @@ begin
     FProductActionRequests.Values[ActualProduct]);
 end;
 
-function TOpsi4Data.getProductScriptPath(actionType: TAction): string;
+function TOpsi4Data.getProductScriptPath(actionType: TActionRequest): string;
 begin
   Result := '';
   //LogDatei.log('in TOpsi4Data.getProductScriptPath ', LLessential);
@@ -5985,14 +6029,12 @@ var
   stateS, parastr: string;
 begin
   try
-    stateS := stateToString(newState);
     FProductOnClient_aktobject.AsObject.N['modificationTime'] := nil;
     parastr := FProductOnClient_aktobject.asJson(False, False);
     FProductOnClient_aktobject.AsObject.N['actionSequence'] := nil;
     parastr := FProductOnClient_aktobject.asJson(False, False);
     FProductOnClient_aktobject.AsObject.S['installationStatus'] :=
       installationStatusToString(newState);
-    FProductOnClient_aktobject.AsObject.S['actionProgress'] := stateS;
     parastr := FProductOnClient_aktobject.asJson(False, False);
     omc := TOpsiMethodCall.Create('productOnClient_updateObject', [parastr]);
     jO := FjsonExecutioner.retrieveJSONObject(omc);
@@ -6006,7 +6048,7 @@ begin
     FProductStates.Values[actualProduct] := installationStatusToString(newState);
 end;
 
-procedure TOpsi4Data.setProductProgress(myprogres: string);
+procedure TOpsi4Data.setProductProgress(newProgress: TActionProgress);
 var
   omc: TOpsiMethodCall;
   jO: ISuperObject;
@@ -6014,14 +6056,12 @@ var
 begin
   try
     begin
-      stateS := myprogres;
       FProductOnClient_aktobject.AsObject.N['modificationTime'] := nil;
       parastr := FProductOnClient_aktobject.asJson(False, False);
       FProductOnClient_aktobject.AsObject.N['actionSequence'] := nil;
       parastr := FProductOnClient_aktobject.asJson(False, False);
-      FProductOnClient_aktobject.AsObject.S['installationStatus'] :=
-        installationStatusToString(tps4Unkown);
-      FProductOnClient_aktobject.AsObject.S['actionProgress'] := stateS;
+      FProductOnClient_aktobject.AsObject.S['actionProgress'] :=
+         actionProgressToString(newProgress);
       parastr := FProductOnClient_aktobject.asJson(False, False);
       omc := TOpsiMethodCall.Create('productOnClient_updateObject', [parastr]);
       jO := FjsonExecutioner.retrieveJSONObject(omc);
@@ -6033,18 +6073,17 @@ begin
   end;
   // save the new value in the local cache as well
   if FProductStates.IndexOf(actualProduct) > -1 then
-    FProductStates.Values[actualProduct] := installationStatusToString(tps4Unkown);
+    FProductStates.Values[actualProduct] := installationStatusToString(tpsUnkown);
 end;
 
 procedure TOpsi4Data.ProductOnClient_update(actionProgressS: string;
-  actionResult: TActionResult4; actionRequest: TActionRequest4;
-  targetConfiguration: TTargetConfiguration4; lastAction: TActionRequest4;
-  installationStatus: TProductstate);
+  actionResult: TActionResult; actionRequest: TActionRequest;
+  lastAction: TActionRequest; installationStatus: TProductstate);
 
 var
   omc: TOpsiMethodCall;
   jO: ISuperObject;
-  installationStatusS, actionResultS, actionRequestS, targetConfigurationS,
+  installationStatusS, actionResultS, actionRequestS,
   lastActionS: string;
   parastr: string;
 
@@ -6052,18 +6091,18 @@ begin
   //if FInstallableProducts.IndexOf(actualProduct) = -1 then exit;
   try
     actionResultS := actionResultToString(actionResult);
-    actionRequestS := actionRequest4toString(actionRequest);
-    targetConfigurationS := targetConfigurationToString(targetConfiguration);
-    lastActionS := actionRequest4toString(lastAction);
+    actionRequestS := actionRequesttoString(actionRequest);
+    //targetConfigurationS := targetConfigurationToString(targetConfiguration);
+    lastActionS := actionRequesttoString(lastAction);
     installationStatusS := installationStatusToString(installationStatus);
 
     FProductOnClient_aktobject.S['actionProgress'] := actionProgressS;
     FProductOnClient_aktobject.S['actionResult'] := actionResultS;
     FProductOnClient_aktobject.S['actionRequest'] := actionRequestS;
-    if lastAction <> tac4Custom then
-      FProductOnClient_aktobject.S['targetConfiguration'] := targetConfigurationS;
+    //if lastAction <> tac4Custom then
+    //  FProductOnClient_aktobject.S['targetConfiguration'] := targetConfigurationS;
     parastr := FProductOnClient_aktobject.asJson(False, False);
-    if lastAction <> tac4Custom then
+    if lastAction <> tacCustom then
     begin
       if (Productvars <> nil) and (Productvars.values['productVersion'] <> '') then
       begin
@@ -6077,7 +6116,7 @@ begin
           Productvars.Values['productVersion'];
       end;
     end;
-    if lastAction <> tac4Custom then
+    if lastAction <> tacCustom then
     begin
       if (Productvars <> nil) and (Productvars.values['packageVersion'] <> '') then
       begin
@@ -6088,7 +6127,7 @@ begin
       end;
     end;
     FProductOnClient_aktobject.S['lastAction'] := lastActionS;
-    if lastAction <> tac4Custom then
+    if lastAction <> tacCustom then
       FProductOnClient_aktobject.S['installationStatus'] := installationStatusS;
     parastr := FProductOnClient_aktobject.asJson(False, False);
     LogDatei.log('Opsi4Data.ProductOnClient_update, params (JSON): ' +
@@ -6107,7 +6146,23 @@ procedure TOpsi4Data.setProductStateActionRequest(newState: TProductState;
 begin
   setProductState(newState);
   setProductActionRequest(newAction);
+  SetProductProgressByActionrequest(newAction);
 end;
+
+procedure TOpsi4Data.SetProductProgressByActionrequest(const Verfahren: TActionRequest);
+begin
+  case Verfahren of
+    tacNone: opsidata.setProductProgress(tppNone);
+    tacSetup: opsidata.setProductProgress(tppInstalling);
+    tacDeinstall: opsidata.setProductProgress(tppUnInstalling);
+    tacOnce: opsidata.setProductProgress(tppInstalling);
+    tacAlways: opsidata.setProductProgress(tppInstalling);
+    tacCustom: opsidata.setProductProgress(tppInstalling);
+    tacLogin: opsidata.setProductProgress(tppInstalling);
+    tacUpdate: opsidata.setProductProgress(tppInstalling);
+  end;
+end;
+
 
 function TOpsi4Data.UpdateSwitches(extremeErrorLevel: TErrorLevel): boolean;
 begin
@@ -6145,61 +6200,55 @@ begin
         begin
           //successful after setup
           ProductOnClient_update(Progress,
-            tar4Successful,
-            tac4None,
-            ttc4Installed,
-            tac4Setup,
-            tps4Unkown);
+            tarSuccessful,
+            tacNone,
+            tacSetup,
+            tpsUnkown);
         end
         else if ActionStr = 'update' then
         begin
           //successful after update
           ProductOnClient_update(Progress,
-            tar4Successful,
-            tac4None,
-            ttc4Installed,
-            tac4Update,
-            tps4Unkown);
+            tarSuccessful,
+            tacNone,
+            tacUpdate,
+            tpsUnkown);
         end
         else if ActionStr = 'uninstall' then
         begin
           //successful after uninstall
           ProductOnClient_update(Progress,
-            tar4Successful,
-            tac4None,
-            ttc4Forbidden,
-            tac4Uninstall,
-            tps4Unkown);
+            tarSuccessful,
+            tacNone,
+            tacDeinstall,
+            tpsUnkown);
         end
         else if ActionStr = 'always' then
         begin
           //successful after always
           ProductOnClient_update(Progress,
-            tar4Successful,
-            tac4Always,
-            ttc4Always,
-            tac4Always,
-            tps4Unkown);
+            tarSuccessful,
+            tacAlways,
+            tacAlways,
+            tpsUnkown);
         end
         else if ActionStr = 'once' then
         begin
           //successful after Once
           ProductOnClient_update(Progress,
-            tar4Successful,
-            tac4None,
-            ttc4Forbidden,
-            tac4Once,
-            tps4Unkown);
+            tarSuccessful,
+            tacNone,
+            tacOnce,
+            tpsUnkown);
         end
         else if ActionStr = 'custom' then
         begin
           //successful after Custom
           ProductOnClient_update(Progress,
-            tar4Successful,
-            tac4None,
-            ttc4undefined,
-            tac4Custom,
-            tps4Unkown);
+            tarSuccessful,
+            tacNone,
+            tacCustom,
+            tpsUnkown);
         end
         else
         begin
@@ -6212,61 +6261,55 @@ begin
         begin
           //failed after setup
           ProductOnClient_update(Progress,
-            tar4Failed,
-            tac4None,
-            ttc4Installed,
-            tac4Setup,
-            tps4Unkown);
+            tarFailed,
+            tacNone,
+            tacSetup,
+            tpsUnkown);
         end
         else if ActionStr = 'update' then
         begin
           //failed after update
           ProductOnClient_update(Progress,
-            tar4Failed,
-            tac4None,
-            ttc4Installed,
-            tac4Update,
-            tps4Unkown);
+            tarFailed,
+            tacNone,
+            tacUpdate,
+            tpsUnkown);
         end
         else if ActionStr = 'uninstall' then
         begin
           //failed after uninstall
           ProductOnClient_update(Progress,
-            tar4Failed,
-            tac4None,
-            ttc4Forbidden,
-            tac4Uninstall,
-            tps4Unkown);
+            tarFailed,
+            tacNone,
+            tacDeinstall,
+            tpsUnkown);
         end
         else if ActionStr = 'always' then
         begin
           //failed after always
           ProductOnClient_update(Progress,
-            tar4Failed,
-            tac4Always,
-            ttc4Always,
-            tac4Always,
-            tps4Unkown);
+            tarFailed,
+            tacAlways,
+            tacAlways,
+            tpsUnkown);
         end
         else if ActionStr = 'once' then
         begin
           //failed after Once
           ProductOnClient_update(Progress,
-            tar4Failed,
-            tac4None,
-            ttc4Forbidden,
-            tac4Once,
-            tps4Unkown);
+            tarFailed,
+            tacNone,
+            tacOnce,
+            tpsUnkown);
         end
         else if ActionStr = 'custom' then
         begin
           //failed after Custom
           ProductOnClient_update(Progress,
-            tar4Failed,
-            tac4None,
-            ttc4undefined,
-            tac4Custom,
-            tps4Unkown);
+            tarFailed,
+            tacNone,
+            tacCustom,
+            tpsUnkown);
         end
         else
         begin
@@ -6283,61 +6326,55 @@ begin
         begin
           //successful after setup
           ProductOnClient_update('',
-            tar4Successful,
-            tac4None,
-            ttc4Installed,
-            tac4Setup,
-            tps4Installed);
+            tarSuccessful,
+            tacNone,
+            tacSetup,
+            tpsInstalled);
         end
         else if ActionStr = 'update' then
         begin
           //successful after update
           ProductOnClient_update('',
-            tar4Successful,
-            tac4None,
-            ttc4Installed,
-            tac4Update,
-            tps4Installed);
+            tarSuccessful,
+            tacNone,
+            tacUpdate,
+            tpsInstalled);
         end
         else if ActionStr = 'uninstall' then
         begin
           //successful after uninstall
           ProductOnClient_update('',
-            tar4Successful,
-            tac4None,
-            ttc4Forbidden,
-            tac4Uninstall,
-            tps4Not_installed);
+            tarSuccessful,
+            tacNone,
+            tacDeinstall,
+            tpsNotInstalled);
         end
         else if ActionStr = 'always' then
         begin
           //successful after always
           ProductOnClient_update('',
-            tar4Successful,
-            tac4Always,
-            ttc4Always,
-            tac4Always,
-            tps4Installed);
+            tarSuccessful,
+            tacAlways,
+            tacAlways,
+            tpsInstalled);
         end
         else if ActionStr = 'once' then
         begin
           //successful after Once
           ProductOnClient_update('',
-            tar4Successful,
-            tac4None,
-            ttc4Forbidden,
-            tac4Once,
-            tps4Not_installed);
+            tarSuccessful,
+            tacNone,
+            tacOnce,
+            tpsNotInstalled);
         end
         else if ActionStr = 'custom' then
         begin
           //successful after Custom
           ProductOnClient_update('',
-            tar4Successful,
-            tac4None,
-            ttc4undefined,
-            tac4Custom,
-            tps4Unkown);
+            tarSuccessful,
+            tacNone,
+            tacCustom,
+            tpsUnkown);
         end
         else
         begin
@@ -6350,61 +6387,55 @@ begin
         begin
           //failed after setup
           ProductOnClient_update(Progress,
-            tar4Failed,
-            tac4None,
-            ttc4Installed,
-            tac4Setup,
-            tps4Unkown);
+            tarFailed,
+            tacNone,
+            tacSetup,
+            tpsUnkown);
         end
         else if ActionStr = 'update' then
         begin
           //failed after update
           ProductOnClient_update(Progress,
-            tar4Failed,
-            tac4None,
-            ttc4Installed,
-            tac4Update,
-            tps4Unkown);
+            tarFailed,
+            tacNone,
+            tacUpdate,
+            tpsUnkown);
         end
         else if ActionStr = 'uninstall' then
         begin
           //failed after uninstall
           ProductOnClient_update(Progress,
-            tar4Failed,
-            tac4None,
-            ttc4Forbidden,
-            tac4Uninstall,
-            tps4Unkown);
+            tarFailed,
+            tacNone,
+            tacDeinstall,
+            tpsUnkown);
         end
         else if ActionStr = 'always' then
         begin
           //failed after always
           ProductOnClient_update(Progress,
-            tar4Failed,
-            tac4Always,
-            ttc4Always,
-            tac4Always,
-            tps4Unkown);
+            tarFailed,
+            tacAlways,
+            tacAlways,
+            tpsUnkown);
         end
         else if ActionStr = 'once' then
         begin
           //failed after Once
           ProductOnClient_update(Progress,
-            tar4Failed,
-            tac4None,
-            ttc4Forbidden,
-            tac4Once,
-            tps4Unkown);
+            tarFailed,
+            tacNone,
+            tacOnce,
+            tpsUnkown);
         end
         else if ActionStr = 'custom' then
         begin
           //failed after Custom
           ProductOnClient_update(Progress,
-            tar4Failed,
-            tac4None,
-            ttc4undefined,
-            tac4Custom,
-            tps4Unkown);
+            tarFailed,
+            tacNone,
+            tacCustom,
+            tpsUnkown);
         end
         else
         begin
@@ -6418,15 +6449,16 @@ begin
   end;
 end;
 
-function TOpsi4Data.actionResultToString(actionResult: TActionResult4): string;
+function TOpsi4Data.actionResultToString(actionResult: TActionResult): string;
 begin
   case actionResult of
-    tar4None: Result := 'none';
-    tar4Failed: Result := 'failed';
-    tar4Successful: Result := 'successful';
+    tarNone: Result := 'none';
+    tarfailed: Result := 'failed';
+    tarSuccessful: Result := 'successful';
   end;
 end;
 
+(*
 function TOpsi4Data.actionRequest4ToString(actionRequest: TActionRequest4): string;
 begin
   case actionRequest of
@@ -6439,7 +6471,9 @@ begin
     tac4Custom: Result := 'custom';
   end;
 end;
+*)
 
+(*
 function TOpsi4Data.targetConfigurationToString(targetConfiguration:
   TTargetConfiguration4): string;
 begin
@@ -6450,15 +6484,16 @@ begin
     ttc4undefined: Result := 'undefined';
   end;
 end;
+*)
 
 function TOpsi4Data.installationStatusToString(installationStatus:
   TProductstate): string;
 begin
   Result := 'unknown';
   case installationStatus of
-    tps4Installed: Result := 'installed';
-    tps4Not_installed: Result := 'not_installed';
-    tps4Unkown: Result := 'unknown';
+    tpsInstalled: Result := 'installed';
+    tpsNotInstalled: Result := 'not_installed';
+    tpsUnkown: Result := 'unknown';
   end;
 end;
 
