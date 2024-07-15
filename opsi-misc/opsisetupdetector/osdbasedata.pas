@@ -29,11 +29,20 @@ uses
 
 type
 
-  TRunMode = (analyzeOnly,
-    singleAnalyzeCreate, twoAnalyzeCreate_1,
-    twoAnalyzeCreate_2, createTemplate, threeAnalyzeCreate_1,
-    threeAnalyzeCreate_2, threeAnalyzeCreate_3, createMultiTemplate, createMeta,
-    analyzeCreateWithUser, gmUnknown);
+  TRunMode = (
+    analyzeOnly,         // only analyze installer
+    singleAnalyzeCreate, // analyze one installer and create opsi package
+    twoAnalyzeCreate_1,  // analyze two installers and create opsi package (part win32)
+    twoAnalyzeCreate_2,  // analyze two installers and create opsi package (part win64)
+    createTemplate,      // create standard template
+    threeAnalyzeCreate_1,// analyze multi installers and create multi opsi package (part win)
+    threeAnalyzeCreate_2,// analyze multi installers and create multi opsi package (part lin)
+    threeAnalyzeCreate_3,// analyze multi installers and create multi opsi package (part mac)
+    createMultiTemplate, // create multi platform template
+    createMeta,          // create meta packeage
+    analyzeCreateWithUser,  // analyze one installer and create opsi package with loggedin user
+    createTemplateWithUser, // create template for opsi package with loggedin user
+    gmUnknown);
 
   TTemplateChannels = (training, default, structured, custom);
 
@@ -97,7 +106,7 @@ type
     amSelectable);
 
   // marker for add installers
-  TKnownInstaller = (stQtInstaller, stSetupFactory, stInstallAnywhere,
+  TKnownInstaller = (stMsixAppx,stWise,stQtInstaller, stSetupFactory, stInstallAnywhere,
     stAdvancedInstaller, stInstall4J, stPortableApps,
     stLinRPM, stLinDeb,
     stMacZip, stMacDmg, stMacPKG, stMacApp,
@@ -114,7 +123,7 @@ type
   TdetectInstaller = function(parent: TClass; markerlist: TStrings): boolean;
 
 
-  TInstallerData = class
+  TInstallerData = class    // Information about a type of installer
   private
   public
     installerId: TKnownInstaller;
@@ -130,15 +139,15 @@ type
     unattendedsetup: string;       // cli parameters for unattended setup
     silentuninstall: string;       // cli parameters for (really) silent uninstall
     unattendeduninstall: string;   // cli parameters for unattended uninstall
-    uninstall_waitforprocess: string;
-    install_waitforprocess: string;
-    uninstallProg: string;
-    comment: string;
-    Link: string;
-    uib_exitcode_function: string;
-    detected: TdetectInstaller;
-    installErrorHandlingLines: TStringList;
-    info_message_html: TStringList;  // Important Information about this Installer.
+    uninstall_waitforprocess: string;  // process name to wait for after uninstall program is started (_Au.exe)
+    install_waitforprocess: string; // process name to wait for after install program is started
+    uninstallProg: string;         // typical path + name of the uninstall.prog
+    comment: string;               // comment to this installer type
+    Link: string;                  // Link to further inormation to this installer type
+    uib_exitcode_function: string; // name of the exitcode function in the library uib_exitcode, that matches to this installer type
+    detected: TdetectInstaller;    // pointer to detection function
+    installErrorHandlingLines: TStringList;  // aditional opsi-script code to run after a failed installation was detected
+    info_message_html: TStringList;  // Important Information about this installer type
     // Displayed after detection
     // formatted in markdown
     { public declarations }
@@ -150,42 +159,42 @@ type
 
   TSetupFile = class(TPersistent)
   private
-    Factive: boolean;
-    FID: integer; // 1 = first setup file, 2 = second setup file
-    FsetupFileNamePath: string;
-    FsetupFileName: string;
-    FsetupFullFileName: string;
-    FsetupFileSize: cardinal;     // MB
-    Farchitecture: TArchitecture;
-    FmsiId: string;
-    FmsiProductName: string;
-    FmstAllowed: boolean;
-    FMstFullFileName: string;
-    FmstFileNamePath: string;
-    FmstFileName: string;
-    FmsiFullFileName: string;
-    FinstallerId: TKnownInstaller;
-    FrequiredSpace: cardinal;      // MB
-    FinstallDirectory: string;
-    Fmarkerlist: TStrings;
-    Finfolist: TStrings;
-    Flink: string;
-    FSoftwareVersion: string;
-    Fwinbatch_del_argument: string;
-    FinstallCommandLine: string;
-    FuninstallCommandLine: string;
-    FuninstallProg: string;
-    FuninstallDirectory: string;
-    FtargetProg: string;
-    FuninstallCheck: TStrings;
-    FisExitcodeFatalFunction: string;
-    Funinstall_waitforprocess: string;
-    Finstall_waitforprocess: string;
-    FinstallErrorHandlingLines: TStrings;
-    Fanalyze_progess: integer;
-    FcopyCompleteDir: boolean;
-    FtargetOS: TTargetOS;
-    FinstallerSourceDir: string;
+    Factive: boolean;             // is this instance active
+    FID: integer;                 // 1 = first setup file, 2 = second setup file
+    FsetupFileNamePath: string;   // path only of the installer file source
+    FsetupFileName: string;       // file name of the installer file source
+    FsetupFullFileName: string;   // path + file name of the installer file source
+    FsetupFileSize: cardinal;     // MB size of the installer file
+    Farchitecture: TArchitecture; // architecture of installer if known
+    FmsiId: string;               // msi ID of installer if known
+    FmsiProductName: string;      // msi Display name of installer if known
+    FmstAllowed: boolean;         // Is it allowed to add mst file
+    FMstFullFileName: string;     // path + file name of the mst file source
+    FmstFileNamePath: string;     // path only of the mst file source
+    FmstFileName: string;         // file name of the mst file source
+    //FmsiFullFileName: string;
+    FinstallerId: TKnownInstaller; // type of detected installer
+    FrequiredSpace: cardinal;      // MB size of the required space to run this installer
+    FinstallDirectory: string;     // target directory where this installer will install to
+    Fmarkerlist: TStrings;         // list of detected markers (patterns) for installer type detection
+    Finfolist: TStrings;           // list of detected info markers (patterns) for installer type detection
+    Flink: string;                 // link to further inormation to the detected installer type
+    FSoftwareVersion: string;      // version of the software that would be installed
+    //Fwinbatch_del_argument: string;
+    FinstallCommandLine: string;   // command line to install the software
+    FuninstallCommandLine: string; // command line to uninstall the software
+    FuninstallProg: string;        // path + name of the uninstall.prog
+    FuninstallDirectory: string;   // dir of the uninstall.prog
+    FtargetProg: string;           // file name of the main program (used for desktop icons)
+    FuninstallCheck: TStrings;     // list of opsi-script code to detect an existing installation
+    FisExitcodeFatalFunction: string;  // name of the exitcode function in the library uib_exitcode, that matches to this installer type
+    Funinstall_waitforprocess: string; // process name to wait for after uninstall program is started (_Au.exe)
+    Finstall_waitforprocess: string;   // process name to wait for after install program is started
+    FinstallErrorHandlingLines: TStrings; // additional opsi-script code to run after a failed installation was detected (e.g.: load installer log)
+    Fanalyze_progess: integer;         // state of the analyze progress in percent
+    FcopyCompleteDir: boolean;         // should we copy only the installer file or the complete directory
+    FtargetOS: TTargetOS;              // on which OS can this installer install
+    FinstallerSourceDir: string;       // directory of the installer inside the opsi package (%scriptpath%\files1)
     FpreferSilent: boolean;
     procedure SetMarkerlist(const AValue: TStrings);
     procedure SetInfolist(const AValue: TStrings);
@@ -195,10 +204,7 @@ type
     procedure SetTargetProg(const AValue: string);
     procedure SetInstallDirectory(const AValue: string);
     procedure SetUninstallDirectory(const AValue: string);
-    //procedure OnRestoreProperty(Sender: TObject; AObject: TObject;
-    //  Info: PPropInfo; AValue: TJSONData; var Handled: Boolean);
   published
-    // proc
     procedure SetArchitecture(const AValue: TArchitecture);
     procedure SetSetupFullFileName(const AValue: string);
     procedure SetMstFullFileName(const AValue: string);
@@ -215,7 +221,7 @@ type
     property mstFullFileName: string read FMstFullFileName write SetMstFullFileName;
     property mstFileNamePath: string read FmstFileNamePath write FmstFileNamePath;
     property mstFileName: string read FmstFileName write FmstFileName;
-    property msiFullFileName: string read FmsiFullFileName write FmsiFullFileName;
+    //property msiFullFileName: string read FmsiFullFileName write FmsiFullFileName;
     property installerId: TKnownInstaller read FinstallerId write FinstallerId;
     property requiredSpace: cardinal read FrequiredSpace write FrequiredSpace;
     property installDirectory: string read FinstallDirectory write SetInstallDirectory;
@@ -223,8 +229,8 @@ type
     property infolist: TStrings read Finfolist write SetInfolist;
     property link: string read Flink write Flink;
     property SoftwareVersion: string read FSoftwareVersion write FSoftwareVersion;
-    property winbatch_del_argument: string read Fwinbatch_del_argument
-      write Fwinbatch_del_argument;
+    //property winbatch_del_argument: string read Fwinbatch_del_argument
+    //  write Fwinbatch_del_argument;
     property installCommandLine: string read FinstallCommandLine
       write FinstallCommandLine;
     property isExitcodeFatalFunction: string
@@ -378,7 +384,7 @@ default: ["xenial_bionic"]
 
   TProductData = class(TPersistent)
   private
-    FarchitectureMode: TArchitectureMode;
+    FarchitectureMode: TArchitectureMode; // how to handle 32/64 bit (32only, 64only, both,...)
     Fcomment: string;
     Fdescription: string;
     Fadvice: string;
@@ -398,14 +404,15 @@ default: ["xenial_bionic"]
     FuserLoginscript: string;
     Fdelsubscript: string;
     Flicenserequired: boolean;
-    FproductImageFullFileName: string;
-    FtargetOSset: TTargetOSset;
-    FuseCustomDir: boolean;
-    FchannelDir: string;
-    FinstallFromLocal: boolean;
-    FhandleLicensekey: boolean;
-    Fdesktopicon: boolean;
-    FcustomizeProfile: boolean;
+    FproductImageFullFileName: string;    // path + name of the product icon source file
+    FtargetOSset: TTargetOSset;           // set of OS this product will work for (win,lin,mac)
+    FuseCustomDir: boolean;               // should we add code for custom dir handling
+    FchannelDir: string;                  // which template channel should be used
+    FinstallFromLocal: boolean;           // should we add code to install from temporary local dir
+    FhandleLicensekey: boolean;           // should we add code for license handling
+    Fdesktopicon: boolean;                // should we add code for desktop icon handling
+    FcustomizeProfile: boolean;           // should we add code for user profile cutomizing
+    FuninstallBeforeInstall : boolean;    // should we add code for uninstall before install by property
     procedure SetPriority(const AValue: TPriority);
   published
     property architectureMode: TArchitectureMode
@@ -438,6 +445,7 @@ default: ["xenial_bionic"]
     property handleLicensekey: boolean read FhandleLicensekey write FhandleLicensekey;
     property desktopicon: boolean read Fdesktopicon write Fdesktopicon;
     property customizeProfile: boolean read FcustomizeProfile write FcustomizeProfile;
+    property uninstallBeforeInstall: boolean read FuninstallBeforeInstall write FuninstallBeforeInstall;
 
   public
     { public declarations }
@@ -451,7 +459,6 @@ default: ["xenial_bionic"]
   public
     SetupFiles: array[0..2] of TSetupFile;
     productdata: TProductData;
-    //dependeciesCount : integer;
     dependencies: TCollection;
     properties: TPProperties;
 
@@ -741,7 +748,16 @@ resourcestring
     LineEnding + '* <https://doc.qt.io/qtinstallerframework/ifw-use-cases-cli.html> ' +
     LineEnding + '* <https://wiki.qt.io/Online_Installer_4.x> ' +
     LineEnding + '* <https://gist.github.com/WindAzure/f3bed9e058cdc81eaa357414610c9125> ';
-
+  mdInstallerInfo_Wise =
+    '## This is a Wise Installer.' + LineEnding +
+    'This is an old discontinued Installer framework 1995 - 2009.' + LineEnding +
+    'If you are lucky it is an msi wrapper.' + LineEnding +
+    'In this case you may start the installation and look for a new msi in:' + LineEnding +
+    '"C:\Program Files (x86)\Common Files\Wise Installation Wizard"' + LineEnding +
+    'You may use this msi as install file.' + LineEnding +
+    'You may perhaps also pass the msi parameters as arguments to your setup.exe.';
+  mdInstallerInfo_MsixAppx = '';
+// marker for add installers
 
 implementation
 
@@ -969,7 +985,7 @@ begin
   FmstFullFileName := '';
   FmstFileNamePath := '';
   FmstFileName := '';
-  FmsiFullFileName := '';
+  //FmsiFullFileName := '';
   FinstallerId := stUnknown;
   FrequiredSpace := 0;
   FinstallDirectory := 'unknown';
@@ -978,7 +994,7 @@ begin
   Finfolist.Clear;
   Flink := '';
   FSoftwareVersion := '0.0';
-  Fwinbatch_del_argument := '';
+  //Fwinbatch_del_argument := '';
   FinstallCommandLine := '';
   FuninstallCommandLine := '';
   FuninstallProg := '';
@@ -1263,7 +1279,8 @@ begin
   // start 'with-user' properties
 
   propexists := aktProduct.properties.propExists('copy_files_locally');
-  if (myrunmode = analyzeCreateWithUser) and not propexists then
+  if (myrunmode in [analyzeCreateWithUser, createTemplateWithUser])
+    and not propexists then
   begin
     myprop := TPProperty(aktProduct.properties.add);
     myprop.init;
@@ -1276,7 +1293,8 @@ begin
   end;
 
   propexists := aktProduct.properties.propExists('debug');
-  if (myrunmode = analyzeCreateWithUser) and not propexists then
+  if (myrunmode  in [analyzeCreateWithUser, createTemplateWithUser])
+    and not propexists then
   begin
     myprop := TPProperty(aktProduct.properties.add);
     myprop.init;
@@ -1290,7 +1308,9 @@ begin
   end;
 
   propexists := aktProduct.properties.propExists('uninstall_before_install');
-  if (myrunmode = analyzeCreateWithUser) and not propexists then
+  if ((myrunmode  in [analyzeCreateWithUser, createTemplateWithUser]) or
+      (aktProduct.productdata.uninstallBeforeInstall))
+    and not propexists then
   begin
     myprop := TPProperty(aktProduct.properties.add);
     myprop.init;
@@ -1304,7 +1324,8 @@ begin
 
 
   propexists := aktProduct.properties.propExists('execution_method');
-  if (myrunmode = analyzeCreateWithUser) and not propexists then
+  if (myrunmode  in [analyzeCreateWithUser, createTemplateWithUser])
+    and not propexists then
   begin
     myprop := TPProperty(aktProduct.properties.add);
     myprop.init;
@@ -1325,6 +1346,21 @@ begin
     FreeAndNil(tmpstrlist);
     myprop.boolDefault := False;
   end;
+
+  propexists := aktProduct.properties.propExists('install_at_safe_mode_boot');
+  if (myrunmode  in [analyzeCreateWithUser, createTemplateWithUser])
+    and not propexists then
+  begin
+    myprop := TPProperty(aktProduct.properties.add);
+    myprop.init;
+    myprop.Property_Name := lowercase('install_at_safe_mode_boot');
+    myprop.description := 'Install after boot to safe mode';
+    myprop.Property_Type := bool;
+    myprop.multivalue := False;
+    myprop.editable := False;
+    myprop.boolDefault := False;
+  end;
+
 
   // END 'with-user' properties
 end;
@@ -2095,6 +2131,7 @@ begin
     else
       desktopicon := False;
     customizeProfile := False;
+    uninstallBeforeInstall := False;
   end;
   // Create Dependencies
   aktProduct.dependencies := TCollection.Create(TPDependency);
@@ -2137,127 +2174,77 @@ procedure reload_installer_info_messages;
 begin
   // unknown
   with installerArray[integer(stUnknown)] do
-  begin
     info_message_html.Text := '';
-  end;
   // inno
   with installerArray[integer(stInno)] do
-  begin
     info_message_html.Text := '';
-  end;
   // NSIS
   with installerArray[integer(stNsis)] do
-  begin
     info_message_html.Text := '';
-  end;
   // InstallShield
   with installerArray[integer(stInstallShield)] do
-  begin
     info_message_html.Text := mdInstallerInfo_Installshield;
-  end;
   // InstallShieldMSI
   with installerArray[integer(stInstallShieldMSI)] do
-  begin
     info_message_html.Text := mdInstallerInfo_Installshield;
-  end;
   // MSI
   with installerArray[integer(stMSI)] do
-  begin
     info_message_html.Text := '';
-  end;
   // 7zip
   with installerArray[integer(st7zip)] do
-  begin
     info_message_html.Text := '';
-  end;
   // st7zipsfx
   with installerArray[integer(st7zipsfx)] do
-  begin
     info_message_html.Text := '';
-  end;
   // stInstallAware
   with installerArray[integer(stInstallAware)] do
-  begin
     info_message_html.Text := '';
-  end;
   // stMSGenericInstaller
   with installerArray[integer(stMSGenericInstaller)] do
-  begin
     info_message_html.Text := '';
-  end;
   // stWixToolset
   with installerArray[integer(stWixToolset)] do
-  begin
     info_message_html.Text := '';
-  end;
   // stBoxStub
   with installerArray[integer(stBoxStub)] do
-  begin
     info_message_html.Text := '';
-  end;
   // stSFXcab
   with installerArray[integer(stSFXcab)] do
-  begin
     info_message_html.Text := '';
-  end;
   // stBitrock
   with installerArray[integer(stBitrock)] do
-  begin
     info_message_html.Text := '';
-  end;
   // stSelfExtractingInstaller
   with installerArray[integer(stSelfExtractingInstaller)] do
-  begin
     info_message_html.Text := '';
-  end;
   with installerArray[integer(stMacZip)] do
-  begin
     info_message_html.Text := '';
-  end;
   with installerArray[integer(stMacDmg)] do
-  begin
     info_message_html.Text := '';
-  end;
   with installerArray[integer(stMacPKG)] do
-  begin
     info_message_html.Text := '';
-  end;
   with installerArray[integer(stMacApp)] do
-  begin
     info_message_html.Text := '';
-  end;
   with installerArray[integer(stLinRPM)] do
-  begin
     info_message_html.Text := '';
-  end;
   with installerArray[integer(stLinDeb)] do
-  begin
     info_message_html.Text := '';
-  end;
   with installerArray[integer(stPortableApps)] do
-  begin
     info_message_html.Text := mdInstallerInfo_PortableApps;
-  end;
   with installerArray[integer(stInstall4J)] do
-  begin
     info_message_html.Text := '';
-  end;
   with installerArray[integer(stAdvancedInstaller)] do
-  begin
     info_message_html.Text := '';
-  end;
   with installerArray[integer(stInstallAnywhere)] do
-  begin
     info_message_html.Text := mdInstallerInfo_InstallAnywhere;
-  end;
   with installerArray[integer(stSetupFactory)] do
-  begin
     info_message_html.Text := mdInstallerInfo_SetupFactory;
-  end;
   with installerArray[integer(stQtInstaller)] do
-  begin
     info_message_html.Text := mdInstallerInfo_QtInstaller;
-  end;
+  with installerArray[integer(stWise)] do
+    info_message_html.Text := mdInstallerInfo_Wise;
+  with installerArray[integer(stMsixAppx)] do
+    info_message_html.Text := mdInstallerInfo_MsixAppx;
   // marker for add installers
 end;
 
@@ -2269,6 +2256,8 @@ begin
 
   // marker for add installers
   knownInstallerList := TStringList.Create;
+  knownInstallerList.Add('Msix_Appx');
+  knownInstallerList.Add('Wise');
   knownInstallerList.Add('QtInstaller');
   knownInstallerList.Add('SetupFactory');
   knownInstallerList.Add('InstallAnywhere');
@@ -2785,7 +2774,8 @@ begin
     unattendedsetup :=
       '/exebasicui /l* "%opsiLogDir%\$ProductId$.install_log.txt" /qb-! ALLUSERS=1 REBOOT=ReallySuppress';
     silentuninstall := '/exenoui /qn REMOVE=all /norestart';
-    unattendeduninstall := '/exebasicui /qb-! REMOVE=all /norestart';
+    // /qb-! führt bei uninstall bei shiluette studio zu 'invalid command line'
+    unattendeduninstall := '/exebasicui /qb REMOVE=all /norestart';
     uninstall_waitforprocess := '';
     install_waitforprocess := '';
     uninstallProg := '<setup-file>';
@@ -2869,6 +2859,69 @@ begin
     detected := @detectedbypatternwithand;
     //info_message_html.Text := mdInstallerInfo_QtInstaller;
   end;
+
+  with installerArray[integer(stWise)] do
+  begin
+    description := 'Wise';
+    silentsetup := '/quiet /norestart /log "%opsiLogDir%\$ProductId$.install_log.txt"';
+    unattendedsetup :=
+      '/passive /norestart /log "%opsiLogDir%\$ProductId$.install_log.txt"';
+    silentuninstall := '/quiet /norestart /log "%opsiLogDir%\$ProductId$.install_log.txt"';
+    unattendeduninstall :=
+      '/passive /norestart /log "%opsiLogDir%\$ProductId$.install_log.txt"';
+    uninstall_waitforprocess := '';
+    install_waitforprocess := '';
+    uninstallProg := '';
+    patterns.Add('Wise Installation Wizard');
+    patterns.Add('Wise for Windows');
+    patterns.Add('InstallTailor');
+    infopatterns.Add('WiseApi');
+    infopatterns.Add('Wise Installation Wizard prepares the Windows Installer');
+    infopatterns.Add('WiseForWindowsInstaller');
+    (* also found patterns
+    WiseDialogStackWiseNextDialogWiseCurrentWizardWiseCurrentDialog
+    WiseDlgSequence
+    PalmUsersWiseInstallMobileDeviceWiseInstallPalmWiseInstallnetcfWiseIsoCompEditRegWiseIsoCompInfoWisePalmInfoWiseSQLExecuteWiseSetAssemblyFrameworkPropertiesWiseUninstallMobileDeviceWiseVerifyUser
+    WiseDocumentCustomActionsWiseFindSqlClientToolsWiseGetServerFeaturesWiseGetSqlServersWiseGetWinEditionWiseLaunchConditionsWiseRegComPlusAddRemoveWiseRegComPlusInitWiseSqlServerCheckWiseTest
+    WiseMDACSuppressReboot /c:"setup.exe /qnt""%s" /r:n /q:a
+    WiseDialog
+    MsiLogFileLocation
+    WiseEditor
+    WiseDebugMode
+    Wise for Windows Installer
+    MsiAssemblyName
+    *)
+    link :=
+      'https://en.wikipedia.org/wiki/Wise_Solutions';
+    comment := 'Wise';
+    uib_exitcode_function := 'isMsiExitcodeFatal';
+    detected := @detectedbypatternwithand;
+    //info_message_html.Text := mdInstallerInfo_SetupFactory;
+  end;
+
+  with installerArray[integer(stMsixAppx)] do
+  begin
+    // https://www.advancedinstaller.com/per-machine-msix.html
+    description :=
+      'Msix / Appx Package';
+    silentsetup :=
+      'powershell.exe Add-AppProvisionedPackage -online -packagepath <#packagePath#> -skiplicense';
+    unattendedsetup :=
+      'powershell.exe Add-AppProvisionedPackage -online -packagepath <#packagePath#> -skiplicense';
+    silentuninstall :=
+      'powershell.exe Remove-AppPackage -AllUsers -package <#packageFullName#>';
+    unattendeduninstall :=
+      'powershell.exe Remove-AppPackage -AllUsers -package <#packageFullName#>';
+    uninstall_waitforprocess := '';
+    uninstallProg := '';
+    installErrorHandlingLines.Add('');
+    link :=
+      'https://learn.microsoft.com/en-us/windows/msix/overview';
+    comment := '';
+    uib_exitcode_function := 'isGenericExitcodeFatal';
+    detected := @detectedbypatternwithor;
+  end;
+
   // marker for add installers
   reload_installer_info_messages;
 
@@ -2888,6 +2941,8 @@ begin
   aktProduct := TopsiProduct.Create;
 
   FileVerInfo := TFileVersionInfo.Create(nil);
+
+
 try
   FileVerInfo.FileName := ParamStr(0);
   FileVerInfo.ReadFileInfo;

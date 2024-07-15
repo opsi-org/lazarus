@@ -1,13 +1,13 @@
 object FBatchOberflaeche: TFBatchOberflaeche
   Left = 439
-  Height = 520
+  Height = 1040
   Top = 336
-  Width = 782
+  Width = 1564
   Caption = 'opsi-script'
-  ClientHeight = 520
-  ClientWidth = 782
+  ClientHeight = 1040
+  ClientWidth = 1564
   Color = cl3DDkShadow
-  Font.Height = 14
+  Font.Height = 28
   Font.Name = 'System'
   Font.Pitch = fpVariable
   OnActivate = FormActivate
@@ -20,18 +20,18 @@ object FBatchOberflaeche: TFBatchOberflaeche
   OnShow = FormShow
   OnWindowStateChange = FormWindowStateChange
   Position = poScreenCenter
-  LCLVersion = '3.2.0.0'
+  LCLVersion = '3.4.0.0'
   object PanelFillScreen: TPanel
     Left = 0
-    Height = 520
+    Height = 1040
     Top = 0
-    Width = 782
+    Width = 1564
     Align = alClient
     AutoSize = True
-    ClientHeight = 520
-    ClientWidth = 782
+    ClientHeight = 1040
+    ClientWidth = 1564
     Color = clMenuBar
-    Font.Height = 14
+    Font.Height = 28
     Font.Name = 'System'
     Font.Pitch = fpVariable
     ParentBackground = False
@@ -39,9 +39,9 @@ object FBatchOberflaeche: TFBatchOberflaeche
     ParentFont = False
     TabOrder = 0
     object ImageOpsiBackground: TImage
-      Left = 304
+      Left = 1086
       Height = 542
-      Top = 4
+      Top = 524
       Width = 489
       Align = alCustom
       Anchors = [akRight, akBottom]
@@ -58,7 +58,7 @@ object FBatchOberflaeche: TFBatchOberflaeche
       ClientHeight = 430
       ClientWidth = 605
       Color = clWindow
-      Font.Height = 14
+      Font.Height = 28
       Font.Name = 'System'
       Font.Pitch = fpVariable
       ParentBackground = False
@@ -80,15 +80,15 @@ object FBatchOberflaeche: TFBatchOberflaeche
         Transparent = True
       end
       object LabelProgress: TLabel
-        Left = 28
-        Height = 16
-        Top = 320
-        Width = 524
+        Left = 56
+        Height = 32
+        Top = 640
+        Width = 1048
         AutoSize = False
         Caption = 'Activity'
         Font.CharSet = ANSI_CHARSET
         Font.Color = clBlack
-        Font.Height = -12
+        Font.Height = -24
         Font.Name = 'Times New Roman'
         Font.Pitch = fpVariable
         Font.Quality = fqDraft
@@ -97,39 +97,41 @@ object FBatchOberflaeche: TFBatchOberflaeche
         WordWrap = True
       end
       object LabelVersion: TLabel
-        Left = 76
+        Left = 152
         Height = 16
-        Top = 16
+        Top = 32
         Width = 85
+        AutoSize = False
         Caption = 'LabelVersion'
         Font.Color = clBlack
-        Font.Height = 11
+        Font.Height = 28
         Font.Name = 'System'
         Font.Pitch = fpVariable
         Font.Style = [fsBold]
+        OptimalFill = True
         ParentColor = False
         ParentFont = False
       end
       object ImageProduct: TImage
-        Left = 224
-        Height = 143
-        Top = 44
-        Width = 143
+        Left = 448
+        Height = 286
+        Top = 88
+        Width = 286
         Center = True
         Proportional = True
         Stretch = True
       end
       object LabelProduct: TLabel
-        Left = 128
-        Height = 41
-        Top = 208
-        Width = 337
+        Left = 256
+        Height = 82
+        Top = 416
+        Width = 674
         Alignment = taCenter
         AutoSize = False
         Caption = 'LabelProduct'
-        Constraints.MaxHeight = 42
+        Constraints.MaxHeight = 84
         Font.Color = clBlack
-        Font.Height = 42
+        Font.Height = 84
         Font.Name = 'Arial'
         Font.Pitch = fpVariable
         Font.Style = [fsBold]
@@ -138,30 +140,30 @@ object FBatchOberflaeche: TFBatchOberflaeche
         ParentFont = False
       end
       object LabelInfo: TLabel
-        Left = 49
-        Height = 16
-        Top = 264
-        Width = 497
+        Left = 98
+        Height = 32
+        Top = 528
+        Width = 994
         Alignment = taCenter
         AutoSize = False
         Caption = 'Info'
         Font.Color = clBlack
-        Font.Height = 17
+        Font.Height = 34
         Font.Name = 'Times New Roman'
         Font.Pitch = fpVariable
         ParentColor = False
         ParentFont = False
       end
       object LabelCommand: TLabel
-        Left = 28
-        Height = 19
-        Top = 304
-        Width = 524
+        Left = 56
+        Height = 38
+        Top = 608
+        Width = 1048
         Alignment = taCenter
         AutoSize = False
         Caption = 'Command'
         Font.Color = clBlack
-        Font.Height = 12
+        Font.Height = 24
         Font.Name = 'Times New Roman'
         Font.Pitch = fpVariable
         Font.Style = [fsBold]
@@ -169,15 +171,15 @@ object FBatchOberflaeche: TFBatchOberflaeche
         ParentFont = False
       end
       object LabelDetail: TLabel
-        Left = 28
-        Height = 28
-        Top = 284
-        Width = 524
+        Left = 56
+        Height = 56
+        Top = 568
+        Width = 1048
         Alignment = taCenter
         AutoSize = False
         Caption = 'Detail'
         Font.Color = clBlack
-        Font.Height = 17
+        Font.Height = 34
         Font.Name = 'Times New Roman'
         Font.Pitch = fpVariable
         Font.Style = [fsItalic]
@@ -185,43 +187,43 @@ object FBatchOberflaeche: TFBatchOberflaeche
         ParentFont = False
       end
       object ImageLogo1: TImage
-        Left = 60
-        Height = 80
-        Top = 80
-        Width = 80
-        Center = True
-        Transparent = True
-      end
-      object ImageLogo2: TImage
-        Left = 440
-        Height = 80
-        Top = 80
-        Width = 80
-        Center = True
-        Transparent = True
-      end
-      object Image1Over: TImage
-        Left = 216
+        Left = 120
         Height = 160
-        Top = 36
+        Top = 160
         Width = 160
         Center = True
         Transparent = True
       end
+      object ImageLogo2: TImage
+        Left = 880
+        Height = 160
+        Top = 160
+        Width = 160
+        Center = True
+        Transparent = True
+      end
+      object Image1Over: TImage
+        Left = 432
+        Height = 320
+        Top = 72
+        Width = 320
+        Center = True
+        Transparent = True
+      end
       object Image2Over: TImage
-        Left = 34
-        Height = 83
-        Top = 356
-        Width = 531
+        Left = 68
+        Height = 166
+        Top = 712
+        Width = 1062
         Center = True
         Transparent = True
       end
       object ActivityBar: TProgressBar
-        Left = 83
-        Height = 20
-        Top = 255
-        Width = 471
-        Font.Height = 14
+        Left = 166
+        Height = 40
+        Top = 510
+        Width = 942
+        Font.Height = 28
         Font.Name = 'System'
         Font.Pitch = fpVariable
         ParentFont = False
@@ -235,34 +237,34 @@ object FBatchOberflaeche: TFBatchOberflaeche
     Enabled = False
     Interval = 200
     OnTimer = TimerActivityTimer
-    Left = 680
-    Top = 56
+    Left = 1360
+    Top = 112
   end
   object TimerDetail: TTimer
     Enabled = False
     Interval = 200
     OnTimer = TimerDetailTimer
-    Left = 680
-    Top = 104
+    Left = 1360
+    Top = 208
   end
   object TimerCommand: TTimer
     Enabled = False
     Interval = 200
     OnTimer = TimerCommandTimer
-    Left = 728
-    Top = 56
+    Left = 1456
+    Top = 112
   end
   object TimerProcessMess: TTimer
     Interval = 200
     OnTimer = TimerProcessMessTimer
-    Left = 652
-    Top = 198
+    Left = 1304
+    Top = 396
   end
   object TimerOnTop: TTimer
     Enabled = False
     Interval = 500
     OnTimer = TimerOnTopTimer
-    Left = 663
-    Top = 277
+    Left = 1326
+    Top = 554
   end
 end

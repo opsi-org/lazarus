@@ -28,8 +28,8 @@ uses
   oswebservice;
 
 function createProductStructure: boolean;
-procedure callOpsiPackageBuilder;
-procedure callServiceOrPackageBuilder;
+function callOpsiPackageBuilder: boolean;
+function callServiceOrPackageBuilder: boolean;
 
 function opsiquotestr(s1, s2: string): string;
 // returns s1 quoted with s2 (if it is quoted right now, nothing will be changed)
@@ -311,7 +311,7 @@ begin
     pre_id := 'mac';
   if (osMulti in aktProduct.productdata.targetOSset) then
     pre_id := 'multi';
-  if (osdsettings.runmode = analyzeCreateWithUser) then
+  if (osdsettings.runmode in [analyzeCreateWithUser, createTemplateWithUser]) then
     pre_id := 'with-user';
 
   try
@@ -345,10 +345,15 @@ begin
       else
         str := str + 'DefVar $' + proptmpstr + '$' + LineEnding;
     end;
+    // special msix
+    if aktProduct.SetupFiles[0].installerId = stMsixAppx then
+       str := str + 'DefVar $MsixAppxPackageName$' + LineEnding;
+
     patchlist.add('#@stringVars*#=' + str);
 
     str := '';
     patchlist.add('#@productId*#=' + aktProduct.productdata.productId);
+    patchlist.add('#@productName*#=' + aktProduct.productdata.productName);
     patchlist.add('#@productVersion*#=' + aktProduct.productdata.productversion);
     for i := 0 to myconfiguration.import_libraries.Count - 1 do
       str := str + 'importlib "' + myconfiguration.import_libraries[i] +
@@ -471,6 +476,14 @@ begin
 
       readFileToList('HandleCustomizeProfilesSections.opsiscript', sectionlist);
     end;
+
+    // Checkbox uninstallBeforeInstall
+    str := '';
+    if aktProduct.productdata.uninstallBeforeInstall then
+    begin
+      str := ' and ($uninstall_before_install$ = "true")';
+    end;
+    patchlist.add('#@preDelIncCondition*#=' + str);
 
     // loop over setups
     for i := 0 to 2 do
@@ -654,7 +667,7 @@ begin
     pre_id := 'mac';
   if (osMulti in aktProduct.productdata.targetOSset) then
     pre_id := 'multi';
-  if (osdsettings.runmode = analyzeCreateWithUser) then
+  if (osdsettings.runmode in [analyzeCreateWithUser, createTemplateWithUser]) then
     pre_id := 'with-user';
 
   try
@@ -718,7 +731,7 @@ begin
           infilelist.Add('mac_delinctempl.opsiinc');
           infilelist.Add('mac_uninstalltempl.opsiscript');
         end;
-        analyzeCreateWithUser:
+        analyzeCreateWithUser, createTemplateWithUser:
         begin
           infilelist.Add('setup.opsiscript');
           infilelist.Add('sections.opsiinc');
@@ -773,7 +786,7 @@ begin
           begin
             infilelist.Add('declarations.opsiinc');
           end;
-          analyzeCreateWithUser:
+          analyzeCreateWithUser, createTemplateWithUser:
           begin
           end;
         end;
@@ -811,7 +824,7 @@ begin
             infilelist.Add('declarations.opsiinc');
             infilelist.Add('sections.opsiinc');
           end;
-          analyzeCreateWithUser:
+          analyzeCreateWithUser, createTemplateWithUser:
           begin
           end;
         end;
@@ -866,14 +879,14 @@ begin
             infilelist.Add('declarations.opsiinc');
             infilelist.Add('sections.opsiinc');
           end;
-          analyzeCreateWithUser:
+          analyzeCreateWithUser, createTemplateWithUser:
           begin
           end;
         end;
       end;
 
-      // we did it for analyzeCreateWithUser right now
-      if not (osdsettings.runmode = analyzeCreateWithUser) then
+      // we did it for analyzeCreateWithUser, createTemplateWithUser right now
+      if not (osdsettings.runmode in [analyzeCreateWithUser, createTemplateWithUser]) then
         for i := 0 to infilelist.Count - 1 do
         begin
           tmpname := ExtractFileNameOnly(infilelist.Strings[i]);
@@ -918,11 +931,11 @@ begin
 
       subdir := '';
       // at 'with user' we need osd-lib also at the 'localsetup' dir
-      if osdsettings.runmode = analyzeCreateWithUser then
+      if osdsettings.runmode in [analyzeCreateWithUser, createTemplateWithUser] then
         subdir := pathdelim + 'localsetup';
       // No need to copy installer for templates or Meta
       if not (osdsettings.runmode in [createTemplate, createMultiTemplate,
-        createMeta]) then
+        createTemplateWithUser, createMeta]) then
         // loop over setups
         for i := 0 to 2 do
         begin
@@ -978,7 +991,7 @@ begin
         copyfile(infilename, outfilename, [cffOverwriteFile,
           cffCreateDestDirectory, cffPreserveTime], True);
         // at 'with user' we need osd-lib also at the base dir (without subdir)
-        if osdsettings.runmode = analyzeCreateWithUser then
+        if osdsettings.runmode in [analyzeCreateWithUser, createTemplateWithUser] then
         begin
           outfilename := clientpath + PathDelim + 'osd-lib.opsiscript';
           copyfile(infilename, outfilename, [cffOverwriteFile,
@@ -1060,6 +1073,17 @@ begin
           cffCreateDestDirectory, cffPreserveTime], True);
       end;
 
+      //customdir
+      if aktProduct.productdata.customizeProfile then
+      begin
+        ForceDirectories(clientpath + subdir + PathDelim + 'profile_files');
+        infilename := genericTemplatePath + Pathdelim + 'profiledir_readme.txt';
+        outfilename := clientpath + subdir + PathDelim + 'profile_files' +
+          PathDelim + 'readme.txt';
+        copyfile(infilename, outfilename, [cffOverwriteFile,
+          cffCreateDestDirectory, cffPreserveTime], True);
+      end;
+
       // write project file
       aktProduct.writeProjectFileToPath(prodpath);
 
@@ -1078,6 +1102,24 @@ begin
     FreeAndNil(infilelist);
   end;
 end;
+
+// escape backslashes and quotes for string
+function escapeStringForToml(instring : string) : string;
+begin
+  result := StringReplace(instring,'\','\\',[rfReplaceAll, rfIgnoreCase]);
+  result := StringReplace(result,'"','\"',[rfReplaceAll, rfIgnoreCase]);
+end;
+
+// escape backslashes and quotes for stringlist
+function escapeListForToml(inlist : TStringlist) : TStringlist;
+var
+  i : integer;
+begin
+  escapeListForToml := TStringlist.Create;
+  for i:= 0 to inlist.Count -1 do
+    escapeListForToml.Add(escapeStringForToml(inlist[i]));
+end;
+
 
 function createOpsiFiles: boolean;
 var
@@ -1201,24 +1243,24 @@ begin
       textlist.Add('[Product]');
       textlist.Add('type = "' + aktProduct.productdata.producttype + '"');
       textlist.Add('id = "' + aktProduct.productdata.productId + '"');
-      textlist.Add('name = "' + aktProduct.productdata.productName + '"');
-      textlist.Add('description = """' + aktProduct.productdata.description + '"""');
-      textlist.Add('advice = """' + aktProduct.productdata.advice + '"""');
-      textlist.Add('version = "' + aktProduct.productdata.productversion + '"');
+      textlist.Add('name = "' + escapeStringForToml(aktProduct.productdata.productName) + '"');
+      textlist.Add('description = """' + escapeStringForToml(aktProduct.productdata.description) + '"""');
+      textlist.Add('advice = """' + escapeStringForToml(aktProduct.productdata.advice) + '"""');
+      textlist.Add('version = "' + escapeStringForToml(aktProduct.productdata.productversion) + '"');
       textlist.Add('priority = ' + IntToStr(aktProduct.productdata.priority));
       textlist.Add('licenseRequired = false');
       textlist.Add('productClasses = []');
-      textlist.Add('setupScript = "' + aktProduct.productdata.setupscript + '"');
+      textlist.Add('setupScript = "' + escapeStringForToml(aktProduct.productdata.setupscript) + '"');
       // No uninstall for Meta
       if not (osdsettings.runmode in [createMeta]) then
         textlist.Add('uninstallScript = "' +
-          aktProduct.productdata.uninstallscript + '"');
-      textlist.Add('updateScript = "' + aktProduct.productdata.updatescript + '"');
+          escapeStringForToml(aktProduct.productdata.uninstallscript) + '"');
+      textlist.Add('updateScript = "' + escapeStringForToml(aktProduct.productdata.updatescript) + '"');
       textlist.Add('alwaysScript = ""');
       textlist.Add('onceScript = ""');
       textlist.Add('customScript = ""');
       if aktProduct.productdata.customizeProfile then
-        textlist.Add('userLoginScript = "' + aktProduct.productdata.setupscript + '"')
+        textlist.Add('userLoginScript = "' + escapeStringForToml(aktProduct.productdata.setupscript) + '"')
       else
         textlist.Add('userLoginScript = ""');
       // the next line avoids a bug in  opsi-makepackage 4.3.0.36 [python-opsi=4.3.0.14]
@@ -1262,7 +1304,7 @@ begin
           unicode: textlist.Add('type = "unicode"');
         end;
         textlist.Add('name = "' + myprop.Property_Name + '"');
-        textlist.Add('description = "' + myprop.description + '"');
+        textlist.Add('description = "' + escapeStringForToml(myprop.description) + '"');
         if myprop.Property_Type = bool then
         begin
           textlist.Add('default = [' + lowercase(
@@ -1272,14 +1314,16 @@ begin
         begin
           textlist.Add('multivalue = ' + lowercase(BoolToStr(myprop.multivalue, True)));
           textlist.Add('editable = ' + lowercase(BoolToStr(myprop.editable, True)));
-          helplist.Text := myprop.GetValueLines.Text;
+          FreeAndNil(helplist);
+          helplist := escapeListForToml(TStringList(myprop.GetValueLines));
           opsiquotelist(helplist, '"');
           if stringListToJsonArray(helplist, tmpstr) then
             textlist.Add('values = ' + tmpstr)
           else
             LogDatei.log('Failed to write property values entry for property: ' +
               myprop.Property_Name, LLerror);
-          helplist.Text := myprop.GetDefaultLines.Text;
+          FreeAndNil(helplist);
+          helplist := escapeListForToml(TStringList(myprop.GetDefaultLines));
           opsiquotelist(helplist, '"');
           if stringListToJsonArray(helplist, tmpstr) then
             textlist.Add('default = ' + tmpstr)
@@ -1291,7 +1335,6 @@ begin
       textlist.SaveToFile(opsipath + pathdelim + 'control.toml');
       // END: create control file (4.3 toml style)
     end;
-
 
 
     // changelog
@@ -1359,8 +1402,12 @@ begin
     FreeAndNil(textlist);
     Result := True;
   except
-    LogDatei.log('Error in createOpsiFiles', LLError);
-    FreeAndNil(textlist);
+    on E: Exception do
+    begin
+      LogDatei.log('Error in createOpsiFiles', LLError);
+      LogDatei.log('Error: '+e.Message, LLError);
+      FreeAndNil(textlist);
+    end;
   end;
 end;
 
@@ -1604,7 +1651,7 @@ begin
 end;
 
 
-procedure callOpsiPackageBuilder;
+function callOpsiPackageBuilder : boolean;
 var
   msg1: string;
   description: string;
@@ -1619,6 +1666,7 @@ var
   paramlist: TStringList;
 
 begin
+  result := true;
   {$IFDEF OSDGUI}
   logdatei.log('Start callOpsiPackageBuilder', LLDebug2);
   buildCallparams := TStringList.Create;
@@ -1683,6 +1731,7 @@ begin
     on E: Exception do
     begin
       errorstate := True;
+      result := false;
       LogDatei.log('Exception while calling ' + buildCallbinary +
         ' Message: ' + E.message, LLerror);
       if osdsettings.showgui then
@@ -1704,6 +1753,7 @@ begin
       if osdsettings.showgui then
         ShowMessage(sErrOpsiPackageBuilderStart);
     end;
+    result := false;
   end;
   logdatei.log('Here comes the OpsiPackageBuilder log', LLnotice);
   logdatei.includelogtail('c:\opsi.org\applog\opb-call.log', 50, 'utf8');
@@ -1711,7 +1761,7 @@ begin
   {$ENDIF OSDGUI}
 end;   // execute OPSIPackageBuilder
 
-procedure buildWithOpsiService;
+function buildWithOpsiService: boolean;
 var
   omc: TOpsiMethodCall;
   params: array of string;
@@ -1740,6 +1790,7 @@ var
 
 begin
   LogDatei.log('Try to call opsi service', LLnotice);
+  result := false;
   {$IFDEF OSDGUI}
   resultForm1.PanelProcess.Visible := True;
   resultForm1.processStatement.Caption := 'invoke opsi service ...';
@@ -1757,7 +1808,10 @@ begin
   if osdsettings.BuildModeIndex = 0 then
   begin
     if servicecall('workbench_buildPackage', packagedir) then
-      LogDatei.log('Package ' + packagefile + ' successful build', LLnotice)
+    begin
+      result := true;
+      LogDatei.log('Package ' + packagefile + ' successful build', LLnotice);
+    end
     else
     begin
       LogDatei.log('Package ' + packagefile + ' failed to build', LLerror);
@@ -1770,7 +1824,10 @@ begin
   begin
 
     if servicecall('workbench_installPackage', packagedir) then
-      LogDatei.log('Package ' + packagefile + ' successful build + installed', LLnotice)
+    begin
+      result := true;
+      LogDatei.log('Package ' + packagefile + ' successful build + installed', LLnotice);
+    end
     else
     begin
       LogDatei.log('Package ' + packagefile + ' failed to build +install', LLerror);
@@ -1784,21 +1841,23 @@ begin
 end;
 
 
-procedure callServiceOrPackageBuilder;
+function callServiceOrPackageBuilder : boolean;
 var
-  callOpB: boolean = False;
+  callOpB: boolean = True;
 begin
   if startOpsiServiceConnection then
   begin
-    if CompareDotSeparatedNumbers(opsiserviceversion, '<', '4.2.0.311') then
-      callOpB := True;
-  end
-  else
-    callOpB := True;
+    LogDatei.log('opsi-service connected', LLinfo);
+    if CompareDotSeparatedNumbers(opsiserviceversion, '>', '4.2.0.311') then
+    begin
+      LogDatei.log('opsi-service can be used for build & install', LLinfo);
+      callOpB := False;
+    end;
+  end;
 
-  if callOpB then callOpsiPackageBuilder
+  if callOpB then result := callOpsiPackageBuilder
   else
-    buildWithOpsiService;
+    result := buildWithOpsiService;
 end;
 
 end.

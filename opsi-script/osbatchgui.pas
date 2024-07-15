@@ -82,10 +82,10 @@ type
     procedure FormActivate(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
+    procedure FormShow(Sender: TObject);
     procedure FormWindowStateChange(Sender: TObject);
     procedure ProgressBarActive(YesNo: boolean);
     procedure ShowProgress(Prozente: integer);
-    procedure FormShow(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
 
     procedure FormMouseUp(Sender: TObject; Button: TMouseButton;
@@ -198,7 +198,7 @@ implementation
 
 uses osmessagedialog, osfunc, osmain, oslog;
 
-procedure TFBatchOberflaeche.FormShow(Sender: TObject);
+procedure TFBatchOberflaeche.FormCreate(Sender: TObject);
 var
   MyFavoriteFont: string = '';
   SecondFont: string = '';
@@ -210,6 +210,7 @@ var
   //Alpha: boolean;
 
 begin
+  Progressbar := TProgressBar.Create(nil);
   with Progressbar do
   begin
     Visible := False;
@@ -242,24 +243,6 @@ begin
 
   Panel.DoubleBuffered := True;
 
-  // window state is controlled commandline parameters
-  //setWindowState(bwmNormalWindow);
-  Position := poScreenCenter;
-  if ScaleDesignToForm(Height) < ScaleDesignToForm(InnerHeight) + ScaleDesignToForm(StartTop) then
-    StartTop := (ScaleDesignToForm(Height) - ScaleDesignToForm(InnerHeight)) div ScaleDesignToForm(2);
-  if ScaleDesignToForm(Width) < ScaleDesignToForm(InnerWidth) + ScaleDesignToForm(StartLeft) then
-    StartLeft := (ScaleDesignToForm(Width) - ScaleDesignToForm(InnerWidth)) div ScaleDesignToForm(2);
-
-  Panel.Left := ScaleDesignToForm(StartLeft);
-  Panel.Top := ScaleDesignToForm(StartTop);
-  Panel.Width := ScaleDesignToForm(InnerWidth);
-  Panel.Height := ScaleDesignToForm(InnerHeight);
-  Left := ScaleDesignToForm(StartLeft);
-  Top := ScaleDesignToForm(StartTop);
-  Width := ScaleDesignToForm(InnerWidth);
-  Height := ScaleDesignToForm(InnerHeight);
-  MoveToDefaultPosition;
-
   Color := clBlue;
   Panel.Color := clBlue;
 
@@ -280,6 +263,31 @@ begin
   LabelProgress.Caption := '';
   //LabelProgress1.Caption := '';
 
+  LoadSkin('');
+end;
+
+procedure TFBatchOberflaeche.FormShow(Sender: TObject);
+begin
+  // window state is controlled commandline parameters
+  //setWindowState(bwmNormalWindow);
+  Position := poScreenCenter;
+  if ScaleDesignToForm(Height) < ScaleDesignToForm(InnerHeight) + ScaleDesignToForm(StartTop) then
+    StartTop := (ScaleDesignToForm(Height) - ScaleDesignToForm(InnerHeight)) div ScaleDesignToForm(2);
+  if ScaleDesignToForm(Width) < ScaleDesignToForm(InnerWidth) + ScaleDesignToForm(StartLeft) then
+    StartLeft := (ScaleDesignToForm(Width) - ScaleDesignToForm(InnerWidth)) div ScaleDesignToForm(2);
+
+  Panel.Left := ScaleDesignToForm(StartLeft);
+  Panel.Top := ScaleDesignToForm(StartTop);
+  Panel.Width := ScaleDesignToForm(InnerWidth);
+  Panel.Height := ScaleDesignToForm(InnerHeight);
+  Left := ScaleDesignToForm(StartLeft);
+  Top := ScaleDesignToForm(StartTop);
+  Width := ScaleDesignToForm(InnerWidth);
+  Height := ScaleDesignToForm(InnerHeight);
+  MoveToDefaultPosition;
+
+
+
   {$IFDEF WINDOWS}
   EnableFontSmoothing(LabelVersion);
   EnableFontSmoothing(LabelProduct);
@@ -292,7 +300,6 @@ begin
   {$IFDEF DARWIN}
   ForceStayOnTop(true);
   {$ENDIF DARWIN}
-   LoadSkin('');
    ProcessMess;
 end;
 
@@ -677,10 +684,6 @@ begin
   CloseAction := caNone;
 end;
 
-procedure TFBatchOberflaeche.FormCreate(Sender: TObject);
-begin
-  Progressbar := TProgressBar.Create(nil);
-end;
 
 procedure TFBatchOberflaeche.FormWindowStateChange(Sender: TObject);
 begin

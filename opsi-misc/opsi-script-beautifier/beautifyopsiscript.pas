@@ -23,7 +23,7 @@ function isStartStr(line: string; codeWords: TStringList): boolean;
 function isEndStr(line: string; codeWords: TStringList): boolean;
 function isNewSection(line: string; const linenum: integer): boolean;
 function beautify(code: TStringList): TStringList;
-procedure Initialize(bfn: string; osf: string);
+procedure Initialize(bfn: string; osf: string; use_stdinout: boolean = False);
 
 implementation
 
@@ -47,7 +47,6 @@ end;
 function isStartStr(line: string; codeWords: TStringList): boolean;
 var
   i: integer;
-
 begin
   isStartStr := False;
   for i := 0 to codeWords.Count - 1 do
@@ -63,7 +62,6 @@ end;
 function isEndStr(line: string; codeWords: TStringList): boolean;
 var
   i: integer;
-
 begin
   isEndStr := False;
   for i := 0 to codeWords.Count - 1 do
@@ -128,7 +126,7 @@ var
   tmpstr, tmpstr2: string;
   threetabs: boolean;
   openif: array[0..250] of integer;
-  codeline : string;
+  codeline: string;
 begin
   //Initialize openif array
   for i := 0 to 250 do
@@ -248,7 +246,8 @@ begin
             AnsiEndsStr(']', code[k].trim)) or
             AnsiStartsStr(UpperCase('deffunc'), UpperCase(code[k].trim)) or
             AnsiStartsStr(UpperCase('endfunc'), UpperCase(code[k].trim)) or
-            AnsiStartsStr(UpperCase('exit $?'), UpperCase(code[k].trim))) and (k < code.Count - 1) do
+            AnsiStartsStr(UpperCase('exit $?'), UpperCase(code[k].trim))) and
+          (k < code.Count - 1) do
         begin
           if dontTouch then // don't touch
           begin
@@ -301,7 +300,8 @@ begin
       code[k] := code[k].trim;
       if (isStartStr(code[k], incIndentList)) then
       begin
-        LogDatei.log('Inc ident at linenr: ' + IntToStr(k) + ' : ' + code[k].trim, LLdebug);
+        LogDatei.log('Inc ident at linenr: ' + IntToStr(k) + ' : ' +
+          code[k].trim, LLdebug);
         code[k] := indentation(indentlevel) + code[k];
         if AnsiStartsStr(UpperCase('if'), UpperCase(code[k].Trim)) then
         begin
@@ -324,7 +324,8 @@ begin
       end
       else if (isStartStr(code[k], decIndentList)) then
       begin
-        LogDatei.log('Dec ident at linenr: ' + IntToStr(k) + ' : ' + code[k].trim, LLdebug);
+        LogDatei.log('Dec ident at linenr: ' + IntToStr(k) + ' : ' +
+          code[k].trim, LLdebug);
         Dec(indentlevel);
         code[k] := indentation(indentlevel) + code[k];
         tmpstr2 := code[k];
@@ -356,22 +357,23 @@ begin
   end;
 end;
 
-procedure Initialize(bfn: string; osf: string);
+procedure Initialize(bfn: string; osf: string; use_stdinout: boolean = False);
 var
   opsiscriptfile: string;
   opsiscriptcode: TStringList;
   ini: TINIFile;
   i: integer;
+  mystring: string;
 begin
   ini := TINIFile.Create(bfn);
   indentrange := INI.ReadInteger('beautifierconf', 'indentrange', 5);
   indentlevel := 0;
   {$IFNDEF GUI}
-  writeln('indentrange:  ' + indentrange.ToString());
+  if not use_stdinout then writeln('indentrange:  ' + indentrange.ToString());
   {$ENDIF GUI}
   logdatei.log('indentrange:  ' + indentrange.ToString(), LLessential);
   {$IFNDEF GUI}
-  writeln('indentlevel:  ' + indentlevel.ToString());
+  if not use_stdinout then writeln('indentlevel:  ' + indentlevel.ToString());
   {$ENDIF GUI}
   logdatei.log('indentlevel:  ' + indentlevel.ToString(), LLessential);
 
@@ -379,7 +381,7 @@ begin
   // Tab = #09, Whitespace = ' '
   indentchar := INI.ReadString('beautifierconf', 'indentchar', '#09');
   {$IFNDEF GUI}
-  writeln(indentchar);
+  if not use_stdinout then writeln(indentchar);
   {$ENDIF GUI}
   logdatei.log('indentchar:  ' + indentchar, LLessential);
   if indentchar.Equals('tab') then
@@ -416,39 +418,64 @@ begin
 
   ini.Free;
 
-  opsiscriptfile := osf;
-  opsiscriptcode := TStringList.Create;
-  if FileExists(opsiscriptfile) then
+  if use_stdinout then
+  // read from stdin and write to stdout
   begin
-    logdatei.log('backup file: ' + opsiscriptfile, LLessential);
-    CopyFile(opsiscriptfile, ExtractFileNameWithoutExt(opsiscriptfile) +
-      '.bak', [cffOverwriteFile]);
-    logdatei.log('opening file: ' + opsiscriptfile, LLessential);
-   {$IFNDEF GUI}
-    writeln('opening file: ' + opsiscriptfile);
-   {$ENDIF GUI}
+    opsiscriptcode := TStringList.Create;
+    while not EOF do
+    begin
+      ReadLn(mystring);
+      opsiscriptcode.Add(mystring);
+    end;
     try
       try
-        opsiscriptcode.LoadFromFile(opsiscriptfile);
-        //logdatei.log('write backup file: '+ opsiscriptfile + '.bak',LLessential);
-        //opsiscriptcode.SaveToFile(opsiscriptfile + '.bak');
-        beautify(opsiscriptcode).SaveToFile(opsiscriptfile);
-        logdatei.log('write beautified file: ' + opsiscriptfile, LLessential);
+        opsiscriptcode.Text := beautify(opsiscriptcode).Text;
+        for i := 0 to opsiscriptcode.Count - 1 do writeln(opsiscriptcode[i]);
       except
-        logdatei.log('error beautifying or writing opsiscriptfiles : ' +
-          opsiscriptfile, LLessential);
+        logdatei.log('error beautifying  ', LLessential);
       end;
     finally
       opsiscriptcode.Free;
     end;
   end
   else
+    // use file
   begin
-    opsiscriptcode.Free;
-    {$IFNDEF GUI}
-    writeln('file does not exist: ' + opsiscriptfile);
-    {$ENDIF GUI}
-    logdatei.log('file does not exist: ' + opsiscriptfile, LLessential);
+
+    opsiscriptfile := osf;
+    opsiscriptcode := TStringList.Create;
+    if FileExists(opsiscriptfile) then
+    begin
+      logdatei.log('backup file: ' + opsiscriptfile, LLessential);
+      CopyFile(opsiscriptfile, ExtractFileNameWithoutExt(opsiscriptfile) +
+        '.bak', [cffOverwriteFile]);
+      logdatei.log('opening file: ' + opsiscriptfile, LLessential);
+      {$IFNDEF GUI}
+      writeln('opening file: ' + opsiscriptfile);
+      {$ENDIF GUI}
+      try
+        try
+          opsiscriptcode.LoadFromFile(opsiscriptfile);
+          //logdatei.log('write backup file: '+ opsiscriptfile + '.bak',LLessential);
+          //opsiscriptcode.SaveToFile(opsiscriptfile + '.bak');
+          beautify(opsiscriptcode).SaveToFile(opsiscriptfile);
+          logdatei.log('write beautified file: ' + opsiscriptfile, LLessential);
+        except
+          logdatei.log('error beautifying or writing opsiscriptfiles : ' +
+            opsiscriptfile, LLessential);
+        end;
+      finally
+        opsiscriptcode.Free;
+      end;
+    end
+    else
+    begin
+      opsiscriptcode.Free;
+      {$IFNDEF GUI}
+      writeln('file does not exist: ' + opsiscriptfile);
+      {$ENDIF GUI}
+      logdatei.log('file does not exist: ' + opsiscriptfile, LLessential);
+    end;
   end;
   // free all
   incIndentList.Free;

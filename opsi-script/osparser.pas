@@ -21698,7 +21698,7 @@ begin
   else
     Command := 'powershell.exe "Get-ExecutionPolicy -Scope ' + Scope +'"';
   try
-    if RunCommandAndCaptureOut(Command , True, Output, Report, SW_SHOWMINIMIZED, FLastExitCodeOfExe) then
+    if RunCommandAndCaptureOut(Command , True, Output, Report, SW_HIDE, FLastExitCodeOfExe) then
     begin
       ExecutionPolicy := Trim(Output.Text);
       LogDatei.log('Get execution policy for scope "'+Scope+'": ' +
