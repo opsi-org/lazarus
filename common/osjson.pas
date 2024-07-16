@@ -368,16 +368,11 @@ begin
       begin
         elementstr := trim(strlist.Strings[j]);
         // if quoted then escape inside the quotes:
-        if (elementstr.Chars[0] = '"') and (elementstr.Chars[elementstr.Length-1] = '"') then
-          elementstr := '"'+escapeControlChars(copy(elementstr,2,elementstr.Length-2))+'"';
-        try
-         new_obj := SO(elementstr);
-         if new_obj <> nil then elementstr := new_obj.asJson;
-        finally
-          AppendStr(jsonstring, elementstr);
-          if (j < strlist.Count - 1) then
-            AppendStr(jsonstring, ',');
-        end;
+        if (elementstr[1] = '"') and (elementstr[elementstr.Length] = '"') then
+          elementstr := '"'+escapeControlChars(elementstr[2..elementstr.Length-1])+'"';
+        AppendStr(jsonstring, elementstr);
+        if (j < strlist.Count - 1) then
+          AppendStr(jsonstring, ',');
       end;
     end;
     AppendStr(jsonstring, ']');
