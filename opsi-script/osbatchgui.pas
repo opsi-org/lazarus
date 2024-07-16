@@ -614,15 +614,13 @@ end;
 
 procedure TFBatchOberflaeche.ForceStayOnTop(YesNo: boolean);
 begin
-    if Assigned(LogDatei) then
-  LogDatei.log_prog('ForceStayOnTop start: '+BoolToStr(YesNo,true), LLnotice);
+  if Assigned(LogDatei) then
+    LogDatei.log_prog('ForceStayOnTop start: '+BoolToStr(YesNo,true), LLnotice);
   if YesNo then
   begin
     { make to system wide top most window }
     FormStyle := fsSystemStayOnTop;
     BringToFront;
-    { now allow new started windows (setup) to get the system wide top most position }
-    FormStyle := fsStayOnTop;
     BatchScreenOnTop := True;
     // call onTopTimer event
     TimerOnTopTimer(TimerOnTop);
