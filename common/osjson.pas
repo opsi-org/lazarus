@@ -355,30 +355,30 @@ end;
 function stringListToJsonArray(strlist: TStringList; var strresult: string): boolean;
 var
   j: integer;
-  jsonstring: string;
-  new_obj: ISuperObject;
+  elementstr: string;
+  JsonArray: TJSONArray;
 begin
-  try
-    jsonstring := '[';
-    Result := False;
-    if (strlist <> nil) and (strlist.Count > 0) then
-    begin
-      for j := 0 to strlist.Count - 1 do
+  Result := False;
+  if (strlist <> nil) and (strlist.Count > 0) then
+  begin
+    JsonArray := TJSONArray.Create;
+    try
+      for j := 0 to strlist.Count-1 do
       begin
-        AppendStr(jsonstring, strlist.Strings[j]);
-        if (j < strlist.Count - 1) then
-          AppendStr(jsonstring, ',');
+        elementstr := trim(strlist.Strings[j]);
+        // if quoted then escape inside the quotes:
+        if (elementstr[1] = '"') and (elementstr[elementstr.Length] = '"') then
+          elementstr := '"'+escapeControlChars(elementstr[2..elementstr.Length-1])+'"';
+        JsonArray.Add(elementstr);
       end;
+      if JsonArray.JSONType = jtArray then
+      begin
+        strresult := JsonArray.AsJSON;
+        Result := True;
+      end;
+    finally
+      FreeAndNil(JsonArray);
     end;
-    AppendStr(jsonstring, ']');
-    new_obj := SO(jsonstring);
-    if new_obj.IsType(stArray) then
-    begin
-      strresult := new_obj.AsJson;
-      Result := True;
-    end;
-  except
-    Result := False;
   end;
 end;
 
@@ -399,11 +399,14 @@ begin
       for i := 0 to new_obj.AsArray.Length - 1 do
       begin
         objstr := new_obj.AsArray.S[i];
-        //objstr := escapeControlChars(objstr);
         objstr := stringreplace(objstr, #10, '\n', [rfReplaceAll, rfIgnoreCase]);
-        if jsonIsObject(objstr) or jsonIsString(objstr) or
-          TryStrToBool(objstr, testbool) then
-          strListResult.Append(objstr);
+        if jsonIsObject(objstr)
+           or jsonIsArray(objstr)
+           or checkNumber(objstr)
+           or TryStrToBool(objstr, testbool) then
+          strListResult.Append(objstr)
+          else //or jsonIsString(objstr)
+            strListResult.Append('"'+objstr+'"')
       end;
     end;
 end;

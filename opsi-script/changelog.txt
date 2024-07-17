@@ -2,6 +2,11 @@ todo:
 isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-package-requires-a-reboot-of-my-system
 mac getIpByName liefert name von IPnum
 
+* [fix] osjson : convert jsonArray from / to stringlist
+    * jsonAsArrayToStringList
+    * stringListToJsonArray
+
+
 opsi-script (4.12.15.3) unreleased/unreleased (4.2/4.3); urgency=medium
 
 * [fix] osbatchgui: fix for High DPI, FormShow method was not assigned to the OnShow event
