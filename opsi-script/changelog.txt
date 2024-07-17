@@ -2,25 +2,32 @@ todo:
 isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-package-requires-a-reboot-of-my-system
 mac getIpByName liefert name von IPnum
 
-* [fix] osjson : convert jsonArray from / to stringlist
-    * jsonAsArrayToStringList
-    * stringListToJsonArray
+
+opsi-script (4.12.15.4) unreleased/unreleased (4.2/4.3); urgency=medium
+
+* [fix] osjson : convert jsonArray from / to stringlist, functions jsonAsArrayToStringList, stringListToJsonArray
+* [fix] osmain, oswebservice: fix memory problem in "Produkte" (list of products was empty or wrong)
+        when using reload product sequence e.g. in opsi-auto-update
+* [fix] osfunc.pas: DeleteFileWithRetries() is only for windows, include compiler switch {$IFDEF WINDOWS}
+* [fix] osparser.pas:: sleepseconds (tssleep) - no parameter error message in testsyntax mode
+
+-- j.werner <j.werner@uib.de> 17 July 2024
 
 
-opsi-script (4.12.15.3) unreleased/unreleased (4.2/4.3); urgency=medium
+opsi-script (4.12.15.3) unreleased/stable (4.2/4.3); urgency=medium
 
 * [fix] osbatchgui: fix for High DPI, FormShow method was not assigned to the OnShow event
 
 -- j.werner <j.werner@uib.de> 28 June 2024
 
 
-opsi-script (4.12.15.2) unreleased/unreleased (4.2/4.3); urgency=medium
+opsi-script (4.12.15.2) unreleased/stable (4.2/4.3); urgency=medium
 
 * [fix] osbatchgui: fix for High DPI
 
 -- j.werner <j.werner@uib.de> 27 June 2024
 
-opsi-script (4.12.15.1) unreleased/released (4.2/4.3); urgency=medium
+opsi-script (4.12.15.1) unreleased/stable (4.2/4.3); urgency=medium
 
 * [fix] osbatchgui: message in BatchGUI was not displayed correctly due to (#47, , d.oertel 2024-04-30) triggered FormShow,
         which then reloaded the skin and displayed the message "Loadin skin...",
