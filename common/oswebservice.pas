@@ -345,7 +345,6 @@ type
     FPostRequirements: TStringList;
     FProductStates: TStringList;
     FProductActionRequests: TStringList;
-    FSortedProductIDsWhereActionIsSet: TStringList;
     ProductVars: TStringList;
     FOpsiModules: ISuperObject;
     FOpsiInformation: ISuperObject;
@@ -368,7 +367,7 @@ type
     function getOpsiModules: TStringList;
     function getLicenseOnClientObject(const parameters: array of string;
       var errorOccured: boolean): string;
-    procedure SetProductOnClientData(const ProductOnClientData: TStringList);
+    function SetProductOnClientData(const ProductOnClientData: TStringList):TStringList;
     function GetSortedProductOnClientListFromService: TStringList;
   protected
     FServiceLastErrorInfo: TStringList;
@@ -3679,7 +3678,6 @@ begin
   FPostRequirements := nil;
   FProductStates := nil;
   FProductActionRequests := nil;
-  FSortedProductIDsWhereActionIsSet := nil;
   ProductVars := nil;
   FProductOnClientIndex := nil;
   mylist := nil;
@@ -3932,11 +3930,12 @@ begin
   end;
 end;
 
-procedure TOpsi4Data.SetProductOnClientData(const ProductOnClientData: TStringList);
+function TOpsi4Data.SetProductOnClientData(const ProductOnClientData: TStringList):TStringList;
 var
   ProductEntry: ISuperObject;
   i: integer; //count variable
 begin
+  Result:= TStringList.Create;
   try
     if not Assigned(FProductActionRequests) then
       FProductActionRequests := TStringList.Create
@@ -3946,10 +3945,6 @@ begin
       FProductStates := TStringList.Create
     else
       FProductStates.Clear;
-    If not Assigned(FSortedProductIDsWhereActionIsSet) then
-      FSortedProductIDsWhereActionIsSet := TStringList.Create
-    else
-      FSortedProductIDsWhereActionIsSet.Clear;
     if (ProductOnClientData <> nil) then
     begin
       for i := 0 to ProductOnClientData.Count - 1 do
@@ -3971,8 +3966,8 @@ begin
         //Add Product ID to result list if action request is set for this product.
         if ProductEntry.S['actionRequest'] <> 'none' then
         begin
-          FSortedProductIDsWhereActionIsSet.Add(ProductEntry.S['productId']);
-          LogDatei.log_prog('FSortedProductIDsWhereActionIsSet:added Id : ' +
+          Result.Add(ProductEntry.S['productId']);
+          LogDatei.log_prog('Result:added Id : ' +
             ProductEntry.S['productId'], LLnotice);
         end;
       end;
@@ -4660,6 +4655,7 @@ var
   jO: ISuperObject;
   omcresult: TStringList;
 begin
+  LogDatei.log('InitProduct', LLDebug);
   Result := True;
   FProductOnClient_aktobject := nil;
   omc := TOpsiMethodCall.Create('getProduct_hash', [actualProduct, FDepotId]);
@@ -4691,7 +4687,7 @@ begin
       ['', '{"clientId": "' + actualClient + '", "productId": "' +
       Productvars.Values['productId'] + '", "productType": "LocalbootProduct"}']);
     mylist := FjsonExecutioner.getListResult(omc);
-    omc.Free;
+      omc.Free;
     if (mylist <> nil) then
       if mylist.Count >= 1 then
       begin
@@ -5166,11 +5162,10 @@ begin
     try
       SortedProductOnClientList := GetSortedProductOnClientListFromService;
       try
-        SetProductOnClientData(SortedProductOnClientList);
+        Result := SetProductOnClientData(SortedProductOnClientList);
       finally
         FreeAndNil(SortedProductOnClientList);
       end;
-      Result := FSortedProductIDsWhereActionIsSet;
       FSortByServer := True;
     except
       on E: Exception do
