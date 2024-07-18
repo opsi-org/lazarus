@@ -355,30 +355,35 @@ end;
 function stringListToJsonArray(strlist: TStringList; var strresult: string): boolean;
 var
   j: integer;
+  jsonstring: string;
   elementstr: string;
-  JsonArray: TJSONArray;
+  new_obj: ISuperObject;
 begin
-  Result := False;
-  if (strlist <> nil) and (strlist.Count > 0) then
-  begin
-    JsonArray := TJSONArray.Create;
-    try
-      for j := 0 to strlist.Count-1 do
+  try
+    jsonstring := '[';
+    Result := False;
+    if (strlist <> nil) and (strlist.Count > 0) then
+    begin
+      for j := 0 to strlist.Count - 1 do
       begin
         elementstr := trim(strlist.Strings[j]);
         // if quoted then escape inside the quotes:
         if (elementstr[1] = '"') and (elementstr[elementstr.Length] = '"') then
           elementstr := '"'+escapeControlChars(elementstr[2..elementstr.Length-1])+'"';
-        JsonArray.Add(elementstr);
+        AppendStr(jsonstring, elementstr);
+        if (j < strlist.Count - 1) then
+          AppendStr(jsonstring, ',');
       end;
-      if JsonArray.JSONType = jtArray then
-      begin
-        strresult := JsonArray.AsJSON;
-        Result := True;
-      end;
-    finally
-      FreeAndNil(JsonArray);
     end;
+    AppendStr(jsonstring, ']');
+    new_obj := SO(jsonstring);
+    if new_obj.IsType(stArray) then
+    begin
+      strresult := new_obj.AsJson;
+      Result := True;
+    end;
+  except
+    Result := False;
   end;
 end;
 
