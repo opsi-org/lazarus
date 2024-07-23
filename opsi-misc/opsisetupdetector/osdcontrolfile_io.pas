@@ -297,6 +297,7 @@ var
   begin
     Value := doc[section][key];
     tmpstr := trim(string(Value));
+    tmpstr := trim(Value.ToString);
     LogDatei.log('in section: ' + section + ' with key: ' + key +
       ' got: ' + tmpstr, LLdebug);
     Result := tmpstr;
@@ -359,11 +360,12 @@ var
   end;
 
 begin
-
   logdatei.log('readTomlControlFile from: ' + filename, LLDebug);
   mylist := TStringList.Create;
   mylist.LoadFromFile(filename);
+  //tmpstr := mylist.Text;
   doc := GetTOML(mylist.Text);
+  //tmpstr := doc.AsJSON.FormatJSON();
   (*
   Value := doc['Package']['version'];
   LogDatei.log('in section: package with key: version got: ' + string(value), LLdebug);
@@ -423,6 +425,7 @@ begin
     aktProduct.Productdata.advice := tmpstr;
 
   // ProductDependency
+  if doc.Contains('ProductDependency') then
   for table in doc['ProductDependency'] do
   begin
     aktdependency := TPDependency(osdbasedata.aktProduct.dependencies.add);
@@ -457,6 +460,7 @@ begin
       end;
   end;
 
+  if doc.Contains('ProductProperty') then
   for table in doc['ProductProperty'] do
   begin
     myprop := TPProperty(osdbasedata.aktProduct.properties.add);

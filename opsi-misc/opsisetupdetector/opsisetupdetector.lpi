@@ -12,6 +12,7 @@
       </Flags>
       <SessionStorage Value="InProjectDir"/>
       <Title Value="opsi-setup-detector"/>
+      <Scaled Value="True"/>
       <ResourceType Value="res"/>
       <UseXPManifest Value="True"/>
       <XPManifest>
@@ -29,9 +30,9 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="3"/>
-      <RevisionNr Value="1"/>
-      <BuildNr Value="4"/>
-      <StringTable CompanyName="uib gmbh (uib.de / opsi.org)" FileDescription="opsi setup detector" InternalName="opsi setup detector" LegalCopyright="AGPLv3" LegalTrademarks="opsi, opsi.org, open pc server integration" OriginalFilename="opsisetupdetector" ProductName="opsi" ProductVersion="opsi 4.3"/>
+      <RevisionNr Value="2"/>
+      <BuildNr Value="6"/>
+      <StringTable CompanyName="uib gmbh (uib.de / opsi.org)" FileDescription="opsi setup detector" InternalName="opsi setup detector" LegalCopyright="AGPLv3" LegalTrademarks="opsi, opsi.org, open system integration" OriginalFilename="opsisetupdetector" ProductName="opsi" ProductVersion="opsi 4.3"/>
     </VersionInfo>
     <BuildModes Count="5">
       <Item1 Name="Default" Default="True"/>
@@ -44,7 +45,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\..\common;..\..\external_libraries\misc;..\..\external_libraries\dcpcrypt;..\..\external_libraries\dcpcrypt\Ciphers;..\..\external_libraries\dcpcrypt\Hashes;..\..\external_libraries\modified\misc;..\..\external_libraries\synapse;..\..\external_libraries\HashLib4Pascal\HashLib\src\Base;..\..\external_libraries\HashLib4Pascal\HashLib\src\Interfaces;..\..\external_libraries\HashLib4Pascal\HashLib\src\Utils;..\..\external_libraries\HashLib4Pascal\HashLib\src\KDF;..\..\external_libraries\HashLib4Pascal\HashLib\src\Nullable;..\..\external_libraries\HashLib4Pascal\HashLib\src\NullDigest;..\..\external_libraries\HashLib4Pascal\HashLib\src\Checksum;..\..\external_libraries\HashLib4Pascal\HashLib\src\Hash32;..\..\external_libraries\HashLib4Pascal\HashLib\src\Hash64;..\..\external_libraries\HashLib4Pascal\HashLib\src\Hash128;..\..\external_libraries\HashLib4Pascal\HashLib\src\Crypto;..\..\external_libraries\HashLib4Pascal\HashLib\src\Crypto\Blake2BParams;..\..\external_libraries\HashLib4Pascal\HashLib\src\Interfaces\IBlake2BParams;..\..\external_libraries\HashLib4Pascal\HashLib\src\Interfaces\IBlake2SParams;..\..\external_libraries\HashLib4Pascal\HashLib\src\Crypto\Blake2SParams;images;fpTOML-master\sources;fpc-markdown-master\source"/>
+            <OtherUnitFiles Value="..\..\common;..\..\external_libraries\misc;..\..\external_libraries\dcpcrypt;..\..\external_libraries\dcpcrypt\Ciphers;..\..\external_libraries\dcpcrypt\Hashes;..\..\external_libraries\modified\misc;..\..\external_libraries\synapse;..\..\external_libraries\HashLib4Pascal\HashLib\src\Base;..\..\external_libraries\HashLib4Pascal\HashLib\src\Interfaces;..\..\external_libraries\HashLib4Pascal\HashLib\src\Utils;..\..\external_libraries\HashLib4Pascal\HashLib\src\KDF;..\..\external_libraries\HashLib4Pascal\HashLib\src\Nullable;..\..\external_libraries\HashLib4Pascal\HashLib\src\NullDigest;..\..\external_libraries\HashLib4Pascal\HashLib\src\Checksum;..\..\external_libraries\HashLib4Pascal\HashLib\src\Hash32;..\..\external_libraries\HashLib4Pascal\HashLib\src\Hash64;..\..\external_libraries\HashLib4Pascal\HashLib\src\Hash128;..\..\external_libraries\HashLib4Pascal\HashLib\src\Crypto;..\..\external_libraries\HashLib4Pascal\HashLib\src\Crypto\Blake2BParams;..\..\external_libraries\HashLib4Pascal\HashLib\src\Interfaces\IBlake2BParams;..\..\external_libraries\HashLib4Pascal\HashLib\src\Interfaces\IBlake2SParams;..\..\external_libraries\HashLib4Pascal\HashLib\src\Crypto\Blake2SParams;images;fpTOML-master\sources;fpc-markdown-master\source;..\..\external_libraries\modified\paszlib\changed"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -89,7 +90,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\..\common;..\..\external_libraries\misc;..\..\external_libraries\synapse;..\..\external_libraries\dcpcrypt\Ciphers;..\..\external_libraries\dcpcrypt\Hashes;..\..\external_libraries\dcpcrypt;..\..\external_libraries\modified\misc;..\..\external_libraries\HashLib4Pascal\HashLib\src\Base;..\..\external_libraries\HashLib4Pascal\HashLib\src\Interfaces;..\..\external_libraries\HashLib4Pascal\HashLib\src\Utils;..\..\external_libraries\HashLib4Pascal\HashLib\src\KDF;..\..\external_libraries\HashLib4Pascal\HashLib\src\Nullable;..\..\external_libraries\HashLib4Pascal\HashLib\src\NullDigest;..\..\external_libraries\HashLib4Pascal\HashLib\src\Checksum;..\..\external_libraries\HashLib4Pascal\HashLib\src\Hash32;..\..\external_libraries\HashLib4Pascal\HashLib\src\Hash64;..\..\external_libraries\HashLib4Pascal\HashLib\src\Hash128;..\..\external_libraries\HashLib4Pascal\HashLib\src\Crypto;..\..\external_libraries\HashLib4Pascal\HashLib\src\Crypto\Blake2BParams;..\..\external_libraries\HashLib4Pascal\HashLib\src\Interfaces\IBlake2BParams;..\..\external_libraries\HashLib4Pascal\HashLib\src\Interfaces\IBlake2SParams;..\..\external_libraries\HashLib4Pascal\HashLib\src\Crypto\Blake2SParams;images;fpTOML-master\sources;fpc-markdown-master\source"/>
+            <OtherUnitFiles Value="..\..\common;..\..\external_libraries\misc;..\..\external_libraries\synapse;..\..\external_libraries\dcpcrypt\Ciphers;..\..\external_libraries\dcpcrypt\Hashes;..\..\external_libraries\dcpcrypt;..\..\external_libraries\modified\misc;..\..\external_libraries\HashLib4Pascal\HashLib\src\Base;..\..\external_libraries\HashLib4Pascal\HashLib\src\Interfaces;..\..\external_libraries\HashLib4Pascal\HashLib\src\Utils;..\..\external_libraries\HashLib4Pascal\HashLib\src\KDF;..\..\external_libraries\HashLib4Pascal\HashLib\src\Nullable;..\..\external_libraries\HashLib4Pascal\HashLib\src\NullDigest;..\..\external_libraries\HashLib4Pascal\HashLib\src\Checksum;..\..\external_libraries\HashLib4Pascal\HashLib\src\Hash32;..\..\external_libraries\HashLib4Pascal\HashLib\src\Hash64;..\..\external_libraries\HashLib4Pascal\HashLib\src\Hash128;..\..\external_libraries\HashLib4Pascal\HashLib\src\Crypto;..\..\external_libraries\HashLib4Pascal\HashLib\src\Crypto\Blake2BParams;..\..\external_libraries\HashLib4Pascal\HashLib\src\Interfaces\IBlake2BParams;..\..\external_libraries\HashLib4Pascal\HashLib\src\Interfaces\IBlake2SParams;..\..\external_libraries\HashLib4Pascal\HashLib\src\Crypto\Blake2SParams;images;fpTOML-master\sources;fpc-markdown-master\source;..\..\external_libraries\modified\paszlib\changed"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -107,6 +108,7 @@
           <Linking>
             <Debugging>
               <GenerateDebugInfo Value="False"/>
+              <DebugInfoType Value="dsDwarf3"/>
               <UseLineInfoUnit Value="False"/>
               <StripSymbols Value="True"/>
             </Debugging>
@@ -133,7 +135,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="fpTOML-master\sources;..\..\common;..\..\external_libraries\misc;..\..\external_libraries\synapse;..\..\external_libraries\dcpcrypt\Ciphers;..\..\external_libraries\dcpcrypt\Hashes;..\..\external_libraries\dcpcrypt;..\..\external_libraries\modified\misc;..\..\external_libraries\HashLib4Pascal\HashLib\src\Base;..\..\external_libraries\HashLib4Pascal\HashLib\src\Interfaces;..\..\external_libraries\HashLib4Pascal\HashLib\src\Utils;..\..\external_libraries\HashLib4Pascal\HashLib\src\KDF;..\..\external_libraries\HashLib4Pascal\HashLib\src\Nullable;..\..\external_libraries\HashLib4Pascal\HashLib\src\NullDigest;..\..\external_libraries\HashLib4Pascal\HashLib\src\Checksum;..\..\external_libraries\HashLib4Pascal\HashLib\src\Hash32;..\..\external_libraries\HashLib4Pascal\HashLib\src\Hash64;..\..\external_libraries\HashLib4Pascal\HashLib\src\Hash128;..\..\external_libraries\HashLib4Pascal\HashLib\src\Crypto;..\..\external_libraries\HashLib4Pascal\HashLib\src\Crypto\Blake2BParams;..\..\external_libraries\HashLib4Pascal\HashLib\src\Interfaces\IBlake2BParams;..\..\external_libraries\HashLib4Pascal\HashLib\src\Interfaces\IBlake2SParams;..\..\external_libraries\HashLib4Pascal\HashLib\src\Crypto\Blake2SParams;images;fpc-markdown-master\source"/>
+            <OtherUnitFiles Value="fpTOML-master\sources;..\..\common;..\..\external_libraries\misc;..\..\external_libraries\synapse;..\..\external_libraries\dcpcrypt\Ciphers;..\..\external_libraries\dcpcrypt\Hashes;..\..\external_libraries\dcpcrypt;..\..\external_libraries\modified\misc;..\..\external_libraries\HashLib4Pascal\HashLib\src\Base;..\..\external_libraries\HashLib4Pascal\HashLib\src\Interfaces;..\..\external_libraries\HashLib4Pascal\HashLib\src\Utils;..\..\external_libraries\HashLib4Pascal\HashLib\src\KDF;..\..\external_libraries\HashLib4Pascal\HashLib\src\Nullable;..\..\external_libraries\HashLib4Pascal\HashLib\src\NullDigest;..\..\external_libraries\HashLib4Pascal\HashLib\src\Checksum;..\..\external_libraries\HashLib4Pascal\HashLib\src\Hash32;..\..\external_libraries\HashLib4Pascal\HashLib\src\Hash64;..\..\external_libraries\HashLib4Pascal\HashLib\src\Hash128;..\..\external_libraries\HashLib4Pascal\HashLib\src\Crypto;..\..\external_libraries\HashLib4Pascal\HashLib\src\Crypto\Blake2BParams;..\..\external_libraries\HashLib4Pascal\HashLib\src\Interfaces\IBlake2BParams;..\..\external_libraries\HashLib4Pascal\HashLib\src\Interfaces\IBlake2SParams;..\..\external_libraries\HashLib4Pascal\HashLib\src\Crypto\Blake2SParams;images;fpc-markdown-master\source;..\..\external_libraries\modified\paszlib\changed"/>
             <UnitOutputDirectory Value="compiler_out\units\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -185,7 +187,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\..\common;..\..\external_libraries\misc;..\..\external_libraries\synapse;..\..\external_libraries\dcpcrypt\Ciphers;..\..\external_libraries\dcpcrypt\Hashes;..\..\external_libraries\dcpcrypt;..\..\external_libraries\modified\misc;..\..\external_libraries\fpTOML\sources;..\..\external_libraries\HashLib4Pascal\HashLib\src\Base;..\..\external_libraries\HashLib4Pascal\HashLib\src\Interfaces;..\..\external_libraries\HashLib4Pascal\HashLib\src\Utils;..\..\external_libraries\HashLib4Pascal\HashLib\src\KDF;..\..\external_libraries\HashLib4Pascal\HashLib\src\Nullable;..\..\external_libraries\HashLib4Pascal\HashLib\src\NullDigest;..\..\external_libraries\HashLib4Pascal\HashLib\src\Checksum;..\..\external_libraries\HashLib4Pascal\HashLib\src\Hash32;..\..\external_libraries\HashLib4Pascal\HashLib\src\Hash64;..\..\external_libraries\HashLib4Pascal\HashLib\src\Hash128;..\..\external_libraries\HashLib4Pascal\HashLib\src\Crypto;..\..\external_libraries\HashLib4Pascal\HashLib\src\Crypto\Blake2BParams;..\..\external_libraries\HashLib4Pascal\HashLib\src\Interfaces\IBlake2BParams;..\..\external_libraries\HashLib4Pascal\HashLib\src\Interfaces\IBlake2SParams;..\..\external_libraries\HashLib4Pascal\HashLib\src\Crypto\Blake2SParams;images"/>
+            <OtherUnitFiles Value="..\..\common;..\..\external_libraries\misc;..\..\external_libraries\synapse;..\..\external_libraries\dcpcrypt\Ciphers;..\..\external_libraries\dcpcrypt\Hashes;..\..\external_libraries\dcpcrypt;..\..\external_libraries\modified\misc;..\..\external_libraries\fpTOML\sources;..\..\external_libraries\HashLib4Pascal\HashLib\src\Base;..\..\external_libraries\HashLib4Pascal\HashLib\src\Interfaces;..\..\external_libraries\HashLib4Pascal\HashLib\src\Utils;..\..\external_libraries\HashLib4Pascal\HashLib\src\KDF;..\..\external_libraries\HashLib4Pascal\HashLib\src\Nullable;..\..\external_libraries\HashLib4Pascal\HashLib\src\NullDigest;..\..\external_libraries\HashLib4Pascal\HashLib\src\Checksum;..\..\external_libraries\HashLib4Pascal\HashLib\src\Hash32;..\..\external_libraries\HashLib4Pascal\HashLib\src\Hash64;..\..\external_libraries\HashLib4Pascal\HashLib\src\Hash128;..\..\external_libraries\HashLib4Pascal\HashLib\src\Crypto;..\..\external_libraries\HashLib4Pascal\HashLib\src\Crypto\Blake2BParams;..\..\external_libraries\HashLib4Pascal\HashLib\src\Interfaces\IBlake2BParams;..\..\external_libraries\HashLib4Pascal\HashLib\src\Interfaces\IBlake2SParams;..\..\external_libraries\HashLib4Pascal\HashLib\src\Crypto\Blake2SParams;images;..\..\external_libraries\modified\paszlib\changed"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -249,7 +251,7 @@
         <MinVersion Major="1" Valid="True"/>
       </Item4>
     </RequiredPackages>
-    <Units Count="33">
+    <Units Count="35">
       <Unit0>
         <Filename Value="opsisetupdetector.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -410,6 +412,14 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit32>
+      <Unit33>
+        <Filename Value="..\..\external_libraries\modified\paszlib\changed\zipper.pp"/>
+        <IsPartOfProject Value="True"/>
+      </Unit33>
+      <Unit34>
+        <Filename Value="..\..\common\osxml.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit34>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -420,7 +430,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="..\..\common;..\..\external_libraries\misc;..\..\external_libraries\dcpcrypt\Ciphers;..\..\external_libraries\dcpcrypt\Hashes;..\..\external_libraries\dcpcrypt;..\..\external_libraries\modified\misc;..\..\external_libraries\synapse;..\..\external_libraries\HashLib4Pascal\HashLib\src\Base;..\..\external_libraries\HashLib4Pascal\HashLib\src\Interfaces;..\..\external_libraries\HashLib4Pascal\HashLib\src\Utils;..\..\external_libraries\HashLib4Pascal\HashLib\src\KDF;..\..\external_libraries\HashLib4Pascal\HashLib\src\Nullable;..\..\external_libraries\HashLib4Pascal\HashLib\src\NullDigest;..\..\external_libraries\HashLib4Pascal\HashLib\src\Checksum;..\..\external_libraries\HashLib4Pascal\HashLib\src\Hash32;..\..\external_libraries\HashLib4Pascal\HashLib\src\Hash64;..\..\external_libraries\HashLib4Pascal\HashLib\src\Hash128;..\..\external_libraries\HashLib4Pascal\HashLib\src\Crypto;..\..\external_libraries\HashLib4Pascal\HashLib\src\Crypto\Blake2BParams;..\..\external_libraries\HashLib4Pascal\HashLib\src\Interfaces\IBlake2BParams;..\..\external_libraries\HashLib4Pascal\HashLib\src\Interfaces\IBlake2SParams;..\..\external_libraries\HashLib4Pascal\HashLib\src\Crypto\Blake2SParams;images;fpTOML-master\sources;fpc-markdown-master\source"/>
+      <OtherUnitFiles Value="..\..\common;..\..\external_libraries\misc;..\..\external_libraries\dcpcrypt\Ciphers;..\..\external_libraries\dcpcrypt\Hashes;..\..\external_libraries\dcpcrypt;..\..\external_libraries\modified\misc;..\..\external_libraries\synapse;..\..\external_libraries\HashLib4Pascal\HashLib\src\Base;..\..\external_libraries\HashLib4Pascal\HashLib\src\Interfaces;..\..\external_libraries\HashLib4Pascal\HashLib\src\Utils;..\..\external_libraries\HashLib4Pascal\HashLib\src\KDF;..\..\external_libraries\HashLib4Pascal\HashLib\src\Nullable;..\..\external_libraries\HashLib4Pascal\HashLib\src\NullDigest;..\..\external_libraries\HashLib4Pascal\HashLib\src\Checksum;..\..\external_libraries\HashLib4Pascal\HashLib\src\Hash32;..\..\external_libraries\HashLib4Pascal\HashLib\src\Hash64;..\..\external_libraries\HashLib4Pascal\HashLib\src\Hash128;..\..\external_libraries\HashLib4Pascal\HashLib\src\Crypto;..\..\external_libraries\HashLib4Pascal\HashLib\src\Crypto\Blake2BParams;..\..\external_libraries\HashLib4Pascal\HashLib\src\Interfaces\IBlake2BParams;..\..\external_libraries\HashLib4Pascal\HashLib\src\Interfaces\IBlake2SParams;..\..\external_libraries\HashLib4Pascal\HashLib\src\Crypto\Blake2SParams;images;fpTOML-master\sources;fpc-markdown-master\source;..\..\external_libraries\modified\paszlib\changed"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Parsing>
@@ -433,6 +443,7 @@
     </CodeGeneration>
     <Linking>
       <Debugging>
+        <DebugInfoType Value="dsDwarf3"/>
         <UseLineInfoUnit Value="False"/>
       </Debugging>
       <LinkSmart Value="True"/>

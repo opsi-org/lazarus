@@ -68,7 +68,6 @@ type
     ImageOpsiBackground: TImage;
     LabelInfo: TLabel;
     ActivityBar: TProgressBar;
-    TimerOnTop: TTimer;
     TimerProcessMess: TTimer;
     TimerActivity: TTimer;
     TimerDetail: TTimer;
@@ -99,7 +98,6 @@ type
     procedure TimerCommandTimer(Sender: TObject);
     procedure TimerActivityTimer(Sender: TObject);
     procedure TimerDetailTimer(Sender: TObject);
-    procedure TimerOnTopTimer(Sender: TObject);
     procedure TimerProcessMessTimer(Sender: TObject);
 
   private
@@ -266,6 +264,7 @@ begin
   LoadSkin('');
 end;
 
+
 procedure TFBatchOberflaeche.FormShow(Sender: TObject);
 begin
   // window state is controlled commandline parameters
@@ -300,7 +299,7 @@ begin
   {$IFDEF DARWIN}
   ForceStayOnTop(true);
   {$ENDIF DARWIN}
-   ProcessMess;
+  ProcessMess;
 end;
 
 function rgbStringToColor(str: string): TColor;
@@ -606,7 +605,7 @@ end;
 
 procedure TFBatchOberflaeche.FormActivate(Sender: TObject);
 begin
-  ForceStayOnTop(BatchScreenOnTop);
+  //ForceStayOnTop(BatchScreenOnTop);
   FOldProgress := 0;
 end;
 
@@ -614,29 +613,26 @@ end;
 
 procedure TFBatchOberflaeche.ForceStayOnTop(YesNo: boolean);
 begin
-    if Assigned(LogDatei) then
-  LogDatei.log_prog('ForceStayOnTop start: '+BoolToStr(YesNo,true), LLnotice);
+  if Assigned(LogDatei) then
+    LogDatei.log_prog('ForceStayOnTop start: '+BoolToStr(YesNo,true), LLnotice);
+  setWindowState(aktBatchWindowMode);
   if YesNo then
   begin
-    { make to system wide top most window }
-    FormStyle := fsSystemStayOnTop;
-    BringToFront;
-    { now allow new started windows (setup) to get the system wide top most position }
-    FormStyle := fsStayOnTop;
+    //{ make to system wide top most window }
+    //FormStyle := fsStayOnTop;
+    //{ now allow new started windows (setup) to get the system wide top most position }
+    FormStyle := fsNormal;
     BatchScreenOnTop := True;
-    // call onTopTimer event
-    TimerOnTopTimer(TimerOnTop);
-    // enable onTopTimer
-    TimerOnTop.Enabled:= true;
   end
   else
   begin
-    FormStyle := fsnormal;
+    FormStyle := fsNormal;
+    //BringToFront;
+    //FormStyle := fsNormal;
     BatchScreenOnTop := False;
-    // disable onTopTimer
-    TimerOnTop.Enabled:= false;
   end;
-  setWindowState(aktBatchWindowMode);
+  Visible := True;
+  BringToFront;
   Application.ProcessMessages;
 end;
 
@@ -777,14 +773,7 @@ begin
 end;
 
 procedure TFBatchOberflaeche.SetBatchWindowMode(BatchWindowMode: TBatchWindowMode);
-var
-  BWModeStr: string;
 begin
-  if Assigned(LogDatei) then
-  begin
-    WriteStr(BWModeStr, BatchWindowMode);
-    LogDatei.log_prog('SetBatchWindowMode start: ' + BWModeStr, LLinfo);
-  end;
   setWindowState(BatchWindowMode);
   aktBatchWindowMode := BatchWindowMode;
 end;
@@ -792,7 +781,6 @@ end;
 procedure TFBatchOberflaeche.FormCloseQuery(Sender: TObject; var CanClose: boolean);
 begin
   CanClose := False;
-  // SetBatchWindowMode also store the mode in aktBatchWindowMode;
   SetBatchWindowMode(bwmNormalWindow);
   Position := poScreenCenter;
   SetBounds(StartLeft, StartTop, InnerWidth, InnerHeight);
@@ -993,16 +981,6 @@ begin
   TimerDetail.Enabled := False;
 end;
 
-procedure TFBatchOberflaeche.TimerOnTopTimer(Sender: TObject);
-begin
-  if TTimer(Sender).Enabled then
-  begin
-    if Assigned(LogDatei) then
-      LogDatei.log_prog('TimerOnTopTimer start ', LLnotice);
-    BringToFront;
-    Application.ProcessMessages;
-  end;
-end;
 
 procedure TFBatchOberflaeche.TimerProcessMessTimer(Sender: TObject);
 begin

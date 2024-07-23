@@ -9,7 +9,7 @@ object OSD_info: TOSD_info
   OnCreate = FormCreate
   OnShow = FormShow
   Position = poMainFormCenter
-  LCLVersion = '3.0.0.3'
+  LCLVersion = '3.2.0.0'
   object Panel1: TPanel
     Left = 0
     Height = 336

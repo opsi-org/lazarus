@@ -24334,9 +24334,9 @@ begin
                   end;
                 end
                 else
-                  ActionResult :=
-                    reportError(Sektion, linecounter, Sektion.strings[linecounter - 1],
-                    InfoSyntaxError);
+                  if not testsyntax then
+                    ActionResult := reportError(Sektion, linecounter,
+                       Sektion.strings[linecounter - 1],InfoSyntaxError);
 
                 processmess;
 

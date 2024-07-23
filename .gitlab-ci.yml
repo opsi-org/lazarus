@@ -82,9 +82,9 @@ compile opsi-script linux:
     - LAZ_PROJECT_FILE=${PROJECT_REPOSITORY_PATH}/${PROJECT_NAME}.lpi
     - echo "$LAZ_PROJECT_FILE"
     - echo "Compiling $PROJECT_NAME for Linux with no GUI"
-    - /usr/share/lazarus/3.2.0/lazbuild $LAZ_PROJECT_FILE --build-all --build-mode=Release_Lin_64_nogui
+    - /usr/share/lazarus/3.4.0/lazbuild $LAZ_PROJECT_FILE --build-all --build-mode=Release_Lin_64_nogui
     - echo "Compiling $PROJECT_NAME for Linux with GUI"
-    - /usr/share/lazarus/3.2.0/lazbuild $LAZ_PROJECT_FILE --build-all --build-mode=Release_Lin_64_gui
+    - /usr/share/lazarus/3.4.0/lazbuild $LAZ_PROJECT_FILE --build-all --build-mode=Release_Lin_64_gui
     # - $BINARY_OUT_PATH = $PROJECT_NAME -eq "opsiscript")
   artifacts:
     name: "opsi-script $BINARY_VERSION linux"

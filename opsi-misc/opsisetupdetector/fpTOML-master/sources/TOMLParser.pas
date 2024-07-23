@@ -175,6 +175,9 @@ begin
           // escaped quotes
           if c = quote then
             pattern += c
+          // escaped backslash
+          else if  c = '\' then
+            pattern += c
           else if c in ['b', 't', 'n', 'f', 'r', 'u', 'U'] then
             begin
               case c of

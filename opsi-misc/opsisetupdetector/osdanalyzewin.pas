@@ -30,7 +30,9 @@ uses
   oscheckbinarybitness,
   osmessagedialog,
   Controls,
-  osd_md_html_dlg;
+  osd_md_html_dlg,
+  oszip,
+  osxml;
 
 procedure get_aktProduct_general_info_win(installerId: TKnownInstaller;
   myfilename: string; var mysetup: TSetupFile);
@@ -52,6 +54,7 @@ procedure get_sfxcab_info(myfilename: string; var mysetup: TSetupFile);
 procedure get_advancedInstaller_info(myfilename: string; var mysetup: TSetupFile);
 procedure get_installAnywhere_info(myfilename: string; var mysetup: TSetupFile);
 procedure get_QtInstaller_info(myfilename: string; var mysetup: TSetupFile);
+procedure get_MsixAppx_info(myfilename: string; var mysetup: TSetupFile);
 // marker for add installers
 procedure Analyze(FileName: string; var mysetup: TSetupFile; verbose: boolean);
 function getProductInfoFromResource(infokey: string; filename: string): string;
@@ -114,46 +117,51 @@ var
   {$IFDEF WINDOWS}
   VerInf: verinfo.TVersionInfo;
   {$ENDIF WINDOWS}
+  extension : string;
 begin
-  try
-    FileVerInfo := TFileVersionInfo.Create(nil);
-    try
-      FileVerInfo.FileName := filename;
-      FileVerInfo.ReadFileInfo;
-      Result := FileVerInfo.VersionStrings.Values[infokey];
-    except
-      on E: Exception do
-      begin
-        LogDatei.log('Exception while reading fileversion2: ' +
-          E.ClassName + ': ' + E.Message, LLError);
-        Result := '';
-      end;
-      else // close the 'on else' block here;
-    end;
-  finally
-    FileVerInfo.Free;
-  end;
-  {$IFDEF WINDOWS}
-  if Result = '' then
+  extension := ExtractFileExt(filename);
+  if extension = '.exe' then
   begin
     try
-      VerInf := verinfo.TVersionInfo.Create(filename);
-      if infokey = 'FileVersion' then
-        Result := trim(VerInf[CviFileVersion]);
-      if infokey = 'ProductName' then
-        Result := trim(VerInf[CviProductName]);
-      VerInf.Free;
-    except
-      on E: Exception do
-      begin
-        LogDatei.log('Exception while reading fileversion2: ' +
-          E.ClassName + ': ' + E.Message, LLError);
-        Result := '';
+      FileVerInfo := TFileVersionInfo.Create(nil);
+      try
+        FileVerInfo.FileName := filename;
+        FileVerInfo.ReadFileInfo;
+        Result := FileVerInfo.VersionStrings.Values[infokey];
+      except
+        on E: Exception do
+        begin
+          LogDatei.log('Exception while reading fileversion2: ' +
+            E.ClassName + ': ' + E.Message, LLError);
+          Result := '';
+        end;
+        else // close the 'on else' block here;
       end;
-      else // close the 'on else' block here;
+    finally
+      FileVerInfo.Free;
     end;
+    {$IFDEF WINDOWS}
+    if Result = '' then
+    begin
+      try
+        VerInf := verinfo.TVersionInfo.Create(filename);
+        if infokey = 'FileVersion' then
+          Result := trim(VerInf[CviFileVersion]);
+        if infokey = 'ProductName' then
+          Result := trim(VerInf[CviProductName]);
+        VerInf.Free;
+      except
+        on E: Exception do
+        begin
+          LogDatei.log('Exception while reading fileversion2: ' +
+            E.ClassName + ': ' + E.Message, LLError);
+          Result := '';
+        end;
+        else // close the 'on else' block here;
+      end;
+    end;
+    {$ENDIF WINDOWS}
   end;
-  {$ENDIF WINDOWS}
 end;
 
 procedure get_aktProduct_general_info_win(installerId: TKnownInstaller;
@@ -248,11 +256,16 @@ begin
   if installerArray[integer(mysetup.installerId)].uninstallProg <> '' then
   begin
     uninstcheckstr := mysetup.uninstallProg;
-    // the use of the  $installdir$ variable for the promary section function fileexists
+    // the use of the  $installdir$ variable for the primary section function fileexists
     // will for example result to:
     // if fileexists(""+$installdir$+"\uninst.exe")
     uninstcheckstr := StringReplace(uninstcheckstr, '$installdir$',
       '"+$installdir$+"', [rfIgnoreCase]);
+    // the use of the  $installerSourceDir$ variable for the primary section function fileexists
+    // will for example result to:
+    // if fileexists($installerSourceDir$+"\uninst.exe")
+    uninstcheckstr := StringReplace(uninstcheckstr, '$installerSourceDir$',
+      '"+$installerSourceDir$+"', [rfIgnoreCase]);
     mysetup.uninstallCheck.Add('if fileexists("' + uninstcheckstr + '")');
     mysetup.uninstallCheck.Add('	set $oldProgFound$ = "true"');
     mysetup.uninstallCheck.Add('endif');
@@ -1036,16 +1049,38 @@ var
   pos1, pos2, i: integer;
 begin
   write_log_and_memo('Analyzing advancedInstaller:');
-  mysetup.uninstallDirectory:= '"$installerSourceDir$\';
-  mysetup.uninstallProg:= mysetup.uninstallDirectory + mysetup.setupFileName;
+  (*
+  todo:
+  create temp dir
+  copy setup to tmp dir
+  call setup with /extract
+  search for msi file
+  get msiid and display name from msi
+  force msi uninstall
+
+  destDir := GetTempDir(False);
+  destDir := destDir + DirectorySeparator + 'msixAppx';
+  // cleanup destination
+  if DirectoryExists(destDir) then
+    DeleteDirectory(destDir,true);
+  // create destination
+  if not DirectoryExists(destDir) then
+    ForceDirectories(destDir);
+    *)
+  mysetup.uninstallDirectory:= '$installerSourceDir$';
+  mysetup.uninstallProg:= mysetup.uninstallDirectory +'\'+ mysetup.setupFileName;
+
   if mysetup.preferSilent then
       mysetup.uninstallCommandLine :=
-        '"' + mysetup.uninstallProg + '" ' +
+        '"' + mysetup.uninstallDirectory + '\'+mysetup.setupFileName+'" ' +
         installerArray[integer(mysetup.installerId)].silentuninstall
     else
       mysetup.uninstallCommandLine :=
-        '"' + mysetup.uninstallProg + '" ' +
+        '"' + mysetup.uninstallDirectory + '\'+mysetup.setupFileName+'" ' +
         installerArray[integer(mysetup.installerId)].unattendeduninstall;
+
+  resultForm1.updateUninstaller(mysetup);
+
   write_log_and_memo('get_advancedInstaller_info finished');
 end;
 
@@ -1067,6 +1102,95 @@ begin
   mysetup.installDirectory:= '%Programfiles64Dir%\"+$ProductId$+"';
   write_log_and_memo('get_QtInstaller_info finished');
 end;
+
+procedure get_MsixAppx_info(myfilename: string; var mysetup: TSetupFile);
+var
+  str1, str2: string;
+  pos1, pos2, i: integer;
+  packagepath,cmdStr, versionStr, fullNameStr, displayNameStr : string;
+  destDir : string;
+  xmlLines, nodeLines : TStringlist;
+begin
+  write_log_and_memo('Analyzing MsixAppx Package:');
+  // Analyze
+  // unzip package
+  xmlLines := TStringList.Create;
+  // nodeLines is created by call
+  destDir := GetTempDir(False);
+  destDir := destDir + DirectorySeparator + 'msixAppx';
+  // cleanup destination
+  if DirectoryExists(destDir) then
+    DeleteDirectory(destDir,true);
+  // create destination
+  if not DirectoryExists(destDir) then
+    ForceDirectories(destDir);
+  if UnzipWithDirStruct(myfilename,destDir) then
+  begin
+    LogDatei.log('Unzipped '+myfilename+' to '+destDir,LLnotice);
+    if fileexists(destDir+DirectorySeparator+'AppxManifest.xml') then
+    begin
+      xmlLines := getXMLDocumentElementfromFile(destDir+DirectorySeparator+'AppxManifest.xml');
+      if xml2GetFirstChildNodeByName(xmlLines,'Identity',nodeLines) then
+      begin
+        if getXml2AttributeValueByKey(nodeLines,'Version',versionStr) then
+        begin
+          mysetup.SoftwareVersion := versionStr;
+          aktProduct.productdata.productversion:= versionStr;
+          LogDatei.log('Got Version: '+versionStr+' from node Identity in AppxManifest.xml',LLnotice);
+        end
+        else LogDatei.log('Could not get Version from AppxManifest.xml.',LLwarning);
+        if getXml2AttributeValueByKey(nodeLines,'Name',fullNameStr) then
+        begin
+          aktProduct.productdata.productName:= fullNameStr;
+          LogDatei.log('Got FullName: '+fullNameStr+' from node Identity in AppxManifest.xml',LLnotice);
+        end
+        else LogDatei.log('Could not get FullName from AppxManifest.xml.',LLwarning);
+      end
+      else LogDatei.log('Could not get node Identity from AppxManifest.xml.',LLwarning);
+      if xml2GetFirstChildNodeByName(xmlLines,'DisplayName',nodeLines) then
+      begin
+        displayNameStr := getXml2NodeText(nodeLines);
+        aktProduct.productdata.productId:= LowerCase(displayNameStr);
+        LogDatei.log('Got productId: '+productId+' from node DisplayName in AppxManifest.xml',LLnotice);
+      end
+      else LogDatei.log('Could not get node Displayname from AppxManifest.xml.',LLwarning);
+      if xml2GetFirstChildNodeByName(xmlLines,'Description',nodeLines) then
+      begin
+        aktProduct.productdata.description := getXml2NodeText(nodeLines);
+        LogDatei.log('Got description: '+aktProduct.productdata.description+' from node Description in AppxManifest.xml',LLnotice);
+      end
+      else LogDatei.log('Could not get node Displayname from AppxManifest.xml.',LLwarning);
+    end
+    else LogDatei.log('File AppxManifest.xml not found.',LLwarning);
+  end
+  else write_log_and_memo('Could not unzip: '+myfilename);
+
+  // install cmd
+  packagepath := '"$installerSourceDir$\' + mysetup.setupFileName + '"';
+  cmdStr := installerArray[integer(mysetup.installerId)].silentsetup;
+  cmdStr := StringReplace(cmdStr,'<#packagePath#>',packagepath,[rfIgnoreCase]);
+  mysetup.installCommandLine:= cmdStr;
+
+  // uninstall check
+  mysetup.uninstallCheck.Clear;
+  cmdStr := 'Get-AppxPackage -AllUsers -Name '+ fullNameStr +' | select -expandProperty PackageFullName';
+  mysetup.uninstallCheck.Add('set $UninstallList$ = powershellCall("'+cmdStr+'")');
+  mysetup.uninstallCheck.Add('if count($UninstallList$) int> "0"');
+  mysetup.uninstallCheck.Add('	set $MsixAppxPackageName$ = takeString(0,$UninstallList$)');
+  mysetup.uninstallCheck.Add('	set $oldProgFound$ = "true"');
+  mysetup.uninstallCheck.Add('endif');
+
+  // uninstall command
+    if mysetup.preferSilent then
+      cmdStr := installerArray[integer(mysetup.installerId)].silentuninstall
+    else
+       cmdStr :=  installerArray[integer(mysetup.installerId)].unattendeduninstall;
+  cmdStr := StringReplace(cmdStr,'<#packageFullName#>','$MsixAppxPackageName$',[rfIgnoreCase]);
+  mysetup.uninstallCommandLine := cmdStr;
+
+  write_log_and_memo('get_MsixAppx_info finished');
+end;
+
 
 // marker for add installers
 
@@ -1111,6 +1235,22 @@ begin
     get_msi_info(FileName, mysetup);
     write_log_and_memo('Found installer= ' + installerToInstallerstr(setupType));
   end
+  else if '.msix' = lowercase(ExtractFileExt(FileName)) then
+  begin
+    mysetup.analyze_progess := 10;
+    setupType := stMsixAppx;
+    get_aktProduct_general_info_win(stMsixAppx, Filename, mysetup);
+    get_MsixAppx_info(FileName, mysetup);
+    write_log_and_memo('Found installer= ' + installerToInstallerstr(setupType));
+  end
+  else if '.appx' = lowercase(ExtractFileExt(FileName)) then
+  begin
+    mysetup.analyze_progess := 10;
+    setupType := stMsixAppx;
+    get_aktProduct_general_info_win(stMsixAppx, Filename, mysetup);
+    get_MsixAppx_info(FileName, mysetup);
+    write_log_and_memo('Found installer= ' + installerToInstallerstr(setupType));
+  end
   else
   begin
     setupType := analyze_binary(FileName, verbose, False, mysetup);
@@ -1144,6 +1284,7 @@ begin
       stInstallShieldMSI: get_installshieldmsi_info(FileName, mysetup);
       //stAdvancedMSI: get_advancedmsi_info(FileName, mysetup);
       stMsi: ;// nothing to do here - see above;
+      stMsixAppx: ;// nothing to do here - see above;
       stInstallAware: get_installaware_info(FileName, mysetup);
       stMSGenericInstaller: get_genmsinstaller_info(FileName, mysetup);
       stWixToolset: get_wixtoolset_info(FileName, mysetup);
@@ -1158,7 +1299,7 @@ begin
         get_null_info(FileName, mysetup);
         {nothing special right now for stBitrock, stSelfExtractingInstaller,
          stPortableApps, stInstall4J, st7zip, stNsis, stInstallShield,
-         st7zipsfx,stSetupFactory}
+         st7zipsfx,stSetupFactory,stWise}
     end;
 
 
@@ -1166,6 +1307,7 @@ begin
     tmpstr := installerToInstallerstr(setupType);
     case setupType of
       stMsi: ;// nothing to do here - see above;
+      stMsixAppx: ;// nothing to do here - see above;
 (*
       stInno: write_log_and_memo('Found installer= ' + tmpstr);
       stNsis: write_log_and_memo('Found installer= ' + tmpstr);

@@ -14,12 +14,11 @@ uses
   osversioninfo,
   osencoding,
   beautifyopsiscript,
-  lazFileUtils
-  ;
+  lazFileUtils;
 
 type
 
-{ TMyApplication }
+  { TMyApplication }
 
   TMyApplication = class(TCustomApplication)
   protected
@@ -32,10 +31,9 @@ type
 
 var
   Application: TMyApplication;
-  myversion : string;
+  myversion: string;
 
 implementation
-
 
 
 
@@ -44,13 +42,13 @@ implementation
 
 procedure initLogging;
 var
-  logfilename : string;
+  logfilename: string;
 begin
   logdatei := TLogInfo.Create;
-  logfilename := ExtractFileNameOnly(reencode(ParamStr(0), 'system'))+'-beautifier.log';
+  logfilename := ExtractFileNameOnly(reencode(ParamStr(0), 'system')) + '-beautifier.log';
   LogDatei.WritePartLog := False;
-  LogDatei.WriteErrFile:= False;
-  LogDatei.WriteHistFile:= False;
+  LogDatei.WriteErrFile := False;
+  LogDatei.WriteHistFile := False;
   logdatei.CreateTheLogfile(logfilename, False);
   logdatei.LogLevel := 7;
   (*
@@ -64,35 +62,30 @@ end;
 
 procedure TMyApplication.DoRun;
 var
-  ErrorMsg: String;
-  optionlist : TStringlist;
-  logpath, beautiparamsfilename, opsiscriptfile : string;
-  (*
-  verinfo : TFileVersionInfo;
+  ErrorMsg: string;
+  optionlist: TStringList;
+  logpath, beautiparamsfilename, opsiscriptfile: string;
+  use_stdinout: boolean = False;
 begin
-  verinfo := TFileVersionInfo.Create(nil);
-  verinfo.FileName := ParamStr(0);
-  verinfo.ReadFileInfo;
-  myversion := verinfo.VersionStrings.Values['FileVersion'];
-  verinfo.Free;
-  *)
-begin
-  writeln(ExtractFileName(ParamStr(0))+' version: ' + getversioninfo);
-  logpath := copy(GetUserDir,1,Length(getUserDir)-1);      // default
+  //writeln(ExtractFileName(ParamStr(0)) + ' version: ' + getversioninfo);
+  logpath := copy(GetUserDir, 1, Length(getUserDir) - 1);      // default
   {look for configuration file (beautify.ini) in program directory by default}
-  beautiparamsfilename := ExtractFileDir(ParamStr(0))+PathDelim+'beautify.ini';
+  beautiparamsfilename := ExtractFileDir(ParamStr(0)) + PathDelim + 'beautify.ini';
   {use last param as file argument by default}
   if (paramcount > 0) and (FileExistsUTF8(ParamStr(ParamCount))) then
     opsiscriptfile := ParamStr(ParamCount)
-  else opsiscriptfile := '';
+  else
+    opsiscriptfile := '';
   // quick check parameters
-  optionlist := TStringlist.Create;
+  optionlist := TStringList.Create;
   optionlist.Add('help');
   optionlist.Add('beautiparams:');
   optionlist.Add('file:');
   optionlist.Add('logpath:');
-  ErrorMsg:=CheckOptions('hbfl',optionlist);
-  if ErrorMsg<>'' then begin
+  optionlist.Add('stdinout');
+  ErrorMsg := CheckOptions('hbfls', optionlist);
+  if ErrorMsg <> '' then
+  begin
     ShowException(Exception.Create(ErrorMsg));
     WriteHelp;
     Terminate;
@@ -100,52 +93,54 @@ begin
   end;
 
   // parse parameters
-  if HasOption('h', 'help') then begin
+  if HasOption('h', 'help') then
+  begin
     WriteHelp;
     Terminate;
     Exit;
   end;
+
+  if HasOption('s', 'stdinout') then
+  begin
+    use_stdinout := True;
+  end
+  else
+  begin
+    if HasOption('f', 'file') then
+    begin
+      opsiscriptfile := GetOptionValue('f', 'file');
+    end
+    else
+    begin
+      writeln('beautify file: ' + opsiscriptfile);
+    end;
+  end;
+
+  if not use_stdinout then
+    writeln(ExtractFileName(ParamStr(0)) + ' version: ' + getversioninfo);
+
 
   if HasOption('b', 'beautiparams') then
   begin
-    beautiparamsfilename := GetOptionValue('b','beautiparams');
+    beautiparamsfilename := GetOptionValue('b', 'beautiparams');
   end
   else
   begin
-    writeln('configuration file: '+beautiparamsfilename);
-    (*
-    writeln('Error: missing parameter for file beautiparams');
-    WriteHelp;
-    Terminate;
-    Exit;
-    *)
+    if not use_stdinout then writeln('configuration file: ' + beautiparamsfilename);
   end;
 
-  if HasOption('f', 'file') then
-  begin
-    opsiscriptfile := GetOptionValue('f','file');
-  end
-  else
-  begin
-    writeln('beautify file: '+opsiscriptfile);
-    (*
-    writeln('Error: missing parameter file');
-    WriteHelp;
-    Terminate;
-    Exit;
-    *)
-  end;
 
   if HasOption('l', 'logpath') then
   begin
-    logpath := GetOptionValue('l','logpath');
+    logpath := GetOptionValue('l', 'logpath');
   end;
   initLogging;
-  writeln('log file: '+LogDatei.FileName);
+  if not use_stdinout then writeln('log file: ' + LogDatei.FileName);
   //writeln('file with beautifier params: ' + beautiparamsfilename);
   logdatei.log('file with beautifier params: ' + beautiparamsfilename, LLessential);
   logdatei.log('opsiscriptfile to beautify: ' + opsiscriptfile, LLessential);
-  beautifyopsiscript.initialize(beautiparamsfilename,opsiscriptfile);
+
+  beautifyopsiscript.Initialize(beautiparamsfilename, opsiscriptfile, use_stdinout);
 
   // stop program loop
   Terminate;
@@ -154,7 +149,7 @@ end;
 constructor TMyApplication.Create(TheOwner: TComponent);
 begin
   inherited Create(TheOwner);
-  StopOnException:=True;
+  StopOnException := True;
 end;
 
 destructor TMyApplication.Destroy;
@@ -164,18 +159,18 @@ end;
 
 procedure TMyApplication.WriteHelp;
 var
-  filename : string;
+  filename: string;
 begin
   filename := ExtractFileName(ExeName);
-  writeln(filename+' version: ' + getversioninfo);
-  writeln('Usage: '+ filename + '[Options] [filename]');
+  writeln(filename + ' version: ' + getversioninfo);
+  writeln('Usage: ' + filename + '[Options] [filename]');
   writeln('Options:');
   writeln('-h, --help : print this help');
   writeln('-b, --beautiprams : path to beautiparams file * optional, default program dir');
-  writeln('-f, --file : path to file.opsiscript * optional, default last param');
+  writeln('-f, --file : path to file.opsiscript * optional, default last param. May not used together with -s');
+  writeln('-s, --stdinout : read from stdin and write to stdout. May not used together with -f');
   writeln('-l, --logpath : set log path * optional, default userdir');
 end;
 
 
 end.
-

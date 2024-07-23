@@ -386,7 +386,7 @@ var
 begin
   try
     strlist := TStringList.Create;
-
+    result := true;
 
     if not localservicedataConnected then
     begin
@@ -437,6 +437,7 @@ begin
         else
         begin
           // service not connected
+          result := false;
           LogDatei.log('Service connection not possible: Url, user or password wrong.',
             LLwarning);
           {$IFDEF OSDGUI}
@@ -453,6 +454,7 @@ begin
       else
       begin
         // service data missing
+        result := false;
         LogDatei.log('Service connection not possible: Url or user missing.', LLwarning);
         {$IFDEF OSDGUI}
         FNewDepDlg.LabelConnect.Caption := rsServiceNotConnected;

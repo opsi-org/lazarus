@@ -84,6 +84,7 @@ type
     BtCreateEmptyTemplateMac: TBitBtn;
     BtCreateEmptyTemplateMulti: TBitBtn;
     BtCreateEmptyTemplateWin: TBitBtn;
+    BtCreateEmptyTemplateWithUserWin: TBitBtn;
     BtCreateMeta: TBitBtn;
     BtnOpenIconFolder: TBitBtn;
     BitBtnAddProp: TBitBtn;
@@ -331,6 +332,7 @@ type
     TabSheetAnalyze: TTabSheet;
     TICheckBoxCustomdir: TTICheckBox;
     TICheckBoxCustomizeProfile: TTICheckBox;
+    TICheckBoxUninstallBefore: TTICheckBox;
     TICheckBoxDesktopIcon: TTICheckBox;
     TICheckBoxHandleLiceneKey: TTICheckBox;
     TICheckBoxInstallFromLocal: TTICheckBox;
@@ -429,6 +431,7 @@ type
     procedure BtATwonalyzeAndCreateClick(Sender: TObject);
     procedure BtCreateEmptyTemplateMultiClick(Sender: TObject);
     procedure BtCreateEmptyTemplateWinClick(Sender: TObject);
+    procedure BtCreateEmptyTemplateWithUserWinClick(Sender: TObject);
     procedure BtCreateEmptyTemplateLinClick(Sender: TObject);
     procedure BtCreateEmptyTemplateMacClick(Sender: TObject);
     procedure BtCreateMetaClick(Sender: TObject);
@@ -568,6 +571,7 @@ type
 
 procedure checkWorkbench;
 procedure initGUI;
+procedure resetGUI;
 
 const
   // base_url while development
@@ -603,6 +607,8 @@ var
   //*****************************************
   firstshowconfigdone: boolean = False;
   productIds: TStringList;
+  designPPI : integer;
+  screenPPI : integer;
 
 
 resourcestring
@@ -695,6 +701,8 @@ resourcestring
     'Should we add code to copy the installer locally before the installation ?';
   rsCustomizeProfileHint =
     'Should we add code to customize the installation in user profiles ?';
+  rsUninstallBeforeInstallHint =
+    'Should we add code to check if we uninstall before the installation ?';
   rsInstalldirHint =
     'The (unquoted) directory path where the software will be installed.' +
     LineEnding +
@@ -813,6 +821,8 @@ begin
         'desktopicon');
       TICheckBoxCustomizeProfile.Link.SetObjectAndProperty(productdata,
         'customizeProfile');
+      TICheckBoxUninstallBefore.Link.SetObjectAndProperty(productdata,
+        'uninstallBeforeInstall');
       TIComboBoxChannel.Link.SetObjectAndProperty(productdata, 'channelDir');
       // initialize drop down
       TIComboBoxChannel.Items.Text := templateChannelList.Text;
@@ -841,6 +851,7 @@ begin
       TICheckBoxCustomdir.Hint := rsSupportCustomDirectoryHint;
       TICheckBoxDesktopIcon.Hint := rsUsePropDesktopicon;
       TICheckBoxCustomizeProfile.Hint := rsCustomizeProfileHint;
+      TICheckBoxUninstallBefore.Hint := rsUninstallBeforeInstallHint;
       TIEditInstallDir1.Hint := rsInstalldirHint;
       TIEditInstallDir2.Hint := rsInstalldirHint;
       TIEditInstallDir3.Hint := rsInstalldirHint;
@@ -932,6 +943,34 @@ begin
   LogDatei.log('Finished initGUI ... ', LLInfo);
 end;
 
+procedure resetGUI;
+begin
+  // set the default values that may changed by different runModes
+  LogDatei.log('Start resetGUI ... ', LLInfo);
+  with resultform1 do
+  begin
+    // the checkboxes
+    TICheckBoxCustomdir.Enabled := True;
+    TICheckBoxInstallFromLocal.Enabled := True;
+    TICheckBoxHandleLiceneKey.Enabled := True;
+    TICheckBoxDesktopIcon.Enabled := True;
+    TICheckBoxCustomizeProfile.Enabled := True;
+    TICheckBoxUninstallBefore.Enabled := True;
+    // the tabsheets
+    TabSheetStart.Enabled := True;
+    TabSheetAnalyze.Enabled := True;
+    TabSheetSetup1.Enabled := True;
+    TabSheetSetup2.Enabled := True;
+    TabSheetProduct.Enabled := True;
+    TabSheetProduct2.Enabled := True;
+    TabSheetCreate.Enabled := True;
+    // the buttons
+    BtSetup1NextStep.Enabled := True;
+    Application.ProcessMessages;
+  end;
+  LogDatei.log('Finished resetGUI ... ', LLInfo);
+end;
+
 procedure TResultform1.updateGUI;
 begin
   TIGridDep.ListObject := osdbasedata.aktproduct.dependencies;
@@ -985,9 +1024,6 @@ begin
 
     analyzeOnly:
     begin
-      TabSheetStart.Enabled := True;
-      TabSheetAnalyze.Enabled := True;
-      TabSheetSetup1.Enabled := True;
       TabSheetSetup2.Enabled := False;
       TabSheetProduct.Enabled := False;
       TabSheetProduct2.Enabled := False;
@@ -996,56 +1032,33 @@ begin
     end;
     singleAnalyzeCreate, analyzeCreateWithUser:
     begin
-      TabSheetStart.Enabled := True;
-      TabSheetAnalyze.Enabled := True;
-      TabSheetSetup1.Enabled := True;
       TabSheetSetup2.Enabled := False;
-      TabSheetProduct.Enabled := True;
-      TabSheetProduct2.Enabled := True;
-      TabSheetCreate.Enabled := True;
-      BtSetup1NextStep.Enabled := True;
     end;
     twoAnalyzeCreate_1, twoAnalyzeCreate_2:
     begin
-      TabSheetStart.Enabled := True;
-      TabSheetAnalyze.Enabled := True;
-      TabSheetSetup1.Enabled := True;
-      TabSheetSetup2.Enabled := True;
-      TabSheetProduct.Enabled := True;
-      TabSheetProduct2.Enabled := True;
-      TabSheetCreate.Enabled := True;
-      BtSetup1NextStep.Enabled := True;
     end;
-    createTemplate:
+    createTemplate, createTemplateWithUser:
     begin
-      TabSheetStart.Enabled := True;
       TabSheetAnalyze.Enabled := False;
       TabSheetSetup1.Enabled := False;
       TabSheetSetup2.Enabled := False;
-      TabSheetProduct.Enabled := True;
-      TabSheetProduct2.Enabled := True;
-      TabSheetCreate.Enabled := True;
     end;
     createMeta:
     begin
-      TabSheetStart.Enabled := True;
       TabSheetAnalyze.Enabled := False;
       TabSheetSetup1.Enabled := False;
       TabSheetSetup2.Enabled := False;
-      TabSheetProduct.Enabled := True;
-      TabSheetProduct2.Enabled := True;
-      TabSheetCreate.Enabled := True;
     end;
-    gmUnknown:
+  end;
+
+  case osdsettings.runmode of
+    analyzeCreateWithUser, createTemplateWithUser:
     begin
-      TabSheetStart.Enabled := True;
-      TabSheetAnalyze.Enabled := True;
-      TabSheetSetup1.Enabled := True;
-      TabSheetSetup2.Enabled := True;
-      TabSheetProduct.Enabled := True;
-      TabSheetProduct2.Enabled := True;
-      TabSheetCreate.Enabled := True;
-      BtSetup1NextStep.Enabled := True;
+      // disable some checkboxes for 'with user'
+      TICheckBoxCustomdir.Enabled := False;
+      TICheckBoxInstallFromLocal.Enabled := False;
+      TICheckBoxDesktopIcon.Enabled := False;
+      TICheckBoxUninstallBefore.Enabled := False;
     end;
   end;
 end;
@@ -1241,6 +1254,7 @@ end;
 
 procedure TResultform1.MenuItemOpenProjClick(Sender: TObject);
 begin
+  resetGUI;
   OpenDialog1.FilterIndex := 8;   // project file
   if DirectoryExists(myconfiguration.LastProjectFileDir) then
     OpenDialog1.InitialDir := myconfiguration.LastProjectFileDir
@@ -1408,6 +1422,7 @@ procedure TResultform1.BtSingleAnalyzeAndCreateWinClick(Sender: TObject);
 var
   localTOSset: TTargetOSset;
 begin
+  resetGUI;
   openDialog1.FilterIndex := 1;   // setup
   if DirectoryExists(myconfiguration.LastSetupFileDir) then
     OpenDialog1.InitialDir := myconfiguration.LastSetupFileDir;
@@ -1450,6 +1465,7 @@ begin
     (Sender as TPanel).Color := clSkyBlue;
 end;
 
+
 // paint icon preview with selected background
 procedure TResultform1.PaintPreview(Image: TImage);
 var
@@ -1459,11 +1475,28 @@ var
   // chess background as no background
   ChessColors: array[0..1] of TColor = (clMedGray, clSilver);
   picturesize: integer;
+  scalefactor: double;
+  TempImage: TImage;
 begin
+  scalefactor := screenPPI / designPPI;
+  LogDatei.log('scalefactor: ' + FloatToStr(scalefactor), LLnotice);
+  // scale TIImageIconPreview only the first call
+  if TIImageIconPreview.Width = 160 then
+    with TIImageIconPreview do
+    begin
+      Top := round(top * scalefactor);
+      Left := round(left * scalefactor);
+      Width := round(Width * scalefactor);
+      Height := round(Height * scalefactor);
+    end;
+  LogDatei.log('TIImageIconPreview.width : ' + IntToStr(
+    TIImageIconPreview.Width), LLnotice);
   with TIImageIconPreview.Canvas do
   begin
     // paint chess background
     squaresize := 22;
+    // scale background
+    squaresize := round(squaresize * scalefactor);
     for row := 0 to 9 do
     begin
       for col := 0 to 9 do
@@ -1475,23 +1508,35 @@ begin
       end;
     end;
     // paint chess board
-    //RectBackgr := Rect(0, 0, ImageIconPreview.Width, ImageIconPreview.Height);
+
+    // get scaled picturesize
     picturesize := TIImageIconPreview.Width;
-    //picturesize := round(picturesize * (Screen.PixelsPerInch / 91));
+
     {$IFDEF LINUX}
     // scale rect
-    picturesize := round(picturesize * (91 / Screen.PixelsPerInch));
+    picturesize := round(picturesize * (screenPPI / designPPI));
     {$ENDIF LINUX}
-    RectBackgr := Rect(0, 0, picturesize, picturesize);
+    // rect we want to paint to (with border of 2 pixel)
+    RectBackgr := Rect(2, 2, picturesize - 2, picturesize - 2);
     // paint icon on chess board
-    // stretched:
-    //StretchDraw(RectBackgr, Image.Picture.Bitmap);
-    // original size:
+    // copy the image
+    TempImage := TImage.Create(nil);
+    //TempImage.Picture.Bitmap := Image.Picture.Bitmap;
+    TempImage.Picture.Assign(Image.Picture);
+    // paint stretched:
+    TIImageIconPreview.Proportional := True;
+    TIImageIconPreview.Center := True;
+    TIImageIconPreview.Canvas.StretchDraw(RectBackgr, TempImage.Picture.Bitmap);
+
+  (*
+  // original size:
     Draw(round((picturesize - Image.Picture.Width) / 2), round(
       (picturesize - Image.Picture.Height) / 2), Image.Picture.Bitmap);
+    //end;
+  *)
+
   end;
 end;
-
 
 procedure TResultform1.IconDisplayOnClick(Sender: TObject);
 var
@@ -1669,6 +1714,7 @@ procedure TResultform1.BtSingleAnalyzeAndCreateWithUserClick(Sender: TObject);
 var
   localTOSset: TTargetOSset;
 begin
+  resetGUI;
   openDialog1.FilterIndex := 1;   // setup
   if DirectoryExists(myconfiguration.LastSetupFileDir) then
     OpenDialog1.InitialDir := myconfiguration.LastSetupFileDir;
@@ -1770,6 +1816,7 @@ procedure TResultform1.BtATwonalyzeAndCreateClick(Sender: TObject);
 var
   localTOSset: TTargetOSset;
 begin
+  resetGUI;
   MessageDlg(rsTwonalyzeAndCreateMsgHead, rsTwonalyzeAndCreateMsgFirstSetup,
     mtInformation, [mbOK], '');
   OpenDialog1.FilterIndex := 1;   // setup
@@ -1800,23 +1847,22 @@ end;
 
 procedure TResultform1.BtCreateEmptyTemplateMultiClick(Sender: TObject);
 begin
-  begin
-    osdsettings.runmode := createMultiTemplate;
-    setRunMode;
-    MemoAnalyze.Clear;
-    PageControl1.ActivePage := resultForm1.TabSheetProduct;
-    Application.ProcessMessages;
-    initaktproduct;
-    makeProperties;
-    resultform1.updateGUI;
-    aktProduct.productdata.targetOSset := [osWin, osLin, osMac, osMulti];
-    aktProduct.productdata.productId := 'opsi-template';
-    aktProduct.productdata.productName := 'opsi template for multi platform';
-    aktProduct.productdata.productversion := '1.0.0';
-    aktProduct.productdata.packageversion := 1;
-    aktProduct.productdata.description :=
-      'A template for opsi products for Win, Lin, Mac';
-  end;
+  resetGUI;
+  osdsettings.runmode := createMultiTemplate;
+  setRunMode;
+  MemoAnalyze.Clear;
+  PageControl1.ActivePage := resultForm1.TabSheetProduct;
+  Application.ProcessMessages;
+  initaktproduct;
+  makeProperties;
+  resultform1.updateGUI;
+  aktProduct.productdata.targetOSset := [osWin, osLin, osMac, osMulti];
+  aktProduct.productdata.productId := 'opsi-template';
+  aktProduct.productdata.productName := 'opsi template for multi platform';
+  aktProduct.productdata.productversion := '1.0.0';
+  aktProduct.productdata.packageversion := 1;
+  aktProduct.productdata.description :=
+    'A template for opsi products for Win, Lin, Mac';
 end;
 
 procedure TResultform1.showCheckEntriesWarning;
@@ -1898,8 +1944,8 @@ begin
     gmUnknown:
     begin
       // we should never be here
-      logdatei.log('Error: in BtSetup1NextStepClick osdsettings.runmode: gmUnknown',
-        LLError);
+      logdatei.log('Error: in BtSetup1NextStepClick osdsettings.runmode: ' +
+        GetEnumName(TypeInfo(TRunMode), Ord(osdsettings.runmode)), LLError);
     end;
   end;
 end;
@@ -2519,6 +2565,13 @@ begin
     uninstcheckstr := StringReplace(uninstcheckstr, '$installdir$',
       '"+$installdir$+"', [rfIgnoreCase]);
 
+    // the use of the  $installerSourceDir$ variable for the primary section function fileexists
+    // will for example result to:
+    // if fileexists($installerSourceDir$+"\uninst.exe")
+    uninstcheckstr := StringReplace(uninstcheckstr, '$installerSourceDir$',
+      '"+$installerSourceDir$+"', [rfIgnoreCase]);
+
+
     mysetup.uninstallCheck.Add('if fileexists("' + uninstcheckstr + '")');
     mysetup.uninstallCheck.Add('	set $oldProgFound$ = "true"');
     mysetup.uninstallCheck.Add('endif');
@@ -2605,36 +2658,36 @@ end;
 
 procedure TResultform1.BitBtnRebuildClick(Sender: TObject);
 var
-  radioindex: integer;
-  done: boolean = False;
+  buildSuccess : boolean = false;
 begin
   // reset exitcode before (repeated) build:
   system.ExitCode := 0;
   logdatei.log('Start BtRebuildClick', LLDebug2);
+  OSD_info.Height := 150 * round(screen.PixelsPerInch / DesignTimePPI);
+  OSD_info.Width := 400 * round(screen.PixelsPerInch / DesignTimePPI);
   if not DirectoryExists(myconfiguration.workbench_Path) then
   begin
-    //checkok := False;
-    ShowMessage(sErrPacketBaseDirNotFound);
+    //ShowMessage(sErrPacketBaseDirNotFound);
+    OSD_info.mdContent:= '<span style="color:red"> **Failed**  '+sErrPacketBaseDirNotFound+'</span>';
+    OSD_info.ShowModal;
   end;
   try
     PanelProcess.Visible := True;
     procmess;
-    callServiceOrPackageBuilder;
-    (*
-    case TIRadioGroupCreateMode.ItemIndex of
-      0: ; // do nothing else
-      1: callServiceOrPackageBuilder;
-      2: ; // do nothing else
-    end;
-    *)
+    buildSuccess := callServiceOrPackageBuilder;
     procmess;
     PanelProcess.Visible := False;
-    if (system.ExitCode = 0) then
-      ShowMessage(rsRebuildFinished)
+    if (system.ExitCode = 0) and buildSuccess then
+      //ShowMessage(rsRebuildFinished)
+      OSD_info.mdContent:= '<span style="color:green"> **OK**  '+rsRebuildFinished+'</span>'
     else
-      ShowMessage(rsRebuildFailedBuild);
+      OSD_info.mdContent:= '<span style="color:red"> **Failed**  '+rsRebuildFailedBuild+'</span>';
+      //ShowMessage(rsRebuildFailedBuild);
+
+    OSD_info.ShowModal;
   finally
     PanelProcess.Visible := False;
+    OSD_info.FormSizeReset;
     procmess;
   end;
   logdatei.log('Finished BtRebuildClick', LLDebug2);
@@ -2643,6 +2696,7 @@ end;
 
 procedure TResultform1.BtCreateEmptyTemplateWinClick(Sender: TObject);
 begin
+  resetGUI;
   osdsettings.runmode := createTemplate;
   setRunMode;
   MemoAnalyze.Clear;
@@ -2659,9 +2713,38 @@ begin
   aktProduct.productdata.description := 'A template for opsi products for Windows';
 end;
 
+procedure TResultform1.BtCreateEmptyTemplateWithUserWinClick(Sender: TObject);
+begin
+  resetGUI;
+  osdsettings.runmode := createTemplateWithUser;
+  setRunMode;
+  MemoAnalyze.Clear;
+  PageControl1.ActivePage := resultForm1.TabSheetProduct;
+  Application.ProcessMessages;
+  initaktproduct;
+  makeProperties;
+  resultform1.updateGUI;
+  aktProduct.productdata.targetOSset := [osWin];
+  aktProduct.productdata.productId := 'opsi-template-with-user';
+  aktProduct.productdata.productName := 'opsi template for Windows - Install with user';
+  aktProduct.productdata.productversion := '1.0.0';
+  aktProduct.productdata.packageversion := 1;
+  aktProduct.productdata.description :=
+    'A template for opsi products for Windows - Install with user';
+  aktProduct.productdata.setupscript := 'setup.opsiscript';
+  aktProduct.productdata.uninstallscript := 'localsetup\uninstall-local.opsiscript';
+  aktProduct.productdata.updatescript := 'localsetup\update-local.opsiscript';
+  aktProduct.productdata.priority := -20;
+  aktProduct.productdata.advice := rsCreateWithUserProductAdvice;
+  resultform1.updateGUI;
+  Application.ProcessMessages;
+end;
+
+
 procedure TResultform1.BtCreateEmptyTemplateMacClick(Sender: TObject);
 begin
   begin
+    resetGUI;
     osdsettings.runmode := createTemplate;
     setRunMode;
     MemoAnalyze.Clear;
@@ -2681,6 +2764,7 @@ end;
 
 procedure TResultform1.BtCreateMetaClick(Sender: TObject);
 begin
+  resetGUI;
   osdsettings.runmode := createMeta;
   setRunMode;
   MemoAnalyze.Clear;
@@ -2701,6 +2785,7 @@ end;
 
 procedure TResultform1.BtCreateEmptyTemplateLinClick(Sender: TObject);
 begin
+  resetGUI;
   osdsettings.runmode := createTemplate;
   setRunMode;
   MemoAnalyze.Clear;
@@ -2727,10 +2812,14 @@ begin
   // reset exitcode before (repeated) build:
   system.ExitCode := 0;
   logdatei.log('Start BtCreateProductClick', LLDebug2);
+  OSD_info.Height := 150 * round(screen.PixelsPerInch / DesignTimePPI);
+  OSD_info.Width := 400 * round(screen.PixelsPerInch / DesignTimePPI);
   if not DirectoryExists(myconfiguration.workbench_Path) then
   begin
     //checkok := False;
-    ShowMessage(sErrPacketBaseDirNotFound);
+    //ShowMessage(sErrPacketBaseDirNotFound);
+    OSD_info.mdContent:= '<span style="color:red"> **Failed**  '+sErrPacketBaseDirNotFound+'</span>';
+    OSD_info.ShowModal;
   end;
   try
     PanelProcess.Visible := True;
@@ -2753,13 +2842,18 @@ begin
     procmess;
     PanelProcess.Visible := False;
     if done and (system.ExitCode = 0) then
-      ShowMessage(sInfoFinished)
+      OSD_info.mdContent:= '<span style="color:green"> **OK**  '+sInfoFinished+'</span>'
+      //ShowMessage(sInfoFinished)
     else if done and (system.ExitCode = 1) then
-      ShowMessage(sInfoFailedBuild)
+      //ShowMessage(sInfoFailedBuild)
+      OSD_info.mdContent:= '<span style="color:red"> **Failed**  '+sInfoFailedBuild+'</span>'
     else
-      ShowMessage(sInfoFailedCreate);
+      OSD_info.mdContent:= '<span style="color:red"> **Failed**  '+sInfoFailedCreate+'</span>';
+      //ShowMessage(sInfoFailedCreate);
+    OSD_info.ShowModal;
   finally
     PanelProcess.Visible := False;
+    OSD_info.FormSizeReset;
     procmess;
   end;
   // we do not want to sav the actual readio button selection in the configuration
@@ -2792,6 +2886,7 @@ begin
         'Error: in BtProductNextStepClick RunMode: analyzeOnly', LLError);
     end;
     createTemplate,
+    createTemplateWithUser,
     createMultiTemplate,
     singleAnalyzeCreate,
     analyzeCreateWithUser,
@@ -2804,17 +2899,12 @@ begin
       PageControl1.ActivePage := resultForm1.TabSheetCreate;
       Application.ProcessMessages;
     end;
-    createMeta:
+    createMeta, gmUnknown:
     begin
       // we should never be here
       logdatei.log(
-        'Error: in BtProductNextStepClick RunMode: gmUnknown', LLError);
-    end;
-    gmUnknown:
-    begin
-      // we should never be here
-      logdatei.log(
-        'Error: in BtProductNextStepClick RunMode: gmUnknown', LLError);
+        'Error: in BtProductNextStepClick RunMode: ' + GetEnumName(
+        TypeInfo(TRunMode), Ord(osdsettings.runmode)), LLError);
     end;
   end;
 end;
@@ -2845,6 +2935,7 @@ begin
       analyzeCreateWithUser,
       createMeta,
       createTemplate,
+      createTemplateWithUser,
       createMultiTemplate,
       singleAnalyzeCreate,
       twoAnalyzeCreate_1,
@@ -2860,8 +2951,9 @@ begin
       gmUnknown:
       begin
         // we should never be here
-        logdatei.log(
-          'Error: in BtProductNextStepClick RunMode: gmUnknown', LLError);
+        logdatei.log('Error: in BtProductNextStepClick RunMode: ' +
+          GetEnumName(TypeInfo(TRunMode), Ord(osdsettings.runmode)),
+          LLError);
       end;
     end;
   end;
@@ -2870,13 +2962,15 @@ end;
 procedure TResultform1.BtProduct2NextStepClick(Sender: TObject);
 begin
   case osdsettings.runmode of
-    analyzeOnly:
+    analyzeOnly, gmUnknown:
     begin
       // we should never be here
-      logdatei.log('Error: in BtProductNextStepClick RunMode: analyzeOnly', LLError);
+      logdatei.log('Error: in BtProductNextStepClick RunMode: ' +
+        GetEnumName(TypeInfo(TRunMode), Ord(osdsettings.runmode)), LLError);
     end;
     analyzeCreateWithUser,
     createTemplate,
+    createTemplateWithUser,
     createMultiTemplate,
     singleAnalyzeCreate,
     twoAnalyzeCreate_1,
@@ -2893,11 +2987,6 @@ begin
     begin
       PageControl1.ActivePage := resultForm1.TabSheetCreate;
       Application.ProcessMessages;
-    end;
-    gmUnknown:
-    begin
-      // we should never be here
-      logdatei.log('Error: in BtProductNextStepClick RunMode: gmUnknown', LLError);
     end;
   end;
 end;
@@ -2978,24 +3067,12 @@ begin
         if not installerselected then
           BtSetup2NextStepClick(Sender);
       end;
-      createTemplate:
+      createTemplate, createTemplateWithUser, createMeta, gmUnknown:
       begin
         // we should never be here
         logdatei.log(
-          'Error: in BtSetup1NextStepClick RunMode: createTemplate', LLError);
-      end;
-      createMeta:
-      begin
-        // we should never be here
-        logdatei.log(
-          'Error: in BtSetup1NextStepClick RunMode: createMeta', LLError);
-      end;
-
-      gmUnknown:
-      begin
-        // we should never be here
-        logdatei.log(
-          'Error: in BtSetup1NextStepClick RunMode: gmUnknown', LLError);
+          'Error: in BtSetup1NextStepClick RunMode: ' +
+          GetEnumName(TypeInfo(TRunMode), Ord(osdsettings.runmode)), LLError);
       end;
     end;
   end;
@@ -3020,22 +3097,14 @@ begin
   if checkok then
   begin
     case osdsettings.runmode of
-      analyzeOnly:
+      analyzeOnly, singleAnalyzeCreate, analyzeCreateWithUser,
+      createTemplate,
+      createTemplateWithUser,
+      createMeta, gmUnknown:
       begin
         // we should never be here
-        logdatei.log('Error: in BtSetup2NextStepClick RunMode: analyzeOnly', LLError);
-      end;
-      singleAnalyzeCreate:
-      begin
-        // we should never be here
-        logdatei.log('Error: in BtSetup2NextStepClick RunMode: singleAnalyzeCreate',
-          LLError);
-      end;
-      analyzeCreateWithUser:
-      begin
-        // we should never be here
-        logdatei.log('Error: in BtSetup2NextStepClick RunMode: analyzeCreateWithUser',
-          LLError);
+        logdatei.log('Error: in BtSetup2NextStepClick RunMode: ' +
+          GetEnumName(TypeInfo(TRunMode), Ord(osdsettings.runmode)), LLError);
       end;
       twoAnalyzeCreate_2:
       begin
@@ -3103,23 +3172,6 @@ begin
         else
           BtSetup3NextStepClick(Sender);
       end;
-      createTemplate:
-      begin
-        // we should never be here
-        logdatei.log('Error: in BtSetup1NextStepClick RunMode: createTemplate', LLError);
-      end;
-      createMeta:
-      begin
-        // we should never be here
-        logdatei.log(
-          'Error: in BtSetup1NextStepClick RunMode: createMeta', LLError);
-      end;
-
-      gmUnknown:
-      begin
-        // we should never be here
-        logdatei.log('Error: in BtSetup2NextStepClick RunMode: gmUnknown', LLError);
-      end;
     end;
   end;
 end;
@@ -3141,50 +3193,20 @@ begin
   begin
 
     case osdsettings.runmode of
-      analyzeOnly:
+      analyzeOnly, singleAnalyzeCreate, analyzeCreateWithUser,
+      twoAnalyzeCreate_2,
+      createTemplate,
+      createTemplateWithUser,
+      createMeta, gmUnknown:
       begin
         // we should never be here
-        logdatei.log('Error: in BtSetup2NextStepClick RunMode: analyzeOnly', LLError);
-      end;
-      singleAnalyzeCreate:
-      begin
-        // we should never be here
-        logdatei.log('Error: in BtSetup2NextStepClick RunMode: singleAnalyzeCreate',
-          LLError);
-      end;
-      analyzeCreateWithUser:
-      begin
-        // we should never be here
-        logdatei.log('Error: in BtSetup2NextStepClick RunMode: analyzeCreateWithUser',
-          LLError);
-      end;
-      twoAnalyzeCreate_2:
-      begin
-        // we should never be here
-        logdatei.log('Error: in BtSetup2NextStepClick RunMode: singleAnalyzeCreate',
-          LLError);
+        logdatei.log('Error: in BtSetup2NextStepClick RunMode:' +
+          GetEnumName(TypeInfo(TRunMode), Ord(osdsettings.runmode)), LLError);
       end;
       threeAnalyzeCreate_3:
       begin
         PageControl1.ActivePage := resultForm1.TabSheetProduct;
         Application.ProcessMessages;
-      end;
-      createTemplate:
-      begin
-        // we should never be here
-        logdatei.log('Error: in BtSetup1NextStepClick RunMode: createTemplate', LLError);
-      end;
-      createMeta:
-      begin
-        // we should never be here
-        logdatei.log(
-          'Error: in BtSetup1NextStepClick RunMode: createMeta', LLError);
-      end;
-
-      gmUnknown:
-      begin
-        // we should never be here
-        logdatei.log('Error: in BtSetup2NextStepClick RunMode: gmUnknown', LLError);
       end;
     end;
   end;
@@ -3213,6 +3235,7 @@ begin
 
   if goon then
   begin
+    resetGUI;
     osdsettings.runmode := singleAnalyzeCreate;
     setRunMode;
     PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
@@ -3272,6 +3295,7 @@ begin
   end;
   if goon then
   begin
+    resetGUI;
     osdsettings.runmode := singleAnalyzeCreate;
     setRunMode;
     PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
@@ -3298,6 +3322,7 @@ var
   localTOSset: TTargetOSset;
   installerselected: boolean = False;
 begin
+  resetGUI;
   osdsettings.runmode := threeAnalyzeCreate_1;
   setRunMode;
   initaktproduct;
@@ -3341,6 +3366,7 @@ end;
 
 procedure TResultform1.BtAnalyzeOnlyClick(Sender: TObject);
 begin
+  resetGUI;
   OpenDialog1.FilterIndex := 1;   // setup
   if DirectoryExists(myconfiguration.LastSetupFileDir) then
     OpenDialog1.InitialDir := myconfiguration.LastSetupFileDir;
@@ -3358,7 +3384,6 @@ begin
     Analyze(OpenDialog1.FileName, aktProduct.SetupFiles[0], True);
     SetTICheckBoxesMST(aktProduct.SetupFiles[0].installerId);
   end;
-
 end;
 
 
@@ -3571,6 +3596,8 @@ begin
   Application.OnIdle := @ApplicationEventIdle;
   // TabSheetIcons presets
   BtnOpenIconFolder.Font.Size := 12;
+  designPPI := DesignTimePPI;
+  screenPPI := screen.PixelsPerInch;
   DefaultIcon := TImage.Create(TabSheetIcons);
   {$IFDEF LINUX}
   // scale form
@@ -3786,7 +3813,7 @@ var
 begin
   if LowerCase(osdsettings.mylang) = 'de' then
     myUrl := opsidocs_base_url +
-      'opsi-docs-de/4.3/opsi-modules/setup-detector.html#opsi-setup-detector-product-configuration-priority_dependecy'
+      'opsi-docs-de/4.3/opsi-modules/setup-detector.html#opsi-setup-detector-product-configuration-priority_dependency'
   else
     myUrl := opsidocs_base_url +
       'opsi-docs-en/4.3/opsi-modules/setup-detector.html#opsi-setup-detector-product-configuration-priority_dependency';
@@ -4055,6 +4082,7 @@ procedure TResultform1.TIEditSetup3UnProgramEditingDone(Sender: TObject);
 begin
   updateUninstaller(aktProduct.SetupFiles[2]);
 end;
+
 
 procedure TResultform1.TIMemoAdviceEditingDone(Sender: TObject);
 var

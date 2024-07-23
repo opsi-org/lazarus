@@ -317,7 +317,7 @@ var
 
   //Verfahren  : TActionRequest;
 
-  Produkte: TStringList;
+
 
 ///NumberOfErrors   :   Integer;
 ///NumberOfWarnings :   Integer;
@@ -1033,11 +1033,29 @@ var
   //TheExitMode: TExitMode;
   buildpcscript: TuibInstScript;
   tmplist: TStringList;
+  Produkte: TStringList = nil;
 
   {$IFDEF WINDOWS}
   regDataType: tuibRegDataType;
 
   {$ENDIF WINDOWS}
+
+  goOn: boolean;
+  problemString: string;
+  aktActionRequestStr: string;
+  aktAction, orgAction: TActionRequest;
+  processProduct: boolean;
+  {$IFDEF UNIX}
+  filehandle: cint;
+  {$ENDIF LINUX}
+  list: TStringList;
+  excludedProducts: TStringList;
+  productscopy: TStringList;
+  opsiclientd: boolean;
+  {$IFDEF UNIX}
+  filehandle: cint;
+  {$ENDIF LINUX}
+
 
 
   procedure LogProductSequence(const produkte: TStringList;
@@ -1160,20 +1178,6 @@ var
     // no errors
   end;// End of function ChangeProductstatusOnReinst
 
-var
-  goOn: boolean;
-  //problemString: string;
-  aktActionRequestStr: string;
-  aktAction, orgAction: TActionRequest;
-  processProduct: boolean;
-  ///val :   Integer;
-  {$IFDEF UNIX}
-  filehandle: cint;
-  {$ENDIF LINUX}
-  //list: TStringList;
-  excludedProducts: TStringList;
-  productscopy: TStringList;
-  //opsiclientd: boolean;
 
 begin
   try
@@ -1188,7 +1192,6 @@ begin
     DontUpdateMemo := True;
     FlagReloadProductList := False;
     OpsiData.setActualClient(computername);
-    if Produkte <> nil then Produkte.Free;
     Produkte := OpsiData.getListOfProductIDs;
     if runprocessproducts then
     begin
@@ -1286,11 +1289,7 @@ begin
 
           if trim(Produkt) = '' then
             LogDatei.log('product ' + IntToStr(i - 1) + ' is "" ', LLWarning);
-
-          if opsidata.initProduct then
-          ;
-
-
+          opsidata.InitProduct;
           // check if there is still an action request if we had one at startup
           // get the actual (live) actionrequest
           aktActionRequestStr := opsidata.getActualProductActionRequest;
@@ -1314,15 +1313,12 @@ begin
           BatchWindowMode := bwmMaximized;
           SavedBatchWindowMode := BatchWindowMode;
           FBatchOberflaeche.SetBatchWindowMode(BatchWindowMode);
-          //FBatchOberflaeche.setWindowState(BatchWindowMode);
           ProcessMess;
-          //FBatchOberflaeche.setWindowState(bwmMaximized);
           {$ENDIF GUI}
           LogDatei.LogProduktId := True;
-
           ProcessProdukt(extremeErrorLevel);
 
-          //FBatchOberflaeche.setWindowState(bwmNormalWindow);
+;
           LogDatei.log('BuildPC: update switches .....', LLDebug);
           if (PerformExitWindows < txrImmediateLogout) and (not scriptsuspendstate) then
           begin
@@ -1333,7 +1329,9 @@ begin
           opsidata.finishProduct;
           LogDatei.LogProduktId := False;
         end;
-
+        // At the recursive call to BuildPC we have lost the Produkte list
+        // as a dirty hack we always reload here and do not increment the counter
+        //Produkte := OpsiData.getListOfProductIDs;
         Inc(i);
       end;
       LogDatei.log('BuildPC: saveOpsiConf .....', LLDebug3);
@@ -1604,6 +1602,7 @@ var
   //ErrorInfo: string;
   goOn: boolean;
   //problemString: string;
+  Produkte: TStringList = nil;
   ///val :   Integer;
   trycounter, maxtries: integer;
   {$IFDEF WINDOWS}
@@ -1664,8 +1663,6 @@ begin
   DontUpdateMemo := True;
 
   OpsiData.setActualClient(computername);
-  if Produkte <> nil then
-    Produkte.Free;
   //Produkte := OpsiData.getListOfProducts;
   Produkte := TOpsi4data(OpsiData).getMapOfLoginscripts2Run(allLoginScripts);
 
@@ -1760,10 +1757,9 @@ begin
   DontUpdateMemo := True;
 
   OpsiData.setActualClient(computername);
-  if Produkte <> nil then
-    Produkte.Free;
   //Produkte := OpsiData.getListOfProducts;
-  Produkte := scriptlist;
+  Produkte := TStringList.Create;
+  Produkte.Assign(TStringList(scriptlist));
 
 
   LogDatei.log('Computername:' + computername, LLinfo);

@@ -1,11 +1,11 @@
 object FBatchOberflaeche: TFBatchOberflaeche
-  Left = 439
-  Height = 1040
-  Top = 336
-  Width = 1564
+  Left = 251
+  Height = 679
+  Top = 424
+  Width = 1196
   Caption = 'opsi-script'
-  ClientHeight = 1040
-  ClientWidth = 1564
+  ClientHeight = 679
+  ClientWidth = 1196
   Color = cl3DDkShadow
   Font.Height = 28
   Font.Name = 'System'
@@ -23,13 +23,13 @@ object FBatchOberflaeche: TFBatchOberflaeche
   LCLVersion = '3.4.0.0'
   object PanelFillScreen: TPanel
     Left = 0
-    Height = 1040
+    Height = 679
     Top = 0
-    Width = 1564
+    Width = 1196
     Align = alClient
     AutoSize = True
-    ClientHeight = 1040
-    ClientWidth = 1564
+    ClientHeight = 679
+    ClientWidth = 1196
     Color = clMenuBar
     Font.Height = 28
     Font.Name = 'System'
@@ -39,9 +39,9 @@ object FBatchOberflaeche: TFBatchOberflaeche
     ParentFont = False
     TabOrder = 0
     object ImageOpsiBackground: TImage
-      Left = 1086
+      Left = 718
       Height = 542
-      Top = 524
+      Top = 163
       Width = 489
       Align = alCustom
       Anchors = [akRight, akBottom]
@@ -259,12 +259,5 @@ object FBatchOberflaeche: TFBatchOberflaeche
     OnTimer = TimerProcessMessTimer
     Left = 1304
     Top = 396
-  end
-  object TimerOnTop: TTimer
-    Enabled = False
-    Interval = 500
-    OnTimer = TimerOnTopTimer
-    Left = 1326
-    Top = 554
   end
 end
