@@ -10,7 +10,6 @@ object FBatchOberflaeche: TFBatchOberflaeche
   Font.Height = 28
   Font.Name = 'System'
   Font.Pitch = fpVariable
-  FormStyle = fsSystemStayOnTop
   OnActivate = FormActivate
   OnClose = FormClose
   OnCreate = FormCreate

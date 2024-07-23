@@ -264,6 +264,7 @@ begin
   LoadSkin('');
 end;
 
+
 procedure TFBatchOberflaeche.FormShow(Sender: TObject);
 begin
   // window state is controlled commandline parameters
@@ -298,7 +299,7 @@ begin
   {$IFDEF DARWIN}
   ForceStayOnTop(true);
   {$ENDIF DARWIN}
-   ProcessMess;
+  ProcessMess;
 end;
 
 function rgbStringToColor(str: string): TColor;
@@ -604,7 +605,7 @@ end;
 
 procedure TFBatchOberflaeche.FormActivate(Sender: TObject);
 begin
-  ForceStayOnTop(BatchScreenOnTop);
+  //ForceStayOnTop(BatchScreenOnTop);
   FOldProgress := 0;
 end;
 
@@ -614,20 +615,23 @@ procedure TFBatchOberflaeche.ForceStayOnTop(YesNo: boolean);
 begin
   if Assigned(LogDatei) then
     LogDatei.log_prog('ForceStayOnTop start: '+BoolToStr(YesNo,true), LLnotice);
+  setWindowState(aktBatchWindowMode);
   if YesNo then
   begin
     //{ make to system wide top most window }
-    //FormStyle := fsSystemStayOnTop;
+    //FormStyle := fsStayOnTop;
     //{ now allow new started windows (setup) to get the system wide top most position }
-    FormStyle := fsSystemStayOnTop;
+    FormStyle := fsNormal;
     BatchScreenOnTop := True;
   end
   else
   begin
-    FormStyle := fsStayOnTop;
+    FormStyle := fsNormal;
+    //BringToFront;
+    //FormStyle := fsNormal;
     BatchScreenOnTop := False;
   end;
-  setWindowState(aktBatchWindowMode);
+  Visible := True;
   BringToFront;
   Application.ProcessMessages;
 end;
