@@ -348,6 +348,9 @@ type
     FtestSyntax: boolean;  // default=false ; if true then run syntax check
 
 
+    function AllsignedHackCommand(var powershellpara: string;
+      var tempfilename: string; var passparas: string;
+      var programparas: string; var programfilename: string): string;
     function IsPowershellExecutionPolicyRestricted: boolean;
     function GetPowershellExecutionPolicy(Scope:string='EffectiveExecutionPolicy'): string;
     procedure parsePowershellCall(var Command: string; var AccessString: string;
@@ -11333,6 +11336,7 @@ var
   exitcode: integer;
   myoutput: TXStringlist;
   powershellpara: string;
+  DisableExecutionPolicyCommand: string;
   tmplist: TStringList;
   AllSignedHack: boolean = false;
   catcommand: string = 'cat ';
@@ -11348,6 +11352,12 @@ begin
     threaded := False;
     use_sp := True; // use startprocess by default
     powershellpara := '';
+    DisableExecutionPolicyCommand := '"function Disable-ExecutionPolicy {'
+      + '($ctx = $executioncontext.gettype().getfield'
+      + '(''_context'',''nonpublic,instance'').getvalue( $executioncontext)).gettype().getfield'
+      + '(''_authorizationManager'',''nonpublic,instance'').setvalue'
+      + '($ctx, (new-object System.Management.Automation.AuthorizationManager ''Microsoft.PowerShell''))};'
+      + ' Disable-ExecutionPolicy; ';
 
 
     if Sektion.Count = 0 then
@@ -11478,13 +11488,13 @@ begin
     if (pos('powershell.exe', LowerCase(programfilename)) > 0)
       or (pos('pwsh.exe', LowerCase(programfilename)) > 0) then
     begin
-      powershellpara := ' -ExecutionPolicy ByPass -file ';
+      powershellpara := ' -NoProfile -Command ';
       useext := '.ps1';
     end;
     if (LowerCase(programfilename) = 'powershell') or (LowerCase(programfilename) = 'pwsh') then
     begin
       // we add '-file ' as last param for powershell
-      powershellpara := ' -ExecutionPolicy ByPass -file ';
+      powershellpara := ' -NoProfile -Command ';
       useext := '.ps1';
     end;
     if useext = '.ps1' then  // we are on powershell
@@ -11552,32 +11562,18 @@ begin
         end;
       end;
 
-      if allSignedHack then
-      begin
-        powershellpara := ' -Command ';
-        if trim(passparas) <> '' then
-           LogDatei.log('Powershell with AllSigned/Restricted: ignored passparas: ' +
-             passparas, LLinfo);
-        {$IFDEF WINDOWS}
-        catcommand := 'type ';
-        {$ENDIF WINDOWS}
-        //commandline := 'cmd.exe /C ' + catcommand + tempfilename +
-        //  ' | ' + '"' + programfilename + '" ' + programparas + ' ' + powershellpara;
-        commandline := '"' + programfilename + '" ' + programparas +
-          ' ' + powershellpara + '"Get-Content -Path ' + tempfilename +
-          ' | Out-String | Invoke-Expression" ';
-      end
-      else
+
       begin
         // if parameters end with '=' we concat tempfile without space
         if copy(programparas, length(programparas), 1) = '=' then
           commandline :=
             '"' + programfilename + '" ' + programparas + '"' +
-            powershellpara + tempfilename + '"  ' + passparas
+            powershellpara + DisableExecutionPolicyCommand + tempfilename + '"  ' + passparas
         else
           commandline :=
             '"' + programfilename + '" ' + programparas + ' ' +
-            powershellpara + tempfilename + '  ' + passparas;
+            powershellpara + DisableExecutionPolicyCommand + tempfilename + '  ' + passparas;
+        LogDatei.log('powershell commandline: ' + commandline, LLNotice);
       end;
 
 
@@ -21743,6 +21739,24 @@ begin
   finally
     Result:=AllSignedHack;
   end;
+end;
+
+function TuibInstScript.AllsignedHackCommand(var powershellpara: string;
+  var tempfilename: string; var passparas: string; var programparas: string;
+  var programfilename: string): string;
+var
+  commandline: string;
+begin
+  powershellpara := ' -Command ';
+  if trim(passparas) <> '' then
+     LogDatei.log('Powershell with AllSigned/Restricted: ignored passparas: ' +
+       passparas, LLinfo);
+  //commandline := 'cmd.exe /C ' + catcommand + tempfilename +
+  //  ' | ' + '"' + programfilename + '" ' + programparas + ' ' + powershellpara;
+  commandline := '"' + programfilename + '" ' + programparas +
+    ' ' + powershellpara + '"Get-Content -Path ' + tempfilename +
+    ' | Out-String | Invoke-Expression" ';
+  Result:=commandline;
 end;
 
 procedure TuibInstScript.SetVariableWithErrors(const Sektion: TWorkSection;
