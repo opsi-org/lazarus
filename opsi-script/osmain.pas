@@ -1728,25 +1728,10 @@ procedure Productlist;
 
 var
   i: integer;
-  //KorrektSortierte: integer;
-  //Bootmode: string;
-  //bootmodeFromRegistry: boolean;
-  //Fehler: string;
-  //numberValue: string;
-  //errorNumber: integer;
   extremeErrorLevel: TErrorLevel;
   showErrorMessages: boolean;
-  //ps: string;
-  //itemlist: TXStringlist;
-  //user, dom, s4, sid: string;
-  //ErrorInfo: string;
   goOn: boolean;
-  //problemString: string;
-  ///val :   Integer;
-  //trycounter, maxtries: integer;
-  //{$IFDEF WINDOWS}
-  //regDataType: tuibRegDataType;
-  //{$ENDIF WINDOWS}
+  Produkte: TStringList = nil;
 
 begin
   LogDatei.LogProduktId := False;
@@ -1757,7 +1742,6 @@ begin
   DontUpdateMemo := True;
 
   OpsiData.setActualClient(computername);
-  //Produkte := OpsiData.getListOfProducts;
   Produkte := TStringList.Create;
   Produkte.Assign(TStringList(scriptlist));
 
