@@ -1320,15 +1320,12 @@ begin
           BatchWindowMode := bwmMaximized;
           SavedBatchWindowMode := BatchWindowMode;
           FBatchOberflaeche.SetBatchWindowMode(BatchWindowMode);
-          //FBatchOberflaeche.setWindowState(BatchWindowMode);
           ProcessMess;
-          //FBatchOberflaeche.setWindowState(bwmMaximized);
           {$ENDIF GUI}
           LogDatei.LogProduktId := True;
-
           ProcessProdukt(extremeErrorLevel);
 
-          //FBatchOberflaeche.setWindowState(bwmNormalWindow);
+;
           LogDatei.log('BuildPC: update switches .....', LLDebug);
           if (PerformExitWindows < txrImmediateLogout) and (not scriptsuspendstate) then
           begin
