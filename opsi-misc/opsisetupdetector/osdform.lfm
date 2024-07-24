@@ -14,7 +14,7 @@ object resultForm1: TresultForm1
   OnMouseLeave = FormMouseLeave
   OnShow = FormShow
   Position = poScreenCenter
-  LCLVersion = '3.2.0.0'
+  LCLVersion = '3.4.0.0'
   object Panel1: TPanel
     Left = 0
     Height = 40
@@ -6669,6 +6669,7 @@ object resultForm1: TresultForm1
         Caption = '1. Setup'
         ClientHeight = 582
         ClientWidth = 1031
+        OnEnter = TabSheetSetup1Enter
         ParentFont = False
         object FlowPanel1: TFlowPanel
           Left = 0
@@ -7859,6 +7860,7 @@ object resultForm1: TresultForm1
         Caption = '2. Setup'
         ClientHeight = 582
         ClientWidth = 1031
+        OnEnter = TabSheetSetup2Enter
         ParentFont = False
         object FlowPanel2: TFlowPanel
           Left = 0
@@ -9049,6 +9051,7 @@ object resultForm1: TresultForm1
         Caption = '3. Setup'
         ClientHeight = 582
         ClientWidth = 1031
+        OnEnter = TabSheetSetup3Enter
         ParentFont = False
         object FlowPanel8: TFlowPanel
           Left = 0

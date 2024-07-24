@@ -168,6 +168,7 @@ type
     Farchitecture: TArchitecture; // architecture of installer if known
     FmsiId: string;               // msi ID of installer if known
     FmsiProductName: string;      // msi Display name of installer if known
+    FmsiUpgradeCode: string;      // msi UpgradeCode of installer if known
     FmstAllowed: boolean;         // Is it allowed to add mst file
     FMstFullFileName: string;     // path + file name of the mst file source
     FmstFileNamePath: string;     // path only of the mst file source
@@ -217,6 +218,7 @@ type
     property architecture: TArchitecture read Farchitecture write Farchitecture;
     property msiId: string read FmsiId write FmsiId;
     property msiProductName: string read FmsiProductName write FmsiProductName;
+    property msiUpgradeCode: string read FmsiUpgradeCode write FmsiUpgradeCode;
     property mstAllowed: boolean read FmstAllowed write FmstAllowed;
     property mstFullFileName: string read FMstFullFileName write SetMstFullFileName;
     property mstFileNamePath: string read FmstFileNamePath write FmstFileNamePath;
@@ -898,7 +900,8 @@ begin
   FsetupFullFileName := AValue;
   FSetupFileNamePath := ExtractFileDir(AValue);
   FsetupFileName := ExtractFileName(AValue);
-  //Log('SetSetupFileNamePath '+MyString);
+  LogDatei.log('FsetupFullFileName '+FsetupFullFileName, LLdebug);
+  LogDatei.log('FsetupFileName '+FsetupFileName, LLdebug);
 end;
 
 procedure TSetupFile.SetMstFullFileName(const AValue: string);

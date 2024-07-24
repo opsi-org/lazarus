@@ -509,6 +509,9 @@ type
     procedure SpeedButtonHelpStartWinClick(Sender: TObject);
     procedure TabSheetCreateShow(Sender: TObject);
     procedure TabSheetIconsShow(Sender: TObject);
+    procedure TabSheetSetup1Enter(Sender: TObject);
+    procedure TabSheetSetup2Enter(Sender: TObject);
+    procedure TabSheetSetup3Enter(Sender: TObject);
     procedure TabSheetStartExit(Sender: TObject);
     procedure CallMakeProperties(Sender: TObject);
     procedure TaskPanelWinClick(Sender: TObject);
@@ -3920,6 +3923,24 @@ end;
 procedure TResultform1.TabSheetIconsShow(Sender: TObject);
 begin
 
+end;
+
+procedure TResultform1.TabSheetSetup1Enter(Sender: TObject);
+begin
+  // force focus - avoid cursor in one of the edit boxes
+  TICheckBoxS1Silent.SetFocus;
+end;
+
+procedure TResultform1.TabSheetSetup2Enter(Sender: TObject);
+begin
+  // force focus - avoid cursor in one of the edit boxes
+  TICheckBoxS2Silent.SetFocus;
+end;
+
+procedure TResultform1.TabSheetSetup3Enter(Sender: TObject);
+begin
+  // force focus - avoid cursor in one of the edit boxes
+  TICheckBoxS3Silent.SetFocus;
 end;
 
 procedure TResultform1.TabSheetStartExit(Sender: TObject);

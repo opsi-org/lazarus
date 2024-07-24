@@ -508,6 +508,9 @@ begin
       patchlist.add('#@MsiProductName' + IntToStr(i + 1) + '*#=' +
         aktProduct.SetupFiles[i].msiProductName);
 
+      patchlist.add('#@MsiUpgradecode' + IntToStr(i + 1) + '*#=' +
+        aktProduct.SetupFiles[i].msiUpgradeCode);
+
       patchlist.add('#@installCommandLine' + IntToStr(i + 1) + '*#=' +
         aktProduct.SetupFiles[i].installCommandLine);
 

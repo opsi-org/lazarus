@@ -143,6 +143,16 @@ todo:
    *
 
 # Changelog opsi-setup-detector
+## [4.3.3.0-1] - 2024-07-24
+
+### feature:
+- detect msi upgradeCode and store in setup object (msiUpgradeCode)
+  place holder #@MsiUpgradecode1*# (for example)
+  https://learn.microsoft.com/de-de/windows/win32/msi/upgradecode
+
+
+(Detlef Oertel <d.oertel@uib.de> 2024-07-24)
+
 
 ## [4.3.2.6-1] - 2024-05-22
 

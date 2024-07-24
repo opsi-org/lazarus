@@ -190,7 +190,8 @@ begin
 
   mysetup.installerId := installerId;
   mysetup.link := installerArray[integer(mysetup.installerId)].Link;
-  mysetup.setupFullFileName := myfilename;
+  //mysetup.setupFullFileName := myfilename;
+  mysetup.SetSetupFullFileName(myfilename);
   mysetup.installerSourceDir := '%scriptpath%\files' + IntToStr(mysetup.ID);
   if mysetup.preferSilent then
     mysetup.installCommandLine :=
@@ -300,6 +301,10 @@ begin
       mysetup.installErrorHandlingLines.Add(
         installerArray[integer(mysetup.installerId)].installErrorHandlingLines[i]);
   end;
+  {$IFDEF OSDGUI}
+  resetGUI;
+  procmess;
+  {$ENDIF OSDGUI}
 end; //get_aktProduct_general_info_win
 
 procedure get_null_info(myfilename: string; var mysetup: TSetupFile);
@@ -372,6 +377,13 @@ begin
       iPos := Pos(sSearch, myoutlines.Strings[i]);
       if (iPos <> 0) then
         mysetup.msiId :=
+          Copy(myoutlines.Strings[i], Length(sSearch) + 1,
+          Length(myoutlines.Strings[i]) - Length(sSearch));
+
+      sSearch := 'UpgradeCode: ';
+      iPos := Pos(sSearch, myoutlines.Strings[i]);
+      if (iPos <> 0) then
+        mysetup.msiUpgradeCode :=
           Copy(myoutlines.Strings[i], Length(sSearch) + 1,
           Length(myoutlines.Strings[i]) - Length(sSearch));
 
