@@ -11488,13 +11488,15 @@ begin
     if (pos('powershell.exe', LowerCase(programfilename)) > 0)
       or (pos('pwsh.exe', LowerCase(programfilename)) > 0) then
     begin
-      powershellpara := ' -NoProfile -Command ';
+      powershellpara := ' -NoProfile -Command ' + DisableExecutionPolicyCommand;
+      passparas := passparas + ' | Out-String; exit $LASTEXITCODE';
       useext := '.ps1';
     end;
     if (LowerCase(programfilename) = 'powershell') or (LowerCase(programfilename) = 'pwsh') then
     begin
       // we add '-file ' as last param for powershell
-      powershellpara := ' -NoProfile -Command ';
+      powershellpara := ' -NoProfile -Command ' + DisableExecutionPolicyCommand;
+      passparas := passparas + ' | Out-String; exit $LASTEXITCODE';
       useext := '.ps1';
     end;
     if useext = '.ps1' then  // we are on powershell
@@ -11507,8 +11509,6 @@ begin
       end;
       LogDatei.log('powershell powershell parameters are: ' + powershellpara, LLDebug);
       LogDatei.log('powershell programparas are: ' + programparas, LLDebug2);
-
-      AllSignedHack := IsPowershellExecutionPolicyRestricted();
     end;
 
     tempfilename := winstGetTempFileNameWithExt(useext);
@@ -11568,12 +11568,12 @@ begin
         if copy(programparas, length(programparas), 1) = '=' then
           commandline :=
             '"' + programfilename + '" ' + programparas + '"' +
-            powershellpara + DisableExecutionPolicyCommand + tempfilename + '"  ' + passparas
+            powershellpara + tempfilename + '"  ' + passparas
         else
           commandline :=
             '"' + programfilename + '" ' + programparas + ' ' +
-            powershellpara + DisableExecutionPolicyCommand + tempfilename + '  ' + passparas;
-        LogDatei.log('powershell commandline: ' + commandline, LLNotice);
+            powershellpara + tempfilename + '  ' + passparas;
+        LogDatei.log('commandline: ' + commandline, LLNotice);
       end;
 
 
