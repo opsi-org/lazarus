@@ -1419,7 +1419,7 @@ begin
   begin
     // delete the actual file
     if SysUtils.DeleteFile(tempfilename) then
-      Logdatei.log('The file: ' + tempfilename + ' has been deleted', LLDebug)
+      Logdatei.log('The file: ' + tempfilename + ' has been deleted', LLDebug2)
     else
       Logdatei.log('The file: ' + tempfilename + ' was not deleted', LLDebug);
   end;
@@ -10346,8 +10346,8 @@ begin
     if (lowercase(archparam) = '32bit') then
       shortarch := '32';
 
-    LogDatei.log('PowershellCall Executing: ' + command + ' ; mode: ' + shortarch,
-      LLNotice + logleveloffset);
+    LogDatei.log('PowershellCall: ' + command + ' (mode: ' + archparam +')',
+      LLNotice);
 
 
     mySektion := TWorkSection.Create(NestingLevel, ActiveSection);
@@ -11362,11 +11362,6 @@ begin
     OldNumberOfErrors := LogDatei.NumberOfErrors;
     OldNumberOfWarnings := LogDatei.NumberOfWarnings;
 
-    ps := '';
-    LogDatei.log(ps, LLNotice + logleveloffset);
-    ps := 'Execution of ' + Sektion.Name + ' ' + ExecParameter;
-    LogDatei.log(ps, LLNotice + logleveloffset);
-
     if pos(uppercase(PStatNames^ [tsExecuteWith]), uppercase(Sektion.Name)) > 0 then
       ps := Sektion.Name;
     //ps := (* 'Ausfuehrung von ' +  *) copy (Sektion.Name, length (PStatNames^ [tsExecuteWith]) + 1, length (Sektion.Name));
@@ -11613,16 +11608,13 @@ begin
       else
         use_sp := False;
 
-      { backport from 4.12.3  }
-      //if threaded then
-
       // new in 4.12.4.12.31 enable runasloggedonuser
       if runas = traLoggedOnUser then
         use_sp := True;
 
       if use_sp then
       begin
-        LogDatei.log('Executing with SP: ' + commandline, LLDebug);
+        LogDatei.log('Executing with SP: ' + commandline, LLDebug2);
         if not StartProcess(Commandline, showcmd, showoutput, not
           threaded, False, False, False, False, runas, '', WaitSecs,
           Report, FLastExitCodeOfExe, catchout, output, Sektion.Name) then
@@ -11636,7 +11628,7 @@ begin
       end
       else
       begin
-        LogDatei.log('Executing with RCACO:  ' + commandline, LLDebug);
+        LogDatei.log('Executing with RCACO:  ' + commandline, LLDebug2);
         if not RunCommandAndCaptureOut(commandline, True, output,
           report, showcmd, FLastExitCodeOfExe) then
         begin
