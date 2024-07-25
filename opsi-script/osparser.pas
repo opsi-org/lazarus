@@ -11335,7 +11335,8 @@ var
   hookscriptfile: string;
   exitcode: integer;
   myoutput: TXStringlist;
-  powershellpara: string;
+  powershellstart: string = '';
+  powershellend: string = '';
   DisableExecutionPolicyCommand: string;
   tmplist: TStringList;
   AllSignedHack: boolean = false;
@@ -11351,14 +11352,6 @@ begin
     force64 := False;
     threaded := False;
     use_sp := True; // use startprocess by default
-    powershellpara := '';
-    DisableExecutionPolicyCommand := '"function Disable-ExecutionPolicy {'
-      + '($ctx = $executioncontext.gettype().getfield'
-      + '(''_context'',''nonpublic,instance'').getvalue( $executioncontext)).gettype().getfield'
-      + '(''_authorizationManager'',''nonpublic,instance'').setvalue'
-      + '($ctx, (new-object System.Management.Automation.AuthorizationManager ''Microsoft.PowerShell''))}; '
-      + 'Disable-ExecutionPolicy; ';
-
 
     if Sektion.Count = 0 then
       exit;
@@ -11479,36 +11472,41 @@ begin
         runAs := traInvoker;
       end;
     end;
-
     useext := '.cmd';
-    // special handling for powershell
-    // we need .ps1 as extension
-    // we need to call the script with the parameter -file in order to get the exitcode
-    // https://community.idera.com/database-tools/powershell/powertips/b/tips/posts/correctly-returning-exit-codes
+
+    // special handling for powershell (we need .ps1 as extension)
+    // Remarks:
+    // 1. Disable ExecutionPolicy by Swapping out the AuthorizationManager
+    //    (https://www.netspi.com/blog/technical-blog/network-pentesting/15-ways-to-bypass-the-powershell-execution-policy/)
+    // 3. Run powershell script
+    // 2. Pipe output of powershell script to Out-String to get all of the output
+    // 3. TrimEnd() to remove new line added by Out-String
+    // 4. run exit $LASTEXITCODE as last command to get the exitcode of the powershell script
+    //    (https://stackoverflow.com/questions/4391553/how-to-return-an-exit-code-from-a-powershell-script-only-when-run-non-interactiv)
+    // powershell call looks like:
+    //"powershell.exe" -NoProfile -Command "function Disable-ExecutionPolicy {($ctx = $executioncontext.gettype().getfield('_context','nonpublic,instance').getvalue( $executioncontext)).gettype().getfield('_authorizationManager','nonpublic,instance').setvalue($ctx, (new-object System.Management.Automation.AuthorizationManager 'Microsoft.PowerShell'))}; Disable-ExecutionPolicy; (c:\opsi.org\tmp\_opsiscript_42M8PZo5vd.ps1 | Out-String).TrimEnd(); exit $LASTEXITCODE;
     if (pos('powershell.exe', LowerCase(programfilename)) > 0)
-      or (pos('pwsh.exe', LowerCase(programfilename)) > 0) then
+      or (LowerCase(programfilename) = 'powershell')
+      or (pos('pwsh.exe', LowerCase(programfilename)) > 0)
+      or (LowerCase(programfilename) = 'pwsh') then
     begin
-      powershellpara := ' -NoProfile -Command ' + DisableExecutionPolicyCommand +'(';
-      passparas := passparas + ' | Out-String).TrimEnd(); exit $LASTEXITCODE;';
+      //Disable ExecutionPolicy by Swapping out the AuthorizationManager
+      DisableExecutionPolicyCommand := '"function Disable-ExecutionPolicy {'
+      + '($ctx = $executioncontext.gettype().getfield'
+      + '(''_context'',''nonpublic,instance'').getvalue( $executioncontext)).gettype().getfield'
+      + '(''_authorizationManager'',''nonpublic,instance'').setvalue'
+      + '($ctx, (new-object System.Management.Automation.AuthorizationManager ''Microsoft.PowerShell''))}; '
+      + 'Disable-ExecutionPolicy; ';
+      //special construction for powershell
+      powershellstart := ' -Command ' + DisableExecutionPolicyCommand +'(';
+      powershellend := ' | Out-String).TrimEnd(); exit $LASTEXITCODE;';
       useext := '.ps1';
-    end;
-    if (LowerCase(programfilename) = 'powershell') or (LowerCase(programfilename) = 'pwsh') then
-    begin
-      // we add '-file ' as last param for powershell
-      powershellpara := ' -NoProfile -Command ' + DisableExecutionPolicyCommand +'(';
-      passparas := passparas + ' | Out-String).TrimEnd(); exit $LASTEXITCODE;';
-      useext := '.ps1';
-    end;
-    if useext = '.ps1' then  // we are on powershell
-    begin
       if pos(' -file', LowerCase(programparas)) > 0 then
       begin
         // It may be that the customer did this before and '- file ' is the end of programparas
         // so we shoud remove this (even for AllSigned hack)
         programparas := copy(programparas, 1, rpos(' -file', LowerCase(programparas)));
       end;
-      LogDatei.log('powershell powershell parameters are: ' + powershellpara, LLDebug);
-      LogDatei.log('powershell programparas are: ' + programparas, LLDebug2);
     end;
 
     tempfilename := winstGetTempFileNameWithExt(useext);
@@ -11562,20 +11560,17 @@ begin
         end;
       end;
 
-
-      begin
-        // if parameters end with '=' we concat tempfile without space
-        if copy(programparas, length(programparas), 1) = '=' then
-          commandline :=
-            '"' + programfilename + '" ' + programparas + '"' +
-            powershellpara + tempfilename + '"  ' + passparas
-        else
-          commandline :=
-            '"' + programfilename + '" ' + programparas + ' ' +
-            powershellpara + tempfilename + '  ' + passparas;
-        LogDatei.log('commandline: ' + commandline, LLNotice);
-      end;
-
+      LogDatei.log('Execute program: ' + programfilename + ' parameters: '  + programparas
+        + ' script arguments: ' + passparas, LLDebug2);
+      // if parameters end with '=' we concat tempfile without space
+      if copy(programparas, length(programparas), 1) = '=' then
+        commandline :=
+          '"' + programfilename + '" ' + programparas + '"' +
+          powershellstart + tempfilename + '" ' + passparas + powershellend
+      else
+        commandline :=
+          '"' + programfilename + '" ' + programparas + ' ' +
+          powershellstart + tempfilename + ' ' + passparas + powershellend;
 
       {$IFNDEF WINDOWS}
       if onlyWindows then
