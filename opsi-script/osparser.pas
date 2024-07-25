@@ -11654,40 +11654,6 @@ begin
         end;
       end;
 
-(*   old .4.12.4 version:
-
-      if threaded then
-        showcmd := sw_hide;
-
-      LogDatei.log_prog('Executing ' + commandline, LLDebug);
-      if not StartProcess(Commandline, showcmd, showoutput, not threaded,
-        False, False, False, False, runas, '', WaitSecs, Report,
-        FLastExitCodeOfExe, catchout, output,Sektion.Name) then
-      begin
-        ps := 'Error: ' + Report;
-        LogDatei.log(ps, LLcritical);
-        FExtremeErrorLevel := LevelFatal;
-        if not threaded then
-          scriptstopped := True;
-      end
-      else if threaded then
-        LogDatei.log(Report, LLinfo)
-      else
-      begin
-        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 4;
-        LogDatei.log('', LLDebug + logleveloffset);
-        LogDatei.log('output:', LLDebug + logleveloffset);
-        LogDatei.log('--------------', LLDebug + logleveloffset);
-
-        for i := 0 to output.Count - 1 do
-        begin
-          LogDatei.log(output.strings[i], LLDebug + logleveloffset);
-        end;
-
-        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 4;
-        LogDatei.log('', LLDebug + logleveloffset);
-      end;
- *)
       {$IFDEF WIN32}
       if Wow64FsRedirectionDisabled then
       begin
@@ -11706,7 +11672,7 @@ begin
       Result := tsrExitProcess;
     if Logdatei.UsedLogLevel < LLconfidential then
       if not threaded then
-        deleteTempBatFiles(tempfilename, logleveloffset);
+        deleteTempBatFiles(tempfilename, 2);
   finally
     {$IFDEF GUI}
     FBatchOberflaeche.SetElementVisible(False, eActivityBar);//showAcitvityBar(False);
@@ -12284,6 +12250,7 @@ begin
             if Skip(')', r, r, InfoSyntaxError) then
             begin
               syntaxCheck := True;
+              LogDatei.log('GetOutStreamFromSection: ' + s1, LLNotice);
               if not testSyntax then
               begin
                 savelogsindentlevel := LogDatei.LogSIndentLevel;
