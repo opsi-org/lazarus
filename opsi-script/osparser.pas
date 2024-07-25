@@ -11356,8 +11356,8 @@ begin
       + '($ctx = $executioncontext.gettype().getfield'
       + '(''_context'',''nonpublic,instance'').getvalue( $executioncontext)).gettype().getfield'
       + '(''_authorizationManager'',''nonpublic,instance'').setvalue'
-      + '($ctx, (new-object System.Management.Automation.AuthorizationManager ''Microsoft.PowerShell''))};'
-      + ' Disable-ExecutionPolicy; ';
+      + '($ctx, (new-object System.Management.Automation.AuthorizationManager ''Microsoft.PowerShell''))}; '
+      + 'Disable-ExecutionPolicy; ';
 
 
     if Sektion.Count = 0 then
@@ -11488,15 +11488,15 @@ begin
     if (pos('powershell.exe', LowerCase(programfilename)) > 0)
       or (pos('pwsh.exe', LowerCase(programfilename)) > 0) then
     begin
-      powershellpara := ' -NoProfile -Command ' + DisableExecutionPolicyCommand;
-      passparas := passparas + ' | Out-String; exit $LASTEXITCODE';
+      powershellpara := ' -NoProfile -Command ' + DisableExecutionPolicyCommand +'(';
+      passparas := passparas + ' | Out-String).TrimEnd(); exit $LASTEXITCODE;';
       useext := '.ps1';
     end;
     if (LowerCase(programfilename) = 'powershell') or (LowerCase(programfilename) = 'pwsh') then
     begin
       // we add '-file ' as last param for powershell
-      powershellpara := ' -NoProfile -Command ' + DisableExecutionPolicyCommand;
-      passparas := passparas + ' | Out-String; exit $LASTEXITCODE';
+      powershellpara := ' -NoProfile -Command ' + DisableExecutionPolicyCommand +'(';
+      passparas := passparas + ' | Out-String).TrimEnd(); exit $LASTEXITCODE;';
       useext := '.ps1';
     end;
     if useext = '.ps1' then  // we are on powershell
