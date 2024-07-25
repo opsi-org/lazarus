@@ -7,7 +7,7 @@ opsi-script (4.12.15.5) unreleased/testing (4.2/4.3); urgency=medium
 * [fix] powershellcall/ExecWith powershell:  approvments in runnning of powershell
            commands on machines were powershell scripts are restricetd.
 
--- j.werner <j.werner@uib.de> 17 July 2024
+-- j.werner <j.werner@uib.de> 24 July 2024
 
 
 opsi-script (4.12.15.4) unreleased/testing (4.2/4.3); urgency=medium
