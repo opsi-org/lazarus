@@ -133,7 +133,7 @@ begin
     end
     else
     begin
-      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 6;
+      
       LogDatei.log('', LLDebug);
       LogDatei.log('output:', LLDebug);
       LogDatei.log('--------------', LLDebug);
@@ -141,7 +141,7 @@ begin
       begin
         LogDatei.log(outlines.strings[i], LLDebug);
       end;
-      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
+      
       LogDatei.log('', LLDebug);
       Result := ExitCode;
     end;
@@ -184,7 +184,7 @@ begin
   end
   else
   begin
-    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 6;
+    
     LogDatei.log('', LLDebug);
     LogDatei.log('output:', LLDebug);
     LogDatei.log('--------------', LLDebug);
@@ -192,7 +192,7 @@ begin
     begin
       LogDatei.log(outlines.strings[i], LLDebug);
     end;
-    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
+    
     LogDatei.log('', LLDebug);
     Result := ExitCode;
   end;

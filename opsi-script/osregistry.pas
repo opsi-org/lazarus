@@ -831,9 +831,6 @@ begin
     end;
 
   end;
-
-  //LogDatei.LogSIndentLevel := baseindentlevel + countChar ('\', key);
-  //LogDatei.log ( 'setze LogSIndentLevel auf ' + inttostr(LogDatei.LogSIndentLevel), LLInfo);
 end;
 
 
@@ -891,9 +888,6 @@ begin
       Result := True;
     end;
   end;
-
-  LogDatei.LogSIndentLevel := baseindentlevel + countChar('\', key);
-
 end;
 
 function TuibRegistry.GetAllSubkeys(const key0: string): TStringList;
@@ -922,14 +916,14 @@ begin
     b := StrAlloc(maxsubkeylength + 1);
     for i := subkeynumber - 1 downto 0 do
     begin
-      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+      
       len := maxsubkeylength + 1;
       errorcode := RegEnumKeyEx(mykey, i, b, len, nil, nil, nil, nil);
       LogDatei.log(' errorcode ' + IntToStr(errorcode) + ' "' +
         RemoveLineBreaks(SysErrorMessage(ErrorCode)) + '"', LLInfo);
       LogDatei.log('there ' + b, LLInfo);
       setString(s, b, len);
-      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
+      
     end;
     Result.add(s);
     freemem(b);
@@ -956,7 +950,7 @@ begin
 
   if keyopened then
   begin
-    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+    
 
     size := 0;
     nameSize := 255;
@@ -985,7 +979,7 @@ begin
 
   end;
 
-  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
+  
 end;
 
 
@@ -1013,7 +1007,7 @@ begin
   enckey := UTF8ToWinCP(key);
   encsubkey := UTF8ToWinCP(subkey);
   startIndentLevel := LogDatei.LogSIndentLevel;
-  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+  
 
   (* no encoding here becaus we are perhaps in a recusrsion
   if enckey = '' then
@@ -1086,7 +1080,7 @@ begin
     end;
     CloseKey;
   end;
-  LogDatei.LogSIndentLevel := startIndentLevel;
+  ;
 end;
 
 
@@ -1104,7 +1098,6 @@ begin
   Result := True;
   enckey := UTF8ToWinCP(key);
   encsubkey := UTF8ToWinCP(subkey);
-  //startindentlevel := LogDatei.LogSIndentLevel;
 
   loglevel := Logdatei.LogLevel;
   LogDatei.LogLevel := LLInfo; //don't log the opening of a key
@@ -1143,7 +1136,7 @@ begin
 
   end;
 
-  //LogDatei.LogSIndentLevel := startindentlevel;
+  //;
 
 end;
 

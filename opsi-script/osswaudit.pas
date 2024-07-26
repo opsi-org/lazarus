@@ -99,7 +99,7 @@ begin
     Regist := Tuibregistry.Create(True)
   else
     Regist := Tuibregistry.Create(False);
-  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+  
   basekey := 'SOFTWARE\Microsoft\Windows\CurrentVersion\App Management\ARPCache\' +
     productkey;
   if Regist.OpenExistingKey('HKEY_LOCAL_MACHINE', basekey) then

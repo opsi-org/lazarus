@@ -183,7 +183,7 @@ begin
     begin
       LogDatei.log(output.strings[i], LLDebug2);
     end;
-    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
+    
     LogDatei.log('', LLDebug2);
     Result := exitcode;
   end;
@@ -452,7 +452,7 @@ begin
   else
   begin
     if Logdatei <> nil then
-      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 6;
+      
     if Logdatei <> nil then
       LogDatei.log('', LLDebug2);
     if Logdatei <> nil then
@@ -470,7 +470,7 @@ begin
       end;
     end;
     if Logdatei <> nil then
-      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
+      
     if Logdatei <> nil then
       LogDatei.log('', LLDebug2);
   end;
