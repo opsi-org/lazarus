@@ -209,9 +209,6 @@ begin
   // subfoldername is ignored at Linux
   result := false;
   oldFolderPath := myFolderPath;
-  if FolderOpened
-  then
-    // some folder was already been referred
   if produceNameFromCsidl(systemfolderName,systemfolder,msg) then
   begin
    mySystemFolder := Systemfolder;

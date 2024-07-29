@@ -286,7 +286,6 @@ begin
         end
         else
         begin
-          
           Logdatei.Log('', LLinfo);
           Logdatei.Log('output:', LLinfo);
           Logdatei.Log('--------------', LLinfo);
@@ -294,7 +293,6 @@ begin
           begin
             Logdatei.Log(output.strings[i], LLinfo);
           end;
-          
           Logdatei.Log('', LLinfo);
         end;
         output.Free;
@@ -349,7 +347,6 @@ begin
       end
       else
       begin
-        
         Logdatei.Log('', LLinfo);
         Logdatei.Log('output:', LLinfo);
         Logdatei.Log('--------------', LLinfo);
@@ -357,7 +354,6 @@ begin
         begin
           Logdatei.Log(output.strings[i], LLinfo);
         end;
-        
         Logdatei.Log('', LLinfo);
       end;
       output.Free;

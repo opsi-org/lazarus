@@ -133,7 +133,6 @@ begin
     end
     else
     begin
-      
       LogDatei.log('', LLDebug);
       LogDatei.log('output:', LLDebug);
       LogDatei.log('--------------', LLDebug);
@@ -141,7 +140,6 @@ begin
       begin
         LogDatei.log(outlines.strings[i], LLDebug);
       end;
-      
       LogDatei.log('', LLDebug);
       Result := ExitCode;
     end;
@@ -184,7 +182,6 @@ begin
   end
   else
   begin
-    
     LogDatei.log('', LLDebug);
     LogDatei.log('output:', LLDebug);
     LogDatei.log('--------------', LLDebug);
@@ -192,7 +189,6 @@ begin
     begin
       LogDatei.log(outlines.strings[i], LLDebug);
     end;
-    
     LogDatei.log('', LLDebug);
     Result := ExitCode;
   end;

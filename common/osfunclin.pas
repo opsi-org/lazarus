@@ -195,7 +195,6 @@ begin
   else
   begin
     Result := True;
-    
     LogDatei.log('', LLDebug);
     LogDatei.log('output:', LLDebug);
     LogDatei.log('--------------', LLDebug);
@@ -203,7 +202,6 @@ begin
     begin
       LogDatei.log(outlines.strings[i], LLDebug);
     end;
-    
     LogDatei.log('', LLDebug);
   end;
   outlines.Free;
@@ -245,7 +243,6 @@ begin
       end
       else
       begin
-        
         LogDatei.log('', LLDebug);
         LogDatei.log('output:', LLDebug);
         LogDatei.log('--------------', LLDebug);
@@ -278,7 +275,6 @@ begin
             //resultstring := resultstring + lineparts.Strings[2] + ';';
             Result.Add(resultstring);
           end;
-        
         LogDatei.log('', LLDebug);
       end;
     except
@@ -392,7 +388,6 @@ begin
   end
   else
   begin
-    
     LogDatei.log('', LLDebug);
     LogDatei.log('output:', LLDebug);
     LogDatei.log('--------------', LLDebug);
@@ -422,7 +417,6 @@ begin
         end;
       end;
     end;
-    
     LogDatei.log('', LLDebug);
   end;
   outlines.Free;
@@ -473,7 +467,6 @@ begin
       [poWaitOnExit, poUsePipes, poStderrToOutPut], swoShow) then
     begin
       Result := True;
-      
       LogDatei.log('', LLDebug2);
       LogDatei.log('output:', LLDebug2);
       LogDatei.log('--------------', LLDebug2);
@@ -522,7 +515,6 @@ begin
       ReleaseInfoFromFile.LoadFromFile(FilePath);
       for i := 0 to Mapping.Count - 1 do
         ReleaseInfo.Add(Mapping.Names[i] + '=' + AnsiDequotedStr(ReleaseInfoFromFile.Values[Mapping.ValueFromIndex[i]],'"'));
-      
       LogDatei.log('', LLDebug2);
       LogDatei.log('output:', LLDebug2);
       LogDatei.log('--------------', LLDebug2);
@@ -713,7 +705,6 @@ begin
   end
   else
   begin
-    
     LogDatei.log('', LLDebug2);
     LogDatei.log('output:', LLDebug2);
     LogDatei.log('--------------', LLDebug2);

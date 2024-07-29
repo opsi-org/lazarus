@@ -6608,9 +6608,6 @@ var
 begin
   LogSCommand := 'addEntry ' + '[' + Sektion + '] ' + Eintrag;
   Logged := Logdatei.Log(LogSCommand, LLinfo);
-
-
-
   IdentAbspalten(Eintrag, Ident, Value);
   if FindSectionheaderIndex(Sektion) = -1 then
     addSection(Sektion);
@@ -6642,9 +6639,6 @@ begin
       Logdatei.Log(LogS, LLwarning);
     end;
   end;
-
-
-
 end;
 
 procedure TuibPatchIniFile.delEntry(const Sektion, Eintrag: string);
@@ -6732,9 +6726,7 @@ begin
   IdentAbspalten(Eintrag, Ident, Value);
   if FindSectionheaderIndex(Sektion) = -1 then
   begin
-
     addSection(Sektion);
-
   end;
 
   i := FindIdentIndex(Sektion, Ident);
@@ -6786,9 +6778,7 @@ begin
 
   if FindSectionheaderIndex(Sektion) = -1 then
   begin
-
     addSection(Sektion);
-
   end;
 
   i := FindEntryIndex(Sektion, Ident, Value);
@@ -7253,9 +7243,7 @@ begin
       //if LogDatei <> nil
       //then
       begin
-
         Logdatei.Log('Variable ' + ident + ' not found', LLinfo);
-
       end;
       found := False;
     end
@@ -7267,9 +7255,7 @@ begin
       //if LogDatei <> nil
       //then
       begin
-
         Logdatei.Log('resulting ' + Result, LLinfo);
-
       end;
     end;
   end;
@@ -7279,9 +7265,7 @@ begin
     //if LogDatei <> nil
     //then
     begin
-
       Logdatei.Log('taking default ' + defaultvalue, LLinfo);
-
     end;
     Result := DefaultValue;
   end;
@@ -9068,11 +9052,8 @@ var
                 unzip_InUse: ZipError :=
                     ZipFileName + ' DLL already in use, try later or use pkunzip!';
               end;
-
-
               LogS := 'Error: ' + ZipError;
               LogDatei.log(LogS, LLError);
-
             end;
 
             if (rc = unzip_ReadErr) or (rc = unzip_Userabort) or
@@ -9097,19 +9078,13 @@ var
 
       if zipresult then
       begin
-
-
         NumberOfExtractedFiles := CentralForm.zipfiles.items.Count;
         for FileI := 0 to NumberOfExtractedFiles - 1 do
         begin
           FName := CutRightBlanks(CentralForm.zipfiles.items[FileI]);
-
           LogS := FName + ' extracted to ' + ExtractTempDir;
           Logdatei.Log(LogS, LLinfo);
         end;
-
-
-
         for FileI := 0 to NumberOfExtractedFiles - 1 do
         begin
           FName := CutRightBlanks(CentralForm.zipfiles.items[FileI]);
@@ -9119,13 +9094,11 @@ var
           ToCopyOrNotToCopy(DecompressedSource, TargetName);
         end;
       end;
-
       // clean up
       SaveLogLevel := LogDatei.LogLevel;
       LogDatei.LogLevel := LLinfo;
       AllDelete(ExtractTempDir + '*.*', True, False, 0);
       LogDatei.LogLevel := SaveLogLevel;
-
       //freemem(PExtractTempDir);
     end;
 
@@ -9232,9 +9205,6 @@ var
           {$ENDIF GUI}
           LogS := 'Source ' + SourceName;
           LogDatei.log(LogS, LLDebug);
-
-
-
           //{$IFDEF WIN32}
           if cpSpecify and cpExtract = cpExtract then
           begin
@@ -9271,9 +9241,6 @@ var
             LogDatei.log_prog('copy candidate: ' + SourceName +
               ' to: ' + TargetName, LLDebug2);
           ToCopyOrNotToCopy(SourceName, TargetName);
-
-
-
         end;
 
       FindResultcode := FindNextUTF8(SearchResult);
@@ -9406,8 +9373,6 @@ begin
     ProcessMess;
     {$ENDIF GUI}
   end;
-
-
 
   if CountModus = tccmCounted then
   begin

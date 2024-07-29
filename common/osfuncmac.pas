@@ -164,7 +164,6 @@ begin
       end
       else
       begin
-        
         LogDatei.log('', LLDebug);
         LogDatei.log('output:', LLDebug);
         LogDatei.log('--------------', LLDebug);

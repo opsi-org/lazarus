@@ -125,7 +125,6 @@ begin
           end
           else
           begin
-            
             LogDatei.log('', LLDebug3);
             LogDatei.log('output:', LLDebug3);
             LogDatei.log('--------------', LLDebug3);
@@ -204,7 +203,6 @@ begin
                   Result.Add(resultstring);
                 end;
             end;
-            
             LogDatei.log('', LLDebug3);
           end;
       until getProcessListSuccess or (retryCounter > 5);

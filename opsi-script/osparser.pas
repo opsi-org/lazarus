@@ -4868,16 +4868,10 @@ begin
       end;
 
     end;
-
     Regist.Free;
     Regist := nil;
-
     finishSection(Sektion, OldNumberOfErrors, OldNumberOfWarnings,
       DiffNumberOfErrors, DiffNumberOfWarnings);
-
-    ;
-    //
-
     if ExitOnError and (DiffNumberOfErrors > 0) then
       Result := tsrExitProcess;
   except
@@ -5062,6 +5056,7 @@ begin
 
       if LowerCase(Expressionstr) = LowerCase('OpenKey') then
       begin
+        keyOpenCommandExists := True;
         SyntaxCheck := False;
         GetWord(r, key, r, [']'], True);
         key := trim(key) + ']';
@@ -5172,11 +5167,9 @@ begin
             keyOpened := not Regist.CloseKey;
           Regist.BaseIndentLevel := StartIndentLevel + 1;
           keyOpened := Regist.OpenKey(key0, key);
-          //
         end
         else
           reportError(Sektion, i, Sektion.strings[i - 1], ErrorInfo);
-
       end   // openkey
 
       else if LowerCase(Expressionstr) = LowerCase('DeleteKey') then
@@ -5648,9 +5641,6 @@ begin
 
   finishSection(Sektion, OldNumberOfErrors, OldNumberOfWarnings,
     DiffNumberOfErrors, DiffNumberOfWarnings);
-
-  ;
-  //
 
   if ExitOnError and (DiffNumberOfErrors > 0) then
     Result := tsrExitProcess;
@@ -7599,6 +7589,7 @@ var
 
         if LowerCase(Expressionstr) = LowerCase('OpenNode') then
         begin
+          nodeOpenCommandExists := True;
           SyntaxCheck := False;
           if GetStringA(trim(r), nodepath, r, errorinfo, True) then
           begin
@@ -10263,7 +10254,6 @@ from defines.inc
     finishSection(Sektion, OldNumberOfErrors, OldNumberOfWarnings,
       DiffNumberOfErrors, DiffNumberOfWarnings);
 
-    ;
     if ExitOnError and (DiffNumberOfErrors > 0) then
       Result := tsrExitProcess;
 
@@ -18815,7 +18805,6 @@ begin
           .log (StopInfo, LLinfo);
         End; *)
 
-    ;
     slist.Free;
 
   except
@@ -26323,8 +26312,6 @@ begin
     doLogEntries(StopInfo, LLinfo);
 
   ArbeitsSektion.Free;
-
-  ;
 
   Result := ActionResult;
   output.Free;
