@@ -20984,9 +20984,9 @@ begin
   if Result then
   begin
     if BooleanResult then
-      RunTimeInfo := RunTimeInfo + '   <<< result true'
+      RunTimeInfo := 'expression: [' + RunTimeInfo + '] <<< is true'
     else
-      RunTimeInfo := RunTimeInfo + '   <<< result false';
+      RunTimeInfo := 'expression: [' + RunTimeInfo + '] <<< is false';
   end
   else
     RunTimeInfo := RunTimeInfo + '    <<< syntax error, no result!! - set to false';
@@ -22515,14 +22515,14 @@ begin
               IntToStr(sektion.NestingLevel) + ' ThenBranch: ' +
               BoolToStr(ThenBranch[NestLevel], True) + ' Conditions: ' +
               BoolToStr(Conditions[NestLevel], True), LLDebug);
-            doLogEntries(PStatNames^ [tsCondOpen], LLinfo);
+            doLogEntries(PStatNames^ [tsCondOpen], LLDebug2);
             if NestLevel > High(TConditions) then
             begin
               reportError(Sektion, linecounter, '', 'Too many nested conditions');
               exit;
             end;
 
-            LogDatei.LogSIndentLevel := NestLevel;
+            //LogDatei.LogSIndentLevel := NestLevel;
 
             if ((NestLevel = ActLevel + 1) and Conditions[ActLevel]) or testSyntax then
             begin
@@ -22548,9 +22548,9 @@ begin
                 reportError(Sektion, linecounter, Remaining, 'erroneous characters ');
             end;
 
-            LogDatei.LogSIndentLevel := NestLevel - 1;
-            doLogEntries(PStatNames^ [tsCondThen], LLDebug);
-            LogDatei.LogSIndentLevel := NestLevel;
+            //LogDatei.LogSIndentLevel := NestLevel - 1;
+            doLogEntries(PStatNames^ [tsCondThen], LLDebug2);
+            //LogDatei.LogSIndentLevel := NestLevel;
           end;
           //ArbeitsSektion.NestingLevel:=Nestlevel;
           //Sektion.NestingLevel:=Nestlevel;
@@ -22586,9 +22586,9 @@ begin
                 ThenBranch[NestLevel] := False;
 
                 // innerhalb einer aktiven Ebene Wechsel zwischen positivem/negativen Zweig
-                LogDatei.LogSIndentLevel := NestLevel - 1;
-                doLogEntries(PStatNames^ [tsCondElse], LLDebug);
-                LogDatei.LogSIndentLevel := NestLevel;
+                //LogDatei.LogSIndentLevel := NestLevel - 1;
+                doLogEntries(PStatNames^ [tsCondElse], LLDebug2);
+                //LogDatei.LogSIndentLevel := NestLevel;
 
                 if (NestLevel = ActLevel) then
                   // the else branch is valid, if we did not found any valid condition yet
@@ -22617,9 +22617,9 @@ begin
               BoolToStr(ThenBranch[NestLevel], True) + ' Conditions: ' +
               BoolToStr(Conditions[NestLevel], True), LLDebug);
 
-            LogDatei.LogSIndentLevel := NestLevel - 1;
-            doLogEntries(PStatNames^ [tsCondElseIf], LLDebug);
-            LogDatei.LogSIndentLevel := NestLevel;
+            //LogDatei.LogSIndentLevel := NestLevel - 1;
+            doLogEntries(PStatNames^ [tsCondElseIf], LLDebug2);
+            //LogDatei.LogSIndentLevel := NestLevel;
 
             if NestLevel > High(TConditions) then
             begin
@@ -22633,7 +22633,7 @@ begin
               exit;
             end;
 
-            LogDatei.LogSIndentLevel := NestLevel;
+            //LogDatei.LogSIndentLevel := NestLevel;
 
             // this is a else (if), so the if has to be evalutated
             // if the else is true
@@ -22669,9 +22669,9 @@ begin
                 reportError(Sektion, linecounter, Expressionstr, InfoSyntaxError);
               if Remaining <> '' then
                 reportError(Sektion, linecounter, Remaining, 'erroneous characters ');
-              LogDatei.LogSIndentLevel := NestLevel - 1;
-              doLogEntries(PStatNames^ [tsCondThen], LLDebug);
-              LogDatei.LogSIndentLevel := NestLevel;
+              //LogDatei.LogSIndentLevel := NestLevel - 1;
+              doLogEntries(PStatNames^ [tsCondThen], LLDebug2);
+              //LogDatei.LogSIndentLevel := NestLevel;
             end
             else
               Conditions[NestLevel] := not elseifConditions[NestLevel];
@@ -22714,8 +22714,8 @@ begin
             //ArbeitsSektion.NestingLevel:=Nestlevel;
             //Sektion.NestingLevel:=Nestlevel;
 
-            LogDatei.LogSIndentLevel := NestLevel;
-            doLogEntries(PStatNames^ [tsCondClose], LLDebug);
+            //LogDatei.LogSIndentLevel := NestLevel;
+            doLogEntries(PStatNames^ [tsCondClose], LLDebug2);
 
 
             if NestLevel < Sektion.NestingLevel then
