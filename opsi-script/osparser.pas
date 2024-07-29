@@ -348,6 +348,9 @@ type
     FtestSyntax: boolean;  // default=false ; if true then run syntax check
 
 
+    function AllsignedHackCommand(var powershellpara: string;
+      var tempfilename: string; var passparas: string;
+      var programparas: string; var programfilename: string): string;
     function IsPowershellExecutionPolicyRestricted: boolean;
     function GetPowershellExecutionPolicy(Scope:string='EffectiveExecutionPolicy'): string;
     procedure parsePowershellCall(var Command: string; var AccessString: string;
@@ -1416,7 +1419,7 @@ begin
   begin
     // delete the actual file
     if SysUtils.DeleteFile(tempfilename) then
-      Logdatei.log('The file: ' + tempfilename + ' has been deleted', LLDebug)
+      Logdatei.log('The file: ' + tempfilename + ' has been deleted', LLDebug2)
     else
       Logdatei.log('The file: ' + tempfilename + ' was not deleted', LLDebug);
   end;
@@ -10343,8 +10346,8 @@ begin
     if (lowercase(archparam) = '32bit') then
       shortarch := '32';
 
-    LogDatei.log('PowershellCall Executing: ' + command + ' ; mode: ' + shortarch,
-      LLNotice + logleveloffset);
+    LogDatei.log('PowershellCall: ' + command + ' (mode: ' + archparam +')',
+      LLNotice);
 
 
     mySektion := TWorkSection.Create(NestingLevel, ActiveSection);
@@ -11332,7 +11335,9 @@ var
   hookscriptfile: string;
   exitcode: integer;
   myoutput: TXStringlist;
-  powershellpara: string;
+  powershellstart: string = '';
+  powershellend: string = '';
+  DisableExecutionPolicyCommand: string;
   tmplist: TStringList;
   AllSignedHack: boolean = false;
   catcommand: string = 'cat ';
@@ -11347,8 +11352,6 @@ begin
     force64 := False;
     threaded := False;
     use_sp := True; // use startprocess by default
-    powershellpara := '';
-
 
     if Sektion.Count = 0 then
       exit;
@@ -11358,11 +11361,6 @@ begin
 
     OldNumberOfErrors := LogDatei.NumberOfErrors;
     OldNumberOfWarnings := LogDatei.NumberOfWarnings;
-
-    ps := '';
-    LogDatei.log(ps, LLNotice + logleveloffset);
-    ps := 'Execution of ' + Sektion.Name + ' ' + ExecParameter;
-    LogDatei.log(ps, LLNotice + logleveloffset);
 
     if pos(uppercase(PStatNames^ [tsExecuteWith]), uppercase(Sektion.Name)) > 0 then
       ps := Sektion.Name;
@@ -11469,36 +11467,41 @@ begin
         runAs := traInvoker;
       end;
     end;
-
     useext := '.cmd';
-    // special handling for powershell
-    // we need .ps1 as extension
-    // we need to call the script with the parameter -file in order to get the exitcode
-    // https://community.idera.com/database-tools/powershell/powertips/b/tips/posts/correctly-returning-exit-codes
+
+    // special handling for powershell (we need .ps1 as extension)
+    // Remarks:
+    // 1. Disable ExecutionPolicy by Swapping out the AuthorizationManager
+    //    (https://www.netspi.com/blog/technical-blog/network-pentesting/15-ways-to-bypass-the-powershell-execution-policy/)
+    // 3. Run powershell script
+    // 2. Pipe output of powershell script to Out-String to get all of the output
+    // 3. TrimEnd() to remove new line added by Out-String
+    // 4. run exit $LASTEXITCODE as last command to get the exitcode of the powershell script
+    //    (https://stackoverflow.com/questions/4391553/how-to-return-an-exit-code-from-a-powershell-script-only-when-run-non-interactiv)
+    // powershell call looks like:
+    //"powershell.exe" -NoProfile -Command "function Disable-ExecutionPolicy {($ctx = $executioncontext.gettype().getfield('_context','nonpublic,instance').getvalue( $executioncontext)).gettype().getfield('_authorizationManager','nonpublic,instance').setvalue($ctx, (new-object System.Management.Automation.AuthorizationManager 'Microsoft.PowerShell'))}; Disable-ExecutionPolicy; (c:\opsi.org\tmp\_opsiscript_42M8PZo5vd.ps1 | Out-String).TrimEnd(); exit $LASTEXITCODE;
     if (pos('powershell.exe', LowerCase(programfilename)) > 0)
-      or (pos('pwsh.exe', LowerCase(programfilename)) > 0) then
+      or (LowerCase(programfilename) = 'powershell')
+      or (pos('pwsh.exe', LowerCase(programfilename)) > 0)
+      or (LowerCase(programfilename) = 'pwsh') then
     begin
-      powershellpara := ' -ExecutionPolicy ByPass -file ';
+      //Disable ExecutionPolicy by Swapping out the AuthorizationManager
+      DisableExecutionPolicyCommand := '"function Disable-ExecutionPolicy {'
+      + '($ctx = $executioncontext.gettype().getfield'
+      + '(''_context'',''nonpublic,instance'').getvalue( $executioncontext)).gettype().getfield'
+      + '(''_authorizationManager'',''nonpublic,instance'').setvalue'
+      + '($ctx, (new-object System.Management.Automation.AuthorizationManager ''Microsoft.PowerShell''))}; '
+      + 'Disable-ExecutionPolicy; ';
+      //special construction for powershell
+      powershellstart := ' -Command ' + DisableExecutionPolicyCommand +'(';
+      powershellend := ' | Out-String).TrimEnd(); exit $LASTEXITCODE;';
       useext := '.ps1';
-    end;
-    if (LowerCase(programfilename) = 'powershell') or (LowerCase(programfilename) = 'pwsh') then
-    begin
-      // we add '-file ' as last param for powershell
-      powershellpara := ' -ExecutionPolicy ByPass -file ';
-      useext := '.ps1';
-    end;
-    if useext = '.ps1' then  // we are on powershell
-    begin
       if pos(' -file', LowerCase(programparas)) > 0 then
       begin
         // It may be that the customer did this before and '- file ' is the end of programparas
         // so we shoud remove this (even for AllSigned hack)
         programparas := copy(programparas, 1, rpos(' -file', LowerCase(programparas)));
       end;
-      LogDatei.log('powershell powershell parameters are: ' + powershellpara, LLDebug);
-      LogDatei.log('powershell programparas are: ' + programparas, LLDebug2);
-
-      AllSignedHack := IsPowershellExecutionPolicyRestricted();
     end;
 
     tempfilename := winstGetTempFileNameWithExt(useext);
@@ -11552,34 +11555,17 @@ begin
         end;
       end;
 
-      if allSignedHack then
-      begin
-        powershellpara := ' -Command ';
-        if trim(passparas) <> '' then
-           LogDatei.log('Powershell with AllSigned/Restricted: ignored passparas: ' +
-             passparas, LLinfo);
-        {$IFDEF WINDOWS}
-        catcommand := 'type ';
-        {$ENDIF WINDOWS}
-        //commandline := 'cmd.exe /C ' + catcommand + tempfilename +
-        //  ' | ' + '"' + programfilename + '" ' + programparas + ' ' + powershellpara;
-        commandline := '"' + programfilename + '" ' + programparas +
-          ' ' + powershellpara + '"Get-Content -Path ' + tempfilename +
-          ' | Out-String | Invoke-Expression" ';
-      end
+      LogDatei.log('Execute program: ' + programfilename + ' parameters: '  + programparas
+        + ' script arguments: ' + passparas, LLDebug2);
+      // if parameters end with '=' we concat tempfile without space
+      if copy(programparas, length(programparas), 1) = '=' then
+        commandline :=
+          '"' + programfilename + '" ' + programparas + '"' +
+          powershellstart + tempfilename + '" ' + passparas + powershellend
       else
-      begin
-        // if parameters end with '=' we concat tempfile without space
-        if copy(programparas, length(programparas), 1) = '=' then
-          commandline :=
-            '"' + programfilename + '" ' + programparas + '"' +
-            powershellpara + tempfilename + '"  ' + passparas
-        else
-          commandline :=
-            '"' + programfilename + '" ' + programparas + ' ' +
-            powershellpara + tempfilename + '  ' + passparas;
-      end;
-
+        commandline :=
+          '"' + programfilename + '" ' + programparas + ' ' +
+          powershellstart + tempfilename + ' ' + passparas + powershellend;
 
       {$IFNDEF WINDOWS}
       if onlyWindows then
@@ -11622,16 +11608,13 @@ begin
       else
         use_sp := False;
 
-      { backport from 4.12.3  }
-      //if threaded then
-
       // new in 4.12.4.12.31 enable runasloggedonuser
       if runas = traLoggedOnUser then
         use_sp := True;
 
       if use_sp then
       begin
-        LogDatei.log('Executing with SP: ' + commandline, LLDebug);
+        LogDatei.log('Executing with SP: ' + commandline, LLDebug2);
         if not StartProcess(Commandline, showcmd, showoutput, not
           threaded, False, False, False, False, runas, '', WaitSecs,
           Report, FLastExitCodeOfExe, catchout, output, Sektion.Name) then
@@ -11645,7 +11628,7 @@ begin
       end
       else
       begin
-        LogDatei.log('Executing with RCACO:  ' + commandline, LLDebug);
+        LogDatei.log('Executing with RCACO:  ' + commandline, LLDebug2);
         if not RunCommandAndCaptureOut(commandline, True, output,
           report, showcmd, FLastExitCodeOfExe) then
         begin
@@ -11671,40 +11654,6 @@ begin
         end;
       end;
 
-(*   old .4.12.4 version:
-
-      if threaded then
-        showcmd := sw_hide;
-
-      LogDatei.log_prog('Executing ' + commandline, LLDebug);
-      if not StartProcess(Commandline, showcmd, showoutput, not threaded,
-        False, False, False, False, runas, '', WaitSecs, Report,
-        FLastExitCodeOfExe, catchout, output,Sektion.Name) then
-      begin
-        ps := 'Error: ' + Report;
-        LogDatei.log(ps, LLcritical);
-        FExtremeErrorLevel := LevelFatal;
-        if not threaded then
-          scriptstopped := True;
-      end
-      else if threaded then
-        LogDatei.log(Report, LLinfo)
-      else
-      begin
-        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 4;
-        LogDatei.log('', LLDebug + logleveloffset);
-        LogDatei.log('output:', LLDebug + logleveloffset);
-        LogDatei.log('--------------', LLDebug + logleveloffset);
-
-        for i := 0 to output.Count - 1 do
-        begin
-          LogDatei.log(output.strings[i], LLDebug + logleveloffset);
-        end;
-
-        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 4;
-        LogDatei.log('', LLDebug + logleveloffset);
-      end;
- *)
       {$IFDEF WIN32}
       if Wow64FsRedirectionDisabled then
       begin
@@ -11723,7 +11672,7 @@ begin
       Result := tsrExitProcess;
     if Logdatei.UsedLogLevel < LLconfidential then
       if not threaded then
-        deleteTempBatFiles(tempfilename, logleveloffset);
+        deleteTempBatFiles(tempfilename, 2);
   finally
     {$IFDEF GUI}
     FBatchOberflaeche.SetElementVisible(False, eActivityBar);//showAcitvityBar(False);
@@ -12301,6 +12250,7 @@ begin
             if Skip(')', r, r, InfoSyntaxError) then
             begin
               syntaxCheck := True;
+              LogDatei.log('GetOutStreamFromSection: ' + s1, LLNotice);
               if not testSyntax then
               begin
                 savelogsindentlevel := LogDatei.LogSIndentLevel;
@@ -21743,6 +21693,24 @@ begin
   finally
     Result:=AllSignedHack;
   end;
+end;
+
+function TuibInstScript.AllsignedHackCommand(var powershellpara: string;
+  var tempfilename: string; var passparas: string; var programparas: string;
+  var programfilename: string): string;
+var
+  commandline: string;
+begin
+  powershellpara := ' -Command ';
+  if trim(passparas) <> '' then
+     LogDatei.log('Powershell with AllSigned/Restricted: ignored passparas: ' +
+       passparas, LLinfo);
+  //commandline := 'cmd.exe /C ' + catcommand + tempfilename +
+  //  ' | ' + '"' + programfilename + '" ' + programparas + ' ' + powershellpara;
+  commandline := '"' + programfilename + '" ' + programparas +
+    ' ' + powershellpara + '"Get-Content -Path ' + tempfilename +
+    ' | Out-String | Invoke-Expression" ';
+  Result:=commandline;
 end;
 
 procedure TuibInstScript.SetVariableWithErrors(const Sektion: TWorkSection;
