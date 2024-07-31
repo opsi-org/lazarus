@@ -24260,55 +24260,51 @@ begin
                     InfoSyntaxError);
               end;
 
+
               tsSleep:
               begin
                 syntaxCheck := False;
+                sleepSecs := 0;
+                InfoSyntaxError := '';
                 processmess;
-
                 try
-                  try
-                    // may be just a number (without quotes)
-                    sleepSecs := StrToInt(Remaining);
-                    syntaxCheck := True;
-                  except
-                    // it could be also a string Expressionstr
-                    if EvaluateString(Remaining, Remaining, Parameter,
-                      InfoSyntaxError) then
-                      syntaxCheck := True;
-                    // which should contain a number
-                    try
-                      if syntaxCheck then
-                        sleepSecs := StrToInt(Parameter);
-                    except;
-                      syntaxCheck := False;
-                      InfoSyntaxError :=
-                        remaining + ' -- expected an integer (number of secs) ';
-                    end;
-                  end;
+                  // Parameter may be just a number (without quotes)
+                  sleepSecs := StrToInt(Remaining);
+                  syntaxCheck := True;
                 except
-                  syntaxCheck := False;
-                  InfoSyntaxError :=
-                    remaining + ' -- expected an integer (number of secs) ';
+                  // StrToInt() failed. Could be a string Expressionstr
+                  if not EvaluateString(Remaining, Remaining, Parameter,
+                    InfoSyntaxError) then
+                      // EvaluateString() faíled
+                      ActionResult := reportError(Sektion, linecounter,
+                        Sektion.strings[linecounter - 1], InfoSyntaxError)
+                  else
+                    // EvaluateString() gave us a Parameter
+                    try
+                      sleepSecs := StrToInt(Parameter);
+                      syntaxCheck := True;
+                    except
+                      // StrToInt(Parameter) failed. Report Runtime Error.
+                      if not testsyntax then
+                      begin
+                        LogDatei.log('Runtime Error in Section: ['
+                           + Sektion.Name + '] (Command in line ' +
+                           IntToStr(Sektion.StartLineNo + linecounter) +
+                           '): ' + Expressionstr + ' -> ' + Parameter
+                           + ' -- expected an integer (number of secs) ', LLError);
+                      end
+                    end;
                 end;
-
-                if syntaxCheck then
+                if syntaxCheck and (not testsyntax) then
                 begin
-                  if not testsyntax then
-                  begin
-                    LogDatei.log('sleep ' + IntToStr(sleepSecs) + ' seconds...', LLDebug2);
-                    //Sleep(1000 * sleepSecs);
-                    // noLockSleep does not completly stop the thread
-                    noLockSleep(1000 * sleepSecs);
-                  end;
-                end
-                else
-                  if not testsyntax then
-                    ActionResult := reportError(Sektion, linecounter,
-                       Sektion.strings[linecounter - 1],InfoSyntaxError);
-
+                  // we have a valid value for seconds and do the sleep now
+                  LogDatei.log('sleep ' + IntToStr(sleepSecs) + ' seconds...', LLDebug2);
+                  // noLockSleep does not completly stop the thread
+                  noLockSleep(1000 * sleepSecs);
+                end;
                 processmess;
-
               end;
+
 
               tsStop:
               begin
@@ -27307,6 +27303,7 @@ begin
 
     ps := ('___________________');
     LogDatei.log(ps, LLessential);
+
     ps := ('script finished: ');
     if extremeErrorLevel = LevelFatal then
       ps := ps + 'failed'
