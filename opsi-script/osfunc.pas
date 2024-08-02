@@ -10311,9 +10311,6 @@ var
 begin
   Result := True;
   oldFolderPath := myFolderPath;
-  if FolderOpened then
-    (* some folder was already been referred *)
-
 
   if not SUCCEEDED(SHGetSpecialFolderLocation(0, SystemFolder, pidl)) then
   begin
@@ -10359,7 +10356,8 @@ begin
   else
     myFolderPath := oldFolderPath;
 
-
+  LogS := 'Path to link foder: "' + myFolderPath;
+  Logdatei.Log(LogS, LLdebug2);
 end;
 
 
