@@ -103,8 +103,8 @@ const
   logtype = 'instlog';
 
 type
-  //TArtProduktbehandlung = (tapSet, tapSetup, tapDeinstall, tapUpdate, tapOnce, tapAlways, tapNull);
-  TAction = (tacNull,
+
+  TActionRequest = (tacNone,
     tacSetup,
     tacUpdate,
     tacDeinstall,
@@ -113,44 +113,16 @@ type
     tacCustom,
     tacLogin);
 
-  TActionRequest = (tapNull, tapUndefined, tapNull_byPolicy,
-    tapSetup, tapSetup_byPolicy,
-    tapUpdate, tapUpdate_byPolicy,
-    tapDeinstall, tapDeinstall_byPolicy,
-    tapAlways,
-    tapOnce,
-    tap_byPolicy,
-    tapCustom,
-    tapLogin);
+  TActionResult = (tarNone, tarFailed, tarSuccessful);
 
-  TActionRequest4 = (tac4None,
-    tac4Setup,
-    tac4Update,
-    tac4Uninstall,
-    tac4Always,
-    tac4Once,
-    tac4Custom,
-    tac4Login);
+  TProductState = (tpsUndefined,
+     tpsNotInstalled,
+     tpsInstalled,
+     tpsUnkown);
 
-  //TProductstate4 = (tps4Installed,
-  //  tps4Not_installed,
-  //  tps4Unkown);
-
-  TTargetConfiguration4 = (ttc4Installed,
-    ttc4Forbidden,
-    ttc4Always,
-    ttc4undefined);
-
-  TActionResult4 = (tar4None, tar4Failed, tar4Successful);
-
-
-  TProductState = (tpsUndefined, tpsNotInstalled, tpsInstalling, tpsUninstalling,
-    tpsInstalled, tpsFailed, tps4Installed,
-    tps4Not_installed,
-    tps4Unkown);
-  //  TProductState4 = (tpsUndefined, tpsNotInstalled, tpsInstalled);
-  //  TProductProgress = (tppUndefined, tppInstalling, tppNone);
-  //  TProductResult = (tprNone, tprFailed, tprSuccessful);
+  TActionProgress = (tppNone,
+     tppInstalling,
+     tppUnInstalling);
 
   TString = class(TObject)
   private
@@ -180,7 +152,7 @@ type
     constructor Create(const method: string; hashlist: TStringList;
       parameters: array of string); overload;
     { destructor }
-    destructor Destroy; override;
+    destructor Destroy;
     { functions }
     function getJsonUrlString: string;
     function getJsonHashListString: string;
@@ -201,7 +173,6 @@ type
   private
     FResultLines: TStringList;
     mymemorystream: TMemoryStream;
-    //nullO : NULL;
     methodGET: boolean;
     function GetSynapseSocketFamilyAsString: string;
     procedure LogHostIPs;
@@ -238,25 +209,8 @@ type
     constructor Create(const serviceURL, username, password, sessionid,
       ip, port, agent: string); overload;
     { destructor }
-    destructor Destroy; override;
+    destructor Destroy;
     { function }
-    (*
-    function retrieveJSONObject(const omc: TOpsiMethodCall;
-      logging: boolean; retry: boolean; readOmcMap: boolean): ISuperObject; overload;
-    function retrieveJSONObject(const omc: TOpsiMethodCall;
-      logging: boolean; retry: boolean): ISuperObject; overload;
-    function retrieveJSONObject(const omc: TOpsiMethodCall;
-      logging: boolean): ISuperObject; overload;
-    function retrieveJSONObject(const omc: TOpsiMethodCall): ISuperObject; overload;
-
-    function retrieveJSONArray(const omc: TOpsiMethodCall; logging: boolean;
-      retry: boolean; readOmcMap: boolean): TSuperArray; overload;
-    function retrieveJSONArray(const omc: TOpsiMethodCall; logging: boolean;
-      retry: boolean): TSuperArray; overload;
-    function retrieveJSONArray(const omc: TOpsiMethodCall;
-      logging: boolean): TSuperArray; overload;
-    function retrieveJSONArray(const omc: TOpsiMethodCall): TSuperArray; overload;
-    *)
     function retrieveJSONObject(const omc: TOpsiMethodCall;
       logging: boolean = True; retry: boolean = True; readOmcMap: boolean = False;
       communicationmode: integer = 0): ISuperObject;
@@ -277,70 +231,16 @@ type
 
   (****************************** Opsi Data *************************************)
 
-  { TOpsiData}
-
-  TOpsiData = class
-  protected
-    actualProduct: string;
-    actualVersion: string;
-    options: string;
-    FSortByServer: boolean;
-  public
-    actualClient: string;
-    {constructor}
-    constructor Create;
-    {functions}
-    function stateToString(state: TProductState): string; virtual; abstract;
-    function actionToString(action: TAction): string; virtual; abstract;
-    function actionRequestToString(actionRequest: TActionRequest): string;
-      virtual; abstract;
-    function getLogFileName(const LogFilename: string): string; virtual; abstract;
-    function UpdateSwitches(extremeErrorLevel: TErrorLevel): boolean; virtual;
-    function getActualProductName: string; virtual;
-    function getActualProductVersion: string; virtual;
-    function initProduct: boolean; virtual; abstract;
-    function getSpecialScriptPath: string; virtual;
-    function getProductproperties: TStringList; virtual; abstract;
-    function getBeforeRequirements: TStringList; virtual; abstract;
-    function getAfterRequirements: TStringList; virtual; abstract;
-    function getProductState: TProductState; virtual; abstract;
-    function getProductAction: TAction; virtual; abstract;
-    function getProductActionRequest: TActionRequest; virtual; abstract;
-    function getListOfProductIDs: TStringList; virtual; abstract;
-    function getProductScriptPath(actionType: TAction): string;
-      virtual; abstract;
-    function getInstallationPriority: integer; virtual; abstract;
-    function withLicenceManagement: boolean; virtual;
-    function getOpsiServiceVersion: string; virtual; abstract;
-    {procedures}
-    procedure setActualClient(computername: string); virtual; abstract;
-    procedure setOptions(serviceoptions: string);
-    procedure setActualProductName(const productname: string); virtual;
-    procedure finishProduct; virtual; abstract;
-    procedure saveOpsiConf; virtual; abstract;
-    procedure finishOpsiConf; virtual;
-    procedure setProductActionRequest(newAction: TActionRequest); virtual; abstract;
-    procedure setProductState(newState: TProductState); virtual; abstract;
-    procedure setProductStateActionRequest(newState: TProductState;
-      newActiont: TActionRequest);
-      virtual; abstract;
-    {Properties}
-    property sortByServer: boolean read FSortByServer;
-  end;
-
   { TOpsi4Data }
 
-  TOpsi4Data = class(TOpsiData)
+  TOpsi4Data = class
   private
     FjsonExecutioner: TJsonThroughHTTPS;
     ProfildateiChange: boolean;
     FServiceUrl: string;
     FDepotId: string;
-    //actualClient: string;
     mapOfMethodSignatures: TStringList;
-    //AllProductsDependencies: TStringList;
     allDependencies: TStringList;
-    //ProductDependencies : TList;
     FPreRequirements: TStringList;
     FPostRequirements: TStringList;
     FProductStates: TStringList;
@@ -349,20 +249,14 @@ type
     FOpsiModules: ISuperObject;
     FOpsiInformation: ISuperObject;
     FOpsiServiceVersion: string;
-    //FactualClient: string;
-    FProductOnClient_objects: TSuperArray;
     FProductOnClient_aktobject: ISuperObject;
     FProductOnClientIndex: TStringList;
-    //FSslProtocol: TIdSSLVersion;
     mylist: TStringList;
     FCommunicationMode: integer;
-    //Function getMapOfProductSwitches : TStringList;
-    //Function getProductRequirements (requirementType : String) : TStringList;
     function ProductPropertyState_getValues_KeyValueMapp(var error: boolean): TStringList;
     function getProductRequirements(productname: string;
       requirementType: string): TStringList;
     procedure reverseProductOrderByUninstall(var MapOfProductStates: TStringList);
-    //procedure productOnClient_getobject_actualclient;
     function getInstallableProducts: TStringList;
     function getOpsiModules: TStringList;
     function getLicenseOnClientObject(const parameters: array of string;
@@ -370,16 +264,19 @@ type
     function SetProductOnClientData(const ProductOnClientData: TStringList):TStringList;
     function GetSortedProductOnClientListFromService: TStringList;
   protected
+    actualProduct: string;
+    actualVersion: string;
+    options: string;
+    FSortByServer: boolean;
     FServiceLastErrorInfo: TStringList;
     function getProductPropertiesOpsi43: TStringList;
     function getProductPropertiesOpsi42: TStringList;
-    //FactualClient: string;
   public
-    //actualClient: string;
+    actualClient: string;
     { constructor }
     constructor Create;
     { destructor }
-    destructor Destroy; override;
+    destructor Destroy;
     { function }
     function checkAndRetrieve(const omc: TOpsiMethodCall;
       var errorOccured: boolean): string;
@@ -394,44 +291,40 @@ type
       var errorOccured: boolean): TStringList;
     function checkAndRetrieveString(const omc: TOpsiMethodCall;
       var errorOccured: boolean): string;
-    function getLogFileName(const LogFilename: string): string; override;
+    function getLogFileName(const LogFilename: string): string;
     //uses the parameter LogFilename as default
     function sendLog: boolean; overload;
     function sendLog(logtype: string): boolean; overload;
     function sendLog(logtype: string; appendmode: boolean): boolean; overload;
-    function stateToString(state: TProductState): string; override;
-    function actionToString(action: TAction): string; override;
+    function stateToString(state: TProductState): string;
     function actionRequestToString(actionRequest: TActionRequest): string;
-      overload; override;
     function stateStringToState(s: string): TProductState;
     function actionRequestStringToActionRequest(s: string): TActionRequest;
-    function actionRequestStringToAction(s: string): TAction;
+    function actionProgressToString(actionProgress: TActionProgress) : string;
     function getMethodSignature(const methodname: string): TStringList;
-    function initProduct: boolean; override;
-    function getActualProductVersion: string; override;
-    function getSpecialScriptPath: string; override;
-    function getProductProperties: TStringList; override;
+    function initProduct: boolean;
+    function getActualProductVersion: string;
+    function getSpecialScriptPath: string;
+    function getProductProperties: TStringList;
     function parse_JSONResult_productPropertyState_getValues(const JSONResult: string): TStringList;
-    function getBeforeRequirements: TStringList; override;
-    function getAfterRequirements: TStringList; override;
-    function getListOfProductIDs: TStringList; override;
+    function getBeforeRequirements: TStringList;
+    function getAfterRequirements: TStringList;
+    function getListOfProductIDs: TStringList;
     function getProductPropertyList(myproperty: string;
       defaultlist: TStringList; var usedefault: boolean): TStringList; overload;
     function getProductPropertyList(myproperty: string;
       defaultlist: TStringList; myClientId: string; myProductId: string;
       var usedefault: boolean): TStringList; overload;
-    // getInstallableLocalBootProductIds_list
-    function getProductState: TProductState; override;
-    function getProductAction: TAction; override;
-    function getProductActionRequest: TActionRequest; override;
+    function getProductState: TProductState;
+    function getProductActionRequest: TActionRequest;
     function getProductPackagageVersion: string; virtual;
-    function getOpsiServiceVersion: string; override;
+    function getOpsiServiceVersion: string;
     function getActualProductDescription: string;
     function getActualProductAdvice: string;
     function getActualProductPriority: string;
     function getActualProductPackageVersion: string;
     function getActualProductId: string;
-    function getActualProductName: string; override;
+    function getActualProductName: string;
     function getActualProductProductVersion: string;
     function getActualProductInstallationState: string;
     function getActualProductLastActionRequest: string;
@@ -440,17 +333,13 @@ type
     function getActualProductInstalledPackage: string;
     function getActualProductInstalledModificationTime: string;
     function getActualProductActionRequest: string;
-    function getProductScriptPath(actionType: TAction): string; override;
-    function getInstallationPriority: integer; override;
-    function actionResultToString(actionResult: TActionResult4): string;
-    function actionRequest4ToString(actionRequest: TActionRequest4): string;
-    function targetConfigurationToString(targetConfiguration: TTargetConfiguration4)
-      : string;
+    function getProductScriptPath(actionType: TActionRequest): string;
+    function getInstallationPriority: integer;
+    function actionResultToString(actionResult: TActionResult): string;
     function installationStatusToString(installationStatus: TProductstate): string;
-    function UpdateSwitches(extremeErrorLevel: TErrorLevel): boolean; override; overload;
-    function UpdateSwitches(extremeErrorLevel: TErrorLevel; Progress: string): boolean;
-      overload;
-    function withLicenceManagement: boolean; override;
+    function UpdateSwitches(extremeErrorLevel: TErrorLevel): boolean; overload;
+    function UpdateSwitches(extremeErrorLevel: TErrorLevel; Progress: string): boolean; overload;
+    function withLicenceManagement: boolean;
     function withRoamingProfiles: boolean;
     function linuxAgentActivated: boolean;
     function macosAgentActivated: boolean;
@@ -484,23 +373,23 @@ type
     procedure initOpsiConf(serviceURL, username, password, sessionid,
       ip, port, agentstring: string);
       overload;
-    procedure saveOpsiConf; override;
-    procedure finishOpsiConf; override;
-    procedure setActualClient(computername: string); override;
-    procedure setActualProductName(const productname: string); override;
+    procedure saveOpsiConf;
+    procedure finishOpsiConf;
+    procedure setActualClient(computername: string);
+    procedure setActualProductName(const productname: string);
     procedure setActionProgress(const progress: string);
-    procedure finishProduct; override;
+    procedure finishProduct;
     procedure setActualProductActionRequest(request: string);
-    procedure setProductActionRequest(newAction: TActionRequest); override;
+    procedure setProductActionRequest(newAction: TActionRequest);
     procedure setProductActionRequestWithDependencies(newAction: TActionRequest);
-    procedure setProductState(newState: TProductState); override;
-    procedure setProductProgress(myprogres: string);
+    procedure setProductState(newState: TProductState);
+    procedure setProductProgress(newProgress: TActionProgress);
     procedure setProductStateActionRequest(newState: TProductState;
-      newAction: TActionRequest); override;
+      newAction: TActionRequest);
+    procedure SetProductProgressByActionrequest(const Verfahren: TActionRequest);
     procedure ProductOnClient_update(actionProgressS: string;
-      actionResult: TActionResult4; actionRequest: TActionRequest4;
-      targetConfiguration: TTargetConfiguration4; lastAction: TActionRequest4;
-      installationStatus: TProductstate);
+      actionResult: TActionResult; actionRequest: TActionRequest;
+      lastAction: TActionRequest; installationStatus: TProductstate);
     function getOpsiVersion: string;  // get opsiversion from backend_info
     // get list of methods via service:
     function getOpsiServiceMethods(allow_deprecated : boolean) : TStringlist;
@@ -515,15 +404,13 @@ type
     //property actualclient: string read FactualClient write FactualClient;
     property CommunicationMode: integer read FCommunicationMode
       write FCommunicationMode;
+    property sortByServer: boolean read FSortByServer;
   end;
 
 var
-  //IdHTTP1: TIdHTTP;
-  //DataModule2: TDataModule2;
   opsidata: TOpsi4Data = nil;
   FValidCredentials: boolean;
 
-function sayActionType(action: TAction): string;
 function getOpsiServerVersion(const serviceUrl: string; const username: string;
   const password: string; var sessionid: string): string;
 function getOpsiServiceVersion(const serviceUrl: string; const username: string;
@@ -551,26 +438,18 @@ uses
 
 {$ENDIF}
 
-const
-  // fuer opsiClassic
-  ProduktestatusSektionsname = 'Products-installed';
-  Produktsektionskennzeichnung = '-install';
-
 var
   testresult: string;
+ {$IFDEF SYNAPSE}
   ContentTypeCompress: string = 'application/json';
   ContentTypeNoCompress: string = 'application/json';
-  //ContentEncodingCommpress: string = 'gzip, deflate';
-  //ContentEncodingCommpress: string = 'gzip';
   ContentEncodingCommpress: string = 'deflate';
-  //ContentEncodingCommpress: string = 'deflate, gzip';
   ContentEncodingNoCommpress: string = 'plain';
   AcceptCompress: string = 'application/json';
   AcceptNoCompress: string = 'application/json';
-  //AcceptEncodingCompress: string = 'gzip, deflate';
-  //AcceptEncodingCompress: string = 'deflate, gzip';
   AcceptEncodingCompress: string = 'deflate';
   AcceptEncodingNoCompress: string = 'plain';
+  {$ENDIF SYNAPSE}
   OpsiVersion: string = '';
 
 {$IFNDEF OPSISCRIPT}
@@ -653,7 +532,6 @@ begin
   FJsonExecutioner := nil;
   //LogDatei.LogLevel := LLdebug2;
   try
-    //if FJsonExecutioner <> nil then FJsonExecutioner.free;
     if Assigned(FJsonExecutioner) then
       FreeAndNil(FJsonExecutioner);
     FjsonExecutioner := TJsonThroughHTTPS.Create(serviceUrl, username,
@@ -669,41 +547,7 @@ begin
       testresult := Result;
       sessionid := FjsonExecutioner.FSessionId;
     end;
-    (* this sems to be buggy opsi3 code (do 3.2019)
-    if Result = '' then
-    begin
-      //result := '3';
-      credentialsValid := FValidCredentials;
-      if credentialsValid then
-      begin
-        LogDatei.log('backend_info with no result', LLdebug2);
-        LogDatei.NumberOfErrors := LogDatei.NumberOfErrors - 1;
-        try
-          if FJsonExecutioner <> nil then
-            FJsonExecutioner.Free;
-          //if omc <> nil then omc.Free;
-          FjsonExecutioner := TJsonThroughHTTPS.Create(serviceUrl, username, password);
-          omc := TOpsiMethodCall.Create('getOpsiInformation_hash', []);
-          jsonEntry := FjsonExecutioner.retrieveJsonObject(omc);
-          //result := jsonEntry.getJSONObject('result').getString('opsiVersion');
-          Result := jsonEntry.O['result'].S['opsiVersion'];
-          omc := TOpsiMethodCall.Create('exit', []);
-          jsonEntry := FjsonExecutioner.retrieveJSONObject(omc);
-          FjsonExecutioner.Free;
-          omc.Free;
-          Result := AnsiDequotedStr(trim(Result), '"');
-          //if result = '' then result := '3'
-        except
-          if omc <> nil then
-            omc.Free;
-          LogDatei.log('Exception in getOpsiServerVersion ', LLdebug2);
-          //result := '3';
-        end;
-      end;
-    end;
-    *)
   except
-    //result := '3';
     try
       if Assigned(FJsonExecutioner) then
         FreeAndNil(FJsonExecutioner);
@@ -712,19 +556,16 @@ begin
       FjsonExecutioner := TJsonThroughHTTPS.Create(serviceUrl, username, password);
       omc := TOpsiMethodCall.Create('getOpsiInformation_hash', []);
       jsonEntry := FjsonExecutioner.retrieveJsonObject(omc);
-      //result := jsonEntry.geTSuperObject('result').getString('opsiVersion');
       Result := jsonEntry.O['result'].S['opsiVersion'];
       omc := TOpsiMethodCall.Create('exit', []);
       jsonEntry := FjsonExecutioner.retrieveJSONObject(omc);
       FjsonExecutioner.Free;
       omc.Free;
       Result := AnsiDequotedStr(trim(Result), '"');
-      //if result = '' then result := '3'
     except
       if omc <> nil then
         omc.Free;
       LogDatei.log('Exception in getOpsiServerVersion ', LLdebug2);
-      //result := '3';
     end;
   end;
   LogDatei.log('opsi Server Version : ' + Result, LLnotice);
@@ -735,25 +576,9 @@ end;
 
 function getOpsiServiceVersion(const serviceUrl: string; const username: string;
   const password: string; var sessionid: string): string;
-var
-  sign: integer;
-  InfoSyntaxError: string;
 begin
   Result := '4'; //default to opsi 4.x
   OpsiVersion := getOpsiServerVersion(serviceUrl, username, password, sessionid);
-end;
-
-function sayActionType(action: TAction): string;
-begin
-  Result := '';
-  case action of
-    tacNull: ;
-    tacSetup: Result := 'setup';
-    tacUpdate: Result := 'update';
-    tacDeinstall: Result := 'deinstall';
-    tacAlways: Result := 'always';
-    tacOnce: Result := 'once';
-  end;
 end;
 
 function getJsonObjectStringfromList(const inlist: TStringList): WideString;
@@ -801,125 +626,6 @@ constructor TString.Create(const AStr: string);
 begin
   inherited Create;
   FStr := AStr;
-end;
-
-(******************************************************************************)
-(*                                                                            *)
-(*                    Implementation of class TOpsiData                       *)
-(*                                                                            *)
-(******************************************************************************)
-constructor TOpsiData.Create;
-begin
-  FSortByServer := False;
-  actualclient := '';
-end;
-
-function TOpsiData.getSpecialScriptPath: string;
-begin
-  Result := '';
-end;
-
-procedure TOpsiData.finishOpsiConf;
-begin
-end;
-
-procedure TOpsiData.setOptions(serviceoptions: string);
-begin
-  options := serviceoptions;
-end;
-
-
-procedure TOpsiData.setActualProductName(const productname: string);
-begin
-  actualProduct := productname;
-end;
-
-
-function TOpsiData.getActualProductName: string;
-begin
-  Result := actualProduct;
-end;
-
-function TOpsiData.getActualProductVersion: string;
-begin
-  Result := actualVersion;
-end;
-
-function TOpsiData.UpdateSwitches(extremeErrorLevel: TErrorLevel): boolean;
-var
-  ar: TActionRequest;
-  action: TAction;
-  newState: TProductState;
-  newActionRequest: TActionRequest;
-begin
-  Result := False;
-  ar := getProductActionRequest;
-  action := getProductAction;
-
-  newActionRequest := tapNull;
-
-
-
-  if extremeErrorLevel > levelfatal then
-  begin
-
-    case action of
-      tacDeinstall:
-      begin
-        newState := tpsNotInstalled;
-        newActionRequest := tapNull;
-        Result := True;
-      end;
-
-      tacSetup, tacUpdate:
-      begin
-        //NeuerProduktschalter := 'on';
-        Result := True;
-        newState := tpsInstalled;
-        newActionRequest := tapNull;
-      end;
-
-      tacOnce:
-      begin
-        Result := True;
-        //newState := tpsUndefined;
-        newState := tpsNotInstalled;
-        newActionRequest := tapNull;
-      end;
-
-      tacAlways:
-      begin
-        Result := True;
-        newState := tpsInstalled;
-        newActionRequest := tapAlways;
-      end;
-    end;
-
-    (*
-    // but if we did the action on hehalf of a policy we stay on following policies and reset new the action request:
-
-    if ar in [tapNull_byPolicy, tapSetup_byPolicy, tapUpdate_byPolicy,
-      tapDeinstall_byPolicy] then
-    begin
-      newActionRequest := tap_byPolicy;
-    end;
-    *)
-
-  end
-  else
-  begin
-    Result := True;
-    newState := tpsFailed;
-    newActionRequest := tapNull;
-  end;
-
-  setProductStateActionRequest(newState, newActionRequest);
-
-end;
-
-function TOpsiData.withLicenceManagement: boolean;
-begin
-  Result := False;
 end;
 
 //========== opsidata-Service ==================================================
@@ -1097,9 +803,6 @@ var
   joParams, joParams0: ISuperObject;
   i, testint: integer;
   inmap: boolean;
-  ///objstr: TString;
-  ///myindex : integer;
-  //jostr,
   aktvalue: SOString;
 begin
   try
@@ -1112,7 +815,6 @@ begin
     LogDatei.log('while getJsonHashListString: ' + jo.AsJSon(False, False) +
       '<', LLdebug3);
     inmap := False;
-    //jostr := '';
     for i := 0 to hashlist.Count - 1 do
     begin
       if hashlist.Strings[i] = '[newmap]' then
@@ -1122,7 +824,6 @@ begin
           LogDatei.log('while getJsonHashListString try to add: ' +
             jotmp.AsJSon(False, False), LLdebug3);
           try
-            //jotmp := SO('{'+jostr+'}');
             if not jotmp.IsType(stNull) then
             begin
               joParams.AsArray.Add(jotmp);
@@ -1507,30 +1208,6 @@ begin
   LogDatei.log('got Furl: ' + Furl, LLdebug3);
 end;
 
-(*
-function TJsonThroughHTTPS.retrieveJSONObject(const omc: TOpsiMethodCall): ISuperObject;
-begin
-  Result := retrieveJSONObject(omc, True);
-end;
-
-function TJsonThroughHTTPS.retrieveJSONObject(const omc: TOpsiMethodCall;
-  logging: boolean): ISuperObject;
-begin
-  Result := retrieveJSONObject(omc, logging, True);
-end;
-
-function TJsonThroughHTTPS.retrieveJSONObject(const omc: TOpsiMethodCall;
-  logging: boolean; retry: boolean): ISuperObject;
-begin
-  Result := retrieveJSONObject(omc, logging, True, False);
-end;
-
-function TJsonThroughHTTPS.retrieveJSONObject(const omc: TOpsiMethodCall;
-  logging: boolean; retry: boolean; readOmcMap: boolean): ISuperObject;
-begin
-  Result := retrieveJSONObject(omc, logging, True, False, 0);
-end;*)
-
 function TJsonThroughHTTPS.retrieveJSONObject(const omc: TOpsiMethodCall;
   logging: boolean = True; retry: boolean = True; readOmcMap: boolean = False;
   communicationmode: integer = 0): ISuperObject;
@@ -1539,29 +1216,18 @@ var
   errorOccured: boolean;
   cookieVal: string;
   posColon: integer;
-  s, t, teststring: string;
+  s, t: string;
   jO: ISuperObject;
   utf8str: string;//UTF8String;
   SendStream, ReceiveStream: TMemoryStream;
-  InStream: TMemoryStream;
-  CompressionSendStream: TCompressionStream;
   DeCompressionReceiveStream: TDeCompressionStream;
-  //IdCompressorZLib.CompressStream(tmpStream,AResponseInfo.ContentStream,9,GZIP_WINBITS,9,0);
-  // IdCompressorZLib.DecompressGZipStream(ARequestInfo.PostStream,tmpStream);
-  //CompressionSendStream: Tgzipstream;
-  //CompressionReceiveStream: Tungzipstream;
-  //gzipstream : TIdCompressorZLib;
   buffer: ^byte;
   readcount: integer;
   compress: boolean;
   startTime: TDateTime;
   ContentType, Accept, ContentEncoding, AcceptEncoding: string;
   {$IFDEF SYNAPSE}
-  //HTTPSenderResult: boolean;
-  testresultSyn: string;
   i: integer;
-  //sendresultcode: integer;
-  //sendresultstring: string;
   finished: boolean;
   {$ENDIF SYNAPSE}
   oldTwistedServer: string;
@@ -1603,21 +1269,8 @@ begin
         ContentType := 'application/json; charset=UTF-8';
         Accept := 'application/json';
         AcceptEncoding := 'gzip, deflate, identity';
-        //AcceptEncoding := 'deflate';
         ContentEncoding := 'gzip';//'deflate';
-        //ContentEncoding := 'deflate';
       end;
-      (*1:
-      begin
-        LogDatei.log('Use opsi 4.1 / 4.2 HTTP Header, plain', LLnotice);
-        compress := False;
-        ContentType := 'application/json; charset=UTF-8';
-        Accept := 'application/json';
-        ContentEncoding := 'identity'; //'gzip, deflate, identity';
-        AcceptEncoding := 'identity';
-        //ContentEncoding := '';
-        //AcceptEncoding  := '';
-      end;*)
       1:
       begin
         LogDatei.log_prog('Use opsi 4.0  HTTP Header, compress', LLnotice);
@@ -1651,19 +1304,10 @@ begin
       SendStream.Clear;
       ResultLines.Clear;
       Result := nil;
-      //HTTPSender.Clear;
       makeURL(omc);
     {$IFDEF SYNAPSE}
       try
-        ////ProcessMess;
         HTTPSender.Document.Clear;
-        (*
-        if Assigned(HTTPSender.Document) then
-        begin
-          FreeAndNil(HTTPSender.Document);
-          HTTPSender.Document := TMemoryStream.Create;
-        end;
-        *)
 
         if FSessionId <> '' then
         begin
@@ -1672,10 +1316,6 @@ begin
         LogDatei.log_prog('Sessionid ' + FSessionId, LLdebug);
         if (HTTPSender.Cookies.Count > 0) then
           LogDatei.log_prog('Cookies synapse: ' + HTTPSender.Cookies[0], LLdebug);
-        //@detlef for testing??? (Jan)
-        //HTTPSender.Headers.Clear;
-        //testresultSyn := HTTPSender.Headers.Text;
-        //LogDatei.log_prog('HTTPSender.Headers ' + testresultSyn, LLdebug);
 
         if FSessionId <> '' then
           // not the first call and we log
@@ -1879,13 +1519,6 @@ begin
                 if (ContentEncoding = 'deflate') or
                   (ContentEncoding = '') or opsi40 then
                 begin
-                  //DeCompressionReceiveStream := TDeCompressionStream.Create(HTTPSender.Document);
-                  //ReceiveStream.Seek(0, 0);
-                  //DeCompressionReceiveStream.read(ReceiveStream,0);
-                  //DeCompressionReceiveStream.Free;
-                  //ReceiveStream := HTTPSender.Document;
-                  //ReceiveStream.Seek(0, 0);
-                  //mymemorystream.Seek(0, 0);
                   DeCompressionReceiveStream :=
                     TDeCompressionStream.Create(HTTPSender.Document);
                   GetMem(buffer, 655360);
@@ -1913,8 +1546,6 @@ begin
                     ContentEncoding, LLWarning);
 
                 //HTTPSender.Document.SaveToFile('C:\Users\Jan\Documents\ReceiveStream.txt');  //for testing
-
-                //ReceiveStream.LoadFromStream(HTTPSender.Document);
               end
               else
               begin
@@ -2091,25 +1722,6 @@ begin
             // we assume opsi4
             compress := True;
             LogDatei.log('Using MimeType: ' + ContentTypeCompress, LLDebug2);
-          (*
-          if opsidata <> nil then
-          begin
-            //LogDatei.log('getOpsiServiceVersion:'+myopsidata.getOpsiServiceVersion, LLdebug2);
-            if myopsidata.getOpsiServiceVersion = '4' then
-            begin
-              compress := True;
-              LogDatei.log('Using MimeType: ' + ContentTypeCompress, LLDebug2);
-              //compress := false;
-            end
-            else
-            begin
-              compress := False;
-              LogDatei.log('Using MimeType: ' + ContentTypeNoCompress, LLDebug2);
-            end;
-          end
-          else
-            compress := False;
-          *)
             if compress then
             begin
               IdHttp.Request.ContentType := ContentTypeCompress;
@@ -2191,21 +1803,6 @@ begin
                 // we assume opsi4
                 compress := True;
                 LogDatei.log('Using MimeType: ' + ContentTypeCompress, LLDebug2);
-              (*
-              if opsidata <> nil then
-              begin
-                //LogDatei.log('getOpsiServiceVersion:'+opsidata.getOpsiServiceVersion, LLdebug2);
-                if opsidata.getOpsiServiceVersion = '4' then
-                begin
-                  compress := True;
-                  //compress := false;
-                end
-                else
-                  compress := False;
-              end
-              else
-                compress := False;
-              *)
                 if compress then
                 begin
                   IdHttp.Request.ContentType := ContentTypeCompress;
@@ -2294,14 +1891,6 @@ begin
       begin
         if not ErrorOccured then
         begin
-          {if compress then
-          begin
-            mymemorystream.Position := 0;
-            LogDatei.log_prog('JSON retrieveJSONObject: memorystream reseted', LLdebug);
-            resultLines.Clear;
-            ResultLines.LoadFromStream(mymemorystream);
-          end
-          else}
           begin
             ReceiveStream.Position := 0;
             LogDatei.log_prog('JSON retrieveJSONObject: ReceiveStream reseted', LLdebug);
@@ -2409,449 +1998,6 @@ begin
   end;
 end;
 
-(* seems to be not in use do 20190826
-
-function TJsonThroughHTTPS.retrieveJSONArray(const omc: TOpsiMethodCall): TSuperArray;
-begin
-  Result := retrieveJSONArray(omc, True);
-end;
-
-
-function TJsonThroughHTTPS.retrieveJSONArray(const omc: TOpsiMethodCall;
-  logging: boolean): TSuperArray;
-begin
-  Result := retrieveJSONArray(omc, logging, True);
-end;
-
-function TJsonThroughHTTPS.retrieveJSONArray(const omc: TOpsiMethodCall;
-  logging: boolean; retry: boolean): TSuperArray;
-begin
-  Result := retrieveJSONArray(omc, logging, True, False);
-end;
-
-function TJsonThroughHTTPS.retrieveJSONArray(const omc: TOpsiMethodCall;
-  logging: boolean; retry: boolean; readOmcMap: boolean): TSuperArray;
-
-var
-  errorOccured: boolean;
-  cookieVal: string;
-  posColon: integer;
-  s: string;
-  t: string;
-  jO, jO1: ISuperObject;
-  ///jA :  TSuperArray;
-  utf8str: UTF8String;
-  sourcestringlist: TStrings;
-  sendstream, ReceiveStream: TMemoryStream;
-  CompressionSendStream: TCompressionStream;
-  CompressionReceiveStream: TDeCompressionStream;
-  buffer: ^byte;
-  readcount: integer;
-  compress: boolean;
-  {$IFDEF SYNAPSE}
-  HTTPSenderResult: boolean;
-  testresultSyn: string;
-  i: integer;
-  sendresultcode: integer;
-  sendresultstring: string;
-  {$ENDIF SYNAPSE}
-
-begin
-  errorOccured := False;
-  Result := nil;
-  resultlines.Clear;
-  fErrorInfo.Clear;
-  compress := False;
-
-  try
-    mymemorystream.Clear;
-
-    makeurl(omc);
-    //    TODO
-    try
-      if FSessionId <> '' then
-      begin
-        {$IFDEF SYNAPSE}
-        HTTPSender.Cookies.Add(FSessionId);
-        {$ELSE SYNAPSE}
-        IdHttp.Request.RawHeaders.Values['Cookie'] := FSessionId;
-        {$ENDIF SYNAPSE}
-      end;
-      {$IFDEF SYNAPSE}
-      HTTPSender.Headers.Clear;
-      testresult := HTTPSender.Headers.Text;
-      {$ELSE SYNAPSE}
-      testresult := IdHttp.Request.RawHeaders.Text;
-      {$ENDIF SYNAPSE}
-
-      if FSessionId <> '' then
-        // not the first call and we log
-        if logging then
-          //LogDatei.log (DateTimeToStr(now) + ' JSON service request ' + Furl + ' '+ omc.FOpsiMethodName, LLInfo);
-          LogDatei.log_prog('JSON service request ' + Furl + ' ' +
-            omc.FOpsiMethodName, LLDebug);
-
-
-      if methodGet then
-      begin
-        utf8str := AnsiToUtf8(Furl);
-        LogDatei.log_prog(' JSON service request ' + Furl, LLdebug);
-        {$IFDEF SYNAPSE}
-        mymemorystream := HTTPSender.Document;
-        HTTPSenderResult := HTTPSender.HTTPMethod('GET', Furl);
-        mymemorystream := HTTPSender.Document;
-        {$ELSE SYNAPSE}
-        IdHTTP.Get(utf8str, mymemorystream);
-        {$ENDIF SYNAPSE}
-      end
-      else
-      begin
-        if readOmcMap then
-        begin
-          s := omc.getJsonHashListString;
-          utf8str := AnsiToUtf8(s);
-          //sourcestringlist.add(utf8str);
-          LogDatei.log_prog(' JSON service request Furl ' + Furl, LLdebug);
-          LogDatei.log_prog(' JSON service request str ' + utf8str, LLdebug);
-
-        end
-        else
-        begin
-          sourcestringlist := TStringList.Create;
-          s := omc.jsonUrlString;
-          utf8str := AnsiToUtf8(s);
-          //sourcestringlist.add(utf8str);
-          LogDatei.log_prog(' JSON service request Furl ' + Furl, LLdebug);
-          LogDatei.log_prog(' JSON service request str ' + utf8str, LLdebug);
-        end;
-        try
-          sendstream := TMemoryStream.Create;
-          ReceiveStream := TMemoryStream.Create;
-          sendstream.Clear;
-          // we assume opsi4
-          compress := True;
-          LogDatei.log_prog('Using MimeType: ' + ContentTypeCompress, LLDebug);
-          if compress then
-          begin
-            {$IFNDEF SYNAPSE}
-            IdHttp.Request.ContentType := ContentTypeCompress;
-            IdHttp.Request.ContentEncoding := ContentEncodingCommpress;
-            IdHttp.Request.Accept := AcceptCompress;
-            IdHttp.Request.AcceptEncoding := AcceptEncodingCompress;
-            LogDatei.log_prog('HTTP Header: ' + IdHttp.Request.RawHeaders.Text, LLDebug);
-            {$ENDIF SYNAPSE}
-            CompressionSendStream := TCompressionStream.Create(clMax, sendstream);
-            CompressionSendStream.Write(utf8str[1], length(utf8str));
-            CompressionSendStream.Free;
-            //writeln('ddebug: bpost');
-            {$IFDEF SYNAPSE}
-            HTTPSender.Document.LoadFromStream(sendstream);
-            HTTPSenderResult := HTTPSender.HTTPMethod('POST', Furl);
-            if HTTPSenderResult then
-            begin
-              LogDatei.log('HTTPSender Post ok', LLDebug2);
-            end
-            else
-              LogDatei.log('HTTPSender Post failed', LLDebug2);
-            sendresultcode := HTTPSender.ResultCode;
-            sendresultstring := HTTPSender.ResultString;
-            LogDatei.log('HTTPSender result: ' + IntToStr(sendresultcode) +
-              ' msg: ' + sendresultstring, LLDebug2);
-            if sendresultstring <> 'OK' then
-            begin
-              raise Exception.Create(HTTPSender.Headers.Strings[0]);
-            end;
-            ReceiveStream := HTTPSender.Document;
-            {$ELSE SYNAPSE}
-            IdHTTP.Post(Furl, sendstream, ReceiveStream);
-            //writeln('ddebug: apost');
-            {$ENDIF SYNAPSE}
-
-            ReceiveStream.Seek(0, 0);
-            mymemorystream.Seek(0, 0);
-            CompressionReceiveStream := TDeCompressionStream.Create(ReceiveStream);
-            GetMem(buffer, 655360);
-            repeat
-              FillChar(buffer^, 655360, ' ');
-              readcount := CompressionReceiveStream.Read(buffer^, 655360);
-              if readcount > 0 then
-                mymemorystream.Write(buffer^, readcount);
-            until readcount < 655360;
-            CompressionReceiveStream.Free;
-            FreeMem(buffer);
-          end
-          else
-          begin
-            {$IFDEF SYNAPSE}
-            HTTPSender.Headers.Add('accept-encoding: ' +
-              ContentEncodingCommpress + ',identity');
-            HTTPSender.Headers.Add('content-encoding: ' + ContentEncodingCommpress);
-            HTTPSender.Headers.Add('content-type: ' + ContentTypeCompress + ',identity');
-            for i := 0 to HTTPSender.Headers.Count - 1 do
-              LogDatei.log('HTTPSender Header.Strings: ' +
-                HTTPSender.Headers.Strings[i], LLDebug2);
-            sendstream.Write(utf8str[1], length(utf8str));
-            HTTPSender.Document.LoadFromStream(sendstream);
-            HTTPSenderResult := HTTPSender.HTTPMethod('POST', Furl);
-            if HTTPSenderResult then
-            begin
-              LogDatei.log('HTTPSender Post ok', LLDebug2);
-            end
-            else
-              LogDatei.log('HTTPSender Post failed', LLDebug2);
-            sendresultcode := HTTPSender.ResultCode;
-            sendresultstring := HTTPSender.ResultString;
-            LogDatei.log('HTTPSender result: ' + IntToStr(sendresultcode) +
-              ' msg: ' + sendresultstring, LLDebug2);
-            if sendresultstring <> 'OK' then
-            begin
-              raise Exception.Create(HTTPSender.Headers.Strings[0]);
-            end;
-            mymemorystream := HTTPSender.Document;
-            {$ELSE SYNAPSE}
-            IdHttp.Request.ContentType := ContentTypeNoCompress;
-            IdHttp.Request.ContentEncoding := ContentEncodingNoCommpress;
-            IdHttp.Request.Accept := AcceptNoCompress;
-            IdHttp.Request.AcceptEncoding := AcceptEncodingNoCompress;
-            LogDatei.log('HTTP Header: ' + IdHttp.Request.RawHeaders.Text, LLDebug2);
-            sendstream.Write(utf8str[1], length(utf8str));
-            IdHTTP.Post(Furl, sendstream, mymemorystream);
-            {$ENDIF SYNAPSE}
-          end;
-        except
-          on e: Exception do
-          begin
-            LogDatei.log_prog('Exception in retrieveJSONArray0: ' +
-              e.message, LLdebug);
-            //writeln('ddebug: Exception in retrieveJSONArray0: ' + e.message);
-            if e.message = 'HTTP/1.1 401 Unauthorized' then
-              FValidCredentials := False;
-            t := s;
-            // retry with other parameters
-            if ContentTypeCompress = 'application/json' then
-            begin
-              ContentTypeCompress := 'gzip-application/json-rpc';
-              AcceptCompress := 'gzip-application/json-rpc';
-              ContentTypeNoCompress := 'application/json-rpc';
-              AcceptNoCompress := 'application/json-rpc';
-              ContentEncodingNoCommpress := '';
-              ContentEncodingCommpress := '';
-              AcceptEncodingCompress := '';
-              AcceptEncodingNoCompress := '';
-            end
-            else
-            begin
-              ContentTypeCompress := 'application/json';
-              AcceptCompress := '';
-              ContentTypeNoCompress := 'application/json';
-              AcceptNoCompress := '';
-              ContentEncodingNoCommpress := '';
-              ContentEncodingCommpress := 'deflate';
-              AcceptEncodingCompress := 'deflate';
-              AcceptEncodingNoCompress := '';
-            end;
-            LogDatei.log_prog('Changing to MimeType: ' + ContentTypeCompress, LLDebug);
-            sendstream.Free;
-            //****************
-            try
-              sendstream := TMemoryStream.Create;
-              ReceiveStream := TMemoryStream.Create;
-              sendstream.Clear;
-              // we assume opsi4
-              compress := True;
-              LogDatei.log_prog('Using MimeType: ' + ContentTypeCompress, LLDebug2);
-              if compress then
-              begin
-                {$IFDEF SYNAPSE}
-                HTTPSender.Headers.Clear;
-                HTTPSender.Headers.Add('accept-encoding: ' +
-                  ContentEncodingCommpress + ',identity');
-                HTTPSender.Headers.Add('content-encoding: ' + ContentEncodingCommpress);
-                HTTPSender.Headers.Add('content-type: ' +
-                  ContentTypeCompress + ',identity');
-                for i := 0 to HTTPSender.Headers.Count - 1 do
-                  LogDatei.log('HTTPSender Header.Strings: ' +
-                    HTTPSender.Headers.Strings[i], LLDebug2);
-                {$ELSE SYNAPSE}
-                IdHttp.Request.ContentType := ContentTypeCompress;
-                IdHttp.Request.ContentEncoding := ContentEncodingCommpress;
-                IdHttp.Request.Accept := AcceptCompress;
-                IdHttp.Request.AcceptEncoding := AcceptEncodingCompress;
-                {$ENDIF SYNAPSE}
-                CompressionSendStream := TCompressionStream.Create(clMax, sendstream);
-                CompressionSendStream.Write(utf8str[1], length(utf8str));
-                CompressionSendStream.Free;
-                //writeln('ddebug: bpost');
-                {$IFDEF SYNAPSE}
-                HTTPSender.Document.LoadFromStream(sendstream);
-                HTTPSenderResult := HTTPSender.HTTPMethod('POST', Furl);
-                if HTTPSenderResult then
-                  LogDatei.log('HTTPSender Post ok', LLDebug2)
-                else
-                  LogDatei.log('HTTPSender Post failed', LLDebug2);
-                sendresultcode := HTTPSender.ResultCode;
-                sendresultstring := HTTPSender.ResultString;
-                LogDatei.log('HTTPSender result: ' + IntToStr(sendresultcode) +
-                  ' msg: ' + sendresultstring, LLDebug2);
-                if sendresultstring <> 'OK' then
-                begin
-                  raise Exception.Create(HTTPSender.Headers.Strings[0]);
-                end;
-                ReceiveStream := HTTPSender.Document;
-                {$ELSE SYNAPSE}
-                IdHTTP.Post(Furl, sendstream, ReceiveStream);
-                {$ENDIF SYNAPSE}
-                //writeln('ddebug: apost');
-                ReceiveStream.Seek(0, 0);
-                mymemorystream.Seek(0, 0);
-                CompressionReceiveStream := TDeCompressionStream.Create(ReceiveStream);
-                GetMem(buffer, 655360);
-                repeat
-                  FillChar(buffer^, 655360, ' ');
-                  readcount := CompressionReceiveStream.Read(buffer^, 655360);
-                  if readcount > 0 then
-                    mymemorystream.Write(buffer^, readcount);
-                until readcount < 655360;
-                CompressionReceiveStream.Free;
-                FreeMem(buffer);
-              end
-              else
-              begin
-                {$IFDEF SYNAPSE}
-                HTTPSender.Headers.Clear;
-                HTTPSender.Headers.Add('accept-encoding: ' +
-                  ContentEncodingCommpress + ',identity');
-                HTTPSender.Headers.Add('content-encoding: ' + ContentEncodingCommpress);
-                HTTPSender.Headers.Add('content-type: ' +
-                  ContentTypeCompress + ',identity');
-                for i := 0 to HTTPSender.Headers.Count - 1 do
-                  LogDatei.log('HTTPSender Header.Strings: ' +
-                    HTTPSender.Headers.Strings[i], LLDebug2);
-                HTTPSender.Document.LoadFromStream(sendstream);
-                HTTPSenderResult := HTTPSender.HTTPMethod('POST', Furl);
-                if HTTPSenderResult then
-                  LogDatei.log('HTTPSender Post ok', LLDebug2)
-                else
-                  LogDatei.log('HTTPSender Post failed', LLDebug2);
-                sendresultcode := HTTPSender.ResultCode;
-                sendresultstring := HTTPSender.ResultString;
-                LogDatei.log('HTTPSender result: ' + IntToStr(sendresultcode) +
-                  ' msg: ' + sendresultstring, LLDebug2);
-                if sendresultstring <> 'OK' then
-                begin
-                  raise Exception.Create(HTTPSender.Headers.Strings[0]);
-                end;
-                mymemorystream := HTTPSender.Document;
-                {$ELSE SYNAPSE}
-                IdHttp.Request.ContentType := ContentTypeNoCompress;
-                IdHttp.Request.ContentEncoding := ContentEncodingNoCommpress;
-                IdHttp.Request.Accept := AcceptNoCompress;
-                IdHttp.Request.AcceptEncoding := AcceptEncodingNoCompress;
-                sendstream.Write(utf8str[1], length(utf8str));
-                IdHTTP.Post(Furl, sendstream, mymemorystream);
-                {$ENDIF SYNAPSE}
-              end;
-            except
-              on e: Exception do
-              begin
-                LogDatei.log_prog('Exception in retrieveJSONArray1: ' +
-                  e.message, LLdebug);
-                //writeln('ddebug: Exception in retrieveJSONArray1: ' + e.message);
-                if e.message = 'HTTP/1.1 401 Unauthorized' then
-                  FValidCredentials := False;
-                t := s;
-              end;
-            end;
-
-            //****************
-          end;
-        end;
-        sourcestringlist.Free;
-        sendstream.Free;
-      end;
-
-      {$IFDEF SYNAPSE}
-      testresult := HTTPSender.Headers.Text;
-      cookieVal := HTTPSender.Cookies[0];
-      {$ELSE SYNAPSE}
-      testResult := IdHTTP.ResponseText;
-      cookieVal := IdHTTP.Response.RawHeaders.Values['Set-Cookie'];
-      {$ENDIF SYNAPSE}
-      // TODO: hier muss das mit dem Auslesen der Cookies noch anders gemacht werden.
-      // Was will man hier wissen???
-      posColon := -1;
-      if cookieVal <> '' then
-        posColon := pos(';', cookieVal);
-
-      if posColon > 0 then
-        FSessionId := copy(cookieVal, 1, posColon - 1)
-      else
-        FSessionId := '';
-
-    except
-      on E: Exception do
-      begin
-        errorOccured := True;
-        FError := E.Message;
-      end;
-    end;
-
-    if not ErrorOccured then
-    begin
-      mymemorystream.Position := 0;
-      ResultLines.LoadFromStream(mymemorystream);
-      // should be one line
-
-      if ResultLines.Count < 1 then
-      begin
-        FError := 'unexpected Result from webservice in retrieveJSONArray, number of lines: '
-          + IntToStr(ResultLines.Count);
-      end
-      else
-      begin
-        jO := SO(ResultLines.Strings[0]);
-
-
-        testresult := jO.AsJSon(True, True);
-        //LogDatei.log (DateTimeToStr(now) + ' JSON result ' + testresult ,  LLInfo);
-        //jO := result.geTSuperObject(0);
-        testresult := jO.S['error'];
-
-        if not (jO.N['error'].IsType(stNull)) then
-        begin
-          FError := jO.S['error'];
-          jO1 := jO.O['error'];
-          getStringlistFromJsonObject(jO1, fErrorInfo);
-          Result := nil;
-        end;
-      end;
-    end;
-
-  except
-    on E: Exception do
-    begin
-      errorOccured := True;
-      FError := E.Message;
-    end;
-  end;
-
-  if Result = nil then
-  begin
-    if logging then
-      LogDatei.log('Error: --- opsi service problem ---' + FError, LLerror);
-
-    if pos('10054', FError) > 0 //Socket error, connection reset by peer
-    then
-    begin
-      LogDatei.log_prog('trying to rebuild connection', LLInfo);
-      sleep(1000);
-      //createSocket;
-      retrieveJSONArray(omc, logging, False);
-    end;
-  end;
-end;
-
-*)
 
 function TJsonThroughHTTPS.retrieveJSONObjectByHttpPost(InStream: TMemoryStream;
   logging: boolean; communicationmode: integer): ISuperObject;
@@ -2862,7 +2008,7 @@ var
   posColon: integer;
   //  s,t : String;
   SendStream, ReceiveStream: TMemoryStream;
-  CompressionSendStream: TCompressionStream;
+  //CompressionSendStream: TCompressionStream;
   DeCompressionReceiveStream: TDeCompressionStream;
   buffer: ^byte;
   readcount: integer;
@@ -2870,7 +2016,7 @@ var
   ContentType, Accept, ContentEncoding, AcceptEncoding: string;
   {$IFDEF SYNAPSE}
   //HTTPSenderResult: boolean;
-  testresultSyn: string;
+  //testresultSyn: string;
   i: integer;
   //sendresultcode: integer;
   //sendresultstring: string;
@@ -2905,17 +2051,6 @@ begin
       ContentEncoding := 'gzip';
       //ContentEncoding := 'deflate';
     end;
-    {1:
-    begin
-      LogDatei.log('Use opsi 4.1 / 4.2 HTTP Header, plain', LLnotice);
-      compress := False;
-      ContentType := 'application/json; charset=UTF-8';
-      Accept := 'application/json';
-      ContentEncoding := 'identity'; //'gzip, deflate, identity';
-      AcceptEncoding := 'identity';
-      //ContentEncoding := '';
-      //AcceptEncoding  := '';
-    end;}
     1:
     begin
       LogDatei.log_prog('Use opsi 4.0  HTTP Header, compress', LLnotice);
@@ -3155,44 +2290,6 @@ begin
             raise Exception.Create(HTTPSender.Headers.Strings[0]);
           end;
         end;
-        (*
-        else
-        begin
-          LogDatei.log_prog('Using MimeType: ' + ContentTypeNoCompress, LLDebug);
-          {$IFDEF SYNAPSE}
-          HTTPSender.Headers.Clear;
-          HTTPSender.Headers.Add('accept: ' + AcceptNoCompress);
-          HTTPSender.Headers.Add('accept-encoding: ' + AcceptEncodingNoCompress);
-          HTTPSender.Headers.Add('content-encoding: ' + ContentEncodingNoCommpress);
-          HTTPSender.Headers.Add('content-type: ' + ContentTypeNoCompress);
-          for i := 0 to HTTPSender.Headers.Count - 1 do
-            LogDatei.log_prog('HTTPSender Header.Strings: ' +
-              HTTPSender.Headers.Strings[i], LLDebug2);
-          HTTPSender.Document.LoadFromStream(sendstream);
-          HTTPSenderResult := HTTPSender.HTTPMethod('POST', Furl);
-          if HTTPSenderResult then
-            LogDatei.log_prog('HTTPSender Post ok', LLDebug2)
-          else
-            LogDatei.log('HTTPSender Post failed', LLError);
-          sendresultcode := HTTPSender.ResultCode;
-          sendresultstring := HTTPSender.ResultString;
-          LogDatei.log_prog('HTTPSender result: ' + IntToStr(sendresultcode) +
-            ' msg: ' + sendresultstring, LLDebug2);
-          if sendresultstring <> 'OK' then
-          begin
-            raise Exception.Create(HTTPSender.Headers.Strings[0]);
-          end;
-          mymemorystream := HTTPSender.Document;
-          {$ELSE SYNAPSE}
-          IdHttp.Request.ContentType := ContentTypeNoCompress;
-          IdHttp.Request.ContentEncoding := ContentEncodingNoCommpress;
-          IdHttp.Request.Accept := AcceptNoCompress;
-          IdHttp.Request.AcceptEncoding := AcceptEncodingNoCompress;
-          LogDatei.log('HTTP Header: ' + IdHttp.Request.RawHeaders.Text, LLDebug);
-          IdHTTP.Post(FserviceURL + '/rpc', instream, mymemorystream);
-          {$ENDIF SYNAPSE}
-        end;
-        *)
       except
         on E: Exception do
         begin
@@ -3218,152 +2315,6 @@ begin
             end;
           end;
         end;
-          (*
-          if ContentTypeCompress = 'application/json' then
-          begin
-            LogDatei.log('Use opsi 4.0 HTTP Header', LLnotice);
-            ContentTypeCompress := 'gzip-application/json-rpc';
-            AcceptCompress := 'gzip-application/json-rpc';
-            ContentTypeNoCompress := 'application/json-rpc';
-            AcceptNoCompress := 'application/json-rpc';
-            ContentEncodingNoCommpress := '';
-            ContentEncodingCommpress := '';
-            AcceptEncodingCompress := '';
-            AcceptEncodingNoCompress := '';
-          end
-          else
-          begin
-            LogDatei.log('Use opsi 4.1 / 4.2 HTTP Header', LLnotice);
-            ContentTypeCompress := 'application/json';
-            AcceptCompress := 'application/json';
-            ContentTypeNoCompress := 'application/json';
-            AcceptNoCompress := 'application/json';
-            ContentEncodingNoCommpress := 'plain';
-            ContentEncodingCommpress := 'deflate';
-            AcceptEncodingCompress := 'deflate';
-            AcceptEncodingNoCompress := 'plain';
-          end;
-          LogDatei.log_prog('Changing to MimeType: ' + ContentTypeCompress, LLDebug);
-          sendstream.Free;
-
-          try
-            sendstream := TMemoryStream.Create;
-            ReceiveStream := TMemoryStream.Create;
-            sendstream.Clear;
-            // we assume opsi4
-            compress := True;
-            LogDatei.log_prog('Using MimeType: ' + ContentTypeCompress, LLDebug);
-
-            if compress then
-            begin
-              LogDatei.log_prog('Using MimeType: ' + ContentTypeCompress, LLDebug);
-              {$IFDEF SYNAPSE}
-              HTTPSender.Headers.Clear;
-              HTTPSender.MimeType := ContentTypeCompress;
-              HTTPSender.Headers.Add('accept: ' + AcceptCompress);
-              HTTPSender.Headers.Add('accept-encoding: ' + AcceptEncodingCompress);
-              HTTPSender.Headers.Add('content-encoding: ' + ContentEncodingCommpress);
-              HTTPSender.Headers.Add('content-type: ' + ContentTypeCompress);
-              for i := 0 to HTTPSender.Headers.Count - 1 do
-                LogDatei.log_prog('HTTPSender Header.Strings: ' +
-                  HTTPSender.Headers.Strings[i], LLDebug2);
-              {$ELSE SYNAPSE}
-              IdHttp.Request.ContentType := ContentTypeCompress;
-              IdHttp.Request.ContentEncoding := ContentEncodingCommpress;
-              IdHttp.Request.Accept := AcceptCompress;
-              IdHttp.Request.AcceptEncoding := AcceptEncodingCompress;
-              LogDatei.log_prog('HTTP Header: ' +
-                IdHttp.Request.RawHeaders.Text, LLDebug);
-              {$ENDIF SYNAPSE}
-              CompressionSendStream := TCompressionStream.Create(clMax, sendstream);
-              Instream.Seek(0, 0);
-              GetMem(buffer, 655360);
-              repeat
-                FillChar(buffer^, 655360, ' ');
-                readcount := Instream.Read(buffer^, 655360);
-                if readcount > 0 then
-                  CompressionSendStream.Write(buffer^, readcount);
-              until readcount < 655360;
-              CompressionSendStream.Free;
-              {$IFDEF SYNAPSE}
-              HTTPSender.Document.LoadFromStream(sendstream);
-              //HTTPSender.Document.SaveToFile('c:\opsi.org\log\senddoc.txt');
-              HTTPSenderResult := HTTPSender.HTTPMethod('POST', Furl);
-              if HTTPSenderResult then
-                LogDatei.log_prog('HTTPSender Post ok', LLDebug)
-              else
-                LogDatei.log('HTTPSender Post failed', LLError);
-              sendresultcode := HTTPSender.ResultCode;
-              sendresultstring := HTTPSender.ResultString;
-              LogDatei.log_prog('HTTPSender result: ' + IntToStr(sendresultcode) +
-                ' msg: ' + sendresultstring, LLDebug2);
-              if sendresultstring <> 'OK' then
-              begin
-                raise Exception.Create(HTTPSender.Headers.Strings[0]);
-              end;
-              ReceiveStream := HTTPSender.Document;
-              {$ELSE SYNAPSE}
-              IdHTTP.post(FserviceURL + '/rpc', sendstream, ReceiveStream);
-              {$ENDIF SYNAPSE}
-              ReceiveStream.Seek(0, 0);
-              mymemorystream.Seek(0, 0);
-              CompressionReceiveStream := TDeCompressionStream.Create(ReceiveStream);
-              repeat
-                readcount := CompressionReceiveStream.Read(buffer^, 655360);
-                if readcount > 0 then
-                  mymemorystream.Write(buffer^, readcount);
-              until readcount < 655360;
-              CompressionReceiveStream.Free;
-              FreeMem(buffer);
-            end
-            else
-            begin
-              LogDatei.log_prog('Using MimeType: ' + ContentTypeNoCompress, LLDebug);
-              {$IFDEF SYNAPSE}
-              HTTPSender.Headers.Clear;
-              HTTPSender.MimeType := ContentTypeNoCompress;
-              HTTPSender.Headers.Add('accept: ' + AcceptNoCompress);
-              HTTPSender.Headers.Add('accept-encoding: ' + AcceptEncodingNoCompress);
-              HTTPSender.Headers.Add('content-encoding: ' + ContentEncodingNoCommpress);
-              HTTPSender.Headers.Add('content-type: ' + ContentTypeNoCompress);
-              for i := 0 to HTTPSender.Headers.Count - 1 do
-                LogDatei.log_prog('HTTPSender Header.Strings: ' +
-                  HTTPSender.Headers.Strings[i], LLDebug2);
-              HTTPSender.Document.LoadFromStream(sendstream);
-              HTTPSenderResult := HTTPSender.HTTPMethod('POST', Furl);
-              if HTTPSenderResult then
-                LogDatei.log_prog('HTTPSender Post ok', LLDebug)
-              else
-                LogDatei.log('HTTPSender Post failed', LLError);
-              sendresultcode := HTTPSender.ResultCode;
-              sendresultstring := HTTPSender.ResultString;
-              LogDatei.log_prog('HTTPSender result: ' + IntToStr(sendresultcode) +
-                ' msg: ' + sendresultstring, LLDebug2);
-              if sendresultstring <> 'OK' then
-              begin
-                raise Exception.Create(HTTPSender.Headers.Strings[0]);
-              end;
-              ReceiveStream := HTTPSender.Document;
-              {$ELSE SYNAPSE}
-              IdHttp.Request.ContentType := ContentTypeNoCompress;
-              IdHttp.Request.ContentEncoding := ContentEncodingNoCommpress;
-              IdHttp.Request.Accept := AcceptNoCompress;
-              IdHttp.Request.AcceptEncoding := AcceptEncodingNoCompress;
-              LogDatei.log_prog('HTTP Header: ' +
-                IdHttp.Request.RawHeaders.Text, LLDebug);
-              IdHTTP.Post(FserviceURL + '/rpc', instream, mymemorystream);
-              {$ENDIF SYNAPSE}
-            end;
-          except
-            on e: Exception do
-            begin
-              LogDatei.log_prog(
-                'Exception in retrieveJSONObjectByHttpPost: stream handling: ' +
-                e.message
-                , LLError);
-            end;
-          end;
-        end;   *)
         (************************)
       end;
       {$IFDEF SYNAPSE}
@@ -3600,7 +2551,8 @@ end;
 function TJsonThroughHTTPS.getFileFromDepot(filename: string;
   toStringList: boolean; var ListResult: TStringList): boolean;
 var
-  resultstring, localurl: string;
+  //resultstring,
+  localurl: string;
   utf8str: string;//UTF8String;
 begin
   try
@@ -3711,38 +2663,11 @@ end;
 procedure TOpsi4Data.initOpsiConf(serviceURL, username, password: string);
 begin
   initOpsiConf(serviceURL, username, password, '', '', '');
-  (*
-  if FJsonExecutioner <> nil then
-    FJsonExecutioner.Free;
-  FjsonExecutioner := TJsonThroughHTTPS.Create(serviceUrl, username, password);
-  ProfildateiChange := False;
-  FServiceUrl := serviceURL;
-  FDepotId := '';
-  FOpsiServiceVersion := '4';
-  FOpsiModules := nil;
-  FOpsiInformation := nil;
-  FProductOnClientIndex := TStringList.Create;
-  FProductStates := TStringList.Create;
-  *)
 end;
 
 procedure TOpsi4Data.initOpsiConf(serviceURL, username, password, sessionid: string);
 begin
   initOpsiConf(serviceURL, username, password, sessionid, '', '');
-  (*
-  if FJsonExecutioner <> nil then
-    FJsonExecutioner.Free;
-  FjsonExecutioner := TJsonThroughHTTPS.Create(serviceUrl, username,
-    password, sessionid);
-  ProfildateiChange := False;
-  FServiceUrl := serviceURL;
-  FDepotId := '';
-  FOpsiServiceVersion := '4';
-  FOpsiModules := nil;
-  FOpsiInformation := nil;
-  FProductOnClientIndex := TStringList.Create;
-  FProductStates := TStringList.Create;
-  *)
 end;
 
 procedure TOpsi4Data.initOpsiConf(serviceURL, username, password,
@@ -3883,38 +2808,6 @@ begin
         LLerror);
   end;
 
-
-
-(*
-  FOpsiModules := nil;
-  FOpsiInformation := nil;
-  if FOpsiInformation = nil then
-  begin
-    omc := TOpsiMethodCall.Create('backend_info', []);
-    if omc <> nil then
-    begin
-      try
-        FOpsiInformation := FjsonExecutioner.retrieveJsonObject(omc);
-        if (FOpsiInformation <> nil) and (FOpsiInformation.O['result'] <>
-          nil) and (FopsiInformation.O['result'].O['modules'] <> nil) then
-          FOpsiModules := FopsiInformation.O['result'].O['modules']
-        else
-          LogDatei.log_prog('Problem getting modules from service', LLerror);
-      except
-        LogDatei.log_prog('Exeception getting modules from service', LLerror);
-      end;
-    end
-    else
-      LogDatei.log_prog('Problem creating OpsiMethodCall backend_info', LLerror);
-  end;
-  //teststring := FOpsiInformation.AsJSon(true,true);
-  //teststring := FOpsiInformation.O['result'].AsJSon(true,true);
-  //teststring := FOpsiInformation.O['result'].O['modules'].AsJSon(true,true);
-  //teststring := FOpsiModules.AsJSon(true,true);
-  //teststring := FOpsiModules.S['license_management'];
-  //testbool := FOpsiModules.B['license_management'];
-  Result := FOpsiModules;
-  *)
   omc.Free;
 end;
 
@@ -4022,28 +2915,7 @@ begin
   end;
 end;
 
-(*
-var
-  mymodules: ISuperObject;
-begin
-  try
-    mymodules := getOpsiModules;
-    LogDatei.log('modules found', LLDebug);
-    if mymodules <> nil then
-      Result := mymodules.B['roaming_profiles']
-    else
-    begin
-      LogDatei.log('Roaming Profiles info not found (modules = nil)',
-        LLWarning);
-      Result := False;
-    end;
-  except
-    LogDatei.log(
-      'Roaming Profiles info not found (exception in withRoamingProfiles)', LLWarning);
-    Result := False;
-  end;
-end;
-*)
+
 
 function TOpsi4Data.getOpsiVersion: string;
 var
@@ -4241,28 +3113,7 @@ begin
   end;
 end;
 
-(*
-var
-  mymodules: ISuperObject;
-begin
-  try
-    mymodules := getOpsiModules;
-    LogDatei.log('modules found', LLDebug);
-    if mymodules <> nil then
-      Result := mymodules.B['linux_agent']
-    else
-    begin
-      LogDatei.log('linux_agent info not found (modules = nil)',
-        LLWarning);
-      Result := False;
-    end;
-  except
-    LogDatei.log(
-      'linux_agent info not found (exception in linuxAgentActivated)', LLWarning);
-    Result := False;
-  end;
-end;
-*)
+
 
 function TOpsi4Data.macosAgentActivated: boolean;
 var
@@ -4285,28 +3136,7 @@ begin
   end;
 end;
 
-(*
-var
-  mymodules: ISuperObject;
-begin
-  try
-    mymodules := getOpsiModules;
-    LogDatei.log('modules found', LLDebug);
-    if mymodules <> nil then
-      Result := mymodules.B['macos_agent']
-    else
-    begin
-      LogDatei.log('macos_agent info not found (modules = nil)',
-        LLWarning);
-      Result := False;
-    end;
-  except
-    LogDatei.log(
-      'macos_agent info not found (exception in macosAgentActivated)', LLWarning);
-    Result := False;
-  end;
-end;
-*)
+
 
 procedure TOpsi4Data.saveOpsiConf;
 begin
@@ -4318,16 +3148,6 @@ begin
   Result := FOpsiServiceVersion;
 end;
 
-{
-function TOpsi4Data.retrieve (const omc: TOpsiMethodCall) : String;
-begin
-  if FJsonExecutioner.retrieveJSONObject(omc) <> nil
-  then
-     result := FjsonExecutioner.resultLines[0]
-  else
-     result := 'error: ' + FjsonExecutioner.lastError;
-end;
-}
 
 function TOpsi4Data.checkAndRetrieve(const omc: TOpsiMethodCall;
   var errorOccured: boolean): string;
@@ -4458,11 +3278,12 @@ begin
   end;
 end;
 
-function TOpsi4Data.actionToString(action: TAction): string;
+
+function TOpsi4Data.actionRequestToString(actionRequest: TActionRequest): string;
 begin
-  Result := 'undefined';
-  case action of
-    tacNull: Result := 'none';
+  Result := '';
+  case actionRequest of
+    tacNone: Result := 'none';
     tacSetup: Result := 'setup';
     tacUpdate: Result := 'update';
     tacDeinstall: Result := 'uninstall';
@@ -4473,26 +3294,15 @@ begin
   end;
 end;
 
-function TOpsi4Data.actionRequestToString(actionRequest: TActionRequest): string;
+function TOpsi4Data.actionProgressToString(actionProgress: TActionProgress) : string;
 begin
   Result := '';
-  case actionRequest of
-    tapNull: Result := 'none';
-    tapNull_byPolicy: Result := 'none_by_policy';
-    tapUndefined: Result := 'undefined';
-    tapSetup: Result := 'setup';
-    tapSetup_byPolicy: Result := 'setup_by_policy';
-    tapUpdate: Result := 'update';
-    tapUpdate_byPolicy: Result := 'update_by_policy';
-    tapDeinstall: Result := 'uninstall';
-    tapDeinstall_byPolicy: Result := 'uninstall_by_policy';
-    tapAlways: Result := 'always';
-    tapOnce: Result := 'once';
-    tapCustom: Result := 'custom';
-    tap_byPolicy: Result := 'by_policy';
+  case actionProgress of
+    tppNone : Result := '';
+    tppInstalling : Result := 'installing';
+    tppUnInstalling : Result := 'uninstalling';
   end;
 end;
-
 
 
 procedure TOpsi4Data.setActualClient(computername: string);
@@ -4505,11 +3315,6 @@ begin
   omc := TOpsiMethodCall.Create('getDepotId', [computername]);
   FDepotId := checkAndRetrieveString(omc, errorOccured);
   omc.Free;
-
-  //FProductStates := getMapOfProductStates;
-  //FProductActionRequests := getMapOfProductActionRequests;
-  //FInstallableProducts := getInstallableProducts;
-  //testresult := FInstallableProducts.text;
 end;
 
 
@@ -4522,68 +3327,35 @@ begin
   sValue := lowercase(s);
   if sValue = 'installed' then
     Result := tpsInstalled
-  //else if sValue = 'installing' then result := tpsInstalling
   else if sValue = 'not_installed' then
     Result := tpsNotInstalled;
-  //else if sValue = 'failed' then result := tpsFailed
-end;
-
-
-function TOpsi4Data.actionRequestStringToAction(s: string): TAction;
-var
-  sValue: string;
-begin
-  Result := tacNull;
-  sValue := lowercase(s);
-
-  if (sValue = 'setup') or (sValue = 'setup_by_policy') then
-    Result := tacSetup
-
-  else if (sValue = 'update') or (sValue = 'update_by_policy') then
-    Result := tacUpdate
-
-  else if (sValue = 'uninstall') or (sValue = 'uninstall_by_policy') then
-    Result := tacDeinstall
-
-  else if (sValue = 'always') then
-    Result := tacAlways
-
-  else if (sValue = 'once') then
-    Result := tacOnce
-
-  else if (sValue = 'custom') then
-    Result := tacCustom
-
-  else if (sValue = 'login') then
-    Result := tacLogin;
-
 end;
 
 function TOpsi4Data.actionRequestStringToActionRequest(s: string): TActionRequest;
 var
   sValue: string;
 begin
-  Result := tapNull;
+  Result := tacNone;
   sValue := lowercase(s);
-  if (sValue = 'setup') then
-    Result := tapSetup
-  else if (sValue = 'setup_by_policy') then
-    Result := tapSetup_byPolicy
+
+  if (sValue = 'none') then
+    Result := tacNone
+  else if (sValue = 'setup') then
+    Result := tacSetup
   else if (sValue = 'update') then
-    Result := tapUpdate
-  else if (sValue = 'update_by_policy') then
-    Result := tapUpdate_byPolicy
+    Result := tacUpdate
   else if (sValue = 'uninstall') then
-    Result := tapDeinstall
-  else if (sValue = 'uninstall_by_policy') then
-    Result := tapDeinstall_byPolicy
+    Result := tacDeinstall
   else if (sValue = 'always') then
-    Result := tapAlways
+    Result := tacAlways
   else if (sValue = 'once') then
-    Result := tapOnce
+    Result := tacOnce
   else if (sValue = 'custom') then
-    Result := tapCustom;
+    Result := tacCustom
+  else if (sValue = 'login') then
+    Result := tacLogin;
 end;
+
 
 function TOpsi4Data.getMethodSignature(const methodname: string): TStringList;
 var
@@ -4593,7 +3365,6 @@ var
   methodEntryString: string;
   methodEntry, jO1: ISuperObject;
   Name: string;
-  ///jA  : TSuperArray;
   slist: TStringList;
 
 begin
@@ -4610,11 +3381,6 @@ begin
         methodEntryString := methodsList.Strings[i];
         methodEntry := SO(methodEntryString);
         Name := methodEntry.S['name'];
-
-        //if name = 'getProduct_hash'
-        //then
-        //begin
-
         jO1 := methodEntry.O['params'];
         //testresult := methodEntry.getString('params');
 
@@ -4629,7 +3395,6 @@ begin
           end;
         end;
         mapOfMethodSignatures.addObject(Name, slist);
-        //end;
       end;
     end;
   end;
@@ -4783,24 +3548,12 @@ begin
     end;
   end;
   { free FJsonExecutioner gives a Access Violation }
-  (*
-  try
-    { free some objects  }
-    if Assigned(FJsonExecutioner) then
-      FreeAndNil(FJsonExecutioner);
-  except
-    on e: Exception do
-    begin
-      LogDatei.log('exception in finishOpsiConf: free FJsonExecutioner ' + e.message, LLError);
-    end;
-  end;
-  *)
 end;
 
 function TOpsi4Data.getLogSize: int64;
 var
   omc: TOpsiMethodCall;
-  str: string;
+ // str: string;
   jo: ISuperObject;
 begin
   Result := -1;
@@ -4860,18 +3613,13 @@ begin
 end;
 
 function TOpsi4Data.sendLog(logtype: string; appendmode: boolean): boolean;
-  //const logtype : String;
-
 var
   logstream: TMemoryStream;
   s, t, t2: string;
   found: boolean;
   errorinfo: string;
-  Count: longint;
   maxlogsizebyte: int64;
   aktlogsize: int64;
-  //scan: TUTF8Scanner;
-  //ch: UCS4Char;
 
 begin
   t := '';
@@ -4951,14 +3699,7 @@ begin
           t := 'log line contains non fixable non UTF8 chars';
         end
       end;
-      //{$IFDEF WINDOWS}
-      //utf8str := AnsiToUtf8(t);
-      //logstream.Write(utf8str[1], length(utf8str));
-      //{$ELSE WINDOWS}
-      //Logdatei.log('line4: '+t, LLDebug2);
       logstream.Write(t[1], length(t));
-      //{$ENDIF WINDOWS}
-      //utf8str := lconvencoding.ConvertEncoding(t,lconvencoding.GetDefaultTextEncoding,'utf8');
 
       Logdatei.log('wrote line: ' + t, LLDebug2);
       //logstream.write(t[1],length(t));
@@ -5694,19 +4435,13 @@ begin
   Result := stateStringToState(FProductStates.Values[ActualProduct]);
 end;
 
-function TOpsi4Data.getProductAction: TAction;
-begin
-  testresult := FProductActionRequests.Values[ActualProduct];
-  Result := actionRequestStringToAction(FProductActionRequests.Values[ActualProduct]);
-end;
-
 function TOpsi4Data.getProductActionRequest: TActionRequest;
 begin
   Result := actionRequestStringToActionRequest(
     FProductActionRequests.Values[ActualProduct]);
 end;
 
-function TOpsi4Data.getProductScriptPath(actionType: TAction): string;
+function TOpsi4Data.getProductScriptPath(actionType: TActionRequest): string;
 begin
   Result := '';
   //LogDatei.log('in TOpsi4Data.getProductScriptPath ', LLessential);
@@ -5936,17 +4671,15 @@ procedure TOpsi4Data.setProductState(newState: TProductState);
 var
   omc: TOpsiMethodCall;
   jO: ISuperObject;
-  stateS, parastr: string;
+  parastr: string;
 begin
   try
-    stateS := stateToString(newState);
     FProductOnClient_aktobject.AsObject.N['modificationTime'] := nil;
     parastr := FProductOnClient_aktobject.asJson(False, False);
     FProductOnClient_aktobject.AsObject.N['actionSequence'] := nil;
     parastr := FProductOnClient_aktobject.asJson(False, False);
     FProductOnClient_aktobject.AsObject.S['installationStatus'] :=
       installationStatusToString(newState);
-    FProductOnClient_aktobject.AsObject.S['actionProgress'] := stateS;
     parastr := FProductOnClient_aktobject.asJson(False, False);
     omc := TOpsiMethodCall.Create('productOnClient_updateObject', [parastr]);
     jO := FjsonExecutioner.retrieveJSONObject(omc);
@@ -5960,22 +4693,20 @@ begin
     FProductStates.Values[actualProduct] := installationStatusToString(newState);
 end;
 
-procedure TOpsi4Data.setProductProgress(myprogres: string);
+procedure TOpsi4Data.setProductProgress(newProgress: TActionProgress);
 var
   omc: TOpsiMethodCall;
   jO: ISuperObject;
-  stateS, parastr: string;
+  parastr: string;
 begin
   try
     begin
-      stateS := myprogres;
       FProductOnClient_aktobject.AsObject.N['modificationTime'] := nil;
       parastr := FProductOnClient_aktobject.asJson(False, False);
       FProductOnClient_aktobject.AsObject.N['actionSequence'] := nil;
       parastr := FProductOnClient_aktobject.asJson(False, False);
-      FProductOnClient_aktobject.AsObject.S['installationStatus'] :=
-        installationStatusToString(tps4Unkown);
-      FProductOnClient_aktobject.AsObject.S['actionProgress'] := stateS;
+      FProductOnClient_aktobject.AsObject.S['actionProgress'] :=
+         actionProgressToString(newProgress);
       parastr := FProductOnClient_aktobject.asJson(False, False);
       omc := TOpsiMethodCall.Create('productOnClient_updateObject', [parastr]);
       jO := FjsonExecutioner.retrieveJSONObject(omc);
@@ -5987,18 +4718,17 @@ begin
   end;
   // save the new value in the local cache as well
   if FProductStates.IndexOf(actualProduct) > -1 then
-    FProductStates.Values[actualProduct] := installationStatusToString(tps4Unkown);
+    FProductStates.Values[actualProduct] := installationStatusToString(tpsUnkown);
 end;
 
 procedure TOpsi4Data.ProductOnClient_update(actionProgressS: string;
-  actionResult: TActionResult4; actionRequest: TActionRequest4;
-  targetConfiguration: TTargetConfiguration4; lastAction: TActionRequest4;
-  installationStatus: TProductstate);
+  actionResult: TActionResult; actionRequest: TActionRequest;
+  lastAction: TActionRequest; installationStatus: TProductstate);
 
 var
   omc: TOpsiMethodCall;
   jO: ISuperObject;
-  installationStatusS, actionResultS, actionRequestS, targetConfigurationS,
+  installationStatusS, actionResultS, actionRequestS,
   lastActionS: string;
   parastr: string;
 
@@ -6006,18 +4736,18 @@ begin
   //if FInstallableProducts.IndexOf(actualProduct) = -1 then exit;
   try
     actionResultS := actionResultToString(actionResult);
-    actionRequestS := actionRequest4toString(actionRequest);
-    targetConfigurationS := targetConfigurationToString(targetConfiguration);
-    lastActionS := actionRequest4toString(lastAction);
+    actionRequestS := actionRequesttoString(actionRequest);
+    //targetConfigurationS := targetConfigurationToString(targetConfiguration);
+    lastActionS := actionRequesttoString(lastAction);
     installationStatusS := installationStatusToString(installationStatus);
 
     FProductOnClient_aktobject.S['actionProgress'] := actionProgressS;
     FProductOnClient_aktobject.S['actionResult'] := actionResultS;
     FProductOnClient_aktobject.S['actionRequest'] := actionRequestS;
-    if lastAction <> tac4Custom then
-      FProductOnClient_aktobject.S['targetConfiguration'] := targetConfigurationS;
+    //if lastAction <> tac4Custom then
+    //  FProductOnClient_aktobject.S['targetConfiguration'] := targetConfigurationS;
     parastr := FProductOnClient_aktobject.asJson(False, False);
-    if lastAction <> tac4Custom then
+    if lastAction <> tacCustom then
     begin
       if (Productvars <> nil) and (Productvars.values['productVersion'] <> '') then
       begin
@@ -6031,7 +4761,7 @@ begin
           Productvars.Values['productVersion'];
       end;
     end;
-    if lastAction <> tac4Custom then
+    if lastAction <> tacCustom then
     begin
       if (Productvars <> nil) and (Productvars.values['packageVersion'] <> '') then
       begin
@@ -6042,7 +4772,7 @@ begin
       end;
     end;
     FProductOnClient_aktobject.S['lastAction'] := lastActionS;
-    if lastAction <> tac4Custom then
+    if lastAction <> tacCustom then
       FProductOnClient_aktobject.S['installationStatus'] := installationStatusS;
     parastr := FProductOnClient_aktobject.asJson(False, False);
     LogDatei.log('Opsi4Data.ProductOnClient_update, params (JSON): ' +
@@ -6061,7 +4791,23 @@ procedure TOpsi4Data.setProductStateActionRequest(newState: TProductState;
 begin
   setProductState(newState);
   setProductActionRequest(newAction);
+  SetProductProgressByActionrequest(newAction);
 end;
+
+procedure TOpsi4Data.SetProductProgressByActionrequest(const Verfahren: TActionRequest);
+begin
+  case Verfahren of
+    tacNone: opsidata.setProductProgress(tppNone);
+    tacSetup: opsidata.setProductProgress(tppInstalling);
+    tacDeinstall: opsidata.setProductProgress(tppUnInstalling);
+    tacOnce: opsidata.setProductProgress(tppInstalling);
+    tacAlways: opsidata.setProductProgress(tppInstalling);
+    tacCustom: opsidata.setProductProgress(tppInstalling);
+    tacLogin: opsidata.setProductProgress(tppInstalling);
+    tacUpdate: opsidata.setProductProgress(tppInstalling);
+  end;
+end;
+
 
 function TOpsi4Data.UpdateSwitches(extremeErrorLevel: TErrorLevel): boolean;
 begin
@@ -6099,61 +4845,55 @@ begin
         begin
           //successful after setup
           ProductOnClient_update(Progress,
-            tar4Successful,
-            tac4None,
-            ttc4Installed,
-            tac4Setup,
-            tps4Unkown);
+            tarSuccessful,
+            tacNone,
+            tacSetup,
+            tpsUnkown);
         end
         else if ActionStr = 'update' then
         begin
           //successful after update
           ProductOnClient_update(Progress,
-            tar4Successful,
-            tac4None,
-            ttc4Installed,
-            tac4Update,
-            tps4Unkown);
+            tarSuccessful,
+            tacNone,
+            tacUpdate,
+            tpsUnkown);
         end
         else if ActionStr = 'uninstall' then
         begin
           //successful after uninstall
           ProductOnClient_update(Progress,
-            tar4Successful,
-            tac4None,
-            ttc4Forbidden,
-            tac4Uninstall,
-            tps4Unkown);
+            tarSuccessful,
+            tacNone,
+            tacDeinstall,
+            tpsUnkown);
         end
         else if ActionStr = 'always' then
         begin
           //successful after always
           ProductOnClient_update(Progress,
-            tar4Successful,
-            tac4Always,
-            ttc4Always,
-            tac4Always,
-            tps4Unkown);
+            tarSuccessful,
+            tacAlways,
+            tacAlways,
+            tpsUnkown);
         end
         else if ActionStr = 'once' then
         begin
           //successful after Once
           ProductOnClient_update(Progress,
-            tar4Successful,
-            tac4None,
-            ttc4Forbidden,
-            tac4Once,
-            tps4Unkown);
+            tarSuccessful,
+            tacNone,
+            tacOnce,
+            tpsUnkown);
         end
         else if ActionStr = 'custom' then
         begin
           //successful after Custom
           ProductOnClient_update(Progress,
-            tar4Successful,
-            tac4None,
-            ttc4undefined,
-            tac4Custom,
-            tps4Unkown);
+            tarSuccessful,
+            tacNone,
+            tacCustom,
+            tpsUnkown);
         end
         else
         begin
@@ -6166,61 +4906,55 @@ begin
         begin
           //failed after setup
           ProductOnClient_update(Progress,
-            tar4Failed,
-            tac4None,
-            ttc4Installed,
-            tac4Setup,
-            tps4Unkown);
+            tarFailed,
+            tacNone,
+            tacSetup,
+            tpsUnkown);
         end
         else if ActionStr = 'update' then
         begin
           //failed after update
           ProductOnClient_update(Progress,
-            tar4Failed,
-            tac4None,
-            ttc4Installed,
-            tac4Update,
-            tps4Unkown);
+            tarFailed,
+            tacNone,
+            tacUpdate,
+            tpsUnkown);
         end
         else if ActionStr = 'uninstall' then
         begin
           //failed after uninstall
           ProductOnClient_update(Progress,
-            tar4Failed,
-            tac4None,
-            ttc4Forbidden,
-            tac4Uninstall,
-            tps4Unkown);
+            tarFailed,
+            tacNone,
+            tacDeinstall,
+            tpsUnkown);
         end
         else if ActionStr = 'always' then
         begin
           //failed after always
           ProductOnClient_update(Progress,
-            tar4Failed,
-            tac4Always,
-            ttc4Always,
-            tac4Always,
-            tps4Unkown);
+            tarFailed,
+            tacAlways,
+            tacAlways,
+            tpsUnkown);
         end
         else if ActionStr = 'once' then
         begin
           //failed after Once
           ProductOnClient_update(Progress,
-            tar4Failed,
-            tac4None,
-            ttc4Forbidden,
-            tac4Once,
-            tps4Unkown);
+            tarFailed,
+            tacNone,
+            tacOnce,
+            tpsUnkown);
         end
         else if ActionStr = 'custom' then
         begin
           //failed after Custom
           ProductOnClient_update(Progress,
-            tar4Failed,
-            tac4None,
-            ttc4undefined,
-            tac4Custom,
-            tps4Unkown);
+            tarFailed,
+            tacNone,
+            tacCustom,
+            tpsUnkown);
         end
         else
         begin
@@ -6237,61 +4971,55 @@ begin
         begin
           //successful after setup
           ProductOnClient_update('',
-            tar4Successful,
-            tac4None,
-            ttc4Installed,
-            tac4Setup,
-            tps4Installed);
+            tarSuccessful,
+            tacNone,
+            tacSetup,
+            tpsInstalled);
         end
         else if ActionStr = 'update' then
         begin
           //successful after update
           ProductOnClient_update('',
-            tar4Successful,
-            tac4None,
-            ttc4Installed,
-            tac4Update,
-            tps4Installed);
+            tarSuccessful,
+            tacNone,
+            tacUpdate,
+            tpsInstalled);
         end
         else if ActionStr = 'uninstall' then
         begin
           //successful after uninstall
           ProductOnClient_update('',
-            tar4Successful,
-            tac4None,
-            ttc4Forbidden,
-            tac4Uninstall,
-            tps4Not_installed);
+            tarSuccessful,
+            tacNone,
+            tacDeinstall,
+            tpsNotInstalled);
         end
         else if ActionStr = 'always' then
         begin
           //successful after always
           ProductOnClient_update('',
-            tar4Successful,
-            tac4Always,
-            ttc4Always,
-            tac4Always,
-            tps4Installed);
+            tarSuccessful,
+            tacAlways,
+            tacAlways,
+            tpsInstalled);
         end
         else if ActionStr = 'once' then
         begin
           //successful after Once
           ProductOnClient_update('',
-            tar4Successful,
-            tac4None,
-            ttc4Forbidden,
-            tac4Once,
-            tps4Not_installed);
+            tarSuccessful,
+            tacNone,
+            tacOnce,
+            tpsNotInstalled);
         end
         else if ActionStr = 'custom' then
         begin
           //successful after Custom
           ProductOnClient_update('',
-            tar4Successful,
-            tac4None,
-            ttc4undefined,
-            tac4Custom,
-            tps4Unkown);
+            tarSuccessful,
+            tacNone,
+            tacCustom,
+            tpsUnkown);
         end
         else
         begin
@@ -6304,61 +5032,55 @@ begin
         begin
           //failed after setup
           ProductOnClient_update(Progress,
-            tar4Failed,
-            tac4None,
-            ttc4Installed,
-            tac4Setup,
-            tps4Unkown);
+            tarFailed,
+            tacNone,
+            tacSetup,
+            tpsUnkown);
         end
         else if ActionStr = 'update' then
         begin
           //failed after update
           ProductOnClient_update(Progress,
-            tar4Failed,
-            tac4None,
-            ttc4Installed,
-            tac4Update,
-            tps4Unkown);
+            tarFailed,
+            tacNone,
+            tacUpdate,
+            tpsUnkown);
         end
         else if ActionStr = 'uninstall' then
         begin
           //failed after uninstall
           ProductOnClient_update(Progress,
-            tar4Failed,
-            tac4None,
-            ttc4Forbidden,
-            tac4Uninstall,
-            tps4Unkown);
+            tarFailed,
+            tacNone,
+            tacDeinstall,
+            tpsUnkown);
         end
         else if ActionStr = 'always' then
         begin
           //failed after always
           ProductOnClient_update(Progress,
-            tar4Failed,
-            tac4Always,
-            ttc4Always,
-            tac4Always,
-            tps4Unkown);
+            tarFailed,
+            tacAlways,
+            tacAlways,
+            tpsUnkown);
         end
         else if ActionStr = 'once' then
         begin
           //failed after Once
           ProductOnClient_update(Progress,
-            tar4Failed,
-            tac4None,
-            ttc4Forbidden,
-            tac4Once,
-            tps4Unkown);
+            tarFailed,
+            tacNone,
+            tacOnce,
+            tpsUnkown);
         end
         else if ActionStr = 'custom' then
         begin
           //failed after Custom
           ProductOnClient_update(Progress,
-            tar4Failed,
-            tac4None,
-            ttc4undefined,
-            tac4Custom,
-            tps4Unkown);
+            tarFailed,
+            tacNone,
+            tacCustom,
+            tpsUnkown);
         end
         else
         begin
@@ -6372,36 +5094,12 @@ begin
   end;
 end;
 
-function TOpsi4Data.actionResultToString(actionResult: TActionResult4): string;
+function TOpsi4Data.actionResultToString(actionResult: TActionResult): string;
 begin
   case actionResult of
-    tar4None: Result := 'none';
-    tar4Failed: Result := 'failed';
-    tar4Successful: Result := 'successful';
-  end;
-end;
-
-function TOpsi4Data.actionRequest4ToString(actionRequest: TActionRequest4): string;
-begin
-  case actionRequest of
-    tac4None: Result := 'none';
-    tac4Setup: Result := 'setup';
-    tac4Update: Result := 'update';
-    tac4Uninstall: Result := 'uninstall';
-    tac4Always: Result := 'always';
-    tac4Once: Result := 'once';
-    tac4Custom: Result := 'custom';
-  end;
-end;
-
-function TOpsi4Data.targetConfigurationToString(targetConfiguration:
-  TTargetConfiguration4): string;
-begin
-  case targetConfiguration of
-    ttc4Installed: Result := 'installed';
-    ttc4Forbidden: Result := 'forbidden';
-    ttc4Always: Result := 'always';
-    ttc4undefined: Result := 'undefined';
+    tarNone: Result := 'none';
+    tarfailed: Result := 'failed';
+    tarSuccessful: Result := 'successful';
   end;
 end;
 
@@ -6410,9 +5108,9 @@ function TOpsi4Data.installationStatusToString(installationStatus:
 begin
   Result := 'unknown';
   case installationStatus of
-    tps4Installed: Result := 'installed';
-    tps4Not_installed: Result := 'not_installed';
-    tps4Unkown: Result := 'unknown';
+    tpsInstalled: Result := 'installed';
+    tpsNotInstalled: Result := 'not_installed';
+    tpsUnkown: Result := 'unknown';
   end;
 end;
 
@@ -6505,5 +5203,5 @@ end;
 (************************ End of TOpsi4Data ***********************************)
 
 initialization
-  // {$i widatamodul.lrs}
+
 end.
