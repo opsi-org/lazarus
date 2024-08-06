@@ -20766,6 +20766,7 @@ begin
                     noRuntimError := False;
                   end;
 
+                {$IFDEF WINDOWS}
                 if syntaxCheck and noRuntimError then
                   // parse s1 in order to get the drive char
                 begin
@@ -20773,25 +20774,56 @@ begin
                     drivenumber := Ord(uppercase(s1)[1]) - Ord('A') + 1
                   else
                   begin
+                    syntaxCheck := False;
                     noRuntimError := False;
                     RunTimeInfo := '"' + s1 + '" is not a valid drive"';
                   end;
                 end;
+                {$ELSE WINDOWS}
+                if syntaxCheck and noRuntimError then
+                begin
+                  // if s1 is empty we use drivenumber = 0 = actual dir
+                  // else if s1 is a existing Directory, we create a drive(number) for this directory
+                  // https://www.freepascal.org/docs-html/rtl/sysutils/adddisk.html
+                  // https://forum.lazarus.freepascal.org/index.php?topic=19439.0
+                  if (s1 = '') then
+                  begin
+                    drivenumber := 0;
+                    // set s1 to actual dir for further messages
+                    s1 := '.';
+                  end
+                  else if (UpperCase(s1) = '%SYSTEMDRIVE%') then
+                  begin
+                    //  %SYSTEMDRIVE% is windows only - use Fallback
+                    LogDatei.log(s1+' is only aviable at Windows - fallback to root dir: "/"', LLwarning);
+                    // set s1 to actual root dir for use and further messages
+                    s1 := '/';
+                    drivenumber := adddisk(s1);
+                  end
+                  else if DirectoryExists(s1)  then
+                    drivenumber := adddisk(s1)
+                  else
+                  begin
+                    noRuntimError := False;
+                    RunTimeInfo := '"' + s1 + '" is not a valid directory"';
+                  end;
+                end;
+                {$ENDIF WINDOWS}
 
-                if syntaxCheck then
+                if syntaxCheck and noRuntimError then
                   freebytes := diskfree(drivenumber);
 
-                if syntaxCheck and (freebytes = -1) then
+                if syntaxCheck and (freebytes = -1) and noRuntimError then
                 begin
-                  syntaxCheck := False;
-                  RunTimeInfo := '"' + s1 + '" is not a valid drive"';
+                  noRuntimError := False;
+                  RunTimeInfo := '"' + s1 + '" is not a valid drive or directory"';
                 end;
 
-                if syntaxCheck then
+                if syntaxCheck and noRuntimError then
                 begin
                   BooleanResult := (freebytes >= requiredBytes);
                   RunTimeInfo :=
-                    'Free on Disk ' + s1 + ': ' + formatInt(freebytes) + ' bytes';
+                    'Free on Disk / Directory "' + s1 + '" : ' + formatInt(freebytes) + ' bytes';
                   if BooleanResult then
                     RunTimeInfo := RunTimeInfo + '  This is more '
                   else
