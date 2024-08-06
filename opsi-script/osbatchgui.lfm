@@ -1,7 +1,7 @@
 object FBatchOberflaeche: TFBatchOberflaeche
   Left = 251
   Height = 1000
-  Top = 103
+  Top = 0
   Width = 1564
   Caption = 'opsi-script'
   ClientHeight = 1000

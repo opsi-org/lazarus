@@ -800,7 +800,6 @@ begin
       CloseKey;
     regresult :=
       RegOpenKeyEx(rkey, PChar(enckey), 0, KeyOpenMode, mykey);
-
     if regresult <> ERROR_SUCCESS then
     begin
       if regresult = ERROR_FILE_NOT_FOUND then
@@ -821,19 +820,12 @@ begin
     else
     begin
       keyopened := True;
-
       LogS := 'opened';
-
       LogS := 'Registry key ' + '[' + key0 + '\' + key + '] ' + LogS;
       LogDatei.log(LogS, LLInfo);
-
       Result := True;
     end;
-
   end;
-
-  //LogDatei.LogSIndentLevel := baseindentlevel + countChar ('\', key);
-  //LogDatei.log ( 'setze LogSIndentLevel auf ' + inttostr(LogDatei.LogSIndentLevel), LLInfo);
 end;
 
 
@@ -858,7 +850,6 @@ begin
     regresult :=
       RegCreateKeyEx(rkey, PChar(enckey), 0, nil, reg_option_non_volatile,
       KeyOpenMode, nil, mykey, @dwDisposition);
-
     if regresult <> ERROR_SUCCESS then
     begin
       LogS := 'Registry key ' + '[' + key0 + '\' + key + '] ' +
@@ -879,21 +870,15 @@ begin
     else
     begin
       keyopened := True;
-
       if dwDisposition = reg_created_new_key then
         LogS := 'created'
       else
         LogS := 'opened';
-
       LogS := 'Registry key ' + '[' + key0 + '\' + key + '] ' + LogS;
       LogDatei.log(LogS, LLInfo);
-
       Result := True;
     end;
   end;
-
-  LogDatei.LogSIndentLevel := baseindentlevel + countChar('\', key);
-
 end;
 
 function TuibRegistry.GetAllSubkeys(const key0: string): TStringList;
@@ -911,29 +896,24 @@ var
 begin
   Result := TStringList.Create;
   keyopened := openExistingKey(key0, '');
-
   if keyopened then
   begin
     errorcode := RegQueryInfoKey(mykey, nil, nil, nil, @subkeynumber,
       @maxsubkeylength, nil, nil, nil, nil, nil, nil);
     LogDatei.log(' errorcode ' + IntToStr(errorcode) + ' "' +
       RemoveLineBreaks(SysErrorMessage(ErrorCode)) + '"', LLInfo);
-
     b := StrAlloc(maxsubkeylength + 1);
     for i := subkeynumber - 1 downto 0 do
     begin
-      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
       len := maxsubkeylength + 1;
       errorcode := RegEnumKeyEx(mykey, i, b, len, nil, nil, nil, nil);
       LogDatei.log(' errorcode ' + IntToStr(errorcode) + ' "' +
         RemoveLineBreaks(SysErrorMessage(ErrorCode)) + '"', LLInfo);
       LogDatei.log('there ' + b, LLInfo);
       setString(s, b, len);
-      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
     end;
     Result.add(s);
     freemem(b);
-
   end;
 end;
 
@@ -956,8 +936,6 @@ begin
 
   if keyopened then
   begin
-    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
-
     size := 0;
     nameSize := 255;
     i := 0;
@@ -982,10 +960,7 @@ begin
 
       Inc(i);
     end;
-
   end;
-
-  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
 end;
 
 
@@ -1013,7 +988,6 @@ begin
   enckey := UTF8ToWinCP(key);
   encsubkey := UTF8ToWinCP(subkey);
   startIndentLevel := LogDatei.LogSIndentLevel;
-  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
 
   (* no encoding here becaus we are perhaps in a recusrsion
   if enckey = '' then
@@ -1086,7 +1060,6 @@ begin
     end;
     CloseKey;
   end;
-  LogDatei.LogSIndentLevel := startIndentLevel;
 end;
 
 
@@ -1104,7 +1077,6 @@ begin
   Result := True;
   enckey := UTF8ToWinCP(key);
   encsubkey := UTF8ToWinCP(subkey);
-  //startindentlevel := LogDatei.LogSIndentLevel;
 
   loglevel := Logdatei.LogLevel;
   LogDatei.LogLevel := LLInfo; //don't log the opening of a key
@@ -1143,7 +1115,7 @@ begin
 
   end;
 
-  //LogDatei.LogSIndentLevel := startindentlevel;
+  //;
 
 end;
 
