@@ -3,7 +3,7 @@ isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-pac
 mac getIpByName liefert name von IPnum
 
 
-opsi-script (4.12.15.5) unreleased/testing (4.2/4.3); urgency=medium
+opsi-script (4.12.16.0) unreleased/unreleased (4.2/4.3); urgency=medium
 
 * [fix] osparser: tssleep - handling of syntax and runtime errors (m.michaelis, !242)
 * [fix] powershellcall/ExecWith powershell:  approvments in runnning of powershell
@@ -13,8 +13,11 @@ opsi-script (4.12.15.5) unreleased/testing (4.2/4.3); urgency=medium
         s1 should be a directory at Unix (Linux / macOS)
         s1 = empty = actual dir ".", s1= %SYSTEMDRIVE% = warning and fallback to root dir: "/"
         (d.oertel, !246) 
+* [change] remove logging indents, set loglevel for IF-Conditions to "Debug2" (j.werner, !244)
+* [change] oswebservice.pas: refactor states and actions, cleanup unused variables, remove opsidata
+           (d.oertel, !245)
 
--- j.werner <j.werner@uib.de> 24 July 2024
+-- j.werner <j.werner@uib.de> 08 August 2024
 
 
 opsi-script (4.12.15.4) unreleased/testing (4.2/4.3); urgency=medium
