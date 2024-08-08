@@ -280,7 +280,7 @@ compile opsi-client-systray windows:
   variables:
     BINARY_NAME: "opsi-client-systray"
   rules:
-    - !reference [.opsi-client-systray_defaults rules]
+    - !reference [.opsi-client-systray_defaults, rules]
   script:
     - $LAZ_PROJECT_FILE=Join-Path ${PROJECT_REPOSITORY_PATH}\  "${PROJECT_NAME}.lpi"
     - echo "$LAZ_PROJECT_FILE"
@@ -303,7 +303,7 @@ compile opsi-client-systray linux:
   variables:
     BINARY_NAME: "opsi-client-systray"
   rules:
-    - !reference [.opsi-client-systray_defaults rules]
+    - !reference [.opsi-client-systray_defaults, rules]
   script:
     - LAZ_PROJECT_FILE=${PROJECT_REPOSITORY_PATH}/${PROJECT_NAME}.lpi
     - echo "$LAZ_PROJECT_FILE"
@@ -325,7 +325,7 @@ compile opsi-client-systray macos:
   variables:
     BINARY_NAME: "opsi-client-systray"
   rules:
-    - !reference [.opsi-client-systray_defaults rules]
+    - !reference [.opsi-client-systray_defaults, rules]
   script:
     - LAZ_PROJECT_FILE=${PROJECT_REPOSITORY_PATH}${PROJECT_NAME}.lpi
     - echo "$LAZ_PROJECT_FILE"
