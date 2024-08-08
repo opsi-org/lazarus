@@ -170,6 +170,9 @@ opsi-script to binaryindex:
     - laz-linux
   dependencies:
     - get version
+    - compile opsi-script windows
+    - compile opsi-script linux
+    - compile opsi-script macos
   rules: 
     - !reference [.opsi-script_defaults, rules]
   script:
