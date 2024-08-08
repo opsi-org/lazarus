@@ -1,31 +1,10 @@
-# Variable definitions
 variables:
-  RUN_PIPLINE:
-    value: "false"  # run pipline NOT by default
-    description: "Run the pipline if set to true."
-
   PROJECT_NAME:
     value: "opsiscript"
-    description: "Project name of the project the pipline should run on."
-
-  BINARY_VERSION:
-    value: "4.12.4.30"
-    description: "Version of the binary"
-
-  PLATFORM:
-    value: "all"
-    description: "For which build modes should the lazarus project be compiled?
-    all: build project for all platforms (Win32, Win64, Linux, MacOS)
-    Windows (Linux, MacOS):  build project for the specified platform only"
-
-# Control of the Pipline
-workflow:
-  rules:
-    - if: '$RUN_PIPLINE == "true"' # && $CI_PIPELINE_SOURCE == "push"'
-    # - if: '$CI_COMMIT_MESSAGE =~ /-compile$/ && $CI_PIPELINE_SOURCE == "push"'
-      when: always
+    description: "Name of the lazarus project (name of .lpi, without the lpi extension)"
 
 stages:
+  - init
   - build
   - test_windows
   # - test_linux
@@ -36,29 +15,78 @@ default:
   before_script:
     - echo "Execute this command before any 'script:' commands."
 
+workflow:
+  rules:
+    - if: $PROJECT_NAME == "opsiscript"
+      variables:
+        PROJECT_REPOSITORY_PATH: "opsi-script"
+    - if: $PROJECT_NAME == "opsi_laz_gui_test"
+      variables:
+        PROJECT_REPOSITORY_PATH: "helper/opsi-laz-gui-test"
+    - if: $PROJECT_NAME == "opsi_client_systray"
+      variables:
+        PROJECT_REPOSITORY_PATH: "helper/opsi-client-systray"
+
+#**********************************************#
+#  Get the binary version from the             # 
+#  Lazarus Project file (.lpi).                #
+#  The file format is xml.                     #
+#**********************************************#
+get version:
+  stage: init
+  tags:
+    - laz-win10
+  rules:
+    - if: ($PROJECT_NAME == "")
+      when: never
+    - if: $CI_COMMIT_TAG
+      when: always
+    - when: manual
+  script:
+    - $LAZ_PROJECT_FILE=Join-Path ${PROJECT_REPOSITORY_PATH}\  "${PROJECT_NAME}.lpi"
+    - New-Item version.env
+    - $doc = [XML] (Get-Content -Path $LAZ_PROJECT_FILE)
+    - $MajorVersionNr = $doc.SelectSingleNode("//MajorVersionNr").Value
+    - if ($MajorVersionNr -eq $null) {$MajorVersionNr = 0}
+    - $MinorVersionNr = $doc.SelectSingleNode("//MinorVersionNr").Value
+    - if ($MinorVersionNr -eq $null) {$MinorVersionNr = 0}
+    - $RevisionNr = $doc.SelectSingleNode("//RevisionNr").Value
+    - if ($RevisionNr -eq $null) {$RevisionNr = 0}
+    - $BuildNr = $doc.SelectSingleNode("//BuildNr").Value
+    - if ($BuildNr -eq $null) {$BuildNr = 0}
+    - $BINARY_VERSION = $MajorVersionNr + "." + $MinorVersionNr + "." + $RevisionNr + "." + $BuildNr
+    - echo $BINARY_VERSION
+    - Add-Content version.env "BINARY_VERSION=${BINARY_VERSION}"
+  artifacts:
+    reports:
+      dotenv: version.env
+
+
 #***************************************#
 #  opsi-script pipline                  #
 #***************************************#
+.opsi-script_defaults:
+  rules:
+    - if: ($PROJECT_NAME != "opsiscript")
+      when: never
+    - if: $CI_COMMIT_TAG
+      when: always
+    - when: manual
+
 compile opsi-script windows:
   stage: build
   tags:
     - laz-win10
-  variables:
-    PROJECT_REPOSITORY_PATH: "opsi-script"
-  rules:
-    - if: ($PROJECT_NAME == "opsiscript") && ($PLATFORM == "all" || $PLATFORM == "Windows")
-      when: always
+  dependencies:
+    - get version
+  rules: 
+    - !reference [.opsi-script_defaults, rules]
   script:
     - $LAZ_PROJECT_FILE=Join-Path ${PROJECT_REPOSITORY_PATH}\  "${PROJECT_NAME}.lpi"
     - echo "$LAZ_PROJECT_FILE"
-    - $doc = [XML] (Get-Content -Path $LAZ_PROJECT_FILE)
-    - $BINARY_VERSION = $doc.SelectSingleNode("//MajorVersionNr").Value + "." + $doc.SelectSingleNode("//MinorVersionNr").Value + "." + $doc.SelectSingleNode("//RevisionNr").Value + "." + $doc.SelectSingleNode("//BuildNr").Value
-    - echo "$BINARY_VERSION"
-    - echo "Compiling $PROJECT_NAME for Win32"
     - C:\lazarus\lazbuild.exe $LAZ_PROJECT_FILE --build-all --build-mode=Release_Win32
     - echo "Compiling $PROJECT_NAME for Win64"
     - C:\lazarus\lazbuild.exe $LAZ_PROJECT_FILE --build-all --build-mode=Release_Win64
-    # - $BINARY_OUT_PATH = $PROJECT_NAME -eq "opsiscript")
     - echo "Code signing opsi-script for windows"
     - opsi-dev-tool -l info --signserver-sign $PROJECT_REPOSITORY_PATH\compiler_out\binarys\i386-win32\opsi-script.exe
     - opsi-dev-tool -l info --signserver-sign $PROJECT_REPOSITORY_PATH\compiler_out\binarys\x86_64-win64\opsi-script.exe
@@ -73,11 +101,10 @@ compile opsi-script linux:
   stage: build
   tags:
     - laz-linux
-  variables:
-    PROJECT_REPOSITORY_PATH: "opsi-script"
-  rules:
-    - if: ($PROJECT_NAME == "opsiscript") && ($PLATFORM == "all" || $PLATFORM == "Linux")
-      when: always
+  dependencies:
+    - get version
+  rules: 
+    - !reference [.opsi-script_defaults, rules]
   script:
     - LAZ_PROJECT_FILE=${PROJECT_REPOSITORY_PATH}/${PROJECT_NAME}.lpi
     - echo "$LAZ_PROJECT_FILE"
@@ -96,12 +123,12 @@ compile opsi-script macos:
   stage: build
   tags:
     - laz-macos
+  dependencies:
+    - get version
+  rules: 
+    - !reference [.opsi-script_defaults, rules]
   variables:
-    PROJECT_REPOSITORY_PATH: "opsi-script"
     ENTITLEMENTS: "--entitlements $PROJECT_REPOSITORY_PATH/opsi-script.entitlements" #maybe needed later
-  rules:
-    - if: ($PROJECT_NAME == "opsiscript") && ($PLATFORM == "all" || $PLATFORM == "MacOS")
-      when: always
   script:
     #---BUILD BINARIES---
     - LAZ_PROJECT_FILE=${PROJECT_REPOSITORY_PATH}/${PROJECT_NAME}.lpi
@@ -141,9 +168,10 @@ opsi-script to binaryindex:
   stage: binaryindex
   tags:
     - laz-linux
-  rules:
-    - if: ($PROJECT_NAME == "opsiscript")
-      when: manual
+  dependencies:
+    - get version
+  rules: 
+    - !reference [.opsi-script_defaults, rules]
   script:
     - echo "deploy to binaryindex"
     - rm -rf upload
@@ -158,26 +186,32 @@ opsi-script to binaryindex:
     - cp compiler_out/binarys/x86_64-darwin/opsi-script upload/mac64/opsi-script
     - cp compiler_out/binarys/x86_64-darwin/opsi-script-gui upload/mac64/opsi-script
     - ls -lah upload/*/opsi-script
-    - VERSION="$(opsi-dev-tool --binary-version upload/win32/opsi-script/opsi-script.exe)"
-    #- VERSION="$(grep MajorVersionNr opsiscript.lpi | tr -d -c [0-9]).$(grep MinorVersionNr opsiscript.lpi | tr -d -c [0-9]).$(grep RevisionNr opsiscript.lpi | tr -d -c [0-9]).$(grep BuildNr opsiscript.lpi | tr -d -c [0-9])"
-    - opsi-dev-tool -l info --binary-push upload/win32/opsi-script opsi-script-bin windows x86 "${VERSION}"
-    - opsi-dev-tool -l info --binary-push upload/win64/opsi-script opsi-script-bin windows x64 "${VERSION}"
-    - opsi-dev-tool -l info --binary-push upload/lin64/opsi-script opsi-script-bin linux x64 "${VERSION}"
-    - opsi-dev-tool -l info --binary-push upload/mac64/opsi-script opsi-script-bin darwin x64 "${VERSION}"
+    - echo "${BINARY_VERSION}"
+    - opsi-dev-tool -l info --binary-push upload/win32/opsi-script opsi-script-bin windows x86 "${BINARY_VERSION}"
+    - opsi-dev-tool -l info --binary-push upload/win64/opsi-script opsi-script-bin windows x64 "${BINARY_VERSION}"
+    - opsi-dev-tool -l info --binary-push upload/lin64/opsi-script opsi-script-bin linux x64 "${BINARY_VERSION}"
+    - opsi-dev-tool -l info --binary-push upload/mac64/opsi-script opsi-script-bin darwin x64 "${BINARY_VERSION}"
 
 #*********************************
 # opsi-laz-gui-test
 #*********************************
+.opsi-laz-gui-test_defaults:
+  rules:
+    - if: ($PROJECT_NAME != "opsi_laz_gui_test")
+      when: never
+    - if: $CI_COMMIT_TAG
+      when: always
+    - when: manual
+
 
 compile opsi-laz-gui-test linux:
   stage: build
   tags:
     - laz-linux
-  variables:
-    PROJECT_REPOSITORY_PATH: "helper/opsi-laz-gui-test"
+  dependencies:
+    - get version
   rules:
-    - if: ($PROJECT_NAME == "opsi_laz_gui_test") && ($PLATFORM == "all" || $PLATFORM == "Linux")
-      when: always
+    - !reference [.opsi-laz-gui-test_defaults, rules]
   script:
     - LAZ_PROJECT_FILE=${PROJECT_REPOSITORY_PATH}/opsi_laz_gui_test.lpi
     - echo "$LAZ_PROJECT_FILE"
@@ -194,11 +228,10 @@ compile opsi-laz-gui-test macos:
   stage: build
   tags:
     - laz-macos
-  variables:
-    PROJECT_REPOSITORY_PATH: "helper/opsi-laz-gui-test"
+  dependencies:
+    - get version
   rules:
-    - if: ($PROJECT_NAME == "opsi_laz_gui_test") && ($PLATFORM == "all" || $PLATFORM == "MacOS")
-      when: always
+    - !reference [.opsi-laz-gui-test_defaults, rules]
   script:
     #---BUILD BINARIES---
     - LAZ_PROJECT_FILE=${PROJECT_REPOSITORY_PATH}/${PROJECT_NAME}.lpi
@@ -215,9 +248,10 @@ opsi-laz-gui-test to binaryindex:
   stage: binaryindex
   tags:
     - laz-linux
+  dependencies:
+    - get version
   rules:
-  - if: ($PROJECT_NAME == "opsi_laz_gui_test")
-    when: manual
+    - !reference [.opsi-laz-gui-test_defaults, rules]
   script:
     - echo "deploy to binaryindex"
     - cd helper/opsi-laz-gui-test
@@ -227,18 +261,26 @@ opsi-laz-gui-test to binaryindex:
 
 
 #***************************************#
-#  opsi-client-systray pipline                  #
+#  opsi-client-systray pipline          #
 #***************************************#
+.opsi-client-systray_defaults:
+  rules:
+    - if: ($PROJECT_NAME != "opsi_client_systray")
+      when: never
+    - if: $CI_COMMIT_TAG
+      when: always
+    - when: manual
+
 compile opsi-client-systray windows:
   stage: build
   tags:
     - laz-win10
+  dependencies:
+    - get version
   variables:
-    PROJECT_REPOSITORY_PATH: "helper/opsi-client-systray"
     BINARY_NAME: "opsi-client-systray"
   rules:
-    - if: ($PROJECT_NAME == "opsi_client_systray") && ($PLATFORM == "all" || $PLATFORM == "Windows")
-      when: always
+    - !reference [.opsi-client-systray_defaults rules]
   script:
     - $LAZ_PROJECT_FILE=Join-Path ${PROJECT_REPOSITORY_PATH}\  "${PROJECT_NAME}.lpi"
     - echo "$LAZ_PROJECT_FILE"
@@ -256,12 +298,12 @@ compile opsi-client-systray linux:
   stage: build
   tags:
     - laz-linux
+  dependencies:
+    - get version
   variables:
-    PROJECT_REPOSITORY_PATH: "helper/opsi-client-systray"
     BINARY_NAME: "opsi-client-systray"
   rules:
-    - if: ($PROJECT_NAME == "opsi_client_systray") && ($PLATFORM == "all" || $PLATFORM == "Linux")
-      when: always
+    - !reference [.opsi-client-systray_defaults rules]
   script:
     - LAZ_PROJECT_FILE=${PROJECT_REPOSITORY_PATH}/${PROJECT_NAME}.lpi
     - echo "$LAZ_PROJECT_FILE"
@@ -278,12 +320,12 @@ compile opsi-client-systray macos:
   stage: build
   tags:
     - laz-macos
+  dependencies:
+    - get version
   variables:
-    PROJECT_REPOSITORY_PATH: "helper/opsi-client-systray/"
     BINARY_NAME: "opsi-client-systray"
   rules:
-    - if: ($PROJECT_NAME == "opsi_client_systray") && ($PLATFORM == "all" || $PLATFORM == "MacOS")
-      when: always # change to always if lazbuild works on masos
+    - !reference [.opsi-client-systray_defaults rules]
   script:
     - LAZ_PROJECT_FILE=${PROJECT_REPOSITORY_PATH}${PROJECT_NAME}.lpi
     - echo "$LAZ_PROJECT_FILE"
