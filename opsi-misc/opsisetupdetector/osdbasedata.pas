@@ -570,6 +570,7 @@ default: ["xenial_bionic"]
 
 
 
+
 function archModeStrToArchmode(modestr: string): TArchitectureMode;
 function installerToInstallerstr(installerId: TKnownInstaller): string;
 function instIdToint(installerId: TKnownInstaller): integer;
@@ -2252,6 +2253,9 @@ begin
 end;
 
 
+
+
+
 //initialize unit
 
 begin
@@ -2942,6 +2946,7 @@ begin
 
   //aktSetupFile := TSetupFile.Create;
   aktProduct := TopsiProduct.Create;
+
 
   FileVerInfo := TFileVersionInfo.Create(nil);
 

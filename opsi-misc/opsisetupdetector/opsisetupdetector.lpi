@@ -250,7 +250,7 @@
         <MinVersion Major="1" Valid="True"/>
       </Item4>
     </RequiredPackages>
-    <Units Count="35">
+    <Units Count="37">
       <Unit0>
         <Filename Value="opsisetupdetector.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -419,6 +419,15 @@
         <Filename Value="..\..\common\osxml.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit34>
+      <Unit35>
+        <Filename Value="opsidynamiclibjyt.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="opsiDynamicLibJYT"/>
+      </Unit35>
+      <Unit36>
+        <Filename Value="osdmeta.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit36>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
