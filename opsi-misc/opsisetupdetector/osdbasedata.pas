@@ -46,7 +46,7 @@ type
 
   TTemplateChannels = (training, default, structured, custom);
 
-  TArchitecture = (a32, a64, aUnknown);
+  TArchitecture = (a32, a64, aarm, aarm64, aUnknown);
 
 
   { stores runtime infos of OSD}

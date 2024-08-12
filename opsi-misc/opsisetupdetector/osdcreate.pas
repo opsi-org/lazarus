@@ -25,7 +25,8 @@ uses
   osjson,
   dateutils,
   osfilehelper,
-  oswebservice;
+  oswebservice,
+  osdmeta;
 
 function createProductStructure: boolean;
 function callOpsiPackageBuilder: boolean;
@@ -1089,6 +1090,8 @@ begin
 
       // write project file
       aktProduct.writeProjectFileToPath(prodpath);
+      osdmeta.aktProdToAktMeta;
+      osdmeta.aktMeta.write_product_metadata_ToPath(clientpath);
 
       Result := True;
       ;
