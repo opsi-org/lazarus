@@ -69,6 +69,7 @@ var
 procedure main;
 function checkAktProduct: boolean;
 procedure WriteHelp;
+procedure write_memo(line: string);
 procedure write_log_and_memo(line: string); overload;
 procedure write_log_and_memo(line: string; loglevel: integer); overload;
 //procedure checkWorkbench;
@@ -236,12 +237,7 @@ begin
   Application.Terminate;
 end;
 
-procedure write_log_and_memo(line: string);
-begin
-  write_log_and_memo(line, LLNotice);
-end;
-
-procedure write_log_and_memo(line: string; loglevel: integer);
+procedure write_memo(line: string);
 begin
   {$IFDEF OSDGUI}
   if osdsettings.showgui then
@@ -249,6 +245,17 @@ begin
     resultform1.memoadd(line);
   end;
   {$ENDIF OSDGUI}
+end;
+
+
+procedure write_log_and_memo(line: string);
+begin
+  write_log_and_memo(line, LLNotice);
+end;
+
+procedure write_log_and_memo(line: string; loglevel: integer);
+begin
+  write_memo(line);
   LogDatei.log(line, loglevel);
 end;
 

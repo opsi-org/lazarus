@@ -175,6 +175,7 @@ type
     FmstFileName: string;         // file name of the mst file source
     //FmsiFullFileName: string;
     FinstallerId: TKnownInstaller; // type of detected installer
+    FinstallerVersion: string;     // version of detected installer
     FrequiredSpace: cardinal;      // MB size of the required space to run this installer
     FinstallDirectory: string;     // target directory where this installer will install to
     Fmarkerlist: TStrings;         // list of detected markers (patterns) for installer type detection
@@ -195,6 +196,7 @@ type
     Fanalyze_progess: integer;         // state of the analyze progress in percent
     FcopyCompleteDir: boolean;         // should we copy only the installer file or the complete directory
     FtargetOS: TTargetOS;              // on which OS can this installer install
+    FtargetOSVersion: string;          // on which OS Version can this installer install
     FinstallerSourceDir: string;       // directory of the installer inside the opsi package (%scriptpath%\files1)
     FpreferSilent: boolean;
     procedure SetMarkerlist(const AValue: TStrings);
@@ -225,6 +227,7 @@ type
     property mstFileName: string read FmstFileName write FmstFileName;
     //property msiFullFileName: string read FmsiFullFileName write FmsiFullFileName;
     property installerId: TKnownInstaller read FinstallerId write FinstallerId;
+    property installerVersion: string read FinstallerVersion write FinstallerVersion;
     property requiredSpace: cardinal read FrequiredSpace write FrequiredSpace;
     property installDirectory: string read FinstallDirectory write SetInstallDirectory;
     property markerlist: TStrings read Fmarkerlist write SetMarkerlist;
@@ -253,6 +256,7 @@ type
     property analyze_progess: integer read Fanalyze_progess write Fanalyze_progess;
     property copyCompleteDir: boolean read FcopyCompleteDir write FcopyCompleteDir;
     property targetOS: TTargetOS read FtargetOS write FtargetOS;
+    property targetOSVersion: string read FtargetOSVersion write FtargetOSVersion;
     property active: boolean read Factive write Factive;
     property installerSourceDir: string read FinstallerSourceDir
       write FinstallerSourceDir;

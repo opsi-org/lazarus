@@ -6,27 +6,30 @@ interface
 
 uses
    {$IFDEF WINDOWS}
-  Windows,
-  ShlObj,
-  Registry,
-  verinfo,
+  //Windows,
+  //ShlObj,
+  //Registry,
+  //verinfo,
+  // Forms, Controls, Graphics,
+  // StdCtrls,
   {$ENDIF WINDOWS}
   Dialogs,
   LCLType,
   Classes,
-  osdhelper,
-  Process,
+  //osdhelper,
+  //Process,
   fileutil,
   lazfileutils,
   SysUtils,
   strutils,
-  fileinfo,
+  //fileinfo,
   winpeimagereader,
   oslog,
   osdbasedata,
-  oscheckbinarybitness,
-  masks,
-  osparserhelper;
+  //oscheckbinarybitness,
+  //masks,
+  //osparserhelper,
+  osdanalyze_by_die;
 
 function getPacketIDfromFilename(str: string): string;
 function getPacketIDShort(str: string): string;
@@ -311,9 +314,10 @@ var
   buffer: array [0 .. 2047] of char;
   charsread: int64;
   msg: string;
-  setuptype: TKnownInstaller;
+  setuptype, dieresult: TKnownInstaller;
   progress, lastprogress: int64;
   fileextension: string;
+  dieOutList : TStringlist;
 
 begin
   MinLen := 5;
@@ -324,6 +328,8 @@ begin
 
   write_log_and_memo('------------------------------------');
   write_log_and_memo('Analyzing: ' + myfilename);
+
+
   msg := 'stringsgrep started (verbose:';
   if verbose = True then
     msg := msg + 'true'
@@ -426,10 +432,13 @@ begin
     msg := msg + ')';
     write_log_and_memo(msg);
     write_log_and_memo('------------------------------------');
+
   finally
     FileStream.Free;
   end;
   Result := analyze_markerlist(mysetup);
+  dieresult := analyze_by_die(myfilename, mysetup);
+
 end;
 
 
