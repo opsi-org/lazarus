@@ -35,13 +35,16 @@ type
 
   TMetaProduct = class(TPersistent)
   private
-    FdoNotInstallInBackground: boolean;
-    FdoNotCheckInstallDirBinaries: boolean;
+        FdoNotInstallInBackground: boolean; // True= do not install in background situation
+    FdoNotCheckInstallDirBinaries: boolean; //True= do not use install directories to check for critical processes
+    FProductIconFilePath : string;  // Path to the icon file inside the opsi product base dir
   published
     property doNotInstallInBackground: boolean
       read FdoNotInstallInBackground write FdoNotInstallInBackground;
     property doNotCheckInstallDirBinaries: boolean
       read FdoNotCheckInstallDirBinaries write FdoNotCheckInstallDirBinaries;
+    property productIconFilePath: string
+      read FProductIconFilePath write FProductIconFilePath;
   public
     { public declarations }
     constructor Create;
@@ -50,8 +53,8 @@ type
 
   TMetaInstallerRequirement = class(TPersistent)
   private
-    Fos: TMeta_os;
-    Fos_arch: TMeta_os_arch;
+    Fos: TMeta_os;  // for wich os fits this installer
+    Fos_arch: TMeta_os_arch; // for wich os_arch fits this installer
   published
     property os: TMeta_os read Fos write Fos;
     property os_arch: TMeta_os_arch read Fos_arch write Fos_arch;
@@ -62,20 +65,26 @@ type
   end;
 
   TMetaInstaller = class(TPersistent)
-    private
-      type
-    TprocessArray = TArray<String>;
   private
-    Factive: boolean;   // is this object in use
-    FdoNotInstallInBackground: boolean;
-    FdoNotCheckInstallDirBinaries: boolean;
-    Fpath: string;
-    Finstall_dir: string;
-    Fother_install_dirs: TStringList;
-    Fprocesses:TprocessArray;
+  type
+    //TprocessArray = TArray<string>;
+  private
+    Factive: boolean;   // True= this object is in use
+    FdoNotInstallInBackground: boolean; // True= do not install in background situation
+    FdoNotCheckInstallDirBinaries: boolean; //True= do not use install directories to check for critical processes
+    Fpath: string;  // Path to the installer inside the opsi product base dir
+    Finstall_dir: string; // target directory where this installer will install to
+    Fother_install_dirs: TStringList; // other directories that should be used to check for critical processes
+    Fprocesses: TStringList;  // List of processes that should be used to check for critical processes
     FMetaInstallerRequirement: TMetaInstallerRequirement;
-    function readProcessArray(i: integer): String;
-    procedure writeProcessArray(i: integer; val: String);
+    FRequiredSpaceMB : cardinal; // MB size of the required space to run this installer
+
+    function readProcesses: Tstrings;
+    procedure writeProcesses(val: Tstrings);
+    procedure addtoProcesses(val: string);
+    function readOtherDirs: Tstrings;
+    procedure writeOtherDirs(val: Tstrings);
+    procedure addtoOtherDirs(val: string);
   published
     property doNotInstallInBackground: boolean
       read FdoNotInstallInBackground write FdoNotInstallInBackground;
@@ -83,11 +92,12 @@ type
       read FdoNotCheckInstallDirBinaries write FdoNotCheckInstallDirBinaries;
     property path: string read Fpath write Fpath;
     property install_dir: string read Finstall_dir write Finstall_dir;
-    property other_install_dirs: TStringList read Fother_install_dirs
-      write Fother_install_dirs;
-    property processes[i: integer]: string read readProcessArray write writeProcessArray;
+    property other_install_dirs: TStrings
+      read readOtherDirs write writeOtherDirs;
+    property processes: Tstrings read readProcesses write writeProcesses;
     property MetaInstallerRequirement: TMetaInstallerRequirement
       read FMetaInstallerRequirement write FMetaInstallerRequirement;
+    property requiredSpaceMB: cardinal read FRequiredSpaceMB write FRequiredSpaceMB;
   public
     { public declarations }
     constructor Create;
@@ -182,36 +192,50 @@ begin
   Fpath := '';
   Finstall_dir := '';
   Fother_install_dirs := TStringList.Create;
-  //Fprocesses := TStringList.Create;
-  SetLength(Fprocesses,2);
+  Fprocesses := TStringlist.Create;
   FMetaInstallerRequirement := TMetaInstallerRequirement.Create;
 end;
 
 destructor TMetaInstaller.Destroy;
 begin
   FreeAndNil(Fother_install_dirs);
-  //FreeAndNil(Fprocesses);
+  FreeAndNil(Fprocesses);
   FreeAndNil(FMetaInstallerRequirement);
   inherited;
 end;
 
-function TMetaInstaller.readProcessArray(i: integer): String;
-var
-  mysize, k : integer;
+
+function TMetaInstaller.readProcesses: Tstrings;
 begin
-  mysize := length(Fprocesses);
-  //if i+1 < mysize then
-  result := '[';
-  for k := 0 to mysize -1 do
-    result := result +'"'+Fprocesses[k]+'",';
-  result := copy(result,0,length(result)-2);
-  result := result +']'
+  result:= TStrings(Fprocesses);
 end;
 
-procedure TMetaInstaller.writeProcessArray(i: integer; val: String);
+procedure TMetaInstaller.writeProcesses(val: Tstrings);
 begin
-  Fprocesses[i] := val;
+  Fprocesses.text := val.Text;
 end;
+
+procedure TMetaInstaller.addtoProcesses(val: string);
+begin
+  Fprocesses.add(val);
+end;
+
+function TMetaInstaller.readOtherDirs: Tstrings;
+begin
+  result:= TStrings(Fother_install_dirs);
+end;
+
+procedure TMetaInstaller.writeOtherDirs(val: Tstrings);
+begin
+  Fother_install_dirs.text := val.Text;
+end;
+
+procedure TMetaInstaller.addtoOtherDirs(val: string);
+begin
+  Fother_install_dirs.add(val);
+end;
+
+
 
 
 //********************************
@@ -251,13 +275,12 @@ var
   poutput: PChar;
   Streamer: TJSONStreamer;
   JSONString, JSONFinalString, JSONArrayString: string;
-  myStringlist : Tstringlist;
+  myStringlist: TStringList;
   TOMLString: string;
   configDir: array[0..MaxPathLen] of char; //Allocate memory
-  configDirUtf8: utf8string;
   pfile: TextFile;
   lib_jyt: TLibJYT;
-  i : integer;
+  i: integer;
 begin
   try
     if Assigned(logdatei) then
@@ -278,28 +301,30 @@ begin
     Rewrite(pfile);
     // http://wiki.freepascal.org/Streaming_JSON
     Streamer := TJSONStreamer.Create(nil);
-    myStringlist := Tstringlist.Create;
+    myStringlist := TStringList.Create;
     try
-      //Streamer.Options := Streamer.Options + [jsoTStringsAsArray];
       // Save strings as JSON array
+      Streamer.Options := Streamer.Options + [jsoTStringsAsArray];
       // JSON convert and output
       // init JSONFinalString
       JSONFinalString := '{}';
       JSONString := Streamer.ObjectToJSONString(aktMeta.metaspecification);
       //JSONFinalString := '{"specification":'+JSONString+'}';
-      jsonAsObjectAddKeyAndValue(JSONFinalString,'specification',JSONString, JSONFinalString);
+      jsonAsObjectAddKeyAndValue(JSONFinalString, 'specification', JSONString,
+        JSONFinalString);
       //writeln(pfile, JSONString);
       for i := 0 to 2 do
-      if aktMeta.InstallerMeta[i].FActive then
+        if aktMeta.InstallerMeta[i].FActive then
         begin
-        JSONString := Streamer.ObjectToJSONString(aktMeta.InstallerMeta[i]);
-        myStringlist.Add(JSONString);
+          JSONString := Streamer.ObjectToJSONString(aktMeta.InstallerMeta[i]);
+          myStringlist.Add(JSONString);
         end;
-      stringListToJsonArray(myStringlist,JSONArrayString);
-      jsonAsObjectAddKeyAndValue(JSONFinalString,'installers',JSONArrayString, JSONFinalString);
+      stringListToJsonArray(myStringlist, JSONArrayString);
+      jsonAsObjectAddKeyAndValue(JSONFinalString, 'installers', JSONArrayString,
+        JSONFinalString);
       //writeln(pfile, JSONString);
       JSONString := Streamer.ObjectToJSONString(aktMeta.productMeta);
-      jsonAsObjectAddKeyAndValue(JSONFinalString,'product',JSONString, JSONFinalString);
+      jsonAsObjectAddKeyAndValue(JSONFinalString, 'product', JSONString, JSONFinalString);
       //writeln(pfile, JSONString);
       try
         try
@@ -317,6 +342,10 @@ begin
       end;
       writeln(pfile, TOMLString);
       CloseFile(pfile);
+      AssignFile(pfile, myfilename + '.json');
+      Rewrite(pfile);
+      writeln(pfile, JSONFinalString);
+      CloseFile(pfile);
 
     finally
       Streamer.Destroy;
@@ -332,56 +361,67 @@ begin
   end;
 end;
 
-function aktprodTargetosToMetaOs(targetos : TTargetOS) : TMeta_os;
+function aktprodTargetosToMetaOs(targetos: TTargetOS): TMeta_os;
 begin
-  if targetos = oswin then result := windows
-  else if targetos = oslin then result := linux
-  else if targetos = osmac then result := macos
-  else if targetos = osUnknown then result := os_unknown
-  else if targetos = osMulti then result := os_unknown
-  else result := os_unknown;
+  if targetos = oswin then Result := windows
+  else if targetos = oslin then Result := linux
+  else if targetos = osmac then Result := macos
+  else if targetos = osUnknown then Result := os_unknown
+  else if targetos = osMulti then Result := os_unknown
+  else
+    Result := os_unknown;
 end;
 
-function aktprodArchitectureToMetaOsArch(targetarch : TArchitecture) : TMeta_os_arch;
+function aktprodArchitectureToMetaOsArch(targetarch: TArchitecture): TMeta_os_arch;
 begin
-  if targetarch = a32 then result := x86
-  else if targetarch = a64 then result := x64
-  else if targetarch = aarm then result := arm
-  else if targetarch = aarm64 then result := arm64
-  else if targetarch = aUnknown then result := arch_unknown
-  else result := arch_unknown;
+  if targetarch = a32 then Result := x86
+  else if targetarch = a64 then Result := x64
+  else if targetarch = aarm then Result := arm
+  else if targetarch = aarm64 then Result := arm64
+  else if targetarch = aUnknown then Result := arch_unknown
+  else
+    Result := arch_unknown;
 end;
 
 
 procedure aktProdToAktMeta;
 var
-  i,k : integer;
-  strlist : Tstringlist;
+  i, k: integer;
+  strlist: TStringList;
 begin
-  strlist := TStringlist.Create;
-  aktMeta.metaspecification.version:='0.1';
-  for i:= 0 to 2 do
+  strlist := TStringList.Create;
+  aktMeta.metaspecification.version := '0.1';
+  aktMeta.productMeta.doNotCheckInstallDirBinaries:=false;
+  aktMeta.productMeta.doNotInstallInBackground:=false;
+  aktMeta.productMeta.productIconFilePath:=
+     aktProduct.productdata.productId+ExtractFileExt(aktProduct.productdata.productImageFullFileName);
+  for i := 0 to 2 do
+  begin
+    if aktProduct.SetupFiles[i].active then
     begin
-      if aktProduct.SetupFiles[i].active then
-        begin
-          aktMeta.InstallerMeta[i].Factive:=true;
-          aktMeta.InstallerMeta[i].Finstall_dir:=aktProduct.SetupFiles[i].installDirectory;
-          aktMeta.InstallerMeta[i].path := 'files'+inttostr(i+1)+'\'+
-            aktProduct.SetupFiles[i].setupFileName;
-          // process test
-          strlist.Add('7zip.exe');
-          strlist.Add('%ProgramFiles64Dir%\7-Zip\7zFM.exe');
-          //aktMeta.InstallerMeta[i].processes
-          for k := 0 to strlist.Count -1 do
-            aktMeta.InstallerMeta[i].processes[k] := strlist[k];
+      aktMeta.InstallerMeta[i].Factive := True;
+      aktMeta.InstallerMeta[i].Finstall_dir :=
+        aktProduct.SetupFiles[i].installDirectory;
+      aktMeta.InstallerMeta[i].path :=
+        aktProduct.SetupFiles[i].installerSourceDir + '\' + aktProduct.SetupFiles[i].setupFileName;
 
-          aktMeta.InstallerMeta[i].FMetaInstallerRequirement.os:=
-            aktprodTargetosToMetaOs(aktProduct.SetupFiles[i].targetOS);
-          aktMeta.InstallerMeta[i].FMetaInstallerRequirement.os_arch:=
-            aktprodArchitectureToMetaOsArch(aktProduct.SetupFiles[i].architecture);
+      (*
+      // process test
+      strlist.Add('7zip.exe');
+      strlist.Add('%ProgramFiles64Dir%\7-Zip\7zFM.exe');
+      //aktMeta.InstallerMeta[i].processes
+      for k := 0 to strlist.Count - 1 do
+        aktMeta.InstallerMeta[i].addtoProcesses(strlist[k]);
+        *)
 
-        end;
+
+      aktMeta.InstallerMeta[i].FMetaInstallerRequirement.os :=
+        aktprodTargetosToMetaOs(aktProduct.SetupFiles[i].targetOS);
+      aktMeta.InstallerMeta[i].FMetaInstallerRequirement.os_arch :=
+        aktprodArchitectureToMetaOsArch(aktProduct.SetupFiles[i].architecture);
+      aktMeta.InstallerMeta[i].FRequiredSpaceMB:=aktProduct.SetupFiles[i].requiredSpace;
     end;
+  end;
   FreeAndNil(strlist);
 end;
 
