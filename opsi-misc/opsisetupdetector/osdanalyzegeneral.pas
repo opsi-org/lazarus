@@ -10,9 +10,13 @@ uses
   //ShlObj,
   //Registry,
   //verinfo,
-  // Forms, Controls, Graphics,
+   //Graphics,
   // StdCtrls,
   {$ENDIF WINDOWS}
+  {$IFDEF OSDGUI}
+  Forms,
+  Controls,
+  {$ENDIF OSDGUI}
   Dialogs,
   LCLType,
   Classes,
@@ -210,7 +214,8 @@ begin
           mysetup.markerlist) then
         begin
           Result := TKnownInstaller(i);
-          LogDatei.log('Detected: ' + installerToInstallerstr(Result), LLnotice);
+          write_log_and_memo('Detected by osd: ' + installerToInstallerstr(Result));
+          //LogDatei.log('Detected: ' + installerToInstallerstr(Result), LLnotice);
           osdsettings.DetectCount := osdsettings.DetectCount +1;
         end;
       end;
@@ -317,8 +322,7 @@ var
   setuptype, dieresult: TKnownInstaller;
   progress, lastprogress: int64;
   fileextension: string;
-  dieOutList : TStringlist;
-
+  dieOutList: TStringList;
 begin
   MinLen := 5;
   MaxLen := 512;
@@ -347,7 +351,7 @@ begin
     {$IFDEF OSDGUI}
     resultForm1.ProgressBarAnalyze.Position := 0;
     procmess;
-        {$ENDIF OSDGUI}
+    {$ENDIF OSDGUI}
     fullsize := FileStream.Size;
     size := fullsize;
     lastprogress := 0;
@@ -356,7 +360,7 @@ begin
     begin
       charsread := FileStream.Read(buffer, sizeof(buffer));
       size := size - charsread;
-       {$IFDEF OSDGUI}
+      {$IFDEF OSDGUI}
       progress := 100 - trunc((size / fullsize) * 100);
       if progress > lastprogress then
       begin
@@ -365,7 +369,7 @@ begin
         LogDatei.log('AnaProgess: ' + IntToStr(progress), LLDebug);
         lastprogress := progress;
       end;
-       {$ENDIF OSDGUI}
+      {$ENDIF OSDGUI}
 
       for i := 0 to charsread - 1 do
       begin
@@ -436,9 +440,20 @@ begin
   finally
     FileStream.Free;
   end;
-  Result := analyze_markerlist(mysetup);
-  dieresult := analyze_by_die(myfilename, mysetup);
-
+  {$IFDEF OSDGUI}
+  Screen.Cursor := crHourGlass;
+  procmess;
+  {$ENDIF OSDGUI}
+  try
+    mysetup.installerId := analyze_markerlist(mysetup);
+    dieresult := analyze_by_die(myfilename, mysetup);
+    Result := mysetup.installerId;
+    write_log_and_memo('Detected final: ' + installerToInstallerstr(Result));
+  finally
+    {$IFDEF OSDGUI}
+    Screen.Cursor := crDefault;
+    {$ENDIF OSDGUI}
+  end;
 end;
 
 

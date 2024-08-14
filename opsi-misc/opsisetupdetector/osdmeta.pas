@@ -95,7 +95,7 @@ type
     property other_install_dirs: TStrings
       read readOtherDirs write writeOtherDirs;
     property processes: Tstrings read readProcesses write writeProcesses;
-    property MetaInstallerRequirement: TMetaInstallerRequirement
+    property InstallerRequirement: TMetaInstallerRequirement
       read FMetaInstallerRequirement write FMetaInstallerRequirement;
     property requiredSpaceMB: cardinal read FRequiredSpaceMB write FRequiredSpaceMB;
   public

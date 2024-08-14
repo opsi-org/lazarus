@@ -1,7 +1,7 @@
 object resultForm1: TresultForm1
-  Left = 581
+  Left = 569
   Height = 675
-  Top = 189
+  Top = 155
   Width = 1047
   Caption = 'opsi Setup Detector'
   ClientHeight = 675
