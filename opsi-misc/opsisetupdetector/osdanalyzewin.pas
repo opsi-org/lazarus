@@ -12,6 +12,7 @@ uses
   verinfo,
   jwatlhelp32,
   jwawindows,
+  osd_lessmsi,
   {$ENDIF WINDOWS}
   Dialogs,
   LCLType,
@@ -329,6 +330,7 @@ var
 
   sSearch: string;
   iPos: integer;
+  installdir : string;
 
 begin
   write_log_and_memo('Analyzing MSI: ' + myfilename);
@@ -389,6 +391,10 @@ begin
 
     end;
     aktproduct.productdata.productversion := trim(mysetup.softwareversion);
+
+    // use lessmsi
+    installdir := getInstallDirFromMsi(myfilename);
+
   end;
   myoutlines.Free;
   {$ENDIF WINDOWS}

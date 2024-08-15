@@ -2320,7 +2320,7 @@ begin
   knownInstallerList.Add('7zip');
   knownInstallerList.Add('7zipsfx');
   knownInstallerList.Add('InstallAware');
-  knownInstallerList.Add('MSGenericInstaller');
+  //knownInstallerList.Add('MSGenericInstaller');
   knownInstallerList.Add('WixToolset');
   knownInstallerList.Add('Bitrock');
   knownInstallerList.Add('SelfExtractingInstaller');

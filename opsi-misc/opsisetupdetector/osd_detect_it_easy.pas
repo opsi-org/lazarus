@@ -16,8 +16,8 @@ uses
   lazutf8,
   dsiwin32;
 
-function runDieDetect(target : string; jsonOut : TStringlist) : boolean;
-function runDieInfo(target : string; jsonOut : TStringlist) : boolean;
+function runDieDetect(target : string; var jsonOut : TStringlist) : boolean;
+function runDieInfo(target : string; var jsonOut : TStringlist) : boolean;
 
 var
   dieJsonResultList: TStringList;
@@ -29,17 +29,18 @@ var
 implementation
 
 
-function runDieDetect(target : string; jsonOut : TStringlist) : boolean;
+function runDieDetect(target : string; var jsonOut : TStringlist) : boolean;
 var
   mycommand : string;
   myexitcode : integer;
   myreport : string;
-  oldworkdir : string;
-  oldDisableWow64FsRedirectionStatus : pointer = nil;
+  //oldworkdir : string;
+  //oldDisableWow64FsRedirectionStatus : pointer = nil;
 
 begin
   result := false;
-  mycommand := '"C:\WINDOWS\system32\cmd.exe" /C "'+myDiec +' '+myDiecParams + ' "'+target+'""';
+  //mycommand := '"C:\WINDOWS\system32\cmd.exe" /C "'+myDiec +' '+myDiecParams + ' "'+target+'""';
+  mycommand := '"'+myDiec +'" '+myDiecParams + ' "'+target+'"';
   LogDatei.log('Start: '+mycommand,LLinfo);
   if not FileExists(myDiec) then
      LogDatei.log('file not found: ' + myDiec,LLerror);
@@ -60,7 +61,7 @@ begin
   //DSiWow64RevertWow64FsRedirection(oldDisableWow64FsRedirectionStatus);
 end;
 
-function runDieInfo(target : string; jsonOut : TStringlist) : boolean;
+function runDieInfo(target : string; var jsonOut : TStringlist) : boolean;
 var
   mycommand : string;
   myexitcode : integer = 0;
