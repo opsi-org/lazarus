@@ -201,7 +201,7 @@ begin
     Result := stUnknown;
     for i := 0 to mysetup.markerlist.Count - 1 do
       LogDatei.log('marker: ' + mysetup.markerlist[i], LLnotice);
-    for i := 0 to integer(stUnknown) - 1 do
+    for i := 0 to integer(stDetectedUnknown) - 1 do
     begin
       if not Assigned(installerArray[i].detected) then
         LogDatei.log('No check implemented for: ' +
@@ -446,7 +446,7 @@ begin
   {$ENDIF OSDGUI}
   try
     mysetup.installerId := analyze_markerlist(mysetup);
-    dieresult := analyze_by_die(myfilename, mysetup);
+    analyze_by_die(myfilename, mysetup);
     Result := mysetup.installerId;
     write_log_and_memo('Detected final: ' + installerToInstallerstr(Result));
   finally

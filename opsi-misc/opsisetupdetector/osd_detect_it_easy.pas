@@ -63,23 +63,24 @@ end;
 function runDieInfo(target : string; jsonOut : TStringlist) : boolean;
 var
   mycommand : string;
-  myexitcode : integer;
-  myreport : string;
-  oldworkdir : string;
+  myexitcode : integer = 0;
+  myreport : string = '';
+  //oldworkdir : string;
 begin
   result := false;
-  mycommand := '"C:\WINDOWS\system32\cmd.exe" /C "'+myDiec +' --info '+myDiecParams + ' -b "'+ExtractFileName(target)+'""';
+  //mycommand := '"C:\WINDOWS\system32\cmd.exe" /C "'+myDiec +' --info '+myDiecParams + ' -b "'+ExtractFileName(target)+'""';
+  //mycommand := '"'+myDiec +'" --info '+myDiecParams + ' -b "'+ExtractFileName(target)+'"';
+  mycommand := '"'+myDiec +'" --info '+myDiecParams + ' "'+target+'"';
   LogDatei.log('Start: '+mycommand,LLinfo);
-  //write_log_and_memo(mycommand);
-  oldworkdir := GetCurrentDir;
-  SetCurrentDir(ExtractFileDir(target));
+  //write_memo(mycommand);
+  //oldworkdir := GetCurrentDir;
+  //SetCurrentDir(ExtractFileDir(target));
 
   if not RunCommandAndCaptureOut(mycommand, True, jsonOut, myreport,
     SW_SHOWMINIMIZED, myexitcode) then
   begin
     LogDatei.log('Failed to get info: ' + myreport,LLerror);
-    //write_log_and_memo('Failed to analyze: ' + myreport);
-    //mysetup.analyze_progess := 0;
+    //write_memo('Failed to analyze: ' + myreport);
   end
   else
   begin
@@ -87,19 +88,27 @@ begin
     LogDatei.log('Diec output: ',LLinfo);
     LogDatei.log_list(jsonOut,LLdebug);
   end;
-  SetCurrentDir(oldworkdir);
+  //SetCurrentDir(oldworkdir);
 end;
 
 
 initialization
   dieJsonResultList := TStringList.Create;
   {$IFDEF WINDOWS}
-  //myDiecDir := ExtractFileDir(ParamStr(0))+'\detectItEasy';
-  myDiecDir := 'C:\gitwork\lazarus\opsi-misc\opsisetupdetector\detectItEasy';
+  myDiecDir := ExtractFileDir(ParamStr(0))+'\detectItEasy';
+  //myDiecDir := 'C:\gitwork\lazarus\opsi-misc\opsisetupdetector\detectItEasy';
   //myDiecDir := '.\detectItEasy';
   myDiec := myDiecDir+ '\diec.exe';
-
   {$EndIF WINDOWS}
+  {$IFDEF LINUX}
+  myDiecDir := ExtractFileDir(ParamStr(0))+'/detectItEasy';
+  myDiec := myDiecDir+ '/diec.sh';
+  {$EndIF LINUX}
+  {$IFDEF DARWIN}
+  myDiecDir := ExtractFileDir(ParamStr(0))+'/detectItEasy';
+  myDiec := myDiecDir+ '/die.app/Contents/MacOS/diec';
+  {$EndIF DARWIN}
+
   myDiecParams := '--json';
 
 finalization

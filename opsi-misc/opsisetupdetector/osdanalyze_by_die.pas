@@ -12,7 +12,7 @@ uses
   oslog,
   osjson;
 
-function analyze_by_die(myfilename: string; var mysetup: TSetupFile): TKnownInstaller;
+procedure analyze_by_die(myfilename: string; var mysetup: TSetupFile);
 
 implementation
 
@@ -31,24 +31,22 @@ begin
   if valuestr = 'Inno Setup Module' then Result := stInno
   else if valuestr = 'Install4j Installer' then Result := stInstall4J
   else if valuestr = 'InstallAnywhere' then Result := stInstallAnywhere
-  else if valuestr = 'Microsoft dotNET installer' then Result := stUnknown
-  else if valuestr = 'Sfx: 7-Zip' then Result := st7zipsfx
+  else if valuestr = 'Microsoft dotNET installer' then Result := stDetectedUnknown
   else if valuestr = '7-Zip' then Result := st7zip
   else if valuestr = 'InstallShield' then Result := stInstallShield
   else if valuestr = 'Microsoft Installer(MSI)' then Result := stMsi
-  else if valuestr = 'Debian Software package (.DEB)' then Result := stLinDeb
-  else if valuestr = 'RPM package' then Result := stLinRPM
   else if valuestr = 'WiX Toolset installer' then Result := stWixToolset
   else if valuestr = 'Nullsoft Scriptable Install System' then Result := stNsis
   else if valuestr = 'QT installer' then Result := stQtInstaller
   else if valuestr = 'Setup Factory' then Result := stSetupFactory
-  else if valuestr = 'Squirrel Installer' then Result := stUnknown
+  else if valuestr = 'Squirrel Installer' then Result := stDetectedUnknown
   else if valuestr = 'Windows Installer' then Result := stWixToolset
   else if valuestr = 'Wise Installer' then Result := stWise
-  else if valuestr = '' then Result := stUnknown;
+  else if valuestr = '' then Result := stUnknown
+  else Result := stDetectedUnknown;
 end;
 
-function analyze_by_die(myfilename: string; var mysetup: TSetupFile): TKnownInstaller;
+procedure analyze_by_die(myfilename: string; var mysetup: TSetupFile);
 var
   i: integer;
   dieDetectList: TStringList;
@@ -60,8 +58,6 @@ var
 begin
   try
     try
-      Result := stUnknown;
-
       dieDetectList := TStringList.Create;
       dieInfoList := TStringList.Create;
 
@@ -96,11 +92,7 @@ begin
               begin
                 if (filetype = 'ZIP') then
                 begin
-
-                end
-                else if (filetype = 'ZIP') then
-                begin
-
+                  write_log_and_memo('Detected by die: filetype = ZIP');
                 end
                 else if (filetype = 'PE32') or (filetype = 'PE64') or
                   (filetype = 'Binary') then
@@ -126,6 +118,7 @@ begin
                           previousInstallerId := mysetup.installerId;
                           installerstr := valuestr;
                           mysetup.installerId := die_installer_name_to_osd(installerstr);
+                          mysetup.installerName:= installerstr;
                           // get the installer version
                           jsonAsObjectGetValueByKey(JSONArrayElement,
                             'version', valuestr);
@@ -160,7 +153,7 @@ begin
                         // we found an 7zip Sfx installer
                         // get the installer name
                         jsonAsObjectGetValueByKey(JSONArrayElement, 'string', valuestr);
-                        mysetup.installerId := die_installer_name_to_osd(valuestr);
+                        if valuestr = 'Sfx: 7-Zip' then mysetup.installerId := st7zipsfx;
                         // get the installer version
                         jsonAsObjectGetValueByKey(JSONArrayElement, 'version', valuestr);
                         mysetup.installerVersion := valuestr;
@@ -170,14 +163,14 @@ begin
                         // we found an Archive
                         // get the installer name
                         jsonAsObjectGetValueByKey(JSONArrayElement, 'name', valuestr);
-                        mysetup.installerId := die_installer_name_to_osd(valuestr);
+                        if valuestr = 'Debian Software package (.DEB)' then mysetup.installerId := stLinDeb
+                        else if valuestr = 'RPM package' then mysetup.installerId := stLinRPM;
                         // get the installer version
                         jsonAsObjectGetValueByKey(JSONArrayElement, 'version', valuestr);
                         mysetup.installerVersion := valuestr;
                       end;
                       // we have an 64 bit installer
                       if filetype = 'PE64' then mysetup.architecture := a64;
-
                     end;
                   end;
                 end;

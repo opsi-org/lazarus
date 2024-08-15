@@ -18,11 +18,13 @@ type
     BitBtn2: TBitBtn;
     ComboBoxChooseInstaller: TComboBox;
     FlowPanel1: TFlowPanel;
+    LabelDetected: TLabel;
     LabelChooseMsg: TLabel;
     LabelSorryUnknown: TLabel;
     Panel1: TPanel;
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure SetLabelUnknown(setDetectedUnknown : boolean);
   private
 
   public
@@ -35,6 +37,7 @@ var
 resourcestring
 
   rsSorryUnknown = 'Sorry Unknown Installer';
+  rsSorryDetectedUnknown = 'Detected Installer not known';
   rsChooseInstallerMsg =
     'Do you want to choose a' + LineEnding +
     'installertype manually' + LineEnding +
@@ -55,10 +58,16 @@ end;
 
 procedure TFChooseInstallerDlg.FormShow(Sender: TObject);
 begin
-  LabelSorryUnknown.Caption := rsSorryUnknown;
+  //LabelSorryUnknown.Caption := rsSorryUnknown;
   LabelChooseMsg.Caption := rsChooseInstallerMsg;
 end;
 
+procedure TFChooseInstallerDlg.SetLabelUnknown(setDetectedUnknown : boolean);
+begin
+  if setDetectedUnknown then
+  LabelSorryUnknown.Caption := rsSorryDetectedUnknown
+  else LabelSorryUnknown.Caption := rsSorryUnknown;
+end;
 
 end.
 

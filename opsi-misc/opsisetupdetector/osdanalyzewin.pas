@@ -45,7 +45,7 @@ procedure get_installshieldmsi_info(myfilename: string; var mysetup: TSetupFile)
 //procedure get_advancedmsi_info(myfilename: string; var mysetup: TSetupFile);
 procedure get_null_info(myfilename: string; var mysetup: TSetupFile);
 procedure get_installaware_info(myfilename: string; var mysetup: TSetupFile);
-procedure get_genmsinstaller_info(myfilename: string; var mysetup: TSetupFile);
+//procedure get_genmsinstaller_info(myfilename: string; var mysetup: TSetupFile);
 procedure get_wixtoolset_info(myfilename: string; var mysetup: TSetupFile);
 procedure get_boxstub_info(myfilename: string; var mysetup: TSetupFile);
 procedure get_sfxcab_info(myfilename: string; var mysetup: TSetupFile);
@@ -929,6 +929,7 @@ begin
   write_log_and_memo('get_installaware_info finished');
 end;
 
+(*
 procedure get_genmsinstaller_info(myfilename: string; var mysetup: TSetupFile);
 var
   str1, str2: string;
@@ -939,6 +940,7 @@ begin
     ExtractFileName(myfilename);
   write_log_and_memo('get_genmsinstaller_info finished');
 end;
+*)
 
 procedure get_wixtoolset_info(myfilename: string; var mysetup: TSetupFile);
 var
@@ -1270,7 +1272,7 @@ begin
     sleep(2000);
 
     {$IFDEF OSDGUI}
-    if setupType = stUnknown then
+    if (setupType = stUnknown) or (setupType = stDetectedUnknown) then
     begin
       FChooseInstallerDlg.ComboBoxChooseInstaller.Clear;
       for i := 0 to integer(stUnknown) do
@@ -1278,6 +1280,17 @@ begin
           installerToInstallerstr(TKnownInstaller(i)));
       FChooseInstallerDlg.ComboBoxChooseInstaller.Text :=
         installerToInstallerstr(stUnknown);
+      if setupType = stDetectedUnknown then
+      begin
+        FChooseInstallerDlg.LabelDetected.Caption :=
+          'Detected: ' + mysetup.installerName + ' Version: ' + mysetup.installerVersion;
+        FChooseInstallerDlg.SetLabelUnknown(True);
+      end
+      else
+      begin
+        FChooseInstallerDlg.LabelDetected.Caption := '';
+        FChooseInstallerDlg.SetLabelUnknown(False);
+      end;
       if FChooseInstallerDlg.ShowModal = mrOk then
       begin
         setupType := installerstrToInstaller(
@@ -1285,7 +1298,7 @@ begin
         mysetup.installerId := setupType;
       end;
     end;
-     {$ENDIF OSDGUI}
+    {$ENDIF OSDGUI}
 
     get_aktProduct_general_info_win(setupType, Filename, mysetup);
 
@@ -1298,7 +1311,7 @@ begin
       stMsi: ;// nothing to do here - see above;
       stMsixAppx: ;// nothing to do here - see above;
       stInstallAware: get_installaware_info(FileName, mysetup);
-      stMSGenericInstaller: get_genmsinstaller_info(FileName, mysetup);
+      //stMSGenericInstaller: get_genmsinstaller_info(FileName, mysetup);
       stWixToolset: get_wixtoolset_info(FileName, mysetup);
       stBoxStub: get_boxstub_info(FileName, mysetup);
       stSFXcab: get_sfxcab_info(FileName, mysetup);
@@ -1350,9 +1363,9 @@ begin
   resultForm1.ProgressBarAnalyze.Position := 100;
   procmess;
   if osdsettings.DetectCount > 1 then
-    MyMessageDlg.showMessage('Warning','More than one installertype detected:' +LineEnding+
-      osdsettings.DetectionSummary.Text +LineEnding+
-      'Please check log file.', [mrOK]);
+    MyMessageDlg.ShowMessage('Warning', 'More than one installertype detected:'
+      + LineEnding + osdsettings.DetectionSummary.Text + LineEnding +
+      'Please check log file.', [mrOk]);
   {$ENDIF OSDGUI}
   //sleep(2000);
   mysetup.installerId := setupType;
@@ -1367,7 +1380,7 @@ begin
     if tmpstr <> '' then
     begin
       //MyMessageDlg.wiMessageSized(tmpstr,[mrOk], 950, 740);
-      OSD_info.mdContent:= tmpstr;
+      OSD_info.mdContent := tmpstr;
       OSD_info.ShowModal;
     end;
     {$ENDIF OSDGUI}

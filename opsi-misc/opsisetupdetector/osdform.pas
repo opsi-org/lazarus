@@ -1380,7 +1380,7 @@ var
 begin
   installerlist := TStringList.Create;
   for installer := Low(TKnownInstaller) to High(TKnownInstaller) do
-    if not (installer = stUnknown) then
+    if not (installer = stUnknown) or (installer = stDetectedUnknown) then
       installerlist.Add(installerToInstallerstr(installer));
   //installerstr := installerstr + installerToInstallerstr(installer) + LineEnding;
   installerlist.Sort;
