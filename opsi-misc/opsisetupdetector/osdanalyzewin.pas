@@ -132,7 +132,7 @@ begin
       except
         on E: Exception do
         begin
-          LogDatei.log('Exception while reading fileversion2: ' +
+          LogDatei.log('Exception while reading fileversion1: ' + infokey + ' Exception: '+
             E.ClassName + ': ' + E.Message, LLError);
           Result := '';
         end;
@@ -154,7 +154,7 @@ begin
       except
         on E: Exception do
         begin
-          LogDatei.log('Exception while reading fileversion2: ' +
+          LogDatei.log('Exception while reading fileversion2: '  + infokey + ' Exception: '+
             E.ClassName + ': ' + E.Message, LLError);
           Result := '';
         end;
@@ -394,6 +394,7 @@ begin
 
     // use lessmsi
     installdir := getInstallDirFromMsi(myfilename);
+    mysetup.installDirectory:= installdir;
 
   end;
   myoutlines.Free;
