@@ -6,8 +6,6 @@ interface
 
 uses
   Classes, SysUtils,
-  //osdhelper,
-  //osprocesses,
   oslog,
   LCLType,
   OSProcessux,
@@ -18,7 +16,6 @@ uses
 function getInstallDirFromMsi(target: string): string;
 function runLessmsiTable(target: string; table: string;
   var Outlist: TStringList): boolean;
-//function runDieInfo(target : string; jsonOut : TStringlist) : boolean;
 
 
 implementation
@@ -27,7 +24,7 @@ var
   myLessMsiOutList: TStringList;
   resultStr: string;
   myLessmsi: string;
-  myLessmsiParams: string;
+  //myLessmsiParams: string;
   myLessmsiDir: string;
 
 
@@ -58,52 +55,133 @@ begin
   end;
 end;
 
-(*
-function runDieInfo(target : string; jsonOut : TStringlist) : boolean;
-var
-  mycommand : string;
-  myexitcode : integer = 0;
-  myreport : string = '';
-  //oldworkdir : string;
-begin
-  result := false;
-  //mycommand := '"C:\WINDOWS\system32\cmd.exe" /C "'+myDiec +' --info '+myDiecParams + ' -b "'+ExtractFileName(target)+'""';
-  //mycommand := '"'+myDiec +'" --info '+myDiecParams + ' -b "'+ExtractFileName(target)+'"';
-  mycommand := '"'+myDiec +'" --info '+myDiecParams + ' "'+target+'"';
-  LogDatei.log('Start: '+mycommand,LLinfo);
-  //write_memo(mycommand);
-  //oldworkdir := GetCurrentDir;
-  //SetCurrentDir(ExtractFileDir(target));
 
-  if not RunCommandAndCaptureOut(mycommand, True, jsonOut, myreport,
-    SW_SHOWMINIMIZED, myexitcode) then
-  begin
-    LogDatei.log('Failed to get info: ' + myreport,LLerror);
-    //write_memo('Failed to analyze: ' + myreport);
-  end
-  else
-  begin
-    result := true;
-    LogDatei.log('Diec output: ',LLinfo);
-    LogDatei.log_list(jsonOut,LLdebug);
-  end;
-  //SetCurrentDir(oldworkdir);
-end;
-  *)
 
 function getInstallDirFromMsi(target: string): string;
 var
   instDirMarker, instDirBase, instDirProd, instDirFull: string;
-  instDirMarkerLine: string;
+  instDirMarkerLine, dirToken: string;
   resultList: TStringList;
   InstDirMarkerList: TStringList;
+  dirTokenList: TStringList;
   instDirMarkerFound: boolean = False;
+  entryFound: boolean = False;
   myProductName, myManufacturer, myAi_package_type: string;
   i, k: integer;
+  recursionCounter: integer = 0;
+
+  function resolveDirectoryToken(var tokenlist: TStringList;
+  var recursionCounter: integer): boolean;
+  var
+    instDirMarkerFound: boolean = False;
+    instDirMarkerLine: string;
+    debugstr: string;
+    dirToken: string;
+    i: integer;
+    tokenListIndex: integer = 0;
+    localTokenListIndex: integer = 0;
+    resultList: TStringList;
+    localTokenList: TStringList;
+  begin
+    i := 0;
+    resultList := TStringList.Create;
+    localTokenList := TStringList.Create;
+    try
+      localTokenList.Text := tokenlist.Text;
+      Result := False;
+      for localTokenListIndex := 0 to localTokenList.Count - 1 do
+      begin
+        dirToken := localTokenList[localTokenListIndex];
+        tokenListIndex := tokenlist.IndexOf(dirToken);
+        LogDatei.log('resolveDirectoryToken token: ' +
+          IntToStr(localTokenListIndex) + ' = ' + dirToken, LLinfo);
+
+        instDirMarkerFound := False;
+        instDirMarkerLine := '';
+        if myLessMsiOutList.Count > 0 then
+        begin
+          // we expect the scheme:
+          // instDirMarker, instDirBase, instDirProd
+          // eg.
+          // INSTALLDIR, ProgramFiles64Folder, grepWin
+          while not instDirMarkerFound and (i < myLessMsiOutList.Count) do
+          begin
+            instDirMarkerLine := myLessMsiOutList[i];
+            resultList.Clear;
+            resultList.AddStrings(instDirMarkerLine.Split(','));
+            //if myLessMsiOutList[i].StartsWith(dirToken, False) then
+            if resultlist[0] = dirToken then
+            begin
+              instDirMarkerFound := True;
+              Result := True;
+              Inc(recursionCounter);
+            end
+            else
+              Inc(i);
+          end;
+        end;
+        if instDirMarkerFound then
+        begin
+          LogDatei.log('resolveDirectoryToken line: ' + instDirMarkerLine, LLinfo);
+          debugstr := resultList.Text;
+          if resultList.Count > 0 then
+            instDirMarker := resultlist[0];
+          if resultList.Count > 1 then
+            instDirBase := resultlist[1];
+          if resultList.Count > 2 then
+            instDirProd := resultlist[2];
+
+          if not ((instDirProd = '') or (instDirProd = '.')) then
+          begin
+            if instDirProd.Contains('|') then
+            begin
+              // we reuse resultlist
+              resultList.Clear;
+              resultList.AddStrings(instDirProd.Split('|'));
+              instDirProd := resultlist[1];
+            end;
+            tokenlist[tokenListIndex] := instDirProd;
+          end;
+
+
+          if not ((instDirBase = '') or (instDirBase = '.')) then
+          begin
+            if instDirBase.Contains('|') then
+            begin
+              // we reuse resultlist
+              resultList.Clear;
+              resultList.AddStrings(instDirBase.Split('|'));
+              instDirBase := resultlist[1];
+            end;
+            // translate msi system folder to opsi system folder
+            // https://learn.microsoft.com/de-de/windows/win32/msi/property-reference#system-folder-properties
+            instDirBase := instDirBase.Replace('ProgramFilesFolder',
+              '%ProgramFiles32Dir%');
+            instDirBase := instDirBase.Replace('ProgramFiles32Folder',
+              '%ProgramFiles32Dir%');
+            instDirBase := instDirBase.Replace('ProgramFiles64Folder',
+              '%ProgramFiles64Dir%');
+            if instDirProd = '.' then
+              tokenlist[tokenListIndex] := instDirBase
+            else
+              tokenlist.Insert(tokenListIndex, instDirBase);
+          end;
+          LogDatei.log('resolveDirectoryToken result: ' + tokenlist.Text, LLinfo);
+        end;
+      end;
+      LogDatei.log('resolveDirectoryToken result____: ' + tokenlist.Text, LLinfo);
+
+    finally
+      FreeAndNil(resultList);
+      FreeAndNil(localTokenList);
+    end;
+  end;
+
 begin
   Result := 'unknown';
   resultList := TStringList.Create;
   InstDirMarkerList := TStringList.Create;
+  dirTokenList := TStringList.Create;
   try
     // Get some data from 'Property'
     myLessMsiOutList.Clear;
@@ -134,125 +212,103 @@ begin
 
     // Get instdir from 'Directory'
     myLessMsiOutList.Clear;
+    // get content from directory table
     runLessmsiTable(target, 'Directory', myLessMsiOutList);
     resultstr := myLessMsiOutList.Text;
+    // initialize well known master search strings
     InstDirMarkerList.Add('INSTALLDIR');
     InstDirMarkerList.Add('APPLICATIONROOTDIRECTORY');
     InstDirMarkerList.Add('APPLICATIONFOLDER');
     InstDirMarkerList.Add('INSTALLFOLDER');
     InstDirMarkerList.Add('INSTALLLOCATION');
-    i := 0;
-    if myLessMsiOutList.Count > 0 then
+
+    k := 0;
+    while not instDirMarkerFound and (k < InstDirMarkerList.Count) do
     begin
-      // we expect the scheme:
-      // instDirMarker, instDirBase, instDirProd
-      // eg.
-      // INSTALLDIR, ProgramFiles64Folder, grepWin
-      while not instDirMarkerFound and (i < myLessMsiOutList.Count) do
+      dirTokenList.Clear;
+      instDirMarker := InstDirMarkerList[k];
+      dirTokenList.Add(instDirMarker);
+      repeat
+        entryFound := resolveDirectoryToken(dirTokenList, recursionCounter);
+      until not entryFound;
+      if (recursionCounter > 0) then
       begin
-        k := 0;
-        LogDatei.log('Looking for instDirMarker in line: ' +
-          myLessMsiOutList[i], LLinfo);
-        while not instDirMarkerFound and (k < InstDirMarkerList.Count) do
+        instDirMarkerFound := True;
+        Result := '';
+        for i := 0 to dirTokenList.Count - 1 do
         begin
-          if myLessMsiOutList[i].StartsWith(InstDirMarkerList[k], True) then
+          dirToken := dirTokenList[i];
+          Result := Result + IncludeTrailingPathDelimiter(dirToken);
+        end;
+        LogDatei.log('Got Installdir from msi via lessmsi: ' + Result, LLinfo);
+      end;
+      Inc(k);
+    end;
+
+    if not instDirMarkerFound then
+    begin
+      // Get instdir from 'CustomAction'  SET_APPDIR
+      LogDatei.log('Got no Installdir from msi table directory.', LLWarning);
+      myLessMsiOutList.Clear;
+      runLessmsiTable(target, 'CustomAction', myLessMsiOutList);
+      i := 0;
+      if myLessMsiOutList.Count > 0 then
+      begin
+        // we expect the scheme:
+        // SET_APPDIR,307,APPDIR,[AI_UserProgramFiles]\Iridium,-2147483648
+        while not instDirMarkerFound and (i < myLessMsiOutList.Count) do
+        begin
+          if myLessMsiOutList[i].StartsWith('SET_APPDIR', True) then
           begin
             instDirMarkerFound := True;
             instDirMarkerLine := myLessMsiOutList[i];
           end
           else
-            Inc(k);
+            Inc(i);
         end;
-        Inc(i);
       end;
-
       if instDirMarkerFound then
       begin
-        // split line at comma
+        LogDatei.log('Looking for instDirMarker in line: ' +
+          instDirMarkerLine, LLinfo);
         resultList.Clear;
         resultList.AddStrings(instDirMarkerLine.Split(','));
-        resultstr := resultList.Text;
-        instDirMarker := resultlist[0];
-        instDirBase := resultlist[1];
-        instDirProd := resultlist[2];
-
-        if instDirProd.Contains('|') then
-        begin
-          // we reuse resultlist
-          resultList.Clear;
-          resultList.AddStrings(instDirProd.Split('|'));
-          instDirProd := resultlist[1];
-        end;
-
-        // translate msi system folder to opsi system folder
-        // https://learn.microsoft.com/de-de/windows/win32/msi/property-reference#system-folder-properties
-        if instDirBase = 'ProgramFilesFolder' then Result := '%ProgramFiles32Dir%\'
-        else if instDirBase = 'ProgramFiles32Folder' then
-          Result := '%ProgramFiles32Dir%\'
-        else if instDirBase = 'ProgramFiles64Folder' then
-          Result := '%ProgramFiles64Dir%\'
-        else
-        begin
-          i := 0;
-          instDirMarkerFound := False;
-          if myLessMsiOutList.Count > 0 then
-          begin
-            // we expect the scheme:
-            // SET_APPDIR,307,APPDIR,[AI_UserProgramFiles]\Iridium,-2147483648
-            while not instDirMarkerFound and (i < myLessMsiOutList.Count) do
-            begin
-              if myLessMsiOutList[i].StartsWith(instDirBase, True) then
-              begin
-                instDirMarkerFound := True;
-                instDirMarkerLine := myLessMsiOutList[i];
-              end
-              else
-                Inc(i);
-            end;
-          end;
-          if instDirMarkerFound then
-          begin
-            // split line at comma
-            resultList.Clear;
-            resultList.AddStrings(instDirMarkerLine.Split(','));
-            resultstr := resultList.Text;
-            instDirMarker := resultlist[0];
-            instDirBase := resultlist[1];
-            //instDirProd := resultlist[2];
-            instDirBase := instDirBase.Replace('ProgramFilesFolder',
-              '%ProgramFiles32Dir%');
-            instDirBase := instDirBase.Replace('ProgramFiles32Folder',
-              '%ProgramFiles32Dir%');
-            instDirBase := instDirBase.Replace('ProgramFiles64Folder',
-              '%ProgramFiles64Dir%');
-            Result := instDirBase + '\' + resultlist[2] + '\';
-          end;
-        end;
-
-        Result := Result + instDirProd;
+        instDirFull := resultlist[3];
+        instDirFull := instDirFull.Replace('[ProductName]', myProductName);
+        instDirFull := instDirFull.Replace('[Manufacturer]', myManufacturer);
+        instDirFull := instDirFull.Replace('[ProgramFilesFolder]',
+          '%ProgramFiles32Dir%\');
+        instDirFull := instDirFull.Replace('[ProgramFiles32Folder]',
+          '%ProgramFiles32Dir%\');
+        instDirFull := instDirFull.Replace('[ProgramFiles64Folder]',
+          '%ProgramFiles64Dir%\');
+        if myAi_package_type = 'Intel' then
+          instDirFull := instDirFull.Replace('[AI_UserProgramFiles]',
+            '%ProgramFiles32Dir%\');
+        if myAi_package_type = 'x64' then
+          instDirFull := instDirFull.Replace('[AI_UserProgramFiles]',
+            '%ProgramFiles64Dir%\');
+        LogDatei.log('Installdir is now: ' + instDirFull, LLinfo);
+        Result := instDirFull;
         LogDatei.log('Got Installdir from msi via lessmsi: ' + Result, LLinfo);
       end
       else
       begin
-        // Get instdir from 'CustomAction'  SET_APPDIR
-        LogDatei.log('Got no Installdir from msi table directory.', LLWarning);
-        myLessMsiOutList.Clear;
-        runLessmsiTable(target, 'CustomAction', myLessMsiOutList);
+        // Get instdir from 'CustomAction'  DIRCA_TARGETDIR
+        LogDatei.log('Got no Installdir from msi table CustomAction. / SET_APPDIR',
+          LLWarning);
         i := 0;
-        if myLessMsiOutList.Count > 0 then
+        // we expect the scheme:
+        // DIRCA_TARGETDIR,307,TARGETDIR,[ProgramFilesFolder]\[ProductName]
+        while not instDirMarkerFound and (i < myLessMsiOutList.Count) do
         begin
-          // we expect the scheme:
-          // SET_APPDIR,307,APPDIR,[AI_UserProgramFiles]\Iridium,-2147483648
-          while not instDirMarkerFound and (i < myLessMsiOutList.Count) do
+          if myLessMsiOutList[i].StartsWith('DIRCA_TARGETDIR', True) then
           begin
-            if myLessMsiOutList[i].StartsWith('SET_APPDIR', True) then
-            begin
-              instDirMarkerFound := True;
-              instDirMarkerLine := myLessMsiOutList[i];
-            end
-            else
-              Inc(i);
-          end;
+            instDirMarkerFound := True;
+            instDirMarkerLine := myLessMsiOutList[i];
+          end
+          else
+            Inc(i);
         end;
         if instDirMarkerFound then
         begin
@@ -262,67 +318,21 @@ begin
           resultList.AddStrings(instDirMarkerLine.Split(','));
           instDirFull := resultlist[3];
           instDirFull := instDirFull.Replace('[ProductName]', myProductName);
+          instDirFull := instDirFull.Replace('[Manufacturer]', myManufacturer);
           instDirFull := instDirFull.Replace('[ProgramFilesFolder]',
-            '%ProgramFiles32Dir%\');
+            '%ProgramFiles32Dir%');
           instDirFull := instDirFull.Replace('[ProgramFiles32Folder]',
-            '%ProgramFiles32Dir%\');
+            '%ProgramFiles32Dir%');
           instDirFull := instDirFull.Replace('[ProgramFiles64Folder]',
-            '%ProgramFiles64Dir%\');
-          if myAi_package_type = 'Intel' then
-            instDirFull := instDirFull.Replace('[AI_UserProgramFiles]',
-              '%ProgramFiles32Dir%\');
-          if myAi_package_type = 'x64' then
-            instDirFull := instDirFull.Replace('[AI_UserProgramFiles]',
-              '%ProgramFiles64Dir%\');
+            '%ProgramFiles64Dir%');
           LogDatei.log('Installdir is now: ' + instDirFull, LLinfo);
-          // not completed:
-          // instDirMarkerFound := False;
           Result := instDirFull;
           LogDatei.log('Got Installdir from msi via lessmsi: ' + Result, LLinfo);
         end
         else
-        begin
-          // Get instdir from 'CustomAction'  DIRCA_TARGETDIR
-          LogDatei.log('Got no Installdir from msi table CustomAction. / SET_APPDIR',
+          LogDatei.log(
+            'Got no Installdir from msi table CustomAction. / DIRCA_TARGETDIR',
             LLWarning);
-          i := 0;
-          // we expect the scheme:
-          // DIRCA_TARGETDIR,307,TARGETDIR,[ProgramFilesFolder]\[ProductName]
-          while not instDirMarkerFound and (i < myLessMsiOutList.Count) do
-          begin
-            if myLessMsiOutList[i].StartsWith('DIRCA_TARGETDIR', True) then
-            begin
-              instDirMarkerFound := True;
-              instDirMarkerLine := myLessMsiOutList[i];
-            end
-            else
-              Inc(i);
-          end;
-          if instDirMarkerFound then
-          begin
-            LogDatei.log('Looking for instDirMarker in line: ' +
-              instDirMarkerLine, LLinfo);
-            resultList.Clear;
-            resultList.AddStrings(instDirMarkerLine.Split(','));
-            instDirFull := resultlist[3];
-            instDirFull := instDirFull.Replace('[ProductName]', myProductName);
-            instDirFull := instDirFull.Replace('[ProgramFilesFolder]',
-              '%ProgramFiles32Dir%');
-            instDirFull := instDirFull.Replace('[ProgramFiles32Folder]',
-              '%ProgramFiles32Dir%');
-            instDirFull := instDirFull.Replace('[ProgramFiles64Folder]',
-              '%ProgramFiles64Dir%');
-            LogDatei.log('Installdir is now: ' + instDirFull, LLinfo);
-            // not completed:
-            //instDirMarkerFound := False;
-            Result := instDirFull;
-            LogDatei.log('Got Installdir from msi via lessmsi: ' + Result, LLinfo);
-          end
-          else
-            LogDatei.log(
-              'Got no Installdir from msi table CustomAction. / DIRCA_TARGETDIR',
-              LLWarning);
-        end;
       end;
     end;
 
@@ -332,6 +342,7 @@ begin
   finally
     FreeAndNil(resultlist);
     FreeAndNil(InstDirMarkerList);
+    FreeAndNil(dirTokenList);
   end;
 end;
 
