@@ -161,6 +161,10 @@ var
               '%ProgramFiles32Dir%');
             instDirBase := instDirBase.Replace('ProgramFiles64Folder',
               '%ProgramFiles64Dir%');
+            instDirBase := instDirBase.Replace('CommonFilesFolder',
+              '%ProgramFiles32Dir%\Common Files');
+
+
             if instDirProd = '.' then
               tokenlist[tokenListIndex] := instDirBase
             else

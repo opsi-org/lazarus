@@ -743,7 +743,6 @@ var
   smask: string;
   mymsilist: TStringList;
   mymsifilename: string;
-
 begin
   write_log_and_memo('Analyzing InstallShield+MSI Setup: ' + myfilename);
   mysetup.installerId := stInstallShieldMSI;
@@ -777,12 +776,34 @@ begin
   end
   else
   begin
-    logdatei.log_list(myoutlines,LLdebug);
+    logdatei.log_list(myoutlines, LLdebug);
     //stopped := KillProcessbyname(ExtractFileName(myfilename), found);
     smask := opsitmp + '*.msi';
     LogDatei.log('Looking for: ' + smask, LLInfo);
     try
       mymsilist := FindAllFiles(opsitmp, '*.msi', True);
+      // some wait retry
+      if mymsilist.Count = 0 then
+      begin
+        Sleep(1000);
+        mymsilist := FindAllFiles(opsitmp, '*.msi', True);
+      end;
+      if mymsilist.Count = 0 then
+      begin
+        Sleep(1000);
+        mymsilist := FindAllFiles(opsitmp, '*.msi', True);
+      end;
+      if mymsilist.Count = 0 then
+      begin
+        Sleep(1000);
+        mymsilist := FindAllFiles(opsitmp, '*.msi', True);
+      end;
+      if mymsilist.Count = 0 then
+      begin
+        Sleep(1000);
+        mymsilist := FindAllFiles(opsitmp, '*.msi', True);
+      end;
+
       if mymsilist.Count > 0 then
       begin
         if mymsilist.Count > 1 then
@@ -1012,6 +1033,27 @@ begin
     LogDatei.log('Looking for: ' + smask, LLInfo);
     try
       mymsilist := FindAllFiles(destDir, '*.msi', True);
+       // some wait retry
+      if mymsilist.Count = 0 then
+      begin
+        Sleep(1000);
+        mymsilist := FindAllFiles(opsitmp, '*.msi', True);
+      end;
+      if mymsilist.Count = 0 then
+      begin
+        Sleep(1000);
+        mymsilist := FindAllFiles(opsitmp, '*.msi', True);
+      end;
+      if mymsilist.Count = 0 then
+      begin
+        Sleep(1000);
+        mymsilist := FindAllFiles(opsitmp, '*.msi', True);
+      end;
+      if mymsilist.Count = 0 then
+      begin
+        Sleep(1000);
+        mymsilist := FindAllFiles(opsitmp, '*.msi', True);
+      end;
       if mymsilist.Count > 0 then
       begin
         if mymsilist.Count > 1 then
@@ -1066,8 +1108,15 @@ end;
 
 procedure get_advancedInstaller_info(myfilename: string; var mysetup: TSetupFile);
 var
-  str1, str2: string;
+  str1, str2, commandline: string;
   pos1, pos2, i: integer;
+  myoutlines: TStringList;
+  myreport: string;
+  myexitcode: integer;
+  smask: string;
+  mymsilist: TStringList;
+  mymsifilename: string;
+  temp_exe :string;
 begin
   write_log_and_memo('Analyzing advancedInstaller:');
   (*
@@ -1088,6 +1137,91 @@ begin
   if not DirectoryExists(destDir) then
     ForceDirectories(destDir);
     *)
+
+  if DirectoryExists(opsitmp) then
+    DeleteDirectory(opsitmp, True);
+  if not DirectoryExists(opsitmp) then
+    ForceDirectories(opsitmp);
+  if not DirectoryExists(opsitmp) then
+    LogDatei.log('Error: could not create directory: ' + opsitmp, LLError);
+  {$IFDEF WINDOWS}
+  // extract and analyze MSI from setup
+
+  write_log_and_memo('Analyzing MSI from advancedInstaller Setup ' + myfilename);
+  temp_exe := opsitmp+'\'+ExtractFileName(myfilename);
+  CopyFile(myfilename,temp_exe);
+  commandline := '"'+temp_exe+'" /extract "'+opsitmp+'"';
+
+  myoutlines := TStringList.Create;
+  write_log_and_memo(commandline);
+  write_log_and_memo('!! PLEASE WAIT !!');
+  write_log_and_memo('!! PLEASE WAIT !! Extracting and analyzing MSI ...');
+  write_log_and_memo('!! PLEASE WAIT !!');
+
+  if not RunCommandAndCaptureOut(commandline, True, myoutlines, myreport,
+    SW_SHOWMINIMIZED, myexitcode) then
+  begin
+    LogDatei.log('Failed to to run "' + commandline + '": ' + myreport, LLWarning);
+  end
+  else
+  begin
+    logdatei.log_list(myoutlines, LLdebug);
+    //stopped := KillProcessbyname(ExtractFileName(myfilename), found);
+    smask := opsitmp + '*.msi';
+    LogDatei.log('Looking for: ' + smask, LLInfo);
+    try
+      mymsilist := FindAllFiles(opsitmp, '*.msi', True);
+      // some wait retry
+      if mymsilist.Count = 0 then
+      begin
+        Sleep(1000);
+        mymsilist := FindAllFiles(opsitmp, '*.msi', True);
+      end;
+      if mymsilist.Count = 0 then
+      begin
+        Sleep(1000);
+        mymsilist := FindAllFiles(opsitmp, '*.msi', True);
+      end;
+      if mymsilist.Count = 0 then
+      begin
+        Sleep(1000);
+        mymsilist := FindAllFiles(opsitmp, '*.msi', True);
+      end;
+      if mymsilist.Count = 0 then
+      begin
+        Sleep(1000);
+        mymsilist := FindAllFiles(opsitmp, '*.msi', True);
+      end;
+
+      if mymsilist.Count > 0 then
+      begin
+        if mymsilist.Count > 1 then
+        begin
+          LogDatei.log('Found multiple msi files: ' + mymsilist.Text, LLWarning);
+          if osdsettings.showgui then
+            ShowMessage(sWarnMultipleMsi + opsitmp);
+          mymsifilename := mymsilist.Strings[0];
+
+          LogDatei.log('Analyzing msi file: ' + mymsifilename, LLInfo);
+        end
+        else
+        begin
+          mymsifilename := mymsilist.Strings[0];
+          LogDatei.log('Analyzing found msi file: ' + mymsifilename, LLInfo);
+        end;
+        get_msi_info(mymsifilename, mysetup, True);
+      end
+      else
+      begin
+        LogDatei.log('Could not extract msi from: ' + myfilename, LLNotice);
+      end;
+    finally
+      mymsilist.Free;
+    end;
+    FreeAndNil(myoutlines);
+    KillProcess(ExtractFileName(myfilename));
+  end;
+  {$ENDIF WINDOWS}
   mysetup.uninstallDirectory:= '$installerSourceDir$';
   mysetup.uninstallProg:= mysetup.uninstallDirectory +'\'+ mysetup.setupFileName;
 
