@@ -328,11 +328,14 @@ begin
       //writeln(pfile, JSONString);
       try
         try
+          TOMLString := lib_jyt.json2toml(JSONFinalString);
+          (*
           pinput := PChar(JSONFinalString);
           lib_jyt := TLibJYT.Create;
           poutput := lib_jyt.json2toml(pinput);
           TOMLString := poutput;
           lib_jyt.free_result(poutput);
+          *)
         except
           on E: Exception do
             LogDatei.log('ERROR: exception: ' + E.ClassName + ': ' + E.Message, LLerror);

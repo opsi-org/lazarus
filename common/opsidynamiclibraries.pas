@@ -69,8 +69,11 @@ begin
     if FLibHandle = 0 then
     begin
       FLibLoaded := false;
-      FErrorMessage := 'ERROR: could not load ' + FLibName
-         + ' from path ' + FLibPath + ' or current directory';
+      FErrorMessage := 'ERROR: could not load ' + FLibName + ' from ';
+      if FLibPath <> '' then
+         FErrorMessage := FErrorMessage + 'path ' + FLibPath + ' or ';
+      FErrorMessage := FErrorMessage + 'current directory';
+      raise Exception.Create(FErrorMessage);
     end
     else FLibLoaded := true;
   finally

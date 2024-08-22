@@ -31,7 +31,7 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
   oscrypt,
   osdmain,
   osdcontrolfile_io,
-  osd_md_html_dlg, osdmeta, osd_lessmsi, osdanalyze_by_die;
+  osd_md_html_dlg, osdmeta, osd_lessmsi, osdanalyze_by_die, opsiDynamicLibJYT;
 
 
 (*
