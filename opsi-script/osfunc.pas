@@ -6608,9 +6608,6 @@ var
 begin
   LogSCommand := 'addEntry ' + '[' + Sektion + '] ' + Eintrag;
   Logged := Logdatei.Log(LogSCommand, LLinfo);
-  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
-
-
   IdentAbspalten(Eintrag, Ident, Value);
   if FindSectionheaderIndex(Sektion) = -1 then
     addSection(Sektion);
@@ -6642,9 +6639,6 @@ begin
       Logdatei.Log(LogS, LLwarning);
     end;
   end;
-
-  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
-
 end;
 
 procedure TuibPatchIniFile.delEntry(const Sektion, Eintrag: string);
@@ -6732,9 +6726,7 @@ begin
   IdentAbspalten(Eintrag, Ident, Value);
   if FindSectionheaderIndex(Sektion) = -1 then
   begin
-    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
     addSection(Sektion);
-    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
   end;
 
   i := FindIdentIndex(Sektion, Ident);
@@ -6786,9 +6778,7 @@ begin
 
   if FindSectionheaderIndex(Sektion) = -1 then
   begin
-    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
     addSection(Sektion);
-    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
   end;
 
   i := FindEntryIndex(Sektion, Ident, Value);
@@ -7239,9 +7229,9 @@ begin
     //if LogDatei <> nil
     //then
     begin
-      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+
       Logdatei.Log('Section not found', LLinfo);
-      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
+
     end;
     found := False;
   end
@@ -7253,9 +7243,7 @@ begin
       //if LogDatei <> nil
       //then
       begin
-        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
         Logdatei.Log('Variable ' + ident + ' not found', LLinfo);
-        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
       end;
       found := False;
     end
@@ -7267,9 +7255,7 @@ begin
       //if LogDatei <> nil
       //then
       begin
-        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
         Logdatei.Log('resulting ' + Result, LLinfo);
-        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
       end;
     end;
   end;
@@ -7279,9 +7265,7 @@ begin
     //if LogDatei <> nil
     //then
     begin
-      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
       Logdatei.Log('taking default ' + defaultvalue, LLinfo);
-      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
     end;
     Result := DefaultValue;
   end;
@@ -9068,11 +9052,8 @@ var
                 unzip_InUse: ZipError :=
                     ZipFileName + ' DLL already in use, try later or use pkunzip!';
               end;
-
-              LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
               LogS := 'Error: ' + ZipError;
               LogDatei.log(LogS, LLError);
-              LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
             end;
 
             if (rc = unzip_ReadErr) or (rc = unzip_Userabort) or
@@ -9097,19 +9078,13 @@ var
 
       if zipresult then
       begin
-
-        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
         NumberOfExtractedFiles := CentralForm.zipfiles.items.Count;
         for FileI := 0 to NumberOfExtractedFiles - 1 do
         begin
           FName := CutRightBlanks(CentralForm.zipfiles.items[FileI]);
-
           LogS := FName + ' extracted to ' + ExtractTempDir;
           Logdatei.Log(LogS, LLinfo);
         end;
-        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
-
-
         for FileI := 0 to NumberOfExtractedFiles - 1 do
         begin
           FName := CutRightBlanks(CentralForm.zipfiles.items[FileI]);
@@ -9119,13 +9094,11 @@ var
           ToCopyOrNotToCopy(DecompressedSource, TargetName);
         end;
       end;
-
       // clean up
       SaveLogLevel := LogDatei.LogLevel;
       LogDatei.LogLevel := LLinfo;
       AllDelete(ExtractTempDir + '*.*', True, False, 0);
       LogDatei.LogLevel := SaveLogLevel;
-
       //freemem(PExtractTempDir);
     end;
 
@@ -9232,9 +9205,6 @@ var
           {$ENDIF GUI}
           LogS := 'Source ' + SourceName;
           LogDatei.log(LogS, LLDebug);
-
-          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
-
           //{$IFDEF WIN32}
           if cpSpecify and cpExtract = cpExtract then
           begin
@@ -9271,9 +9241,6 @@ var
             LogDatei.log_prog('copy candidate: ' + SourceName +
               ' to: ' + TargetName, LLDebug2);
           ToCopyOrNotToCopy(SourceName, TargetName);
-
-          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
-
         end;
 
       FindResultcode := FindNextUTF8(SearchResult);
@@ -9407,8 +9374,6 @@ begin
     {$ENDIF GUI}
   end;
 
-  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
-
   if CountModus = tccmCounted then
   begin
     LogS := IntToStr(NumberCounted) + ' File(s) found';
@@ -9445,7 +9410,7 @@ begin
   FBatchOberflaeche.SetMessageText('', mCommand); //setCommandLabel('');
   ProcessMess;
   {$ENDIF GUI}
-  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
+
 end;
 
 function TuibFileInstall.MakePath(const Dirname: string): boolean;
@@ -9546,7 +9511,7 @@ var
     isdeleted: boolean;
 
   begin
-    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+
     { analyze Completename }
     OrigPath := ExtractFilePath(CompleteName);
     { should end always with pathdelimiter }
@@ -9597,7 +9562,7 @@ var
       Filename := OrigPath + SearchResult.Name;
       LogS := 'File "' + Filename + '"';
       LogDatei.log(LogS, LLdebug2);
-      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+
 
       FileIsReadOnly := False;
       if ignoreReadonly then
@@ -9697,7 +9662,7 @@ var
         end;
       end;
 
-      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
+
       FindResultcode := FindNextUTF8(SearchResult);
     end;
 
@@ -9758,7 +9723,7 @@ var
       end;
     end;
 
-    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
+
 
   end; // ExecDelete
 
@@ -10044,9 +10009,9 @@ var
             if StartProcess(CmdLinePasStr, sw_minimize, True,
               False, False, False, '', 0, LogS, ReturnCode) then
             begin
-              LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+
               Logdatei.Log(LogS, LLinfo);
-              LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
+
             end
             else
             begin
@@ -10153,7 +10118,7 @@ begin
 
   LogS := 'Zipping  ' + SourceMask + ' -----> ' + TargetDir;
   Logdatei.Log(LogS, LLinfo);
-  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+
 
 
   (* FBatchOberflaeche.Gauge1.progress := 0; *)
@@ -10171,7 +10136,7 @@ begin
     CompressRecursive
     (SourceMask, TargetDir, FileFound, Recursive, CompressModus);
 
-  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
+
 
 end;
 
@@ -10308,7 +10273,7 @@ end;
 destructor TuibShellLinks.Destroy;
 begin
   CoUnInitialize;
-  LogDatei.LogSIndentLevel := StartIndentLevel;
+  ;
   MyFiles.Free;
   // MyMessageDlg.WiMessage ('destroy uibShellLinks ', [mrOK]);
   inherited Destroy;
@@ -10346,9 +10311,6 @@ var
 begin
   Result := True;
   oldFolderPath := myFolderPath;
-  if FolderOpened then
-    (* some folder was already been referred *)
-    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
 
   if not SUCCEEDED(SHGetSpecialFolderLocation(0, SystemFolder, pidl)) then
   begin
@@ -10394,7 +10356,8 @@ begin
   else
     myFolderPath := oldFolderPath;
 
-  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+  LogS := 'Path to link foder: "' + myFolderPath;
+  Logdatei.Log(LogS, LLdebug2);
 end;
 
 
@@ -10644,7 +10607,7 @@ begin
         Tell_SystemFolder(SystemFolder);
       Logdatei.Log(LogS, LLinfo);
 
-      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+
 
       if MyFiles.AllDelete(FolderPath, True, True, 0) then
       begin
@@ -10652,7 +10615,7 @@ begin
         if FolderOpened and (FolderPath = MyFolderPath) then
           FolderOpened := False;
       end;
-      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
+
     end;
   end;
 end;

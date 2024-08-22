@@ -1020,7 +1020,6 @@ procedure BuildPC;
 
 var
   i: integer;
-  //KorrektSortierte: integer;
   Bootmode: string;
   bootmodeFromRegistry: boolean;
   Fehler: string;
@@ -1028,33 +1027,26 @@ var
   errorNumber: integer;
   extremeErrorLevel: TErrorLevel;
   showErrorMessages: boolean;
-  //ps,
   tmpstr, cmdstr: string;
-  //TheExitMode: TExitMode;
   buildpcscript: TuibInstScript;
   tmplist: TStringList;
   Produkte: TStringList = nil;
-
-  {$IFDEF WINDOWS}
-  regDataType: tuibRegDataType;
-
-  {$ENDIF WINDOWS}
-
   goOn: boolean;
   problemString: string;
   aktActionRequestStr: string;
   aktAction, orgAction: TActionRequest;
   processProduct: boolean;
-  {$IFDEF UNIX}
-  filehandle: cint;
-  {$ENDIF LINUX}
   list: TStringList;
   excludedProducts: TStringList;
   productscopy: TStringList;
   opsiclientd: boolean;
+  {$IFDEF WINDOWS}
+  regDataType: tuibRegDataType;
+  {$ENDIF WINDOWS}
   {$IFDEF UNIX}
   filehandle: cint;
-  {$ENDIF LINUX}
+  TheExitMode: TExitMode;
+  {$ENDIF UNIX}
 
 
 

@@ -631,7 +631,6 @@ begin
     //FormStyle := fsNormal;
     BatchScreenOnTop := False;
   end;
-  Visible := True;
   BringToFront;
   Application.ProcessMessages;
 end;

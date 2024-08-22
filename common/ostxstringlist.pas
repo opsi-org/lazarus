@@ -166,7 +166,7 @@ var
   LogS: string;
   usedenc: string;
 begin
-  LogDatei.log('Save to file with encoding: ' + encodingtype, LLDebug);
+  LogDatei.log('Save to file with encoding: ' + encodingtype, LLDebug2);
   try
     myfilename := ExpandFileName(FileName);
     //myfilename := reencode(myfilename,'utf8', usedenc, 'system');

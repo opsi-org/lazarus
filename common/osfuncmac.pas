@@ -164,7 +164,6 @@ begin
       end
       else
       begin
-        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 6;
         LogDatei.log('', LLDebug);
         LogDatei.log('output:', LLDebug);
         LogDatei.log('--------------', LLDebug);
@@ -197,7 +196,7 @@ begin
             //resultstring := resultstring + lineparts.Strings[2] + ';';
             Result.Add(resultstring);
           end;
-        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
+        
         LogDatei.log('', LLDebug);
       end;
     except
@@ -249,7 +248,7 @@ begin
       end
       else
       begin
-        //LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 6;
+        //
         LogDatei.log('', LLDebug3);
         LogDatei.log('output:', LLDebug3);
         LogDatei.log('--------------', LLDebug3);
@@ -267,7 +266,7 @@ begin
             if pidstr = lineparts.Strings[0] then
               Result := lineparts.Strings[2];
           end;
-        //LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
+        //
         //LogDatei.log('', LLDebug3);
       end;
     except
@@ -422,7 +421,7 @@ begin
   end
   else
   begin
-    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 6;
+    
     LogDatei.log('', LLDebug);
     LogDatei.log('output:', LLDebug);
     LogDatei.log('--------------', LLDebug);
@@ -430,7 +429,7 @@ begin
     begin
       LogDatei.log(outlines.strings[i], LLDebug);
     end;
-    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
+    
     LogDatei.log('', LLDebug);
     Result := ExitCode;
   end;
@@ -462,7 +461,7 @@ begin
   end
   else
   begin
-    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 6;
+    
     LogDatei.log('', LLDebug);
     LogDatei.log('output:', LLDebug);
     LogDatei.log('--------------', LLDebug);
@@ -470,7 +469,7 @@ begin
     begin
       LogDatei.log(outlines.strings[i], LLDebug);
     end;
-    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
+    
     LogDatei.log('', LLDebug);
     Result := ExitCode;
   end;

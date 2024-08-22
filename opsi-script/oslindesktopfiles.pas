@@ -209,11 +209,6 @@ begin
   // subfoldername is ignored at Linux
   result := false;
   oldFolderPath := myFolderPath;
-  if FolderOpened
-  then
-    // some folder was already been referred
-    LogDatei.LogSIndentLevel :=  LogDatei.LogSIndentLevel - 1;
-
   if produceNameFromCsidl(systemfolderName,systemfolder,msg) then
   begin
    mySystemFolder := Systemfolder;
@@ -228,7 +223,6 @@ begin
    LogS := 'Error ' +msg;
    LogDatei.log (LogS, LLError);
   end;
-  LogDatei.LogSIndentLevel :=  LogDatei.LogSIndentLevel + 1;
 end;
 
 function TuibLinuxDesktopFiles.getIconSize (const iconfilename: String) : integer;

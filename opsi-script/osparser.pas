@@ -348,6 +348,9 @@ type
     FtestSyntax: boolean;  // default=false ; if true then run syntax check
 
 
+    function AllsignedHackCommand(var powershellpara: string;
+      var tempfilename: string; var passparas: string;
+      var programparas: string; var programfilename: string): string;
     function IsPowershellExecutionPolicyRestricted: boolean;
     function GetPowershellExecutionPolicy(Scope:string='EffectiveExecutionPolicy'): string;
     procedure parsePowershellCall(var Command: string; var AccessString: string;
@@ -1416,7 +1419,7 @@ begin
   begin
     // delete the actual file
     if SysUtils.DeleteFile(tempfilename) then
-      Logdatei.log('The file: ' + tempfilename + ' has been deleted', LLDebug)
+      Logdatei.log('The file: ' + tempfilename + ' has been deleted', LLDebug2)
     else
       Logdatei.log('The file: ' + tempfilename + ' was not deleted', LLDebug);
   end;
@@ -2367,7 +2370,6 @@ begin
   FBatchOberflaeche.SetMessageText(CentralForm.Label2.Caption, mDetail);
   //setDetailLabel(CentralForm.Label2.Caption);
 
-  (* LogDatei.LogSIndentLevel := Sektion.NestingLevel; *)
   ProcessMess;
   {$ENDIF GUI}
 end;
@@ -2471,7 +2473,7 @@ var
         exit;
 
     ProcessMess;
-    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+
     workingSection := GetWorkSection(Section, presetDir);
 
     { create the list we work on }
@@ -3158,7 +3160,7 @@ var
       if saveToOriginalFile then
         PatchListe.SaveToFile(PatchFilename, flag_encoding);
 
-    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
+
     FreeAndNil(PatchListe);
     FreeAndNil(workingSection);
   end;
@@ -3403,7 +3405,7 @@ var
         exit;
 
     ProcessMess;
-    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+
     workingSection := GetWorkSection(Section, presetDir);
 
     Patchdatei := TuibPatchIniFile.Create;
@@ -3518,7 +3520,7 @@ begin
       doInifilePatchesMain(Sektion, GetUserProfilePath, ExpandFileName(Filename));
   end;
 
-  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
+
 
   finishSection(Sektion, OldNumberOfErrors, OldNumberOfWarnings,
     DiffNumberOfErrors, DiffNumberOfWarnings);
@@ -3587,7 +3589,7 @@ var
       end;
       HostsImage.Text := reencode(HostsImage.Text, 'system');
     end;
-    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+
 
     for i := 1 to Sektion.Count do
     begin
@@ -3660,7 +3662,7 @@ var
     HostsImage.Free;
     HostsImage := nil;
 
-    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
+
   end;
 
 begin
@@ -4111,12 +4113,12 @@ var
 
           (* // check result: *)
           logdatei.log('LDAP search result: ', LLinfo);
-          logdatei.LogSIndentLevel := logDatei.logSIndentLevel + 4;
+
           for l := 0 to ldapResult.Count - 1 do
           begin
             logdatei.log(ldapResult.Strings[l], LLinfo);
           end;
-          logdatei.LogSIndentLevel := logDatei.logSIndentLevel - 4;
+
           logdatei.log('', LLinfo);
         end;
 
@@ -4476,7 +4478,7 @@ begin
 
   if not initSection(Sektion, OldNumberOfErrors, OldNumberOfWarnings) then
     exit;
-  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+
 
   if flag_force64 then
     Regist := TuibRegistry.Create(True)
@@ -4525,7 +4527,7 @@ begin
     DiffNumberOfErrors, DiffNumberOfWarnings);
 
 
-  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
+
 
   if ExitOnError and (DiffNumberOfErrors > 0) then
     Result := tsrExitProcess;
@@ -4721,8 +4723,6 @@ begin
       sectionname := copy(sectionname, 2, length(sectionname) - 2);
       key := sectionname;
 
-      LogDatei.LogSIndentLevel := startindentlevel + 1;
-
       LogDatei.log('key ' + key, LLDebug);
 
       key_completepath := key;
@@ -4790,7 +4790,6 @@ begin
       LogDatei.log('We will open Key : ' + key_completepath, LLdebug2);
 
 
-      LogDatei.LogSIndentLevel := startindentlevel + 2;
       Regist.BaseIndentLevel := startindentlevel + 2;
 
       // close key before opening the next -> regunload will fail if keys are open
@@ -4869,16 +4868,10 @@ begin
       end;
 
     end;
-
     Regist.Free;
     Regist := nil;
-
     finishSection(Sektion, OldNumberOfErrors, OldNumberOfWarnings,
       DiffNumberOfErrors, DiffNumberOfWarnings);
-
-    LogDatei.LogSIndentLevel := StartIndentLevel;
-    //LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
-
     if ExitOnError and (DiffNumberOfErrors > 0) then
       Result := tsrExitProcess;
   except
@@ -5042,7 +5035,7 @@ begin
   if not initSection(Sektion, OldNumberOfErrors, OldNumberOfWarnings) then
     exit;
   StartIndentLevel := LogDatei.LogSIndentLevel;
-  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+
   if flag_force64 then
     Regist := TuibRegistry.Create(True)
   else
@@ -5063,12 +5056,7 @@ begin
 
       if LowerCase(Expressionstr) = LowerCase('OpenKey') then
       begin
-        if keyOpenCommandExists // i.e., existed already
-        then
-        //LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1
-        else
-          keyOpenCommandExists := True;
-
+        keyOpenCommandExists := True;
         SyntaxCheck := False;
         GetWord(r, key, r, [']'], True);
         key := trim(key) + ']';
@@ -5179,11 +5167,9 @@ begin
             keyOpened := not Regist.CloseKey;
           Regist.BaseIndentLevel := StartIndentLevel + 1;
           keyOpened := Regist.OpenKey(key0, key);
-          //LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
         end
         else
           reportError(Sektion, i, Sektion.strings[i - 1], ErrorInfo);
-
       end   // openkey
 
       else if LowerCase(Expressionstr) = LowerCase('DeleteKey') then
@@ -5312,7 +5298,7 @@ begin
           end
           else
           begin
-            LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 6;
+
             LogDatei.log('', LLDebug);
             LogDatei.log('output:', LLDebug);
             LogDatei.log('--------------', LLDebug);
@@ -5320,7 +5306,7 @@ begin
             begin
               LogDatei.log(output.strings[outputlines], LLDebug);
             end;
-            LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
+
             LogDatei.log('', LLDebug);
             output.Free;
           end;
@@ -5644,7 +5630,7 @@ begin
   {
   if keyOpenCommandExists (* i.e., existed already *)
   then
-    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
+
   }
 
   if keyOpened then
@@ -5655,9 +5641,6 @@ begin
 
   finishSection(Sektion, OldNumberOfErrors, OldNumberOfWarnings,
     DiffNumberOfErrors, DiffNumberOfWarnings);
-
-  LogDatei.LogSIndentLevel := StartIndentLevel;
-  //LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
 
   if ExitOnError and (DiffNumberOfErrors > 0) then
     Result := tsrExitProcess;
@@ -5725,7 +5708,7 @@ var
 
   procedure workOnNtUserDat;
   begin
-    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+
 
 
     case rfSelected of
@@ -5736,7 +5719,7 @@ var
     end;
 
     LogDatei.log('', LLdebug);
-    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
+
 
     ErrorCode := RegFlushKey(HKEY_Users);
 
@@ -5764,7 +5747,7 @@ var
   var
     sidStr: string = '';
   begin
-    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+
     sidStr := SID;
     LogDatei.log('sidStr : ' + sidStr, LLDebug);
 
@@ -5782,7 +5765,7 @@ var
       end;
 
       LogDatei.log('', LLDebug);
-      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
+
 
       ErrorCode := RegFlushKey(HKEY_Users);
 
@@ -5802,7 +5785,7 @@ begin
 
   if not initSection(Sektion, StartWithErrorNumbers, StartWithWarningsNumber) then
     exit;
-  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+
 
   // mount the NTUser.dat in the users profile path , patch them and write them back
   ProfileList := getProfilesListWin(tSID);
@@ -5844,9 +5827,9 @@ begin
   end;
 
 
-  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
 
-  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
+
+
 
   finishSection(Sektion, OldNumberOfErrors, OldNumberOfWarnings,
     DiffNumberOfErrors, DiffNumberOfWarnings);
@@ -5928,7 +5911,7 @@ var
 
   procedure workOnUsrClassDat;
   begin
-    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+
 
 
     case rfSelected of
@@ -5939,7 +5922,7 @@ var
     end;
 
     LogDatei.log('', LLdebug);
-    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
+
 
     ErrorCode := RegFlushKey(HKEY_Users);
 
@@ -5967,7 +5950,7 @@ var
   var
     sidStr: string = '';
   begin
-    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+
 
     sidStr := SID;
     LogDatei.log('sidStr :' + sidStr, LLDebug);
@@ -5980,7 +5963,7 @@ var
     end;
 
     LogDatei.log('', LLDebug);
-    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
+
 
     ErrorCode := RegFlushKey(HKEY_Users);
 
@@ -5999,7 +5982,7 @@ begin
 
   if not initSection(Sektion, StartWithErrorNumbers, StartWithWarningsNumber) then
     exit;
-  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+
 
   // mount the UsrClass.dat in the users profile path , patch them and write them back
   ProfileList := getProfilesListWin(tSID);
@@ -6044,9 +6027,9 @@ begin
     end;
   end;
 
-  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
 
-  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
+
+
 
   finishSection(Sektion, OldNumberOfErrors, OldNumberOfWarnings,
     DiffNumberOfErrors, DiffNumberOfWarnings);
@@ -6125,7 +6108,7 @@ var
 
   procedure workOnNtUserDat;
   begin
-    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+
 
 
     case rfSelected of
@@ -6136,7 +6119,7 @@ var
     end;
 
     LogDatei.log('', LLdebug);
-    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
+
 
     ErrorCode := RegFlushKey(HKEY_Users);
 
@@ -6165,7 +6148,7 @@ begin
 
   if not initSection(Sektion, StartWithErrorNumbers, StartWithWarningsNumber) then
     exit;
-  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+
 
    (*
    ProfileList := getProfilesDirList;
@@ -6199,9 +6182,9 @@ begin
     end;
   end;
   //End;
-  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
 
-  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
+
+
 
   finishSection(Sektion, OldNumberOfErrors, OldNumberOfWarnings,
     DiffNumberOfErrors, DiffNumberOfWarnings);
@@ -6295,7 +6278,7 @@ begin
     startSIndentLevel := LogDatei.LogSIndentLevel;
     if not initSection(Sektion, OldNumberOfErrors, OldNumberOfWarnings) then
       exit;
-    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+
     try
       //convert String to catch not allowed chars
       r := trim(Utf8ToAnsi(AnsiToUtf8(parameter)));
@@ -7010,7 +6993,7 @@ begin
   startSIndentLevel := LogDatei.LogSIndentLevel;
   if not initSection(Sektion, OldNumberOfErrors, OldNumberOfWarnings) then
     exit;
-  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+
   try
     //convert String to catch not allowed chars
     r := trim(Utf8ToAnsi(AnsiToUtf8(parameter)));
@@ -7491,8 +7474,7 @@ var
     *)
     if not initSection(Sektion, OldNumberOfErrors, OldNumberOfWarnings) then
       exit;
-    //StartIndentLevel := LogDatei.LogSIndentLevel;
-    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+
 
     nodeOpened := False;
     nodeOpenCommandExists := False;
@@ -7607,11 +7589,7 @@ var
 
         if LowerCase(Expressionstr) = LowerCase('OpenNode') then
         begin
-          if nodeOpenCommandExists // i.e., existed already
-          then
-          //LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1
-          else
-            nodeOpenCommandExists := True;
+          nodeOpenCommandExists := True;
           SyntaxCheck := False;
           if GetStringA(trim(r), nodepath, r, errorinfo, True) then
           begin
@@ -9262,7 +9240,7 @@ begin
 
   if not initSection(Sektion, OldNumberOfErrors, OldNumberOfWarnings) then
     exit;
-  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+
 
   Install := TuibFileInstall.Create;
 
@@ -9332,7 +9310,7 @@ begin
   if ExitOnError and (DiffNumberOfErrors > 0) then
     Result := tsrExitProcess;
 
-  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
+
 end;
 
 
@@ -9503,7 +9481,7 @@ begin
           begin
             if csidl_set then
             begin
-              //LogDatei.LogSIndentLevel := startindentlevel;
+              //;
               ShellLinks.DeleteShellFolder(csidl, deletefoldername);
               //csidl_set := false;
             end
@@ -9758,7 +9736,7 @@ begin
   if not initSection(Sektion, OldNumberOfErrors, OldNumberOfWarnings) then
     exit;
 
-  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+
 
   // doLinkFolder main
     {$IFDEF WIN32}
@@ -9794,7 +9772,7 @@ begin
   if ExitOnError and (DiffNumberOfErrors > 0) then
     Result := tsrExitProcess;
 
-  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
+
 end;
 
 
@@ -10061,7 +10039,7 @@ begin
 
 
     StartIndentLevel := LogDatei.LogSIndentLevel;
-    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+
     {$IFDEF WIN32}
     Wow64FsRedirectionDisabled := False;
     if flag_force64 then
@@ -10253,7 +10231,7 @@ from defines.inc
 
         if (outputStart < output.Count) then
         begin
-          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+
           LogDatei.log('output:', LLDebug);
           LogDatei.log('--------------', LLDebug);
           while outputStart < output.Count do
@@ -10262,7 +10240,7 @@ from defines.inc
             Inc(outputStart, 1);
           end;
           LogDatei.log('--------------', LLDebug);
-          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
+
         end;
       end;
     end;
@@ -10276,7 +10254,6 @@ from defines.inc
     finishSection(Sektion, OldNumberOfErrors, OldNumberOfWarnings,
       DiffNumberOfErrors, DiffNumberOfWarnings);
 
-    LogDatei.LogSIndentLevel := StartIndentLevel;
     if ExitOnError and (DiffNumberOfErrors > 0) then
       Result := tsrExitProcess;
 
@@ -10343,8 +10320,8 @@ begin
     if (lowercase(archparam) = '32bit') then
       shortarch := '32';
 
-    LogDatei.log('PowershellCall Executing: ' + command + ' ; mode: ' + shortarch,
-      LLNotice + logleveloffset);
+    LogDatei.log('PowershellCall: ' + command + ' (mode: ' + archparam +')',
+      LLNotice);
 
 
     mySektion := TWorkSection.Create(NestingLevel, ActiveSection);
@@ -10370,7 +10347,7 @@ begin
     begin
       LogDatei.log(output.strings[i], LLDebug + logleveloffset);
     end;
-    //LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
+    //
     LogDatei.log('', LLDebug + logleveloffset);
     Result.Text := output.Text;
     output.Free;
@@ -10566,7 +10543,7 @@ begin
       begin
         LogDatei.log(output.strings[i], LLDebug + logleveloffset);
       end;
-      //LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
+      //
       LogDatei.log('', LLDebug + logleveloffset);
       Result.Text := output.Text;
     end;
@@ -10654,7 +10631,6 @@ begin
     if Sektion.Count = 0 then
       exit;
 
-    LogDatei.LogSIndentLevel := Sektion.NestingLevel;
     OldNumberOfErrors := LogDatei.NumberOfErrors;
     OldNumberOfWarnings := LogDatei.NumberOfWarnings;
 
@@ -10663,8 +10639,6 @@ begin
     FBatchOberflaeche.SetMessageText(ps, mDetail); //setDetailLabel(ps);
     ProcessMess;
     {$ENDIF GUI}
-
-    LogDatei.LogSIndentLevel := Sektion.NestingLevel + 1;
 
     Sektion.eliminateLinesStartingWith(';', False);
 
@@ -10984,7 +10958,7 @@ begin
             SysUtils.DeleteFile('/tmp/opsi-script-out.txt');
           end;
           //xoutput.AddStrings(output);
-          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 4;
+
           LogDatei.log('', LLDebug + logleveloffset);
           LogDatei.log('output:', LLDebug + logleveloffset);
           LogDatei.log('--------------', LLDebug + logleveloffset);
@@ -10992,7 +10966,7 @@ begin
           begin
             LogDatei.log(output.strings[i], LLDebug + logleveloffset);
           end;
-          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 4;
+
           LogDatei.log('', LLDebug + logleveloffset);
         end;
       end;
@@ -11073,7 +11047,6 @@ begin
   if Sektion.Count = 0 then
     exit;
 
-  LogDatei.LogSIndentLevel := Sektion.NestingLevel;
   savelogsindentlevel := LogDatei.LogSIndentLevel;
 
   OldNumberOfErrors := LogDatei.NumberOfErrors;
@@ -11094,15 +11067,13 @@ begin
   ProcessMess;
   {$ENDIF GUI}
 
-  LogDatei.LogSIndentLevel := Sektion.NestingLevel + 1;
-
   Sektion.eliminateLinesStartingWith(';', False);
 
   outlines := TXStringList.Create;
 
   if pythonCall('--version', outlines, showcmd) then
   begin
-    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 6;
+
     if outlines.Count > 0 then
       versionTestResult := outlines.Strings[0];
 
@@ -11111,7 +11082,7 @@ begin
       LogDatei.log('::: ' + outlines.strings[i], LLinfo);
     end;
 
-    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
+
     LogDatei.log('', LLInfo);
   end;
 
@@ -11148,7 +11119,7 @@ begin
         (* '--winstvars ' + [loglevel:loglevel, url:serviceurl, user, client, password] *)
         ' ' + pythonparameter, output, showcmd) then
       begin
-        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 4;
+
         LogDatei.log('', LLDebug + logleveloffset);
         LogDatei.log('output:', LLDebug + logleveloffset);
         LogDatei.log('--------------', LLDebug + logleveloffset);
@@ -11158,7 +11129,7 @@ begin
           LogDatei.log(output.strings[i], LLDebug + logleveloffset);
         end;
 
-        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 4;
+
         LogDatei.log('', LLDebug + logleveloffset);
       end;
     end;
@@ -11332,7 +11303,9 @@ var
   hookscriptfile: string;
   exitcode: integer;
   myoutput: TXStringlist;
-  powershellpara: string;
+  powershellstart: string = '';
+  powershellend: string = '';
+  DisableExecutionPolicyCommand: string;
   tmplist: TStringList;
   AllSignedHack: boolean = false;
   catcommand: string = 'cat ';
@@ -11347,22 +11320,14 @@ begin
     force64 := False;
     threaded := False;
     use_sp := True; // use startprocess by default
-    powershellpara := '';
-
 
     if Sektion.Count = 0 then
       exit;
 
-    LogDatei.LogSIndentLevel := Sektion.NestingLevel;
     savelogsindentlevel := LogDatei.LogSIndentLevel;
 
     OldNumberOfErrors := LogDatei.NumberOfErrors;
     OldNumberOfWarnings := LogDatei.NumberOfWarnings;
-
-    ps := '';
-    LogDatei.log(ps, LLNotice + logleveloffset);
-    ps := 'Execution of ' + Sektion.Name + ' ' + ExecParameter;
-    LogDatei.log(ps, LLNotice + logleveloffset);
 
     if pos(uppercase(PStatNames^ [tsExecuteWith]), uppercase(Sektion.Name)) > 0 then
       ps := Sektion.Name;
@@ -11374,15 +11339,9 @@ begin
     ProcessMess;
     {$ENDIF GUI}
 
-    LogDatei.LogSIndentLevel := Sektion.NestingLevel + 1;
-
     Sektion.eliminateLinesStartingWith(';', False);
 
     output := TXStringList.Create;
-
-    //inc(TempBatchDatei_UniqueCount);
-    //tempfilename := TempPath + TempBatchfilename + inttoStr(TempBatchDatei_UniqueCount) + '.bat';
-    //Sektion.SaveToFile (tempfilename);
 
     if ExecParameter <> '' then
     begin
@@ -11469,36 +11428,41 @@ begin
         runAs := traInvoker;
       end;
     end;
-
     useext := '.cmd';
-    // special handling for powershell
-    // we need .ps1 as extension
-    // we need to call the script with the parameter -file in order to get the exitcode
-    // https://community.idera.com/database-tools/powershell/powertips/b/tips/posts/correctly-returning-exit-codes
+
+    // special handling for powershell (we need .ps1 as extension)
+    // Remarks:
+    // 1. Disable ExecutionPolicy by Swapping out the AuthorizationManager
+    //    (https://www.netspi.com/blog/technical-blog/network-pentesting/15-ways-to-bypass-the-powershell-execution-policy/)
+    // 3. Run powershell script
+    // 2. Pipe output of powershell script to Out-String to get all of the output
+    // 3. TrimEnd() to remove new line added by Out-String
+    // 4. run exit $LASTEXITCODE as last command to get the exitcode of the powershell script
+    //    (https://stackoverflow.com/questions/4391553/how-to-return-an-exit-code-from-a-powershell-script-only-when-run-non-interactiv)
+    // powershell call looks like:
+    //"powershell.exe" -NoProfile -Command "function Disable-ExecutionPolicy {($ctx = $executioncontext.gettype().getfield('_context','nonpublic,instance').getvalue( $executioncontext)).gettype().getfield('_authorizationManager','nonpublic,instance').setvalue($ctx, (new-object System.Management.Automation.AuthorizationManager 'Microsoft.PowerShell'))}; Disable-ExecutionPolicy; (c:\opsi.org\tmp\_opsiscript_42M8PZo5vd.ps1 | Out-String).TrimEnd(); exit $LASTEXITCODE;
     if (pos('powershell.exe', LowerCase(programfilename)) > 0)
-      or (pos('pwsh.exe', LowerCase(programfilename)) > 0) then
+      or (LowerCase(programfilename) = 'powershell')
+      or (pos('pwsh.exe', LowerCase(programfilename)) > 0)
+      or (LowerCase(programfilename) = 'pwsh') then
     begin
-      powershellpara := ' -ExecutionPolicy ByPass -file ';
+      //Disable ExecutionPolicy by Swapping out the AuthorizationManager
+      DisableExecutionPolicyCommand := '"function Disable-ExecutionPolicy {'
+      + '($ctx = $executioncontext.gettype().getfield'
+      + '(''_context'',''nonpublic,instance'').getvalue( $executioncontext)).gettype().getfield'
+      + '(''_authorizationManager'',''nonpublic,instance'').setvalue'
+      + '($ctx, (new-object System.Management.Automation.AuthorizationManager ''Microsoft.PowerShell''))}; '
+      + 'Disable-ExecutionPolicy; ';
+      //special construction for powershell
+      powershellstart := ' -Command ' + DisableExecutionPolicyCommand +'(';
+      powershellend := ' | Out-String).TrimEnd(); exit $LASTEXITCODE;';
       useext := '.ps1';
-    end;
-    if (LowerCase(programfilename) = 'powershell') or (LowerCase(programfilename) = 'pwsh') then
-    begin
-      // we add '-file ' as last param for powershell
-      powershellpara := ' -ExecutionPolicy ByPass -file ';
-      useext := '.ps1';
-    end;
-    if useext = '.ps1' then  // we are on powershell
-    begin
       if pos(' -file', LowerCase(programparas)) > 0 then
       begin
         // It may be that the customer did this before and '- file ' is the end of programparas
         // so we shoud remove this (even for AllSigned hack)
         programparas := copy(programparas, 1, rpos(' -file', LowerCase(programparas)));
       end;
-      LogDatei.log('powershell powershell parameters are: ' + powershellpara, LLDebug);
-      LogDatei.log('powershell programparas are: ' + programparas, LLDebug2);
-
-      AllSignedHack := IsPowershellExecutionPolicyRestricted();
     end;
 
     tempfilename := winstGetTempFileNameWithExt(useext);
@@ -11552,34 +11516,17 @@ begin
         end;
       end;
 
-      if allSignedHack then
-      begin
-        powershellpara := ' -Command ';
-        if trim(passparas) <> '' then
-           LogDatei.log('Powershell with AllSigned/Restricted: ignored passparas: ' +
-             passparas, LLinfo);
-        {$IFDEF WINDOWS}
-        catcommand := 'type ';
-        {$ENDIF WINDOWS}
-        //commandline := 'cmd.exe /C ' + catcommand + tempfilename +
-        //  ' | ' + '"' + programfilename + '" ' + programparas + ' ' + powershellpara;
-        commandline := '"' + programfilename + '" ' + programparas +
-          ' ' + powershellpara + '"Get-Content -Path ' + tempfilename +
-          ' | Out-String | Invoke-Expression" ';
-      end
+      LogDatei.log('Execute program: ' + programfilename + ' parameters: '  + programparas
+        + ' script arguments: ' + passparas, LLDebug2);
+      // if parameters end with '=' we concat tempfile without space
+      if copy(programparas, length(programparas), 1) = '=' then
+        commandline :=
+          '"' + programfilename + '" ' + programparas + '"' +
+          powershellstart + tempfilename + '" ' + passparas + powershellend
       else
-      begin
-        // if parameters end with '=' we concat tempfile without space
-        if copy(programparas, length(programparas), 1) = '=' then
-          commandline :=
-            '"' + programfilename + '" ' + programparas + '"' +
-            powershellpara + tempfilename + '"  ' + passparas
-        else
-          commandline :=
-            '"' + programfilename + '" ' + programparas + ' ' +
-            powershellpara + tempfilename + '  ' + passparas;
-      end;
-
+        commandline :=
+          '"' + programfilename + '" ' + programparas + ' ' +
+          powershellstart + tempfilename + ' ' + passparas + powershellend;
 
       {$IFNDEF WINDOWS}
       if onlyWindows then
@@ -11622,16 +11569,13 @@ begin
       else
         use_sp := False;
 
-      { backport from 4.12.3  }
-      //if threaded then
-
       // new in 4.12.4.12.31 enable runasloggedonuser
       if runas = traLoggedOnUser then
         use_sp := True;
 
       if use_sp then
       begin
-        LogDatei.log('Executing with SP: ' + commandline, LLDebug);
+        LogDatei.log('Executing with SP: ' + commandline, LLDebug2);
         if not StartProcess(Commandline, showcmd, showoutput, not
           threaded, False, False, False, False, runas, '', WaitSecs,
           Report, FLastExitCodeOfExe, catchout, output, Sektion.Name) then
@@ -11645,7 +11589,7 @@ begin
       end
       else
       begin
-        LogDatei.log('Executing with RCACO:  ' + commandline, LLDebug);
+        LogDatei.log('Executing with RCACO:  ' + commandline, LLDebug2);
         if not RunCommandAndCaptureOut(commandline, True, output,
           report, showcmd, FLastExitCodeOfExe) then
         begin
@@ -11656,7 +11600,7 @@ begin
         end
         else
         begin
-          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 4;
+
           LogDatei.log('', LLDebug + logleveloffset);
           LogDatei.log('output:', LLDebug + logleveloffset);
           LogDatei.log('--------------', LLDebug + logleveloffset);
@@ -11666,45 +11610,11 @@ begin
             LogDatei.log(output.strings[i], LLDebug + logleveloffset);
           end;
 
-          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 4;
+
           LogDatei.log('', LLDebug + logleveloffset);
         end;
       end;
 
-(*   old .4.12.4 version:
-
-      if threaded then
-        showcmd := sw_hide;
-
-      LogDatei.log_prog('Executing ' + commandline, LLDebug);
-      if not StartProcess(Commandline, showcmd, showoutput, not threaded,
-        False, False, False, False, runas, '', WaitSecs, Report,
-        FLastExitCodeOfExe, catchout, output,Sektion.Name) then
-      begin
-        ps := 'Error: ' + Report;
-        LogDatei.log(ps, LLcritical);
-        FExtremeErrorLevel := LevelFatal;
-        if not threaded then
-          scriptstopped := True;
-      end
-      else if threaded then
-        LogDatei.log(Report, LLinfo)
-      else
-      begin
-        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 4;
-        LogDatei.log('', LLDebug + logleveloffset);
-        LogDatei.log('output:', LLDebug + logleveloffset);
-        LogDatei.log('--------------', LLDebug + logleveloffset);
-
-        for i := 0 to output.Count - 1 do
-        begin
-          LogDatei.log(output.strings[i], LLDebug + logleveloffset);
-        end;
-
-        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 4;
-        LogDatei.log('', LLDebug + logleveloffset);
-      end;
- *)
       {$IFDEF WIN32}
       if Wow64FsRedirectionDisabled then
       begin
@@ -11723,7 +11633,7 @@ begin
       Result := tsrExitProcess;
     if Logdatei.UsedLogLevel < LLconfidential then
       if not threaded then
-        deleteTempBatFiles(tempfilename, logleveloffset);
+        deleteTempBatFiles(tempfilename, 2);
   finally
     {$IFDEF GUI}
     FBatchOberflaeche.SetElementVisible(False, eActivityBar);//showAcitvityBar(False);
@@ -11969,11 +11879,11 @@ begin
               except
                 on e: Exception do
                 begin
-                  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+
                   LogDatei.log('Error executing :' + s1 + ' : ' + e.message,
                     LLError);
                   FNumberOfErrors := FNumberOfErrors + 1;
-                  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+
                 end
               end;
           end;
@@ -12028,11 +11938,11 @@ begin
               except
                 on e: Exception do
                 begin
-                  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+
                   LogDatei.log('Exception in LoadTextFile on loading file: ' +
                     s1 + ' with msg: ' + e.message, LLError);
                   FNumberOfErrors := FNumberOfErrors + 1;
-                  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+
                 end
               end;
             end;
@@ -12068,12 +11978,12 @@ begin
                   except
                     on e: Exception do
                     begin
-                      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+
                       LogDatei.log(
                         'Exception in LoadTextFileWithEncoding on loading file: ' +
                         s1 + ' with msg: ' + e.message, LLError);
                       FNumberOfErrors := FNumberOfErrors + 1;
-                      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+
                     end
                   end;
                 end;
@@ -12109,12 +12019,12 @@ begin
               except
                 on e: Exception do
                 begin
-                  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+
                   LogDatei.log('Exception in LoadUnicodeTextFile on loading file: ' +
                     s1 + ' with msg: ' + e.message,
                     LLError);
                   FNumberOfErrors := FNumberOfErrors + 1;
-                  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+
                 end
               end;
             end;
@@ -12145,12 +12055,12 @@ begin
           except
             on e: Exception do
             begin
-              LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+
               LogDatei.log('Exception in GetSectionNames on loading file: ' +
                 s1 + ' with msg: ' + e.message,
                 LLError);
               FNumberOfErrors := FNumberOfErrors + 1;
-              LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+
             end
           end;
 
@@ -12207,13 +12117,13 @@ begin
                    LogDatei.log('Encoding of IniFile is supposed to be: ' + newIniFile.Encoding.EncodingName, LLInfo);
                    //newInifile.Encoding := TEncoding.SystemEncoding;
                    list.Clear;
-                    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+
                     LogDatei.log('Reading the value of section "' + s1 + '"  from inifile  "' +
                     s2 + '"', LLinfo);
                     //s1enc := UTF8ToAnsi(s1);
                    //s1enc := s1;
                    newInifile.ReadSectionRaw(s1,TStrings(list));
-                    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+
                    FreeAndNil(newIniFile);
                  except
                      on e: Exception do
@@ -12248,11 +12158,11 @@ begin
                   except
                     on e: Exception do
                     begin
-                      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+
                       LogDatei.log('Error on loading file: ' + e.message,
                         LLError);
                       FNumberOfErrors := FNumberOfErrors + 1;
-                      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+
                     end
                   end;
                   *)
@@ -12301,11 +12211,12 @@ begin
             if Skip(')', r, r, InfoSyntaxError) then
             begin
               syntaxCheck := True;
+              LogDatei.log('GetOutStreamFromSection: ' + s1, LLNotice);
               if not testSyntax then
               begin
                 savelogsindentlevel := LogDatei.LogSIndentLevel;
                 localSection :=
-                  TWorkSection.Create(LogDatei.LogSIndentLevel + 1, ActiveSection);
+                  TWorkSection.Create(LogDatei.LogSIndentLevel, ActiveSection);
                 try
                   GetWord(s1, s2, r1, WordDelimiterSet1);
                   localSection.Name := s2;
@@ -12394,7 +12305,7 @@ begin
                 savelogsindentlevel := LogDatei.LogSIndentLevel;
                 //list1 := TXStringList.Create;
                 localSection :=
-                  TWorkSection.Create(LogDatei.LogSIndentLevel + 1, ActiveSection);
+                  TWorkSection.Create(LogDatei.LogSIndentLevel, ActiveSection);
                 try
                   GetWord(s1, s2, r1, WordDelimiterSet1);
                   localKindOfStatement := findKindOfStatement(s2, SecSpec, s1);
@@ -12793,11 +12704,11 @@ begin
                 except
                   on e: Exception do
                   begin
-                    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+
                     LogDatei.log('Error on producing sublist: ' + e.message,
                       LLerror);
                     FNumberOfErrors := FNumberOfErrors + 1;
-                    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+
                   end
                 end;
             end;
@@ -12859,10 +12770,10 @@ begin
                 except
                   on e: Exception do
                   begin
-                    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+
                     LogDatei.log('Error on producing sublist: ' + e.message, LLerror);
                     FNumberOfErrors := FNumberOfErrors + 1;
-                    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+
                   end
                 end;
             end;
@@ -12923,10 +12834,10 @@ begin
               except
                 on e: Exception do
                 begin
-                  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+
                   LogDatei.log('Error on producing sublist: ' + e.message, LLerror);
                   FNumberOfErrors := FNumberOfErrors + 1;
-                  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+
                 end
               end;
             end;
@@ -13115,10 +13026,10 @@ begin
               except
                 on e: Exception do
                 begin
-                  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+
                   LogDatei.log('Error on producing sublist: ' + e.message, LLerror);
                   FNumberOfErrors := FNumberOfErrors + 1;
-                  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+
                 end
               end;
             end;
@@ -13172,10 +13083,10 @@ begin
               except
                 on e: Exception do
                 begin
-                  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+
                   LogDatei.log('Error on producing sublist: ' + e.message, LLerror);
                   FNumberOfErrors := FNumberOfErrors + 1;
-                  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+
                 end
               end;
             end;
@@ -13230,10 +13141,10 @@ begin
               except
                 on e: Exception do
                 begin
-                  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+
                   LogDatei.log('Error on producing sublist: ' + e.message, LLerror);
                   FNumberOfErrors := FNumberOfErrors + 1;
-                  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+
                 end
               end;
             end;
@@ -13269,11 +13180,11 @@ begin
                         except
                           on e: Exception do
                           begin
-                            LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+
                             LogDatei.log('Error on producing sublist: ' + e.message,
                               LLerror);
                             FNumberOfErrors := FNumberOfErrors + 1;
-                            LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+
                           end
                         end;
                       end;
@@ -13363,12 +13274,12 @@ begin
                       except
                         on e: Exception do
                         begin
-                          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+
                           LogDatei.log('Exception: Error on findFiles: ' +
                             e.message, LLerror);
                           list.Text := '';
                           FNumberOfErrors := FNumberOfErrors + 1;
-                          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+
                         end;
                       end;
                     end;
@@ -13405,13 +13316,13 @@ begin
                         except
                           on e: Exception do
                           begin
-                            LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+
                             LogDatei.log('Exception: Error on setStringInListAtIndex: ' +
                               e.message,
                               LLerror);
                             list.Text := '';
                             FNumberOfErrors := FNumberOfErrors + 1;
-                            LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+
                           end
                         end;
                       end;
@@ -13526,13 +13437,13 @@ begin
                             except
                               on e: Exception do
                               begin
-                                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+
                                 LogDatei.log('Exception: Error on getListFromWMI: ' +
                                   e.message,
                                   LLerror);
                                 list.Text := '';
                                 FNumberOfErrors := FNumberOfErrors + 1;
-                                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+
                               end
                             end;
                           end;
@@ -13573,11 +13484,11 @@ begin
               except
                 on e: Exception do
                 begin
-                  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+
                   LogDatei.log('Error on producing sublist: ' + e.message,
                     LLerror);
                   FNumberOfErrors := FNumberOfErrors + 1;
-                  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+
                 end
               end;
             end;
@@ -13609,11 +13520,11 @@ begin
               except
                 on e: Exception do
                 begin
-                  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+
                   LogDatei.log('Error on producing sublist: ' + e.message,
                     LLerror);
                   FNumberOfErrors := FNumberOfErrors + 1;
-                  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+
                 end
               end;
             end;
@@ -13648,11 +13559,11 @@ begin
               except
                 on e: Exception do
                 begin
-                  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+
                   LogDatei.log('Error on producing sublist: ' + e.message,
                     LLerror);
                   FNumberOfErrors := FNumberOfErrors + 1;
-                  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+
                 end
               end;
             end;
@@ -13794,11 +13705,11 @@ begin
                 except
                   on e: Exception do
                   begin
-                    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+
                     LogDatei.log('Error on producing sublist: ' + e.message,
                       LLWarning);
                     FNumberOfWarnings := FNumberOfWarnings + 1;
-                    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+
                   end
                 end;
             end;
@@ -14497,10 +14408,10 @@ begin
             begin
               if not fileExists(s1) then
               begin
-                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+
                 LogDatei.log('File "' + s1 + '" does not exist', LLWarning);
                 FNumberOfWarnings := FNumberOfWarnings + 1;
-                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+
               end
               else
               begin
@@ -14609,10 +14520,10 @@ begin
           *)
               if not fileExists(s1) then
               begin
-                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+
                 LogDatei.log('File "' + s1 + '" does not exist', LLWarning);
                 FNumberOfWarnings := FNumberOfWarnings + 1;
-                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+
               end
               else
               begin
@@ -14704,10 +14615,10 @@ begin
                  *)
                 if not fileExists(s1) then
                 begin
-                  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+
                   LogDatei.log('File "' + s1 + '" does not exist', LLWarning);
                   FNumberOfWarnings := FNumberOfWarnings + 1;
-                  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+
                 end
                 else
                 begin
@@ -14760,10 +14671,10 @@ begin
                   '  Starting getFileInfoMap (SysNative 32 Bit mode)...', LLInfo);
                 if not fileExists(s1) then
                 begin
-                  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+
                   LogDatei.log('File "' + s1 + '" does not exist', LLWarning);
                   FNumberOfWarnings := FNumberOfWarnings + 1;
-                  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+
                 end
                 else
                 begin
@@ -15001,12 +14912,12 @@ begin
     if syntaxcheck then
       if not testSyntax then
       begin
-        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+
         LogDatei.log('retrieving strings from ' + logstring, LLDebug2);
-        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+
         LogDatei.log_list(list, LLDebug2);
         LogDatei.log('', LLDebug2);
-        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 4;
+
       end;
   end;
 
@@ -15819,7 +15730,7 @@ begin
                             s1 := ExpandFileName(s1);
                             Inifile := TInifile.Create(s1);
 
-                            LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+
                             LogDatei.log
                             ('    reading the value to the key "' +
                               s3 + '" in section "' + s2 + '"  from inifile  "' +
@@ -15830,7 +15741,7 @@ begin
                             s4enc := UTF8ToWinCP(s4);
                             StringResult := Inifile.ReadString(s2enc, s3enc, s4enc);
                             StringResult := WinCPToUTF8(StringResult);
-                            LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+
 
                             Inifile.Free;
                             Inifile := nil;
@@ -15864,7 +15775,7 @@ begin
                           s1 := ExpandFileName(s1);
                           Inifile := TInifile.Create(s1);
                           LogDatei.log_prog('Inifile: ' + Inifile.ToString, LLDebug);
-                          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+
                           LogDatei.log
                           ('    reading the value to the key "' +
                             s3 + '" in section "' + s2 + '"  from inifile  "' +
@@ -15875,7 +15786,7 @@ begin
                           s4enc := UTF8ToWinCP(s4);
                           StringResult := Inifile.ReadString(s2enc, s3enc, s4enc);
                           StringResult := WinCPToUTF8(StringResult);
-                          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+
 
                           Inifile.Free;
                           Inifile := nil;
@@ -15906,7 +15817,7 @@ begin
                               uibInifile.loadFromFileWithEncoding(s1, s5);
                               LogDatei.log_prog('Inifile: ' +
                                 uibInifile.Text, LLDebug);
-                              LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+
                               LogDatei.log
                               ('    reading the value to the key "' +
                                 s3 + '" in section "' + s2 +
@@ -15914,7 +15825,7 @@ begin
                                 s4 + '" in encoding "' + s5 + '"',
                                 LLinfo);
                               StringResult := uibInifile.ReadString(s2, s3, s4);
-                              LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+
                             except
                               on e: Exception do
                               begin
@@ -15941,14 +15852,14 @@ begin
               s2 := ExpandFileName(s2);
               Inifile := TInifile.Create(s2);
 
-              LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+
               LogDatei.log
               ('    reading the value of section "' + s1 + '"  from inifile  "' + s2 + '"',
                 LLinfo);
               s1enc := UTF8ToWinCP(s1);
               Inifile.ReadSectionRaw(s1enc, Strings);
               StringResult := WinCPToUTF8(ansistring(Strings));
-              LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+
 
               Inifile.Free;
               Inifile := nil;
@@ -15976,10 +15887,10 @@ begin
             begin
               try
                 s1 := ExpandFileName(s1);
-                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+
                 LogDatei.log('    Reading TOML file  "' + s1, LLinfo);
                 StringResult := ReadTOMLFile(s1);
-                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+
               except
                 on e: Exception do
                 begin
@@ -16003,10 +15914,10 @@ begin
             if not testSyntax then
             begin
               try
-                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+
                 LogDatei.log('    GetTOMLAsString  "' + s1, LLinfo);
                 StringResult := GetTOMLAsString(s1);
-                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+
               except
                 on e: Exception do
                 begin
@@ -16032,11 +15943,11 @@ begin
                 if not testSyntax then
                 begin
                   try
-                    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+
                     LogDatei.log('    Getting Table  "' + s2 + '" as String ',
                       LLinfo);
                     StringResult := GetTOMLTableAsString(s1, s2);
-                    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+
                   except
                     on e: Exception do
                     begin
@@ -16064,13 +15975,13 @@ begin
                     if not testSyntax then
                     begin
                       try
-                        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+
                         LogDatei.log('    Getting the value of the key "' +
                           s2 + '"  from TOML contents with default value : "' +
                           s3 + '"',
                           LLinfo);
                         StringResult := GetValueFromTOML(s1, s2, s3);
-                        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+
                       except
                         on e: Exception do
                         begin
@@ -16100,12 +16011,12 @@ begin
                         if not testSyntax then
                         begin
                           try
-                            LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+
                             LogDatei.log('    Modifying TOML contents with command "' +
                               s2 + '"  in key : "' + s3 + '" and value : "' + s4 + '"',
                               LLinfo);
                             StringResult := ModifyTOML(s1, s2, s3, s4);
-                            LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+
                           except
                             on e: Exception do
                             begin
@@ -16131,11 +16042,11 @@ begin
                 if not testSyntax then
                 begin
                   try
-                    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+
                     LogDatei.log('    Deleting Table "' + s2 + '" from TOML contents',
                       LLinfo);
                     StringResult := DeleteTableFromTOML(s1, s2);
-                    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+
                   except
                     on e: Exception do
                     begin
@@ -16159,11 +16070,11 @@ begin
             if not testSyntax then
             begin
               try
-                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+
                 LogDatei.log
                 ('    Coverting TOML contents to JSON String ', LLinfo);
                 StringResult := ConvertTOMLtoJSON(s1);
-                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+
               except
                 on e: Exception do
                 begin
@@ -16397,11 +16308,11 @@ begin
             except
               on e: Exception do
               begin
-                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+
                 LogDatei.log('Exception in strLoadTextFile on loading file: ' +
                   s1 + ' with msg: ' + e.message, LLError);
                 FNumberOfErrors := FNumberOfErrors + 1;
-                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+
               end
             end;
           finally
@@ -16448,12 +16359,12 @@ begin
                     except
                       on e: Exception do
                       begin
-                        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+
                         LogDatei.log(
                           'Exception in strLoadTextFileWithEncoding on loading file: ' +
                           s1 + ' with msg: ' + e.message, LLError);
                         FNumberOfErrors := FNumberOfErrors + 1;
-                        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+
                       end;
                     end;
                   finally
@@ -16674,11 +16585,11 @@ begin
               except
                 on e: Exception do
                 begin
-                  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+
                   LogDatei.log('Error executing :' + s1 + ' : ' + e.message,
                     LLError);
                   FNumberOfErrors := FNumberOfErrors + 1;
-                  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+
                 end
               end;
             end;
@@ -17676,7 +17587,7 @@ begin
                       begin
                         StringResult := '';
                         OldNumberOfWarnings := LogDatei.NumberOfWarnings;
-                        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+
                         LogDatei.log('Warning: String "' + s1 +
                           '" using delimiter "' + s2 +
                           '" was not splitted in (' + IntToStr(ListIndex) +
@@ -17684,7 +17595,7 @@ begin
                         DiffNumberOfWarnings :=
                           LogDatei.NumberOfWarnings - OldNumberOfWarnings;
                         FNumberOfWarnings := NumberOfWarnings + DiffNumberOfWarnings;
-                        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
+
                       end
                       else
                         StringResult := itemlist[ListIndex];
@@ -17940,10 +17851,10 @@ begin
               except
                 on e: Exception do
                 begin
-                  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+
                   LogDatei.log('Exception in getValueFromFile on loading file: ' +
                     s3 + ' with msg: ' + e.message, LLError);
-                  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+
                 end
               end;
             end;
@@ -18001,10 +17912,10 @@ begin
             except
               on e: Exception do
               begin
-                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+
                 LogDatei.log('Exception in getValueFromFileBySeparator on loading file: '
                   + s3 + ' with msg: ' + e.message, LLError);
-                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+
               end
             end;
           end;
@@ -18894,7 +18805,6 @@ begin
           .log (StopInfo, LLinfo);
         End; *)
 
-    LogDatei.LogSIndentLevel := StartIndentLevel;
     slist.Free;
 
   except
@@ -19557,7 +19467,7 @@ begin
                   {$IFDEF WINDOWS}
                   if not testSyntax then
                   begin
-                    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+
 
                     LogDatei.log(' Adding NameSpace (if not existing) "' +
                       s3 + '" for element "' + s2 + '" in file "' +
@@ -19572,7 +19482,7 @@ begin
                         LogDatei.log('Error: ' + ex.message, LLError);
                       end;
                     end;
-                    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
+
                   end;
                   {$ELSE WINDOWS}
                   LogDatei.log('Error: XMLAddNamespace only implemented for Winows',
@@ -19597,7 +19507,7 @@ begin
                   {$IFDEF WINDOWS}
                   if not testSyntax then
                   begin
-                    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+
                     LogDatei.log
                     (' Removing NameSpace "' + s3 + '" for element "' +
                       s2 + '" in file "' + s1 + '"',
@@ -19612,7 +19522,7 @@ begin
                         LogDatei.log('Error: ' + ex.message, LLError);
                       end;
                     end;
-                    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
+
                   end;
                   {$ELSE WINDOWS}
                   LogDatei.log('Error: XMLAddNamespace only implemented for Winows',
@@ -19635,7 +19545,7 @@ begin
                   syntaxCheck := True;
                   if not testSyntax then
                   begin
-                    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+
                     LogDatei.log('xml2NodeExistsByPathInXMLFile in File "' +
                       s1 + '" path "' + s2 + '"  strict mode: "' + s3 + '"', LLInfo);
                     try
@@ -19666,7 +19576,7 @@ begin
               syntaxCheck := True;
               if not testSyntax then
               begin
-                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+
                 LogDatei.log('Searching "' + s1 + '" in File "' + s2 +
                   '"', LLinfo);
                 try
@@ -19685,7 +19595,7 @@ begin
                   end;
                 end;
 
-                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
+
               end;
             end;
   end
@@ -19701,7 +19611,7 @@ begin
               syntaxCheck := True;
               if not testSyntax then
               begin
-                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+
                 LogDatei.log('Searching "' + s1 + '" in File "' + s2 + '"', LLInfo);
                 try
                   Textfile := TPatchList.Create;
@@ -19720,7 +19630,7 @@ begin
                   end;
                 end;
 
-                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
+
               end;
             end;
   end
@@ -19736,7 +19646,7 @@ begin
               syntaxCheck := True;
               if not testSyntax then
               begin
-                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+
                 LogDatei.log('Searching "' + s1 + '" in File "' + s2 +
                   '"', LLinfo);
                 try
@@ -19755,7 +19665,7 @@ begin
                   end;
                 end;
 
-                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
+
               end;
             end;
   end
@@ -20336,7 +20246,7 @@ begin
                       if not testSyntax then
                       begin
                         s2 := trim(s2);
-                        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+
                         LogDatei.log('Checking if "' + s1 + '" is "' +
                           s2 + '" than / as "' + s3 + '"', LLDebug);
                         BooleanResult := False;
@@ -20411,7 +20321,7 @@ begin
             ex.message, LLError);
         end;
       end;
-      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
+
     end;
   end
 
@@ -20438,7 +20348,7 @@ begin
                       if not testSyntax then
                       begin
                         s2 := trim(s2);
-                        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+
                         LogDatei.log('Checking if "' + s1 + '" is "' +
                           s2 + '" than / as "' + s3 + '"', LLDebug);
                         BooleanResult := False;
@@ -20509,7 +20419,7 @@ begin
             ex.message, LLError);
         end;
       end;
-      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
+
     end;
   end
 
@@ -20778,7 +20688,7 @@ begin
               syntaxCheck := True;
               if not testSyntax then
               begin
-                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+
                 noRuntimError := True;
 
                 einheit := 1;
@@ -20816,6 +20726,7 @@ begin
                     noRuntimError := False;
                   end;
 
+                {$IFDEF WINDOWS}
                 if syntaxCheck and noRuntimError then
                   // parse s1 in order to get the drive char
                 begin
@@ -20823,25 +20734,56 @@ begin
                     drivenumber := Ord(uppercase(s1)[1]) - Ord('A') + 1
                   else
                   begin
+                    syntaxCheck := False;
                     noRuntimError := False;
                     RunTimeInfo := '"' + s1 + '" is not a valid drive"';
                   end;
                 end;
+                {$ELSE WINDOWS}
+                if syntaxCheck and noRuntimError then
+                begin
+                  // if s1 is empty we use drivenumber = 0 = actual dir
+                  // else if s1 is a existing Directory, we create a drive(number) for this directory
+                  // https://www.freepascal.org/docs-html/rtl/sysutils/adddisk.html
+                  // https://forum.lazarus.freepascal.org/index.php?topic=19439.0
+                  if (s1 = '') then
+                  begin
+                    drivenumber := 0;
+                    // set s1 to actual dir for further messages
+                    s1 := '.';
+                  end
+                  else if (UpperCase(s1) = '%SYSTEMDRIVE%') then
+                  begin
+                    //  %SYSTEMDRIVE% is windows only - use Fallback
+                    LogDatei.log(s1+' is only aviable at Windows - fallback to root dir: "/"', LLwarning);
+                    // set s1 to actual root dir for use and further messages
+                    s1 := '/';
+                    drivenumber := adddisk(s1);
+                  end
+                  else if DirectoryExists(s1)  then
+                    drivenumber := adddisk(s1)
+                  else
+                  begin
+                    noRuntimError := False;
+                    RunTimeInfo := '"' + s1 + '" is not a valid directory"';
+                  end;
+                end;
+                {$ENDIF WINDOWS}
 
-                if syntaxCheck then
+                if syntaxCheck and noRuntimError then
                   freebytes := diskfree(drivenumber);
 
-                if syntaxCheck and (freebytes = -1) then
+                if syntaxCheck and (freebytes = -1) and noRuntimError then
                 begin
-                  syntaxCheck := False;
-                  RunTimeInfo := '"' + s1 + '" is not a valid drive"';
+                  noRuntimError := False;
+                  RunTimeInfo := '"' + s1 + '" is not a valid drive or directory"';
                 end;
 
-                if syntaxCheck then
+                if syntaxCheck and noRuntimError then
                 begin
                   BooleanResult := (freebytes >= requiredBytes);
                   RunTimeInfo :=
-                    'Free on Disk ' + s1 + ': ' + formatInt(freebytes) + ' bytes';
+                    'Free on Disk / Directory "' + s1 + '" : ' + formatInt(freebytes) + ' bytes';
                   if BooleanResult then
                     RunTimeInfo := RunTimeInfo + '  This is more '
                   else
@@ -20857,7 +20799,7 @@ begin
                 else
                   LogDatei.log(RunTimeInfo, LLError);
 
-                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
+
               end;
             end;
   end
@@ -20926,11 +20868,11 @@ begin
               begin
                 try
                   s2 := ExpandFileName(s2);
-                  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+
                   LogDatei.log
                   ('    Saving TOMLcontents to TOML file : ' + s2, LLinfo);
                   BooleanResult := SaveToTOMLFile(s1, s2);
-                  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+
                 except
                   on e: Exception do
                   begin
@@ -20958,12 +20900,12 @@ begin
                 try
                   s1 := ExpandFileName(s1);
                   s2 := ExpandFileName(s2);
-                  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+
                   LogDatei.log
                   ('    Coverting TOML file  "' + s1 + '" to JSON file "' + s2,
                     LLinfo);
                   BooleanResult := ConvertTOMLfileToJSONfile(s1, s2);
-                  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+
                 except
                   on e: Exception do
                   begin
@@ -21063,9 +21005,9 @@ begin
   if Result then
   begin
     if BooleanResult then
-      RunTimeInfo := RunTimeInfo + '   <<< result true'
+      RunTimeInfo := 'expression: [' + RunTimeInfo + '] <<< is true'
     else
-      RunTimeInfo := RunTimeInfo + '   <<< result false';
+      RunTimeInfo := 'expression: [' + RunTimeInfo + '] <<< is false';
   end
   else
     RunTimeInfo := RunTimeInfo + '    <<< syntax error, no result!! - set to false';
@@ -21156,10 +21098,10 @@ begin
     end;
   if Result then
   begin
-    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+
     LogDatei.log('The value of the variable "' + Varname + '" is now:', LLDebug);
     LogDatei.log_list(list, LLDebug);
-    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
+
   end;
 end;
 
@@ -21190,10 +21132,10 @@ begin
     end;
   if Result then
   begin
-    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+
     LogDatei.log('The value of the variable "' + Varname + '" is now: "' +
       VarValue + '"', LLInfo);
-    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
+
   end;
 end;
 
@@ -21342,7 +21284,7 @@ begin
 
   LogDatei.log('Add Connection '  (* + 'User ' + Username *) + ' to ' +
     NetResourceName, LLinfo);
-  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+
 
   netresult := wNetAddConnection2(NetResource, nil (* PAnsiChar (Password) *),
     nil (* PAnsiChar (Username) *), 0);
@@ -21407,7 +21349,7 @@ begin
   else
     DiffNumberOfErrors := 0;
 
-  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
+
 
   if ExitOnError and (DiffNumberOfErrors > 0) then
     Result := tsrExitProcess;
@@ -21743,6 +21685,24 @@ begin
   finally
     Result:=AllSignedHack;
   end;
+end;
+
+function TuibInstScript.AllsignedHackCommand(var powershellpara: string;
+  var tempfilename: string; var passparas: string; var programparas: string;
+  var programfilename: string): string;
+var
+  commandline: string;
+begin
+  powershellpara := ' -Command ';
+  if trim(passparas) <> '' then
+     LogDatei.log('Powershell with AllSigned/Restricted: ignored passparas: ' +
+       passparas, LLinfo);
+  //commandline := 'cmd.exe /C ' + catcommand + tempfilename +
+  //  ' | ' + '"' + programfilename + '" ' + programparas + ' ' + powershellpara;
+  commandline := '"' + programfilename + '" ' + programparas +
+    ' ' + powershellpara + '"Get-Content -Path ' + tempfilename +
+    ' | Out-String | Invoke-Expression" ';
+  Result:=commandline;
 end;
 
 procedure TuibInstScript.SetVariableWithErrors(const Sektion: TWorkSection;
@@ -22160,7 +22120,7 @@ begin
   conditions[ActLevel] := True;
 
   StartIndentLevel := LogDatei.LogSIndentLevel;
-  //LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+  //
 
   //FBatchOberflaeche.setPicture (3, '', '');
 
@@ -22289,7 +22249,7 @@ begin
               ValidCase := False;
               SwitchResolved := False;
               doLogEntries(PStatNames^ [tsSwitch] + ' : ' + switchCondition, LLinfo);
-              LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+
             end
             else
               reportError(Sektion, linecounter, Expressionstr, InfoSyntaxError);
@@ -22328,7 +22288,7 @@ begin
                 SwitchResolved := True;
                 LogDatei.log('Case match: ' + switchExpressionstr +
                   ' = ' + switchCondition, LLInfo);
-                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+
               end
               else
               begin
@@ -22362,7 +22322,7 @@ begin
           begin
             doLogEntries(PStatNames^ [tsSwitchCaseClose], LLinfo);
             if ValidCase then
-              LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
+
             InSwitch := True;
             InCase := False;
             ValidCase := False;
@@ -22394,7 +22354,7 @@ begin
               doLogEntries(PStatNames^ [tsSwitchDefaultOpen], LLinfo);
               ValidCase := True;
               SwitchResolved := True;
-              LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
+
             end;
           end;
         end
@@ -22421,7 +22381,7 @@ begin
             InSwitch := False;
             InCase := False;
             ValidCase := False;
-            LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
+
           end;
         end
 
@@ -22576,14 +22536,14 @@ begin
               IntToStr(sektion.NestingLevel) + ' ThenBranch: ' +
               BoolToStr(ThenBranch[NestLevel], True) + ' Conditions: ' +
               BoolToStr(Conditions[NestLevel], True), LLDebug);
-            doLogEntries(PStatNames^ [tsCondOpen], LLinfo);
+            doLogEntries(PStatNames^ [tsCondOpen], LLDebug2);
             if NestLevel > High(TConditions) then
             begin
               reportError(Sektion, linecounter, '', 'Too many nested conditions');
               exit;
             end;
 
-            LogDatei.LogSIndentLevel := NestLevel;
+            //LogDatei.LogSIndentLevel := NestLevel;
 
             if ((NestLevel = ActLevel + 1) and Conditions[ActLevel]) or testSyntax then
             begin
@@ -22609,9 +22569,9 @@ begin
                 reportError(Sektion, linecounter, Remaining, 'erroneous characters ');
             end;
 
-            LogDatei.LogSIndentLevel := NestLevel - 1;
-            doLogEntries(PStatNames^ [tsCondThen], LLInfo);
-            LogDatei.LogSIndentLevel := NestLevel;
+            //LogDatei.LogSIndentLevel := NestLevel - 1;
+            doLogEntries(PStatNames^ [tsCondThen], LLDebug2);
+            //LogDatei.LogSIndentLevel := NestLevel;
           end;
           //ArbeitsSektion.NestingLevel:=Nestlevel;
           //Sektion.NestingLevel:=Nestlevel;
@@ -22647,9 +22607,9 @@ begin
                 ThenBranch[NestLevel] := False;
 
                 // innerhalb einer aktiven Ebene Wechsel zwischen positivem/negativen Zweig
-                LogDatei.LogSIndentLevel := NestLevel - 1;
-                doLogEntries(PStatNames^ [tsCondElse], LLinfo);
-                LogDatei.LogSIndentLevel := NestLevel;
+                //LogDatei.LogSIndentLevel := NestLevel - 1;
+                doLogEntries(PStatNames^ [tsCondElse], LLDebug2);
+                //LogDatei.LogSIndentLevel := NestLevel;
 
                 if (NestLevel = ActLevel) then
                   // the else branch is valid, if we did not found any valid condition yet
@@ -22678,9 +22638,9 @@ begin
               BoolToStr(ThenBranch[NestLevel], True) + ' Conditions: ' +
               BoolToStr(Conditions[NestLevel], True), LLDebug);
 
-            LogDatei.LogSIndentLevel := NestLevel - 1;
-            doLogEntries(PStatNames^ [tsCondElseIf], LLinfo);
-            LogDatei.LogSIndentLevel := NestLevel;
+            //LogDatei.LogSIndentLevel := NestLevel - 1;
+            doLogEntries(PStatNames^ [tsCondElseIf], LLDebug2);
+            //LogDatei.LogSIndentLevel := NestLevel;
 
             if NestLevel > High(TConditions) then
             begin
@@ -22694,7 +22654,7 @@ begin
               exit;
             end;
 
-            LogDatei.LogSIndentLevel := NestLevel;
+            //LogDatei.LogSIndentLevel := NestLevel;
 
             // this is a else (if), so the if has to be evalutated
             // if the else is true
@@ -22730,9 +22690,9 @@ begin
                 reportError(Sektion, linecounter, Expressionstr, InfoSyntaxError);
               if Remaining <> '' then
                 reportError(Sektion, linecounter, Remaining, 'erroneous characters ');
-              LogDatei.LogSIndentLevel := NestLevel - 1;
-              doLogEntries(PStatNames^ [tsCondThen], LLInfo);
-              LogDatei.LogSIndentLevel := NestLevel;
+              //LogDatei.LogSIndentLevel := NestLevel - 1;
+              doLogEntries(PStatNames^ [tsCondThen], LLDebug2);
+              //LogDatei.LogSIndentLevel := NestLevel;
             end
             else
               Conditions[NestLevel] := not elseifConditions[NestLevel];
@@ -22775,8 +22735,8 @@ begin
             //ArbeitsSektion.NestingLevel:=Nestlevel;
             //Sektion.NestingLevel:=Nestlevel;
 
-            LogDatei.LogSIndentLevel := NestLevel;
-            doLogEntries(PStatNames^ [tsCondClose], LLinfo);
+            //LogDatei.LogSIndentLevel := NestLevel;
+            doLogEntries(PStatNames^ [tsCondClose], LLDebug2);
 
 
             if NestLevel < Sektion.NestingLevel then
@@ -23037,7 +22997,7 @@ begin
                       s1 := s1 + '''' + looplist[looplist.Count - 1] + '''';
 
                     LogDatei.log('~~~~~~ Looping through:  ' + s1, LLinfo);
-                    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+
 
                     stayOnStatement := remaining;
                   end;
@@ -23132,7 +23092,7 @@ begin
                       if looplist.Count > 0 then
                         s1 := s1 + '''' + looplist[looplist.Count - 1] + '''';
                       LogDatei.log('~~~~~~ Looping through:  ' + s1, LLinfo);
-                      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+
                       stayOnStatement := remaining;
                     end;
                   end;
@@ -24292,55 +24252,51 @@ begin
                     InfoSyntaxError);
               end;
 
+
               tsSleep:
               begin
                 syntaxCheck := False;
+                sleepSecs := 0;
+                InfoSyntaxError := '';
                 processmess;
-
                 try
-                  try
-                    // may be just a number (without quotes)
-                    sleepSecs := StrToInt(Remaining);
-                    syntaxCheck := True;
-                  except
-                    // it could be also a string Expressionstr
-                    if EvaluateString(Remaining, Remaining, Parameter,
-                      InfoSyntaxError) then
-                      syntaxCheck := True;
-                    // which should contain a number
-                    try
-                      if syntaxCheck then
-                        sleepSecs := StrToInt(Parameter);
-                    except;
-                      syntaxCheck := False;
-                      InfoSyntaxError :=
-                        remaining + ' -- expected an integer (number of secs) ';
-                    end;
-                  end;
+                  // Parameter may be just a number (without quotes)
+                  sleepSecs := StrToInt(Remaining);
+                  syntaxCheck := True;
                 except
-                  syntaxCheck := False;
-                  InfoSyntaxError :=
-                    remaining + ' -- expected an integer (number of secs) ';
+                  // StrToInt() failed. Could be a string Expressionstr
+                  if not EvaluateString(Remaining, Remaining, Parameter,
+                    InfoSyntaxError) then
+                      // EvaluateString() faíled
+                      ActionResult := reportError(Sektion, linecounter,
+                        Sektion.strings[linecounter - 1], InfoSyntaxError)
+                  else
+                    // EvaluateString() gave us a Parameter
+                    try
+                      sleepSecs := StrToInt(Parameter);
+                      syntaxCheck := True;
+                    except
+                      // StrToInt(Parameter) failed. Report Runtime Error.
+                      if not testsyntax then
+                      begin
+                        LogDatei.log('Runtime Error in Section: ['
+                           + Sektion.Name + '] (Command in line ' +
+                           IntToStr(Sektion.StartLineNo + linecounter) +
+                           '): ' + Expressionstr + ' -> ' + Parameter
+                           + ' -- expected an integer (number of secs) ', LLError);
+                      end
+                    end;
                 end;
-
-                if syntaxCheck then
+                if syntaxCheck and (not testsyntax) then
                 begin
-                  if not testsyntax then
-                  begin
-                    LogDatei.log('sleep ' + IntToStr(sleepSecs) + ' seconds...', LLDebug2);
-                    //Sleep(1000 * sleepSecs);
-                    // noLockSleep does not completly stop the thread
-                    noLockSleep(1000 * sleepSecs);
-                  end;
-                end
-                else
-                  if not testsyntax then
-                    ActionResult := reportError(Sektion, linecounter,
-                       Sektion.strings[linecounter - 1],InfoSyntaxError);
-
+                  // we have a valid value for seconds and do the sleep now
+                  LogDatei.log('sleep ' + IntToStr(sleepSecs) + ' seconds...', LLDebug2);
+                  // noLockSleep does not completly stop the thread
+                  noLockSleep(1000 * sleepSecs);
+                end;
                 processmess;
-
               end;
+
 
               tsStop:
               begin
@@ -24547,11 +24503,11 @@ begin
                         except
                           on e: Exception do
                           begin
-                            LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+
                             LogDatei.log('Error executing :' + s1 + ' : ' + e.message,
                               LLError);
                             FNumberOfErrors := FNumberOfErrors + 1;
-                            LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+
                           end;
                         end;
                     end;
@@ -24591,9 +24547,8 @@ begin
                 if Skip('(', Remaining, Remaining, InfoSyntaxError) then
                   if EvaluateString(Remaining, Remaining, call, InfoSyntaxError) then
                   begin
-                    //savelogsindentlevel := LogDatei.LogSIndentLevel;
                     localSection :=
-                      TWorkSection.Create(LogDatei.LogSIndentLevel + 1, Sektion);
+                      TWorkSection.Create(LogDatei.LogSIndentLevel, Sektion);
                     GetWord(call, Expressionstr, tmpstr, WordDelimiterSet1);
                     localSection.Name := Expressionstr;
 
@@ -24703,8 +24658,7 @@ begin
                     if localSection <> nil then
                       localSection.Free;
 
-                    // LogDatei.LogSIndentLevel := saveLogSIndentLevel;
-                  end;
+                   end;
                 if tmplist <> nil then
                   FreeAndNil(tmplist);
               end;
@@ -26256,12 +26210,12 @@ begin
                         except
                           on e: Exception do
                           begin
-                            LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+
                             LogDatei.log('ImportCertToSystem: failed to import: ' +
                               s1 + ' : ' + e.message,
                               LLError);
                             FNumberOfErrors := FNumberOfErrors + 1;
-                            LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+
                           end;
                         end;
                       end;
@@ -26287,12 +26241,12 @@ begin
                         except
                           on e: Exception do
                           begin
-                            LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+
                             LogDatei.log('RemoveCertFromSystem: failed to remove: ' +
                               s1 + ' : ' + e.message,
                               LLError);
                             FNumberOfErrors := FNumberOfErrors + 1;
-                            LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+
                           end;
                         end;
                       end;
@@ -26352,7 +26306,7 @@ begin
             syntaxCheck := False
           else
             syntaxCheck := True;
-          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
+
           LogDatei.log('', LLinfo);
           LogDatei.log('~~~~~~ End Loop', LLinfo);
 
@@ -26386,8 +26340,6 @@ begin
     doLogEntries(StopInfo, LLinfo);
 
   ArbeitsSektion.Free;
-
-  LogDatei.LogSIndentLevel := StartIndentLevel;
 
   Result := ActionResult;
   output.Free;
@@ -27339,6 +27291,7 @@ begin
 
     ps := ('___________________');
     LogDatei.log(ps, LLessential);
+
     ps := ('script finished: ');
     if extremeErrorLevel = LevelFatal then
       ps := ps + 'failed'
