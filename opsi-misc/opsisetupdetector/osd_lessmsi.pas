@@ -50,7 +50,7 @@ begin
   else
   begin
     Result := True;
-    LogDatei.log('lessmsi output by exitcode: ' + IntToStr(myexitcode), LLinfo);
+    LogDatei.log('lessmsi output by exitcode: ' + IntToStr(myexitcode), LLdebug);
     LogDatei.log_list(Outlist, LLdebug);
   end;
 end;
@@ -94,7 +94,7 @@ var
         dirToken := localTokenList[localTokenListIndex];
         tokenListIndex := tokenlist.IndexOf(dirToken);
         LogDatei.log('resolveDirectoryToken token: ' +
-          IntToStr(localTokenListIndex) + ' = ' + dirToken, LLinfo);
+          IntToStr(localTokenListIndex) + ' = ' + dirToken, LLdebug2);
 
         instDirMarkerFound := False;
         instDirMarkerLine := '';
@@ -122,7 +122,7 @@ var
         end;
         if instDirMarkerFound then
         begin
-          LogDatei.log('resolveDirectoryToken line: ' + instDirMarkerLine, LLinfo);
+          LogDatei.log('resolveDirectoryToken line: ' + instDirMarkerLine, LLdebug2);
           debugstr := resultList.Text;
           if resultList.Count > 0 then
             instDirMarker := resultlist[0];
@@ -170,10 +170,10 @@ var
             else
               tokenlist.Insert(tokenListIndex, instDirBase);
           end;
-          LogDatei.log('resolveDirectoryToken result: ' + tokenlist.Text, LLinfo);
+          LogDatei.log('resolveDirectoryToken result: ' + tokenlist.Text, LLdebug2);
         end;
       end;
-      LogDatei.log('resolveDirectoryToken result____: ' + tokenlist.Text, LLinfo);
+      LogDatei.log('resolveDirectoryToken result____: ' + tokenlist.Text, LLdebug2);
 
     finally
       FreeAndNil(resultList);
@@ -182,6 +182,7 @@ var
   end;
 
 begin
+  LogDatei.log('Try to get Installdir from msi via lessmsi.', LLnotice);
   Result := 'unknown';
   resultList := TStringList.Create;
   InstDirMarkerList := TStringList.Create;
@@ -244,7 +245,7 @@ begin
           dirToken := dirTokenList[i];
           Result := Result + IncludeTrailingPathDelimiter(dirToken);
         end;
-        LogDatei.log('Got Installdir from msi via lessmsi: ' + Result, LLinfo);
+        LogDatei.log('Got Installdir from msi via lessmsi: ' + Result, LLnotice);
       end;
       Inc(k);
     end;
@@ -331,7 +332,7 @@ begin
             '%ProgramFiles64Dir%');
           LogDatei.log('Installdir is now: ' + instDirFull, LLinfo);
           Result := instDirFull;
-          LogDatei.log('Got Installdir from msi via lessmsi: ' + Result, LLinfo);
+          LogDatei.log('Got Installdir from msi via lessmsi: ' + Result, LLnotice);
         end
         else
           LogDatei.log(

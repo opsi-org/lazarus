@@ -1089,7 +1089,11 @@ begin
       end;
 
       // write project file
+      LogDatei.log('Write project file to path: ' +prodpath, LLnotice);
       aktProduct.writeProjectFileToPath(prodpath);
+
+      // write CLIENT_DATA\opsi-meta-data.toml
+      LogDatei.log('Write meta data file to path: ' +clientpath, LLnotice);
       osdmeta.aktProdToAktMeta;
       osdmeta.aktMeta.write_product_metadata_ToPath(clientpath);
 
@@ -1345,28 +1349,6 @@ begin
 
     // changelog
     textlist.Clear;
-    (*
-    utcoffset := (GetLocalTimeOffset div 60) * 100 * -1;
-    if utcoffset >= 0 then
-      utcoffsetstr := '+';
-    utcoffsetstr := utcoffsetstr + format('%4.4d', [utcoffset]);
-    *)
-    (* old 4.2 style:
-    textlist.Add('');
-    textlist.Add('[Changelog]');
-    tmpstr := aktProduct.productdata.productversion + '-' + IntToStr(
-      aktProduct.productdata.packageversion);
-    textlist.Add(aktProduct.productdata.productId + ' (' + tmpstr +
-      ')');
-    textlist.Add('');
-    textlist.Add('  * initial by opsi-setup-detector - Version: ' + myVersion);
-    textlist.Add('');
-    textlist.Add('-- ' + myconfiguration.fullName + ' <' +
-      myconfiguration.email_address + '> ' + FormatDateTime(
-      'ddd, dd mmm yyyy hh:nn:ss', LocalTimeToUniversal(now)));
-    //mon, 04 Jun 12:00:00
-    textlist.SaveToFile(opsipath + pathdelim + 'changelog.txt');
-    *)
     // new 4.3 style
     textlist.Add('');
     textlist.Add('# Changelog '+aktProduct.productdata.productId);

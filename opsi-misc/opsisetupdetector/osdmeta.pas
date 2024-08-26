@@ -327,6 +327,7 @@ begin
       jsonAsObjectAddKeyAndValue(JSONFinalString, 'product', JSONString, JSONFinalString);
       //writeln(pfile, JSONString);
       try
+        lib_jyt := TLibJYT.Create;
         try
           TOMLString := lib_jyt.json2toml(JSONFinalString);
           (*

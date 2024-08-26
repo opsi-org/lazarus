@@ -143,6 +143,30 @@ todo:
    *
 
 # Changelog opsi-setup-detector
+## [4.3.3.1-1] - 2024-08-26
+
+### Add:
+- write opsi meta data file:  CLIENT_DATA\opsi-meta-data.toml
+  use jyt to convert it to toml:
+  https://github.com/ken-matsui/jyt
+- add detection via 'detect it easy' (die)
+  https://github.com/horsicq/Detect-It-Easy
+- Integrate osd detection and die detection
+- remove msgeninstaller -> wixtoolset
+- new stDetectedUnknown for deteted by die but known by osd
+- modified unknown insaller dialog for stDetectedUnknown
+- analyze msi with lessmsi.exe (windows only)
+  https://lessmsi.activescott.com/
+  https://github.com/activescott/lessmsi
+  License : MIT
+- analyze msi from InstallshieldMSI, wixtool, advanced_installer
+- guess software architecture from installdir
+
+
+(Detlef Oertel <d.oertel@uib.de> 2024-08-26)
+
+
+# Changelog opsi-setup-detector
 ## [4.3.3.0-1] - 2024-07-24
 
 ### feature:

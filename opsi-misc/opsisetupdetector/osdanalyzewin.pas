@@ -285,10 +285,17 @@ begin
     // no known uninstall program
     mysetup.uninstallCheck.Add('set $oldProgFound$ = "false"');
   end;
+
   {$IFDEF WINDOWS}
+  (*
+  Many setup programs that install 64 bit only software
+  are 32 bit.
+  So: having a 32 bit installer means nothing
+  but having a 64 bit installer means we have a 64 bit architecture for sure
+  *)
   myArch := getBinaryArchitecture(myfilename);
   if myArch = '32' then
-    mysetup.architecture := a32;
+    mysetup.architecture := aUnknown;
   if myArch = '64' then
     mysetup.architecture := a64;
   if myArch = 'unknown' then
@@ -395,6 +402,12 @@ begin
     // use lessmsi
     installdir := getInstallDirFromMsi(myfilename);
     mysetup.installDirectory:= installdir;
+
+    // guess architecture from installdir
+    if installdir.StartsWith('%ProgramFiles64Dir%') then
+    mysetup.architecture := a64
+    else if installdir.StartsWith('%ProgramFiles32Dir%') then
+    mysetup.architecture := a32;
 
   end;
   myoutlines.Free;
