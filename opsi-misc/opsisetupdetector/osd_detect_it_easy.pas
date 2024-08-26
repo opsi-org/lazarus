@@ -12,9 +12,12 @@ uses
   LCLType,
   OSProcessux,
   Process,
+  {$IFDEF WINDOWS}
   windows,
-  lazutf8,
-  dsiwin32;
+  dsiwin32,
+  {$ENDIF WINDOWS}
+  lazutf8;
+
 
 function runDieDetect(target : string; var jsonOut : TStringlist) : boolean;
 function runDieInfo(target : string; var jsonOut : TStringlist) : boolean;

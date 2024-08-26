@@ -30,8 +30,14 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
   oswebservice,
   oscrypt,
   osdmain,
+  {$IFDEF WINDOWS}
+  osd_lessmsi,
+  {$ENDIF WINDOWS}
   osdcontrolfile_io,
-  osd_md_html_dlg, osdmeta, osd_lessmsi, osdanalyze_by_die, opsiDynamicLibJYT;
+  osd_md_html_dlg,
+  osdmeta,
+  osdanalyze_by_die,
+  osd_detect_it_easy;
 
 
 (*
