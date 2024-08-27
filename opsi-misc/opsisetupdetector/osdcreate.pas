@@ -1097,8 +1097,9 @@ begin
       aktProduct.writeProjectFileToPath(prodpath);
 
       // write CLIENT_DATA\opsi-meta-data.toml
-      LogDatei.log('Write meta data file to path: ' +clientpath, LLnotice);
+      LogDatei.log('Collect meta data', LLnotice);
       osdmeta.aktProdToAktMeta;
+      LogDatei.log('Write meta data file to path: ' +clientpath, LLnotice);
       osdmeta.aktMeta.write_product_metadata_ToPath(clientpath);
 
       Result := True;

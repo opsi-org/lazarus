@@ -109,7 +109,7 @@ initialization
   myDiec := myDiecDir+ '/diec.sh';
   {$EndIF LINUX}
   {$IFDEF DARWIN}
-  myDiecDir := ExtractFileDir(ParamStr(0))+'/detectItEasy';
+  myDiecDir := ExtractFileDir(ParamStr(0))+'/../Resources/detectItEasy';
   myDiec := myDiecDir+ '/die.app/Contents/MacOS/diec';
   {$EndIF DARWIN}
 

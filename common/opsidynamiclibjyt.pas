@@ -5,7 +5,10 @@ unit opsiDynamicLibJYT;
 interface
 
 uses
-  Classes, SysUtils, OpsiDynamicLibraries;
+  Classes, SysUtils,
+  fileutil,
+  oslog,
+  OpsiDynamicLibraries;
 
 type
 
@@ -48,20 +51,33 @@ const
   {$IFDEF WIN64}
   libname: string = 'jyt_64.dll';
   {$ENDIF WIN64}
-  libpath: string = '';
   {$ENDIF MSWINDOWS}
 
   {$IFDEF LINUX}
   libname: string = 'libjyt.so';
-  libpath: string = '';
   {$ENDIF LINUX}
 
   {$IFDEF DARWIN}
   libname: string = 'libjyt.dylib';
-  libpath: string = '';
   {$ENDIF DARWIN}
 
+var
+  libpath: string = '';
+
+
 begin
+  {$IFDEF MSWINDOWS}
+   libpath:= '';
+  {$ENDIF MSWINDOWS}
+
+  {$IFDEF LINUX}
+  libpath:= '';
+  {$ENDIF LINUX}
+
+  {$IFDEF DARWIN}
+  libpath:= ProgramDirectory+'../Frameworks';
+  {$ENDIF DARWIN}
+  LogDatei.log('Loading lib: '+libpath+'/'+libname,LLinfo);
   try
      inherited Create(libname, libpath);
      Load;

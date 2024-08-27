@@ -285,6 +285,7 @@ begin
   try
     if Assigned(logdatei) then
       logdatei.log('Start write metadata file', LLDebug);
+
     // metadata file name
     myfilename := ExpandFileName(myfilename);
     configdir := ExtractFileDir(myfilename);
@@ -297,8 +298,9 @@ begin
         if Assigned(logdatei) then
           LogDatei.log('failed to create metadata file directory: ' +
             configDir, LLError);
-    AssignFile(pfile, myfilename);
-    Rewrite(pfile);
+
+    if Assigned(logdatei) then
+      logdatei.log('Convert metadata to json', LLDebug);
     // http://wiki.freepascal.org/Streaming_JSON
     Streamer := TJSONStreamer.Create(nil);
     myStringlist := TStringList.Create;
@@ -326,6 +328,8 @@ begin
       JSONString := Streamer.ObjectToJSONString(aktMeta.productMeta);
       jsonAsObjectAddKeyAndValue(JSONFinalString, 'product', JSONString, JSONFinalString);
       //writeln(pfile, JSONString);
+      if Assigned(logdatei) then
+        logdatei.log('Convert json metadata to toml', LLDebug);
       try
         lib_jyt := TLibJYT.Create;
         try
@@ -344,8 +348,13 @@ begin
       finally
         FreeAndNil(lib_jyt);
       end;
+      if Assigned(logdatei) then
+      logdatei.log('write toml metadata to file', LLDebug);
+      AssignFile(pfile, myfilename);
+      Rewrite(pfile);
       writeln(pfile, TOMLString);
       CloseFile(pfile);
+      logdatei.log('write json metadata to file', LLDebug);
       AssignFile(pfile, myfilename + '.json');
       Rewrite(pfile);
       writeln(pfile, JSONFinalString);
