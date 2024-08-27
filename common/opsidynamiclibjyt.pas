@@ -78,6 +78,10 @@ begin
   libpath:= ProgramDirectory+'../Frameworks';
   {$ENDIF DARWIN}
   LogDatei.log('Loading lib: '+libpath+'/'+libname,LLinfo);
+  if FileExists(libpath+'/'+libname) then
+    LogDatei.log('Lib exist: '+libpath+'/'+libname,LLinfo)
+  else
+    LogDatei.log('Lib not exist: '+libpath+'/'+libname,LLerror);
   try
      inherited Create(libname, libpath);
      Load;
