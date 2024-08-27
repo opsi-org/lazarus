@@ -366,7 +366,8 @@ begin
 
     // msi special
     if length(aktProduct.SetupFiles) > 0 then
-      if aktProduct.SetupFiles[0].installerId = stMsi then
+      //if aktProduct.SetupFiles[0].installerId = stMsi then
+      if aktProduct.SetupFiles[0].msiUninstallCode then
       begin
         readFileToList('HandleMsiUninstallSections.opsiscript', sectionlist);
       end;
@@ -685,7 +686,8 @@ begin
           infilelist.Add('setupsingle.opsiscript');
           infilelist.Add('delincsingle.opsiinc');
           infilelist.Add('uninstallsingle.opsiscript');
-          if aktProduct.SetupFiles[0].installerId = stMsi then
+          //if aktProduct.SetupFiles[0].installerId = stMsi then
+          if aktProduct.SetupFiles[0].msiUninstallCode then
             infilelist.Add('delincmsisingle.opsiinc');
         end;
         twoAnalyzeCreate_1, twoAnalyzeCreate_2:
@@ -693,7 +695,8 @@ begin
           infilelist.Add('setupdouble.opsiscript');
           infilelist.Add('delincdouble.opsiinc');
           infilelist.Add('uninstalldouble.opsiscript');
-          if aktProduct.SetupFiles[0].installerId = stMsi then
+          //if aktProduct.SetupFiles[0].installerId = stMsi then
+          if aktProduct.SetupFiles[0].msiUninstallCode then
             infilelist.Add('delincmsidouble.opsiinc');
         end;
         createTemplate:
@@ -741,7 +744,8 @@ begin
           infilelist.Add('sections.opsiinc');
           infilelist.Add('declarations.opsiinc');
           infilelist.Add('localsetup\declarations-local.opsiinc');
-          if aktProduct.SetupFiles[0].installerId = stMsi then
+          //if aktProduct.SetupFiles[0].installerId = stMsi then
+          if aktProduct.SetupFiles[0].msiUninstallCode then
             infilelist.Add('localsetup\delsubmsi-local.opsiinc')
           else
             infilelist.Add('localsetup\delsub-local.opsiinc');

@@ -161,7 +161,11 @@ todo:
   License : MIT
 - analyze msi from InstallshieldMSI, wixtool, advanced_installer
 - guess software architecture from installdir
-
+- display msi upgradeCode
+- new configuration: preferMsiUninstall (default=true):
+  If true=prefer uninstall via msi if possible (if msi is found).
+  Affects Installer that are wrapper around msi,
+  like installshieldMSI, advanced_installer, wix toolset
 
 (Detlef Oertel <d.oertel@uib.de> 2024-08-26)
 

@@ -180,6 +180,7 @@ type
     Label102: TLabel;
     Label103: TLabel;
     Label104: TLabel;
+    Label105: TLabel;
     Label2: TLabel;
     Label3: TLabel;
     Label4: TLabel;
@@ -187,9 +188,11 @@ type
     Label56: TLabel;
     Label6: TLabel;
     Label63: TLabel;
+    Label69: TLabel;
     Label7: TLabel;
     Label8: TLabel;
     Label86: TLabel;
+    Label87: TLabel;
     Label88: TLabel;
     Label89: TLabel;
     Label90: TLabel;
@@ -347,9 +350,12 @@ type
     TIEditInstallDir3: TTIEdit;
     TIEditMsiId2: TTIEdit;
     TIEditMsiId3: TTIEdit;
+    TIEditMsiUpCode1: TTIEdit;
     TIEditMsiName1: TTIEdit;
     TIEditMsiName2: TTIEdit;
     TIEditMsiName3: TTIEdit;
+    TIEditMsiUpCode2: TTIEdit;
+    TIEditMsiUpCode3: TTIEdit;
     TIEditMstFile2: TTIEdit;
     TIEditMstFile3: TTIEdit;
     TIEditSetup1TargetProgram: TTIEdit;
@@ -768,6 +774,9 @@ begin
       TIEditMsiName1.Link.SetObjectAndProperty(SetupFiles[0], 'msiProductName');
       TIEditMsiName2.Link.SetObjectAndProperty(SetupFiles[1], 'msiProductName');
       TIEditMsiName3.Link.SetObjectAndProperty(SetupFiles[2], 'msiProductName');
+      TIEditMsiUpCode1.Link.SetObjectAndProperty(SetupFiles[0], 'msiUpgradeCode');
+      TIEditMsiUpCode2.Link.SetObjectAndProperty(SetupFiles[1], 'msiUpgradeCode');
+      TIEditMsiUpCode3.Link.SetObjectAndProperty(SetupFiles[2], 'msiUpgradeCode');
       TIEditSoftVersion1.Link.SetObjectAndProperty(SetupFiles[0], 'SoftwareVersion');
       TIEditSoftVersion2.Link.SetObjectAndProperty(SetupFiles[1], 'SoftwareVersion');
       TIEditSoftVersion3.Link.SetObjectAndProperty(SetupFiles[2], 'SoftwareVersion');

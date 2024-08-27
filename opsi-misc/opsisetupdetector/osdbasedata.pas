@@ -177,6 +177,7 @@ type
     FmsiId: string;               // msi ID of installer if known
     FmsiProductName: string;      // msi Display name of installer if known
     FmsiUpgradeCode: string;      // msi UpgradeCode of installer if known
+    FmsiUninstallCode: boolean;   // use msi uninstall code for uninstall
     FmstAllowed: boolean;         // Is it allowed to add mst file
     FMstFullFileName: string;     // path + file name of the mst file source
     FmstFileNamePath: string;     // path only of the mst file source
@@ -242,6 +243,7 @@ type
     property msiId: string read FmsiId write FmsiId;
     property msiProductName: string read FmsiProductName write FmsiProductName;
     property msiUpgradeCode: string read FmsiUpgradeCode write FmsiUpgradeCode;
+    property msiUninstallCode: boolean read FmsiUninstallCode write FmsiUninstallCode;
     property mstAllowed: boolean read FmstAllowed write FmstAllowed;
     property mstFullFileName: string read FMstFullFileName write SetMstFullFileName;
     property mstFileNamePath: string read FmstFileNamePath write FmstFileNamePath;
@@ -540,6 +542,7 @@ default: ["xenial_bionic"]
     Fcontrol_in_toml_format: boolean; // since opsi 4.3 control files in toml format
     Fdependencies_for_all_actionrequests: boolean;
     // since opsi 4.3 dependecies are allowed for all action requests
+    FpreferMsiUninstall: boolean; // true=prefer uninstall via msi if possible
     procedure SetLibraryLines(const AValue: TStrings);
     procedure SetPreInstallLines(const AValue: TStrings);
     procedure SetPostInstallLines(const AValue: TStrings);
@@ -589,6 +592,8 @@ default: ["xenial_bionic"]
       read Fcontrol_in_toml_format write Fcontrol_in_toml_format;
     property dependencies_for_all_actionrequests: boolean
       read Fdependencies_for_all_actionrequests write Fdependencies_for_all_actionrequests;
+    property preferMsiUninstall: boolean
+      read FpreferMsiUninstall write FpreferMsiUninstall;
 
 
 
@@ -720,6 +725,10 @@ resourcestring
     'Allow dependencies for all action request ?. ' + LineEnding +
     'If true, you need opsi 4.3 (or up) ' + LineEnding +
     'Be careful when creating dependencies for other action requests than "setup"';
+  rsPreferMsiUninstall =
+     'If true=prefer uninstall via msi if possible.'  + LineEnding +
+     'Affects Installer that are wrapper around msi,'  + LineEnding +
+     'like installshieldMSI, advanced_installer, wix toolset';
   //************************************************
   //info_message_html.Text
   //************************************************
@@ -1046,6 +1055,8 @@ begin
   FmsiProductName := '';
   FinstallerSourceDir := '';
   FpreferSilent := myconfiguration.preferSilent;
+  FmsiUpgradeCode:='';
+  FmsiUninstallCode := false; // Do not use msi uninstall code by default
 end;
 
 // TPProperty **********************************
@@ -1683,6 +1694,7 @@ begin
   FLasticonFileDir :=
     ExtractFileDir(Application.Params[0]) + PathDelim + 'icons';
   {$ENDIF WINDOWS}
+  FpreferMsiUninstall := true;
   //readconfig;
 end;
 

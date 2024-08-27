@@ -126,14 +126,20 @@ begin
                           write_log_and_memo('Detected by die: ' + installerstr + ' version: ' + valuestr);
                           //LogDatei.log('Detected by die: ' + installerstr + ' version: ' + valuestr, LLnotice);
 
+                          // special handlings
+                          // installshieldMSI
                           if (previousInstallerId = stInstallShieldMSI) and
                             (installerstr = 'InstallShield') then
+                            mysetup.installerId := previousInstallerId;
+                          // installaware
+                          if (previousInstallerId = stInstallAware) then
                             mysetup.installerId := previousInstallerId;
 
 
                           if (previousInstallerId <> stUnknown) and
                             (previousInstallerId <> mysetup.installerId) then
-                            if (mysetup.installerId = stUnknown) then
+                            if (mysetup.installerId = stUnknown) or
+                               (mysetup.installerId = stDetectedUnknown) then
                             begin
                               LogDatei.log('Fall back to previous detection: ', LLInfo);
                               mysetup.installerId := previousInstallerId;

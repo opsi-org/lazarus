@@ -174,12 +174,8 @@ var
   i: integer;
   fsize: int64;
   fsizemb, rsizemb: double;
-  sMsiSize: string;
   sReqSize: string;
   sFileSize: string;
-  sSearch: string;
-  iPos: integer;
-  destDir: string;
   myArch: string;
   product: string;
   installerstr: string;
@@ -397,6 +393,16 @@ begin
           Length(myoutlines.Strings[i]) - Length(sSearch));
 
     end;
+    // we have an msi, so we use msi uninstall mode
+    // always if installer = msi
+    if mysetup.installerId = stMsi then mysetup.msiUninstallCode := true
+    // under conditions if it is a msi wrapper exe
+    else if (mysetup.msiId <> '') and
+    ((mysetup.msiProductName <> '') or (mysetup.msiUpgradeCode <> '')) and
+    myconfiguration.preferMsiUninstall then
+      mysetup.msiUninstallCode := true;
+    LogDatei.log('msiUninstallCode: ' + BoolToStr(mysetup.msiUninstallCode,true), LLNotice);
+
     aktproduct.productdata.productversion := trim(mysetup.softwareversion);
 
     // use lessmsi
@@ -405,9 +411,9 @@ begin
 
     // guess architecture from installdir
     if installdir.StartsWith('%ProgramFiles64Dir%') then
-    mysetup.architecture := a64
+      mysetup.architecture := a64
     else if installdir.StartsWith('%ProgramFiles32Dir%') then
-    mysetup.architecture := a32;
+      mysetup.architecture := a32;
 
   end;
   myoutlines.Free;
@@ -466,32 +472,56 @@ begin
         LogDatei.log('Found ProductCode: ' + mysetup.msiId, LLNotice);
       end;
 
+      sSearch := 'UpgradeCode: ';
+      iPos := Pos(sSearch, myoutlines.Strings[i]);
+      if (iPos <> 0) then
+        mysetup.msiUpgradeCode :=
+          Copy(myoutlines.Strings[i], Length(sSearch) + 1,
+          Length(myoutlines.Strings[i]) - Length(sSearch));
+        LogDatei.log('Found UpgradeCode: ' + mysetup.msiUpgradeCode, LLNotice);
     end;
-    //if aktproduct.productdata.productversion = '' then
+
+    // we have an msi, so we use msi uninstall mode
+    // always if installer = msi
+    if mysetup.installerId = stMsi then mysetup.msiUninstallCode := true
+    // under conditions if it is a msi wrapper exe
+    else if (mysetup.msiId <> '') and
+    (mysetup.msiProductName <> '') or (mysetup.msiUpgradeCode <> '') and
+    myconfiguration.preferMsiUninstall then
+      mysetup.msiUninstallCode := true;
+    LogDatei.log('msiUninstallCode: ' + BoolToStr(mysetup.msiUninstallCode,true), LLNotice);
+
     aktproduct.productdata.productversion := trim(mysetup.softwareversion);
   end;
   myoutlines.Free;
   {$ENDIF LINUX}
-  if not uninstall_only then
+  if mysetup.msiUninstallCode then
   begin
+    if not uninstall_only then
+    begin
+      if mysetup.preferSilent then
+        mysetup.installCommandLine :=
+          'msiexec /i "$installerSourceDir$\' + mysetup.setupFileName +
+          '" ' + installerArray[integer(mysetup.installerId)].silentsetup
+      else
+        mysetup.installCommandLine :=
+          'msiexec /i "$installerSourceDir$\' + mysetup.setupFileName +
+          '" ' + installerArray[integer(mysetup.installerId)].unattendedsetup;
+
+      mysetup.mstAllowed := True;
+    end;
+
     if mysetup.preferSilent then
-      mysetup.installCommandLine :=
-        'msiexec /i "$installerSourceDir$\' + mysetup.setupFileName +
-        '" ' + installerArray[integer(mysetup.installerId)].silentsetup
+      mysetup.uninstallCommandLine :=
+        'msiexec /x $MsiId$ ' + installerArray[integer(stMsi)].silentuninstall
     else
-      mysetup.installCommandLine :=
-        'msiexec /i "$installerSourceDir$\' + mysetup.setupFileName +
-        '" ' + installerArray[integer(mysetup.installerId)].unattendedsetup;
+      mysetup.uninstallCommandLine :=
+        'msiexec /x $MsiId$ ' + installerArray[integer(stMsi)].unattendeduninstall;
 
-    mysetup.mstAllowed := True;
+    // clear non msi uninstall entries
+    mysetup.uninstallProg:='';
+    mysetup.uninstallCheck.Clear;
   end;
-
-  if mysetup.preferSilent then
-    mysetup.uninstallCommandLine :=
-      'msiexec /x $MsiId$ ' + installerArray[integer(stMsi)].silentuninstall
-  else
-    mysetup.uninstallCommandLine :=
-      'msiexec /x $MsiId$ ' + installerArray[integer(stMsi)].unattendeduninstall;
 
 
   LogDatei.log('get_MSI_info finished', LLInfo);
@@ -798,22 +828,22 @@ begin
       // some wait retry
       if mymsilist.Count = 0 then
       begin
-        Sleep(1000);
+        Sleep(2000);
         mymsilist := FindAllFiles(opsitmp, '*.msi', True);
       end;
       if mymsilist.Count = 0 then
       begin
-        Sleep(1000);
+        Sleep(2000);
         mymsilist := FindAllFiles(opsitmp, '*.msi', True);
       end;
       if mymsilist.Count = 0 then
       begin
-        Sleep(1000);
+        Sleep(2000);
         mymsilist := FindAllFiles(opsitmp, '*.msi', True);
       end;
       if mymsilist.Count = 0 then
       begin
-        Sleep(1000);
+        Sleep(2000);
         mymsilist := FindAllFiles(opsitmp, '*.msi', True);
       end;
 
@@ -1109,9 +1139,6 @@ begin
 end;
 
 procedure get_sfxcab_info(myfilename: string; var mysetup: TSetupFile);
-var
-  str1, str2: string;
-  pos1, pos2, i: integer;
 begin
   write_log_and_memo('Analyzing sfxcabr-Setup:');
   mysetup.uninstallProg := 'C:\ProgramData\{<UNKNOWN GUID>}\' +
@@ -1121,36 +1148,16 @@ end;
 
 procedure get_advancedInstaller_info(myfilename: string; var mysetup: TSetupFile);
 var
-  str1, str2, commandline: string;
-  pos1, pos2, i: integer;
+  commandline: string;
   myoutlines: TStringList;
   myreport: string;
   myexitcode: integer;
   smask: string;
   mymsilist: TStringList;
   mymsifilename: string;
-  temp_exe :string;
+  temp_exe: string;
 begin
   write_log_and_memo('Analyzing advancedInstaller:');
-  (*
-  todo:
-  create temp dir
-  copy setup to tmp dir
-  call setup with /extract
-  search for msi file
-  get msiid and display name from msi
-  force msi uninstall
-
-  destDir := GetTempDir(False);
-  destDir := destDir + DirectorySeparator + 'msixAppx';
-  // cleanup destination
-  if DirectoryExists(destDir) then
-    DeleteDirectory(destDir,true);
-  // create destination
-  if not DirectoryExists(destDir) then
-    ForceDirectories(destDir);
-    *)
-
   if DirectoryExists(opsitmp) then
     DeleteDirectory(opsitmp, True);
   if not DirectoryExists(opsitmp) then
@@ -1161,9 +1168,9 @@ begin
   // extract and analyze MSI from setup
 
   write_log_and_memo('Analyzing MSI from advancedInstaller Setup ' + myfilename);
-  temp_exe := opsitmp+'\'+ExtractFileName(myfilename);
-  CopyFile(myfilename,temp_exe);
-  commandline := '"'+temp_exe+'" /extract "'+opsitmp+'"';
+  temp_exe := opsitmp + '\' + ExtractFileName(myfilename);
+  CopyFile(myfilename, temp_exe);
+  commandline := '"' + temp_exe + '" /extract "' + opsitmp + '"';
 
   myoutlines := TStringList.Create;
   write_log_and_memo(commandline);
@@ -1235,18 +1242,21 @@ begin
     KillProcess(ExtractFileName(myfilename));
   end;
   {$ENDIF WINDOWS}
-  mysetup.uninstallDirectory:= '$installerSourceDir$';
-  mysetup.uninstallProg:= mysetup.uninstallDirectory +'\'+ mysetup.setupFileName;
+  if not mysetup.msiUninstallCode then
+  begin
+    mysetup.uninstallDirectory := '$installerSourceDir$';
+    mysetup.uninstallProg := mysetup.uninstallDirectory + '\' + mysetup.setupFileName;
 
-  if mysetup.preferSilent then
+    if mysetup.preferSilent then
       mysetup.uninstallCommandLine :=
-        '"' + mysetup.uninstallDirectory + '\'+mysetup.setupFileName+'" ' +
+        '"' + mysetup.uninstallDirectory + '\' + mysetup.setupFileName + '" ' +
         installerArray[integer(mysetup.installerId)].silentuninstall
     else
       mysetup.uninstallCommandLine :=
-        '"' + mysetup.uninstallDirectory + '\'+mysetup.setupFileName+'" ' +
+        '"' + mysetup.uninstallDirectory + '\' + mysetup.setupFileName + '" ' +
         installerArray[integer(mysetup.installerId)].unattendeduninstall;
 
+  end;
   resultForm1.updateUninstaller(mysetup);
 
   write_log_and_memo('get_advancedInstaller_info finished');

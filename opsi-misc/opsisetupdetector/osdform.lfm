@@ -7082,6 +7082,16 @@ object resultForm1: TresultForm1
               Control = TIEditSoftVersion1
               WrapAfter = waAuto
               Index = 1
+            end          
+            item
+              Control = Label69
+              WrapAfter = waAuto
+              Index = 2
+            end          
+            item
+              Control = TIEditMsiUpCode1
+              WrapAfter = waAuto
+              Index = 3
             end>
           FlowLayout = tlTop
           FlowStyle = fsLeftRightTopBottom
@@ -7113,6 +7123,35 @@ object resultForm1: TresultForm1
             OnChange = genRttiEditChange
             ParentFont = False
             TabOrder = 0
+          end
+          object Label69: TLabel
+            Left = 472
+            Height = 21
+            Top = 8
+            Width = 85
+            Anchors = []
+            BorderSpacing.Left = 9
+            BorderSpacing.Around = 4
+            Caption = 'MsiUpgrade'
+            Font.Height = -16
+            ParentColor = False
+            ParentFont = False
+          end
+          object TIEditMsiUpCode1: TTIEdit
+            Left = 572
+            Height = 27
+            Top = 6
+            Width = 300
+            Anchors = []
+            BorderSpacing.Left = 9
+            BorderSpacing.Around = 2
+            BorderSpacing.InnerBorder = 2
+            Constraints.MinWidth = 300
+            Enabled = False
+            OnChange = genRttiEditChange
+            ParentFont = False
+            ReadOnly = True
+            TabOrder = 1
           end
         end
         object FlowPanelMsiId: TFlowPanel
@@ -8313,6 +8352,16 @@ object resultForm1: TresultForm1
               Control = TIEditSoftVersion2
               WrapAfter = waAuto
               Index = 1
+            end          
+            item
+              Control = Label87
+              WrapAfter = waAuto
+              Index = 2
+            end          
+            item
+              Control = TIEditMsiUpCode2
+              WrapAfter = waAuto
+              Index = 3
             end>
           FlowLayout = tlTop
           FlowStyle = fsLeftRightTopBottom
@@ -8344,6 +8393,35 @@ object resultForm1: TresultForm1
             OnChange = genRttiEditChange
             ParentFont = False
             TabOrder = 0
+          end
+          object Label87: TLabel
+            Left = 472
+            Height = 21
+            Top = 8
+            Width = 85
+            Anchors = []
+            BorderSpacing.Left = 9
+            BorderSpacing.Around = 4
+            Caption = 'MsiUpgrade'
+            Font.Height = -16
+            ParentColor = False
+            ParentFont = False
+          end
+          object TIEditMsiUpCode2: TTIEdit
+            Left = 572
+            Height = 27
+            Top = 6
+            Width = 300
+            Anchors = []
+            BorderSpacing.Left = 9
+            BorderSpacing.Around = 2
+            BorderSpacing.InnerBorder = 2
+            Constraints.MinWidth = 300
+            Enabled = False
+            OnChange = genRttiEditChange
+            ParentFont = False
+            ReadOnly = True
+            TabOrder = 1
           end
         end
         object FlowPanel12: TFlowPanel
@@ -9504,6 +9582,16 @@ object resultForm1: TresultForm1
               Control = TIEditSoftVersion3
               WrapAfter = waAuto
               Index = 1
+            end          
+            item
+              Control = Label105
+              WrapAfter = waAuto
+              Index = 2
+            end          
+            item
+              Control = TIEditMsiUpCode3
+              WrapAfter = waAuto
+              Index = 3
             end>
           FlowLayout = tlTop
           FlowStyle = fsLeftRightTopBottom
@@ -9535,6 +9623,35 @@ object resultForm1: TresultForm1
             OnChange = genRttiEditChange
             ParentFont = False
             TabOrder = 0
+          end
+          object Label105: TLabel
+            Left = 472
+            Height = 21
+            Top = 8
+            Width = 85
+            Anchors = []
+            BorderSpacing.Left = 9
+            BorderSpacing.Around = 4
+            Caption = 'MsiUpgrade'
+            Font.Height = -16
+            ParentColor = False
+            ParentFont = False
+          end
+          object TIEditMsiUpCode3: TTIEdit
+            Left = 572
+            Height = 27
+            Top = 6
+            Width = 300
+            Anchors = []
+            BorderSpacing.Left = 9
+            BorderSpacing.Around = 2
+            BorderSpacing.InnerBorder = 2
+            Constraints.MinWidth = 300
+            Enabled = False
+            OnChange = genRttiEditChange
+            ParentFont = False
+            ReadOnly = True
+            TabOrder = 1
           end
         end
         object FlowPanel24: TFlowPanel
