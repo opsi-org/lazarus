@@ -756,8 +756,9 @@ begin
           infilelist.Add('localsetup\update-local.opsiscript');
           for i := 0 to infilelist.Count - 1 do
           begin
-            infilename := getFilePath(infilelist.Strings[i]);
-            outfilename := clientpath + PathDelim + infilelist.Strings[i];
+            // use GetForcedPathDelims to make it work also at unix
+            infilename := getFilePath(GetForcedPathDelims(infilelist.Strings[i]));
+            outfilename := clientpath + PathDelim + GetForcedPathDelims(infilelist.Strings[i]);
             outfilename := StringReplace(outfilename, 'msi', '', []);
             patchScript(infilename, outfilename);
           end;
