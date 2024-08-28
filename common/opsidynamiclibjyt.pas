@@ -12,10 +12,10 @@ uses
 
 type
 
-  TFuncToJson = function(intype:integer; input:PChar):PChar; cdecl;
-  TFuncToYaml = function(intype:integer; input:PChar):PChar; cdecl;
-  TFuncToToml = function(intype:integer; input:PChar):PChar; cdecl;
-  TProcFree   = procedure(mystr:PChar); cdecl;
+  TFuncToJson = function(intype: integer; input: PChar): PChar; cdecl;
+  TFuncToYaml = function(intype: integer; input: PChar): PChar; cdecl;
+  TFuncToToml = function(intype: integer; input: PChar): PChar; cdecl;
+  TProcFree = procedure(mystr: PChar); cdecl;
 
   TLibJYT = class(TOpsiDynamicLibrary)
   private
@@ -27,7 +27,6 @@ type
     cstring_free: TProcFree;
 
     procedure GetFunctionAddresses;
-
   public
     constructor Create;
     function json2yaml(var src: string): string;
@@ -60,14 +59,12 @@ const
   {$IFDEF DARWIN}
   libname: string = 'libjyt.dylib';
   {$ENDIF DARWIN}
-
 var
   libpath: string = '';
-
-
+  fullpath: string;
 begin
   {$IFDEF MSWINDOWS}
-   libpath:= '';
+  libpath := '';
   {$ENDIF MSWINDOWS}
 
   {$IFDEF LINUX}
@@ -77,19 +74,27 @@ begin
   {$IFDEF DARWIN}
   libpath:= ProgramDirectory+'../Frameworks';
   {$ENDIF DARWIN}
-  LogDatei.log('Loading lib: '+libpath+'/'+libname,LLinfo);
-  if FileExists(libpath+'/'+libname) then
-    LogDatei.log('Lib exist: '+libpath+'/'+libname,LLinfo)
+
+  if libpath = '' then
+    fullpath := ProgramDirectory + Pathdelim + libname
   else
-    LogDatei.log('Lib not exist: '+libpath+'/'+libname,LLerror);
+    fullpath := libpath + Pathdelim + libname;
+
+  LogDatei.log('Loading lib: ' + fullpath, LLinfo);
+  if FileExists(fullpath) then
+    LogDatei.log('Lib exist: ' + fullpath, LLinfo)
+  else
+    LogDatei.log('Lib not exist: ' + fullpath, LLerror);
   try
-     inherited Create(libname, libpath);
-     Load;
-     GetFunctionAddresses;
+    inherited Create(libname, libpath);
+    Load;
+    LogDatei.log('Loaded lib: ' + libname, LLinfo);
+    GetFunctionAddresses;
   except
     on E: Exception do
-       raise Exception.Create(E.Message);
+      raise Exception.Create(E.Message);
   end;
+
 end;
 
 procedure TLibJYT.GetFunctionAddresses;
@@ -105,141 +110,140 @@ begin
     finally
       FCSLoadLib.Leave;
     end;
-  end
+  end;
 end;
 
 
 function TLibJYT.json2yaml;
 var
-  presult: pchar;
+  presult: PChar;
 begin
   if Assigned(to_yaml) then
   begin
     try
-       presult := to_yaml(0, pchar(src));  // intype 0 = json
-       result := string(presult);
-       cstring_free(presult);
+      presult := to_yaml(0, PChar(src));  // intype 0 = json
+      Result := string(presult);
+      cstring_free(presult);
     except
-       raise Exception.Create(FErrorMessage);
+      raise Exception.Create(FErrorMessage);
     end;
   end
   else
-    if Loaded then
-       raise Exception.Create('ERROR:: could not get function address for "to_yaml"')
-    else
-       raise Exception.Create(FErrorMessage);
+  if Loaded then
+    raise Exception.Create('ERROR:: could not get function address for "to_yaml"')
+  else
+    raise Exception.Create(FErrorMessage);
 end;
 
 
 function TLibJYT.json2toml;
 var
-  presult: pchar;
+  presult: PChar;
 begin
   if Assigned(to_toml) then
   begin
     try
-       presult := to_toml(0, pchar(src));  // intype 0 = json
-       result := string(presult);
-       cstring_free(presult);
+      presult := to_toml(0, PChar(src));  // intype 0 = json
+      Result := string(presult);
+      cstring_free(presult);
     except
-       raise Exception.Create(FErrorMessage);
+      raise Exception.Create(FErrorMessage);
     end;
   end
   else
-    if Loaded then
-       raise Exception.Create('ERROR:: could not get function address for "to_toml"')
-    else
-       raise Exception.Create(FErrorMessage);
+  if Loaded then
+    raise Exception.Create('ERROR:: could not get function address for "to_toml"')
+  else
+    raise Exception.Create(FErrorMessage);
 end;
 
 
 function TLibJYT.yaml2json;
 var
-  presult: pchar;
+  presult: PChar;
 begin
   if Assigned(to_json) then
   begin
     try
-       presult := to_json(1, pchar(src));  // intype 1 = yaml
-       result := string(presult);
-       cstring_free(presult);
+      presult := to_json(1, PChar(src));  // intype 1 = yaml
+      Result := string(presult);
+      cstring_free(presult);
     except
-       raise Exception.Create(FErrorMessage);
+      raise Exception.Create(FErrorMessage);
     end;
   end
   else
-    if Loaded then
-       raise Exception.Create('ERROR:: could not get function address for "to_json"')
-    else
-       raise Exception.Create(FErrorMessage);
+  if Loaded then
+    raise Exception.Create('ERROR:: could not get function address for "to_json"')
+  else
+    raise Exception.Create(FErrorMessage);
 end;
 
 
 function TLibJYT.yaml2toml;
 var
-  presult: pchar;
+  presult: PChar;
 begin
   if Assigned(to_toml) then
   begin
     try
-       presult := to_toml(1, pchar(src));  // intype 1 = yaml
-       result := string(presult);
-       cstring_free(presult);
+      presult := to_toml(1, PChar(src));  // intype 1 = yaml
+      Result := string(presult);
+      cstring_free(presult);
     except
-       raise Exception.Create(FErrorMessage);
+      raise Exception.Create(FErrorMessage);
     end;
   end
   else
-    if Loaded then
-       raise Exception.Create('ERROR:: could not get function address for "to_toml"')
-    else
-       raise Exception.Create(FErrorMessage);
+  if Loaded then
+    raise Exception.Create('ERROR:: could not get function address for "to_toml"')
+  else
+    raise Exception.Create(FErrorMessage);
 end;
 
 
 function TLibJYT.toml2json;
 var
-  presult: pchar;
+  presult: PChar;
 begin
   if Assigned(to_json) then
   begin
     try
-       presult := to_json(2, pchar(src));  // intype 2 = toml
-       result := string(presult);
-       cstring_free(presult);
+      presult := to_json(2, PChar(src));  // intype 2 = toml
+      Result := string(presult);
+      cstring_free(presult);
     except
-       raise Exception.Create(FErrorMessage);
+      raise Exception.Create(FErrorMessage);
     end;
   end
   else
-    if Loaded then
-       raise Exception.Create('ERROR:: could not get function address for "to_json"')
-    else
-       raise Exception.Create(FErrorMessage);
+  if Loaded then
+    raise Exception.Create('ERROR:: could not get function address for "to_json"')
+  else
+    raise Exception.Create(FErrorMessage);
 end;
 
 
 function TLibJYT.toml2yaml;
 var
-  presult: pchar;
+  presult: PChar;
 begin
   if Assigned(to_yaml) then
   begin
     try
-       presult := to_yaml(2, pchar(src));  // intype 2 = toml
-       result := string(presult);
-       cstring_free(presult);
+      presult := to_yaml(2, PChar(src));  // intype 2 = toml
+      Result := string(presult);
+      cstring_free(presult);
     except
-       raise Exception.Create(FErrorMessage);
+      raise Exception.Create(FErrorMessage);
     end;
   end
   else
-    if Loaded then
-       raise Exception.Create('ERROR:: could not get function address for "to_yaml"')
-    else
-       raise Exception.Create(FErrorMessage);
+  if Loaded then
+    raise Exception.Create('ERROR:: could not get function address for "to_yaml"')
+  else
+    raise Exception.Create(FErrorMessage);
 end;
 
 
 end.
-
