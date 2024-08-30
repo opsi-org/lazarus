@@ -10,7 +10,8 @@ uses
   oslog,
   opsiDynamicLibJYT,
   osjson,
-  osdbasedata;
+  osdbasedata,
+  osd_jyt_convert;
 
 type
 
@@ -328,6 +329,7 @@ begin
       JSONString := Streamer.ObjectToJSONString(aktMeta.productMeta);
       jsonAsObjectAddKeyAndValue(JSONFinalString, 'product', JSONString, JSONFinalString);
       //writeln(pfile, JSONString);
+      {$IFNDEF DARWIN}
       if Assigned(logdatei) then
         logdatei.log('Convert json metadata to toml', LLDebug);
       try
@@ -359,6 +361,17 @@ begin
       Rewrite(pfile);
       writeln(pfile, JSONFinalString);
       CloseFile(pfile);
+    {$ELSE DARWIN}
+      logdatei.log('write json metadata to file', LLDebug);
+      AssignFile(pfile, myfilename + '.json');
+      Rewrite(pfile);
+      writeln(pfile, JSONFinalString);
+      CloseFile(pfile);
+
+      if Assigned(logdatei) then
+        logdatei.log('Convert json metadata file to toml', LLDebug);
+      convertJsonFileToTomlFile(myfilename + '.json', myfilename);
+    {$EndIF DARWIN}
 
     finally
       Streamer.Destroy;
