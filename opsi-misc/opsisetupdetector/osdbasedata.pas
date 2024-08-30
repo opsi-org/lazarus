@@ -938,8 +938,10 @@ end;
 
 procedure TSetupFile.SetSetupFullFileName(const AValue: string);
 begin
+  (*
   if AValue = SetupFullFileName then
     exit;
+    *)
   FsetupFullFileName := AValue;
   FSetupFileNamePath := ExtractFileDir(AValue);
   FsetupFileName := ExtractFileName(AValue);

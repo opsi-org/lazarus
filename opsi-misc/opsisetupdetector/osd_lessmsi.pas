@@ -9,13 +9,15 @@ uses
   oslog,
   LCLType,
   OSProcessux,
+  {$IFDEF WINDOWS}
   Windows,
-  lazutf8,
-  dsiwin32;
+  dsiwin32,
+  {$ENDIF WINDOWS}
+  strutils,
+  lazutf8;
 
 function getInstallDirFromMsi(target: string): string;
-function runLessmsiTable(target: string; table: string;
-  var Outlist: TStringList): boolean;
+function readMsiTable(target: string; table: string; var Outlist: TStringList): boolean;
 
 
 implementation
@@ -28,8 +30,42 @@ var
   myLessmsiDir: string;
 
 
-function runLessmsiTable(target: string; table: string;
+{$IFDEF LINUX}
+  function readMsiTable(target: string; table: string;
   var Outlist: TStringList): boolean;
+var
+  mycommand: string;
+  myexitcode: integer = 0;
+  myreport: string = '';
+  i : integer;
+begin
+  Result := False;
+  //mycommand := '"' + myLessmsi + '" l -t ' + table + ' "' + target + '"';
+  mycommand := 'bash -c ''msiinfo export "' + target + '" '+ table +'''';
+  LogDatei.log('Start: ' + mycommand, LLinfo);
+  //if not FileExists(myLessmsi) then
+  //  LogDatei.log('file not found: ' + myLessmsi, LLerror);
+  if not RunCommandAndCaptureOut(mycommand, True, Outlist, myreport,
+    SW_SHOWDEFAULT, myexitcode, True, 0) then
+  begin
+    LogDatei.log('Failed to analyze: ' + myreport, LLerror);
+    //write_log_and_memo('Failed to analyze: ' + myreport);
+    //mysetup.analyze_progess := 0;
+  end
+  else
+  begin
+    Result := True;
+    // replace tabs by comma in list
+    for i := 0 to Outlist.Count-1 do
+      Outlist[i] :=  Outlist[i].Replace(#9,',');
+    LogDatei.log('msiinfo output by exitcode: ' + IntToStr(myexitcode), LLdebug);
+    LogDatei.log_list(Outlist, LLdebug);
+  end;
+end;
+{$ENDIF LINUX}
+
+{$IFDEF WINDOWS}
+function readMsiTable(target: string; table: string; var Outlist: TStringList): boolean;
 var
   mycommand: string;
   myexitcode: integer = 0;
@@ -54,7 +90,7 @@ begin
     LogDatei.log_list(Outlist, LLdebug);
   end;
 end;
-
+{$ENDIF WINDOWS}
 
 
 function getInstallDirFromMsi(target: string): string;
@@ -62,6 +98,7 @@ var
   instDirMarker, instDirBase, instDirProd, instDirFull: string;
   instDirMarkerLine, dirToken: string;
   resultList: TStringList;
+  resultstr : string;
   InstDirMarkerList: TStringList;
   dirTokenList: TStringList;
   instDirMarkerFound: boolean = False;
@@ -190,26 +227,29 @@ begin
   try
     // Get some data from 'Property'
     myLessMsiOutList.Clear;
-    runLessmsiTable(target, 'Property', myLessMsiOutList);
+    readMsiTable(target, 'Property', myLessMsiOutList);
     resultstr := myLessMsiOutList.Text;
     for i := 0 to myLessMsiOutList.Count - 1 do
     begin
       if myLessMsiOutList[i].StartsWith('ProductName', True) then
       begin
         resultList.Clear;
-        resultList.AddStrings(myLessMsiOutList[i].Split(','));
+        resultstr := myLessMsiOutList[i];
+        resultList.AddStrings(resultstr.Split(','));
         myProductName := resultlist[1];
       end;
       if myLessMsiOutList[i].StartsWith('Manufacturer', True) then
       begin
+        resultstr := myLessMsiOutList[i];
         resultList.Clear;
-        resultList.AddStrings(myLessMsiOutList[i].Split(','));
+        resultList.AddStrings(resultstr.Split(','));
         myManufacturer := resultlist[1];
       end;
       if myLessMsiOutList[i].StartsWith('AI_PACKAGE_TYPE', True) then
       begin
         resultList.Clear;
-        resultList.AddStrings(myLessMsiOutList[i].Split(','));
+        resultstr := myLessMsiOutList[i];
+        resultList.AddStrings(resultstr.Split(','));
         myAi_package_type := resultlist[1];
       end;
     end;
@@ -218,7 +258,7 @@ begin
     // Get instdir from 'Directory'
     myLessMsiOutList.Clear;
     // get content from directory table
-    runLessmsiTable(target, 'Directory', myLessMsiOutList);
+    readMsiTable(target, 'Directory', myLessMsiOutList);
     resultstr := myLessMsiOutList.Text;
     // initialize well known master search strings
     InstDirMarkerList.Add('INSTALLDIR');
@@ -255,7 +295,7 @@ begin
       // Get instdir from 'CustomAction'  SET_APPDIR
       LogDatei.log('Got no Installdir from msi table directory.', LLWarning);
       myLessMsiOutList.Clear;
-      runLessmsiTable(target, 'CustomAction', myLessMsiOutList);
+      readMsiTable(target, 'CustomAction', myLessMsiOutList);
       i := 0;
       if myLessMsiOutList.Count > 0 then
       begin
@@ -266,7 +306,8 @@ begin
           if myLessMsiOutList[i].StartsWith('SET_APPDIR', True) then
           begin
             instDirMarkerFound := True;
-            instDirMarkerLine := myLessMsiOutList[i];
+            resultstr := myLessMsiOutList[i];
+            instDirMarkerLine := resultstr;
           end
           else
             Inc(i);

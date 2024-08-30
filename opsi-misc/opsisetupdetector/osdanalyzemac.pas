@@ -176,7 +176,7 @@ begin
 
   mysetup.installerId := installerId;
   mysetup.link := installerArray[integer(mysetup.installerId)].Link;
-  mysetup.setupFullFileName := myfilename;
+  mysetup.SetSetupFullFileName(myfilename);
   mysetup.installerSourceDir := '%scriptpath%/files' + IntToStr(mysetup.ID);
   mysetup.installCommandLine :=
     'set $installSuccess$ = install_macos_generic($installerSourceDir$ + ' +

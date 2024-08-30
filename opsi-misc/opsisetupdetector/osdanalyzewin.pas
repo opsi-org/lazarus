@@ -12,8 +12,8 @@ uses
   verinfo,
   jwatlhelp32,
   jwawindows,
-  osd_lessmsi,
   {$ENDIF WINDOWS}
+  osd_lessmsi,
   Dialogs,
   LCLType,
   Classes,
@@ -327,6 +327,7 @@ procedure get_msi_info(myfilename: string; var mysetup: TSetupFile;
 var
   mycommand: string;
   myoutlines: TStringList;
+  resultList : TStringList;
   myreport: string;
   myexitcode: integer;
   i: integer;
@@ -351,11 +352,13 @@ begin
   else
   begin
     mysetup.analyze_progess := mysetup.analyze_progess + 10;
+    (*
     if not uninstall_only then
     begin
       mysetup.installerId := stMsi;
-      mysetup.setupFullFileName := myfilename;
+      mysetup.SetSetupFullFileName := myfilename;
     end;
+    *)
     write_log_and_memo('........');
     for i := 0 to myoutlines.Count - 1 do
     begin
@@ -405,19 +408,83 @@ begin
 
     aktproduct.productdata.productversion := trim(mysetup.softwareversion);
 
-    // use lessmsi
-    installdir := getInstallDirFromMsi(myfilename);
-    mysetup.installDirectory:= installdir;
-
-    // guess architecture from installdir
-    if installdir.StartsWith('%ProgramFiles64Dir%') then
-      mysetup.architecture := a64
-    else if installdir.StartsWith('%ProgramFiles32Dir%') then
-      mysetup.architecture := a32;
-
   end;
   myoutlines.Free;
   {$ENDIF WINDOWS}
+
+   {$IFDEF LINUX}
+  myoutlines := TStringList.Create;
+  resultList := TStringList.Create;
+  try
+    if not readMsiTable(myfilename,'Property',myoutlines) then
+    begin
+      write_log_and_memo('Failed to analyze: ' + myfilename);
+      mysetup.analyze_progess := 0;
+    end
+    else
+    begin
+      mysetup.analyze_progess := mysetup.analyze_progess + 10;
+      (*
+      if not uninstall_only then
+      begin
+        mysetup.installerId := stMsi;
+        mysetup.SetSetupFullFileName := myfilename;
+      end;
+      *)
+      LogDatei.log('........', LLDebug);
+      for i := 0 to myoutlines.Count - 1 do
+      begin
+        LogDatei.log(myoutlines.Strings[i], LLDebug);
+        mysetup.analyze_progess := mysetup.analyze_progess + 1;
+        if myoutlines[i].StartsWith('ProductName', True) then
+        begin
+          resultList.Clear;
+          resultList.AddStrings(myoutlines[i].Split(','));
+          mysetup.msiProductName := trim(resultlist[1]);
+          aktProduct.productdata.productName := mysetup.msiProductName;
+        end;
+        if myoutlines[i].StartsWith('ProductVersion', True) then
+        begin
+          resultList.Clear;
+          resultList.AddStrings(myoutlines[i].Split(','));
+          mysetup.SoftwareVersion := trim(resultlist[1]);
+          aktproduct.productdata.productversion := mysetup.softwareversion;
+        end;
+        if myoutlines[i].StartsWith('ProductCode', True) then
+        begin
+          resultList.Clear;
+          resultList.AddStrings(myoutlines[i].Split(','));
+          mysetup.msiId := trim(resultlist[1]);
+        end;
+        if myoutlines[i].StartsWith('UpgradeCode', True) then
+        begin
+          resultList.Clear;
+          resultList.AddStrings(myoutlines[i].Split(','));
+          mysetup.msiUpgradeCode :=  trim(resultlist[1]);
+        end;
+      end;
+
+      // we have an msi, so we use msi uninstall mode
+      // always if installer = msi
+      if mysetup.installerId = stMsi then
+      begin
+        mysetup.msiUninstallCode := true;
+        mysetup.SetSetupFullFileName(myfilename);
+      end
+      // under conditions if it is a msi wrapper exe
+      else if (mysetup.msiId <> '') and
+      (mysetup.msiProductName <> '') or (mysetup.msiUpgradeCode <> '') and
+      myconfiguration.preferMsiUninstall then
+        mysetup.msiUninstallCode := true;
+      LogDatei.log('msiUninstallCode: ' + BoolToStr(mysetup.msiUninstallCode,true), LLNotice);
+    end;
+  finally
+    FreeAndNil(myoutlines);
+    FreeAndNil(resultList);
+  end;
+  {$ENDIF LINUX}
+
+  (*
   {$IFDEF LINUX}
   mycommand := 'bash -c ''msiinfo export "' + myfilename + '" Property''';
   write_log_and_memo(mycommand);
@@ -495,6 +562,19 @@ begin
   end;
   myoutlines.Free;
   {$ENDIF LINUX}
+ *)
+  {$IFNDEF DARWIN}
+    // use lessmsi / msiinfo
+    installdir := getInstallDirFromMsi(myfilename);
+    mysetup.installDirectory:= installdir;
+
+    // guess architecture from installdir
+    if installdir.StartsWith('%ProgramFiles64Dir%') then
+      mysetup.architecture := a64
+    else if installdir.StartsWith('%ProgramFiles32Dir%') then
+      mysetup.architecture := a32;
+  {$ENDIF DARWIN}
+
   if mysetup.msiUninstallCode then
   begin
     if not uninstall_only then
@@ -789,7 +869,7 @@ var
 begin
   write_log_and_memo('Analyzing InstallShield+MSI Setup: ' + myfilename);
   mysetup.installerId := stInstallShieldMSI;
-  mysetup.setupFullFileName := myfilename;
+  mysetup.SetSetupFullFileName(myfilename);
 
   if DirectoryExists(opsitmp) then
     DeleteDirectory(opsitmp, True);

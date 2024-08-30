@@ -30,9 +30,9 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
   oswebservice,
   oscrypt,
   osdmain,
-  {$IFDEF WINDOWS}
+  {$IFNDEF DARWIN}
   osd_lessmsi,
-  {$ENDIF WINDOWS}
+  {$ENDIF DARWIN}
   osdcontrolfile_io,
   osd_md_html_dlg,
   osdmeta,
