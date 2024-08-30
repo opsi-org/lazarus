@@ -484,6 +484,7 @@ type
     procedure OpenDialog1Close(Sender: TObject);
     procedure OpenDialog1FolderChange(Sender: TObject);
     procedure OpenDialog1SelectionChange(Sender: TObject);
+    procedure OpenDialog1Show(Sender: TObject);
     procedure setRunMode;
     procedure BitBtnClose1Click(Sender: TObject);
     procedure BtAnalyzeOnlyClick(Sender: TObject);
@@ -1427,6 +1428,16 @@ begin
   else
     OpenDialog1.Options := [ofEnableSizing, ofViewDetail];
 
+end;
+
+procedure TResultform1.OpenDialog1Show(Sender: TObject);
+begin
+  // the case insensitive trick implemented in the changeFilenameFilter
+  // does not work with macos
+  // but macos is case sensitive - so we choose alway 'any file (*.*)'
+  {$IFDEF DARWIN}
+  OpenDialog1.FilterIndex:= 7;
+  {$ENDIF DARWIN}
 end;
 
 
@@ -3559,14 +3570,14 @@ end;
 // https://www.lazarusforum.de/viewtopic.php?p=116368#p116368
 function ChangeFileNameFilter(sFilter: string): string;
   // Filter-String für Linux die Groß/Kleinschreibung als Filter setzen
-  {$ifdef UNIX}
+  {$ifdef LINUX}
 var
   sl: TStringList;
   s, s2: string;
   i, k: integer;
   {$endif}
 begin
-  {$ifdef UNIX}
+  {$ifdef LINUX}
   // macht aus "*.jpg" ein "*.[jJ][pP][gG]"
   sl := TStringList.Create;
   sl.Delimiter := '|';
@@ -3592,7 +3603,7 @@ begin
   end;
   Result := sl.DelimitedText;
   sl.Free;
-  {$else}// Windows
+  {$else}// Windows / macOs
   Result := sFilter;
   {$endif}
 end;
