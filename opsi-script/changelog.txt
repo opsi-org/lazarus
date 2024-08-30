@@ -2,8 +2,15 @@ todo:
 isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-package-requires-a-reboot-of-my-system
 mac getIpByName liefert name von IPnum
 
+opsi-script (4.12.17.0) unreleased; urgency=medium
 
-opsi-script (4.12.16.0) unreleased/unreleased (4.2/4.3); urgency=medium
+ * [fix] oslog.pas, opsiscript.lpr: include cwstring, clocale (j.werner. !249)
+
+
+-- j.werner <j.werner@uib.de> 30 August 2024
+
+
+opsi-script (4.12.16.0) unreleased/released (4.2/4.3); urgency=medium
 
 * [fix] osparser: tssleep - handling of syntax and runtime errors (m.michaelis, !242)
 * [fix] powershellcall/ExecWith powershell:  approvments in runnning of powershell
