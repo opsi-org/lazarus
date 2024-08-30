@@ -47,6 +47,8 @@ uses
 {$ENDIF WINDOWS}
 {$IFDEF UNIX}
   baseUnix,
+  cwstring,
+  clocale,
 {$ENDIF LINUX}
   //lconvencoding,
   osencoding,

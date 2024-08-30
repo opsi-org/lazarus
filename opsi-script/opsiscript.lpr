@@ -31,6 +31,8 @@ uses //lcltranslator,
  // {$IFDEF UseCThreads}
   cthreads,
  // {$ENDIF}
+  cwstring,
+  clocale,
 {$ENDIF}
   Classes,
   SysUtils,
