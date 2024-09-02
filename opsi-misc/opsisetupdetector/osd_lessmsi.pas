@@ -16,9 +16,10 @@ uses
   strutils,
   lazutf8;
 
+{$IFNDEF DARWIN}
 function getInstallDirFromMsi(target: string): string;
 function readMsiTable(target: string; table: string; var Outlist: TStringList): boolean;
-
+{$ENDIF DARWIN}
 
 implementation
 

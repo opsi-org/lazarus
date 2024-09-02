@@ -13,7 +13,9 @@ uses
   jwatlhelp32,
   jwawindows,
   {$ENDIF WINDOWS}
+  {$IFNDEF DARWIN}
   osd_lessmsi,
+  {$ENDIF DARWIN}
   Dialogs,
   LCLType,
   Classes,
