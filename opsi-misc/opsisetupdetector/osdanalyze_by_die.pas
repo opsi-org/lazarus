@@ -48,7 +48,6 @@ end;
 
 procedure analyze_by_die(myfilename: string; var mysetup: TSetupFile);
 var
-  i: integer;
   dieDetectList: TStringList;
   dieInfoList: TStringList;
   JSONString, JSONArrayElement, valuestr, filetype: string;

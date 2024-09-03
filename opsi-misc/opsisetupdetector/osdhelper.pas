@@ -208,6 +208,7 @@ begin
     end;
   finally
     S.Free;
+    ExitCode := FpcProcess.ExitCode;
     FpcProcess.Free;
     M.Free;
   end;

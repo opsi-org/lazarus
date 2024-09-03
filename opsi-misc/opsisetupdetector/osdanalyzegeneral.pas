@@ -319,10 +319,9 @@ var
   buffer: array [0 .. 2047] of char;
   charsread: int64;
   msg: string;
-  setuptype, dieresult: TKnownInstaller;
+  setuptype: TKnownInstaller;
   progress, lastprogress: int64;
   fileextension: string;
-  dieOutList: TStringList;
 begin
   MinLen := 5;
   MaxLen := 512;

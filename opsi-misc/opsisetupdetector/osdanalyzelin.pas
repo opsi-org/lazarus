@@ -6,26 +6,17 @@ unit osdanalyzeLin;
 interface
 
 uses
-  {$IFDEF WINDOWS}
-  Windows,
-  ShlObj,
-  Registry,
-  verinfo,
-  {$ENDIF WINDOWS}
   Dialogs,
   LCLType,
   Classes,
-  osdhelper,
   Process,
   fileutil,
   lazfileutils,
   SysUtils,
   strutils,
-  fileinfo,
   winpeimagereader,
   oslog,
   osdbasedata,
-  oscheckbinarybitness,
   osdanalyzegeneral,
   osparserhelper;
 
@@ -51,19 +42,10 @@ uses
 procedure get_aktProduct_general_info_lin(installerId: TKnownInstaller;
   myfilename: string; var mysetup: TSetupFile);
 var
-  myoutlines: TStringList;
-  myreport: string;
-  myexitcode: integer;
-  i: integer;
   fsize: int64;
   fsizemb, rsizemb: double;
-  sMsiSize: string;
   sReqSize: string;
   sFileSize: string;
-  sSearch: string;
-  iPos: integer;
-  destDir: string;
-  myArch: string;
   product: string;
   installerstr: string;
   str1: string;

@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, LCLProc, LResources, TypInfo, Forms, Controls, Graphics,
-  Dialogs, StdCtrls,
+  Dialogs,
   strutils,
   {$IFDEF WINDOWS}
   shlobj,
@@ -59,11 +59,11 @@ type
     Fmylocaledir: string;
     Fmylang: string;
     Fmyexitcode: integer;
-    FCreateModeCreateOnly: boolean;
-    FCreateModeBuildPackage: boolean;
-    FCreateModePackageBuilder: boolean;
-    FBuildModebuildOnly: boolean;
-    FBuildModebuildInstall: boolean;
+    //FCreateModeCreateOnly: boolean;
+    //FCreateModeBuildPackage: boolean;
+    //FCreateModePackageBuilder: boolean;
+    //FBuildModebuildOnly: boolean;
+    //FBuildModebuildInstall: boolean;
     FBuildMode: TStrings;
     FBuildModeIndex: integer;
     FBuildModeValue: string;
@@ -353,19 +353,11 @@ default: ["xenial_bionic"]
     Fmultivalue: boolean;
     Feditable: boolean;
     Fdescription: string;
-    //FStrvalues: TStrings;
-    //FStrDefault: TStrings;
     FStrvaluesStr: string;
     FStrDefaultStr: string;
     FBoolDefault: boolean;
-    //FimportMode : boolean;
-    dummystr: string;
   protected
-    // function GetDisplayName: string; override;
-    // public
-    //     procedure Assign(Source: TPersistent); override;
   published
-    //procedure activateImportMode;
     procedure SetValueLines(const AValue: TStrings);
     procedure SetDefaultLines(const AValue: TStrings);
     procedure SetDefaultStr(const AValue: string);
@@ -379,8 +371,6 @@ default: ["xenial_bionic"]
     property Description: string read Fdescription write Fdescription;
     property Multivalue: boolean read Fmultivalue write Fmultivalue;
     property Editable: boolean read Feditable write Feditable;
-    //property StrDefault: TStrings read GetDefaultLines write SetDefaultLines;
-    //property Strvalues: TStrings read GetValueLines write SetValueLines;
     property Default_Values: string read FStrDefaultStr write FStrDefaultStr;
     property Possible_Values: string read FStrvaluesStr write FStrvaluesStr;
     property BoolDefault: boolean read FBoolDefault write FBoolDefault;
@@ -534,7 +524,7 @@ default: ["xenial_bionic"]
     FService_URL: string;
     FService_user: string;
     FService_pass: string;
-    FUseService: boolean;
+   // FUseService: boolean;
     FTemplateChannel: TTemplateChannels;
     FLastProjectFileDir: string;  // last dir from wich we opend a project file
     FLastSetupFileDir: string;  // last dir from wich we opend a setup file
@@ -1239,7 +1229,6 @@ procedure makeProperties;
 var
   //myprop: TStringList;
   myprop: TPProperty;
-  index, i: integer;
   propexists: boolean;
   tmpstrlist: TStringList;
   myrunmode: TRunMode;
@@ -1446,7 +1435,6 @@ var
   Streamer: TJSONStreamer;
   JSONString: string;
   configDir: array[0..MaxPathLen] of char; //Allocate memory
-  configDirUtf8: utf8string;
   pfile: TextFile;
 begin
   try
@@ -1511,10 +1499,6 @@ var
   //Streamer: TJSONStreamer;
   JSONString, JSONObjString: string;
   myfilename: string;
-  configDir: array[0..MaxPathLen] of char; //Allocate memory
-  configDirUtf8: utf8string;
-  configDirstr: string;
-  oldconfigDir, oldconfigFileName, tmpstr: string;
   pfile: TextFile;
   aktproperty: TPProperty;
   i: integer;
@@ -1607,8 +1591,6 @@ end;
 procedure TopsiProduct.readControlFile(filename: string; filter: boolean = False);
 var
   myfilename: string;
-  cfile: TextFile;
-  line: string;
 begin
   try
     if Assigned(logdatei) then
@@ -1861,7 +1843,6 @@ var
   myfilename: string;
   configDir: array[0..MaxPathLen] of char; //Allocate memory
   configDirUtf8: utf8string;
-  configDirstr: string;
   myfile: Text;
   oldconfigDir, oldconfigFileName, tmpstr: string;
   fConfig: Text;
@@ -2011,7 +1992,7 @@ end;
 
 function detectedinno(parent: TClass; markerlist: TStringList): boolean;
 var
-  i1, i2, i3, i4, i5, i6: integer;
+  i1, i2: integer;
 begin
   Result := False;
   markerlist.Sort;
