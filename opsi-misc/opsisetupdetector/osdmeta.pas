@@ -361,9 +361,6 @@ begin
       Rewrite(pfile);
       writeln(pfile, JSONFinalString);
       CloseFile(pfile);
-
-    finally
-    end;
     {$ELSE DARWIN}
       logdatei.log('write json metadata to file', LLDebug);
       AssignFile(pfile, myfilename + '.json');

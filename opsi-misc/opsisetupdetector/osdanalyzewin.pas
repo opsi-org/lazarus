@@ -1435,6 +1435,8 @@ begin
   mysetup.uninstallCheck.Clear;
   cmdStr := 'Get-AppxPackage -AllUsers -Name '+ fullNameStr +' | select -expandProperty PackageFullName';
   mysetup.uninstallCheck.Add('set $UninstallList$ = powershellCall("'+cmdStr+'")');
+  mysetup.uninstallCheck.Add('; remove empty entries');
+  mysetup.uninstallCheck.Add('set $UninstallList$ = removeFromListByMatch("", $UninstallList$)');
   mysetup.uninstallCheck.Add('if count($UninstallList$) int> "0"');
   mysetup.uninstallCheck.Add('	set $MsixAppxPackageName$ = takeString(0,$UninstallList$)');
   mysetup.uninstallCheck.Add('	set $oldProgFound$ = "true"');
@@ -1627,7 +1629,8 @@ begin
     begin
       //MyMessageDlg.wiMessageSized(tmpstr,[mrOk], 950, 740);
       OSD_info.mdContent := tmpstr;
-      OSD_info.ShowModal;
+      if osdsettings.showgui then
+        OSD_info.ShowModal;
     end;
     {$ENDIF OSDGUI}
   end;
