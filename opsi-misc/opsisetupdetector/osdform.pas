@@ -617,8 +617,8 @@ var
   //*****************************************
   firstshowconfigdone: boolean = False;
   productIds: TStringList;
-  designPPI : integer;
-  screenPPI : integer;
+  designPPI: integer;
+  screenPPI: integer;
 
 
 resourcestring
@@ -1436,7 +1436,7 @@ begin
   // does not work with macos
   // but macos is case sensitive - so we choose alway 'any file (*.*)'
   {$IFDEF DARWIN}
-  OpenDialog1.FilterIndex:= 7;
+  OpenDialog1.FilterIndex := 7;
   {$ENDIF DARWIN}
 end;
 
@@ -2681,7 +2681,7 @@ end;
 
 procedure TResultform1.BitBtnRebuildClick(Sender: TObject);
 var
-  buildSuccess : boolean = false;
+  buildSuccess: boolean = False;
 begin
   // reset exitcode before (repeated) build:
   system.ExitCode := 0;
@@ -2691,7 +2691,8 @@ begin
   if not DirectoryExists(myconfiguration.workbench_Path) then
   begin
     //ShowMessage(sErrPacketBaseDirNotFound);
-    OSD_info.mdContent:= '<span style="color:red"> **Failed**  '+sErrPacketBaseDirNotFound+'</span>';
+    OSD_info.mdContent := '<span style="color:red"> **Failed**  ' +
+      sErrPacketBaseDirNotFound + '</span>';
     OSD_info.ShowModal;
   end;
   try
@@ -2702,10 +2703,12 @@ begin
     PanelProcess.Visible := False;
     if (system.ExitCode = 0) and buildSuccess then
       //ShowMessage(rsRebuildFinished)
-      OSD_info.mdContent:= '<span style="color:green"> **OK**  '+rsRebuildFinished+'</span>'
+      OSD_info.mdContent := '<span style="color:green"> **OK**  ' +
+        rsRebuildFinished + '</span>'
     else
-      OSD_info.mdContent:= '<span style="color:red"> **Failed**  '+rsRebuildFailedBuild+'</span>';
-      //ShowMessage(rsRebuildFailedBuild);
+      OSD_info.mdContent := '<span style="color:red"> **Failed**  ' +
+        rsRebuildFailedBuild + '</span>';
+    //ShowMessage(rsRebuildFailedBuild);
 
     OSD_info.ShowModal;
   finally
@@ -2841,7 +2844,8 @@ begin
   begin
     //checkok := False;
     //ShowMessage(sErrPacketBaseDirNotFound);
-    OSD_info.mdContent:= '<span style="color:red"> **Failed**  '+sErrPacketBaseDirNotFound+'</span>';
+    OSD_info.mdContent := '<span style="color:red"> **Failed**  ' +
+      sErrPacketBaseDirNotFound + '</span>';
     OSD_info.ShowModal;
   end;
   try
@@ -2865,14 +2869,16 @@ begin
     procmess;
     PanelProcess.Visible := False;
     if done and (system.ExitCode = 0) then
-      OSD_info.mdContent:= '<span style="color:green"> **OK**  '+sInfoFinished+'</span>'
-      //ShowMessage(sInfoFinished)
+      OSD_info.mdContent := '<span style="color:green"> **OK**  ' + sInfoFinished + '</span>'
+    //ShowMessage(sInfoFinished)
     else if done and (system.ExitCode = 1) then
       //ShowMessage(sInfoFailedBuild)
-      OSD_info.mdContent:= '<span style="color:red"> **Failed**  '+sInfoFailedBuild+'</span>'
+      OSD_info.mdContent := '<span style="color:red"> **Failed**  ' +
+        sInfoFailedBuild + '</span>'
     else
-      OSD_info.mdContent:= '<span style="color:red"> **Failed**  '+sInfoFailedCreate+'</span>';
-      //ShowMessage(sInfoFailedCreate);
+      OSD_info.mdContent := '<span style="color:red"> **Failed**  ' +
+        sInfoFailedCreate + '</span>';
+    //ShowMessage(sInfoFailedCreate);
     OSD_info.ShowModal;
   finally
     PanelProcess.Visible := False;

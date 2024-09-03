@@ -16,14 +16,11 @@ procedure analyze_by_die(myfilename: string; var mysetup: TSetupFile);
 
 implementation
 
-{$IFDEF OSDGUI}
 uses
+  {$IFDEF OSDGUI}
   osdform,
+  {$ENDIF OSDGUI}
   osdmain;
-{$ELSE OSDGUI}
-uses
-  osdmain;
-{$ENDIF OSDGUI}
 
 function die_installer_name_to_osd(valuestr: string): TKnownInstaller;
 begin
@@ -43,7 +40,8 @@ begin
   else if valuestr = 'Windows Installer' then Result := stWixToolset
   else if valuestr = 'Wise Installer' then Result := stWise
   else if valuestr = '' then Result := stUnknown
-  else Result := stDetectedUnknown;
+  else
+    Result := stDetectedUnknown;
 end;
 
 procedure analyze_by_die(myfilename: string; var mysetup: TSetupFile);
@@ -117,12 +115,13 @@ begin
                           previousInstallerId := mysetup.installerId;
                           installerstr := valuestr;
                           mysetup.installerId := die_installer_name_to_osd(installerstr);
-                          mysetup.installerName:= installerstr;
+                          mysetup.installerName := installerstr;
                           // get the installer version
                           jsonAsObjectGetValueByKey(JSONArrayElement,
                             'version', valuestr);
                           mysetup.installerVersion := valuestr;
-                          write_log_and_memo('Detected by die: ' + installerstr + ' version: ' + valuestr);
+                          write_log_and_memo('Detected by die: ' +
+                            installerstr + ' version: ' + valuestr);
                           //LogDatei.log('Detected by die: ' + installerstr + ' version: ' + valuestr, LLnotice);
 
                           // special handlings
@@ -138,7 +137,7 @@ begin
                           if (previousInstallerId <> stUnknown) and
                             (previousInstallerId <> mysetup.installerId) then
                             if (mysetup.installerId = stUnknown) or
-                               (mysetup.installerId = stDetectedUnknown) then
+                              (mysetup.installerId = stDetectedUnknown) then
                             begin
                               LogDatei.log('Fall back to previous detection: ', LLInfo);
                               mysetup.installerId := previousInstallerId;
@@ -168,8 +167,10 @@ begin
                         // we found an Archive
                         // get the installer name
                         jsonAsObjectGetValueByKey(JSONArrayElement, 'name', valuestr);
-                        if valuestr = 'Debian Software package (.DEB)' then mysetup.installerId := stLinDeb
-                        else if valuestr = 'RPM package' then mysetup.installerId := stLinRPM;
+                        if valuestr = 'Debian Software package (.DEB)' then
+                          mysetup.installerId := stLinDeb
+                        else if valuestr = 'RPM package' then
+                          mysetup.installerId := stLinRPM;
                         // get the installer version
                         jsonAsObjectGetValueByKey(JSONArrayElement, 'version', valuestr);
                         mysetup.installerVersion := valuestr;
@@ -188,10 +189,10 @@ begin
 
       // get info
       //write_log_and_memo('Get info with "detect it easy": ' + myfilename);
-      logdatei.log('Get info with "detect it easy": ' + myfilename,LLinfo);
+      logdatei.log('Get info with "detect it easy": ' + myfilename, LLinfo);
       if not runDieInfo(myfilename, dieInfoList) then
         logdatei.log('Failed to getinfo: ' + myfilename, LLwarning);
-      logdatei.log_list(dieInfoList,LLdebug);
+      logdatei.log_list(dieInfoList, LLdebug);
 
 
     except
@@ -210,4 +211,3 @@ end;
 
 
 end.
-

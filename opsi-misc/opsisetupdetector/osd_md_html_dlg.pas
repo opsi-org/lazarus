@@ -33,7 +33,7 @@ type
       const Target, URL: ThtString; var Handled: boolean);
     procedure IpHtmlPanel1HotClick(Sender: TObject);
     *)
-    procedure IpHtmlPanel1HotURL(Sender: TObject; const URL: String);
+    procedure IpHtmlPanel1HotURL(Sender: TObject; const URL: string);
     procedure FormSizeReset;
 
   private
@@ -51,14 +51,11 @@ implementation
 {$R *.lfm}
 
 const
-  CSSDecoration = '<style type="text/css">' + 'code{' +
-    '  color: #A00;' + '}' + 'pre{' +
-    '  background: #f4f4f4;' + '  border: 1px solid #ddd;' +
-    '  border-left: 3px solid #f36d33;' +
-    '  color: #555;' + '  overflow: auto;' +
-    '  padding: 1em 1.5em;' + '  display: block;' +
-    '}' + 'pre code{' +
-    '  color: inherit;' + '}' + '</style>';
+  CSSDecoration = '<style type="text/css">' + 'code{' + '  color: #A00;' +
+    '}' + 'pre{' + '  background: #f4f4f4;' + '  border: 1px solid #ddd;' +
+    '  border-left: 3px solid #f36d33;' + '  color: #555;' +
+    '  overflow: auto;' + '  padding: 1em 1.5em;' + '  display: block;' +
+    '}' + 'pre code{' + '  color: inherit;' + '}' + '</style>';
 
 
 (*
@@ -107,18 +104,19 @@ var
 begin
   HtmlContent := Convert_md_to_html(mdContent);
   try
-    fs := TStringStream.Create( HtmlContent );
+    fs := TStringStream.Create(HtmlContent);
     try
-      pHTML:=TIpHtml.Create; // Beware: Will be freed automatically by IpHtmlPanelDesc
+      pHTML := TIpHtml.Create; // Beware: Will be freed automatically by IpHtmlPanelDesc
       pHTML.LoadFromStream(fs);
     finally
       fs.Free;
     end;
-    IpHtmlPanel1.SetHtml( pHTML );
+    IpHtmlPanel1.SetHtml(pHTML);
     //Caption := IpHtmlPanelAdvice.Title;
   except
-    on E: Exception do begin
-      MessageDlg( 'Error: '+E.Message, mtError, [mbCancel], 0 );
+    on E: Exception do
+    begin
+      MessageDlg('Error: ' + E.Message, mtError, [mbCancel], 0);
     end;
   end;
 end;
@@ -126,11 +124,12 @@ end;
 procedure TOSD_info.IpHtmlPanel1HotClick(Sender: TObject);
 var
   NodeA: TIpHtmlNodeA;
-  URL: String;
+  URL: string;
 begin
-  if IpHtmlPanel1.HotNode is TIpHtmlNodeA then begin
-    NodeA:=TIpHtmlNodeA(IpHtmlPanel1.HotNode);
-    URL:=NodeA.HRef;
+  if IpHtmlPanel1.HotNode is TIpHtmlNodeA then
+  begin
+    NodeA := TIpHtmlNodeA(IpHtmlPanel1.HotNode);
+    URL := NodeA.HRef;
     OpenUrl(URL);
   end;
 end;
@@ -145,7 +144,7 @@ end;
 
 
 
-procedure TOSD_info.IpHtmlPanel1HotURL(Sender: TObject; const URL: String);
+procedure TOSD_info.IpHtmlPanel1HotURL(Sender: TObject; const URL: string);
 begin
   //OpenUrl(URL);
 end;
@@ -173,8 +172,8 @@ end;
 
 procedure TOSD_info.FormSizeReset;
 begin
-  Height:= 375 * round(screen.PixelsPerInch / DesignTimePPI);
-  width := 700 * round(screen.PixelsPerInch / DesignTimePPI);
+  Height := 375 * round(screen.PixelsPerInch / DesignTimePPI);
+  Width := 700 * round(screen.PixelsPerInch / DesignTimePPI);
   Application.ProcessMessages;
 end;
 

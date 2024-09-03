@@ -32,17 +32,17 @@ var
 
 
 {$IFDEF LINUX}
-  function readMsiTable(target: string; table: string;
+function readMsiTable(target: string; table: string;
   var Outlist: TStringList): boolean;
 var
   mycommand: string;
   myexitcode: integer = 0;
   myreport: string = '';
-  i : integer;
+  i: integer;
 begin
   Result := False;
   //mycommand := '"' + myLessmsi + '" l -t ' + table + ' "' + target + '"';
-  mycommand := 'bash -c ''msiinfo export "' + target + '" '+ table +'''';
+  mycommand := 'bash -c ''msiinfo export "' + target + '" ' + table + '''';
   LogDatei.log('Start: ' + mycommand, LLinfo);
   //if not FileExists(myLessmsi) then
   //  LogDatei.log('file not found: ' + myLessmsi, LLerror);
@@ -57,8 +57,8 @@ begin
   begin
     Result := True;
     // replace tabs by comma in list
-    for i := 0 to Outlist.Count-1 do
-      Outlist[i] :=  Outlist[i].Replace(#9,',');
+    for i := 0 to Outlist.Count - 1 do
+      Outlist[i] := Outlist[i].Replace(#9, ',');
     LogDatei.log('msiinfo output by exitcode: ' + IntToStr(myexitcode), LLdebug);
     LogDatei.log_list(Outlist, LLdebug);
   end;
@@ -99,7 +99,7 @@ var
   instDirMarker, instDirBase, instDirProd, instDirFull: string;
   instDirMarkerLine, dirToken: string;
   resultList: TStringList;
-  resultstr : string;
+  resultstr: string;
   InstDirMarkerList: TStringList;
   dirTokenList: TStringList;
   instDirMarkerFound: boolean = False;

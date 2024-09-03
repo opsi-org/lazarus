@@ -30,14 +30,11 @@ procedure AnalyzeLin(FileName: string; var mysetup: TSetupFile; verbose: boolean
 
 implementation
 
-{$IFDEF OSDGUI}
 uses
+  {$IFDEF OSDGUI}
   osdform,
+  {$ENDIF OSDGUI}
   osdmain;
-{$ELSE OSDGUI}
-uses
-  osdmain;
-{$ENDIF OSDGUI}
 
 procedure get_aktProduct_general_info_lin(installerId: TKnownInstaller;
   myfilename: string; var mysetup: TSetupFile);
@@ -49,7 +46,6 @@ var
   product: string;
   installerstr: string;
   str1: string;
-
 begin
   installerstr := installerToInstallerstr(installerId);
   write_log_and_memo('Analyzing ' + installerstr + ' Setup: ' + myfilename);
@@ -164,7 +160,7 @@ begin
   mysetup.installCommandLine :=
     'set $exitcode$ = linuxInstallOneFile($installerSourceDir$ + ' +
     '"/' + mysetup.setupFileName + '") ';
-    {$IFDEF LINUX}
+  {$IFDEF LINUX}
   mysetup.installDirectory := '<none>';
   // product ID
   packageId := getFieldInfoFromRpm(myfilename, 'name');
@@ -334,7 +330,6 @@ procedure AnalyzeLin(FileName: string; var mysetup: TSetupFile; verbose: boolean
 var
   setupType: TKnownInstaller;
   extension, tmpstr: string;
-
 begin
   LogDatei.log('Start Analyze ... ', LLInfo);
   {$IFDEF OSDGUI}

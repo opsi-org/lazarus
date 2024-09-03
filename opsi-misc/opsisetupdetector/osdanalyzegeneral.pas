@@ -5,12 +5,12 @@ unit osdanalyzegeneral;
 interface
 
 uses
-   {$IFDEF WINDOWS}
+  {$IFDEF WINDOWS}
   //Windows,
   //ShlObj,
   //Registry,
   //verinfo,
-   //Graphics,
+  //Graphics,
   // StdCtrls,
   {$ENDIF WINDOWS}
   {$IFDEF OSDGUI}
@@ -47,14 +47,11 @@ function analyze_binary(myfilename: string; verbose, skipzero: boolean;
 
 implementation
 
-{$IFDEF OSDGUI}
 uses
+  {$IFDEF OSDGUI}
   osdform,
+  {$ENDIF OSDGUI}
   osdmain;
-{$ELSE OSDGUI}
-uses
-  osdmain;
-{$ENDIF OSDGUI}
 
 function getPacketIDfromFilename(str: string): string;
 var
@@ -195,7 +192,6 @@ end;
 function analyze_markerlist(var mysetup: TSetupFile): TKnownInstaller;
 var
   i: integer;
-
 begin
   try
     Result := stUnknown;
@@ -216,7 +212,7 @@ begin
           Result := TKnownInstaller(i);
           write_log_and_memo('Detected by osd: ' + installerToInstallerstr(Result));
           //LogDatei.log('Detected: ' + installerToInstallerstr(Result), LLnotice);
-          osdsettings.DetectCount := osdsettings.DetectCount +1;
+          osdsettings.DetectCount := osdsettings.DetectCount + 1;
         end;
       end;
     end;
@@ -261,7 +257,8 @@ var
       begin
         mysetup.markerlist.add(installerArray[integer(instId)].infopatterns[i]);
         LogDatei.log('Infolevel for: ' + installerToInstallerstr(instId) +
-          ' found: ' + LowerCase(installerArray[integer(instId)].infopatterns[i]), LLNotice);
+          ' found: ' + LowerCase(installerArray[integer(instId)].infopatterns[i]),
+          LLNotice);
       end;
     end;
     for i := 0 to installerArray[integer(instId)].notpatterns.Count - 1 do
@@ -271,7 +268,8 @@ var
       begin
         mysetup.markerlist.add(installerArray[integer(instId)].notpatterns[i]);
         LogDatei.log('Against: ' + installerToInstallerstr(instId) +
-          ' found: ' + LowerCase(installerArray[integer(instId)].notpatterns[i]), LLNotice);
+          ' found: ' + LowerCase(installerArray[integer(instId)].notpatterns[i]),
+          LLNotice);
       end;
     end;
   end;

@@ -107,7 +107,8 @@ type
     amSelectable);
 
   // marker for add installers
-  TKnownInstaller = (stMsixAppx, stWise, stQtInstaller, stSetupFactory, stInstallAnywhere,
+  TKnownInstaller = (stMsixAppx, stWise, stQtInstaller, stSetupFactory,
+    stInstallAnywhere,
     stAdvancedInstaller, stInstall4J, stPortableApps,
     stLinRPM, stLinDeb,
     stMacZip, stMacDmg, stMacPKG, stMacApp,
@@ -524,7 +525,7 @@ default: ["xenial_bionic"]
     FService_URL: string;
     FService_user: string;
     FService_pass: string;
-   // FUseService: boolean;
+    // FUseService: boolean;
     FTemplateChannel: TTemplateChannels;
     FLastProjectFileDir: string;  // last dir from wich we opend a project file
     FLastSetupFileDir: string;  // last dir from wich we opend a setup file
@@ -582,8 +583,8 @@ default: ["xenial_bionic"]
       read Fcontrol_in_toml_format write Fcontrol_in_toml_format;
     property dependencies_for_all_actionrequests: boolean
       read Fdependencies_for_all_actionrequests write Fdependencies_for_all_actionrequests;
-    property preferMsiUninstall: boolean
-      read FpreferMsiUninstall write FpreferMsiUninstall;
+    property preferMsiUninstall: boolean read FpreferMsiUninstall
+      write FpreferMsiUninstall;
 
 
 
@@ -716,9 +717,9 @@ resourcestring
     'If true, you need opsi 4.3 (or up) ' + LineEnding +
     'Be careful when creating dependencies for other action requests than "setup"';
   rsPreferMsiUninstall =
-     'If true=prefer uninstall via msi if possible.'  + LineEnding +
-     'Affects Installer that are wrapper around msi,'  + LineEnding +
-     'like installshieldMSI, advanced_installer, wix toolset';
+    'If true=prefer uninstall via msi if possible.' + LineEnding +
+    'Affects Installer that are wrapper around msi,' + LineEnding +
+    'like installshieldMSI, advanced_installer, wix toolset';
   //************************************************
   //info_message_html.Text
   //************************************************
@@ -755,10 +756,10 @@ resourcestring
     LineEnding + '' + LineEnding + 'For example:' + LineEnding +
     '' + LineEnding + '`setup.exe -r "./response.txt"`' + LineEnding +
     '' + LineEnding +
-    'Then you have to add at the top of the generated response file the line:'
-    + LineEnding + '' + LineEnding + '`INSTALLER_UI=silent`' +
-    LineEnding + '' + LineEnding + 'Then run silent by calling:' +
-    LineEnding + '`setup.exe -f "./response.txt"`' + LineEnding;
+    'Then you have to add at the top of the generated response file the line:' +
+    LineEnding + '' + LineEnding + '`INSTALLER_UI=silent`' + LineEnding +
+    '' + LineEnding + 'Then run silent by calling:' + LineEnding +
+    '`setup.exe -f "./response.txt"`' + LineEnding;
   mdInstallerInfo_PortableApps =
     '## This is not a setup program.' + LineEnding +
     'It is a PortableApps Selfextractor.' + LineEnding +
@@ -797,10 +798,10 @@ resourcestring
 implementation
 
 uses
-  osdcontrolfile_io
   {$IFDEF OSDGUI}
-  , osdform
-  {$ENDIF OSDGUI}  ;
+  osdform,
+  {$ENDIF OSDGUI}
+  osdcontrolfile_io;
 
 var
   FileVerInfo: TFileVersionInfo;
@@ -1047,8 +1048,8 @@ begin
   FmsiProductName := '';
   FinstallerSourceDir := '';
   FpreferSilent := myconfiguration.preferSilent;
-  FmsiUpgradeCode:='';
-  FmsiUninstallCode := false; // Do not use msi uninstall code by default
+  FmsiUpgradeCode := '';
+  FmsiUninstallCode := False; // Do not use msi uninstall code by default
 end;
 
 // TPProperty **********************************
@@ -1678,7 +1679,7 @@ begin
   FLasticonFileDir :=
     ExtractFileDir(Application.Params[0]) + PathDelim + 'icons';
   {$ENDIF WINDOWS}
-  FpreferMsiUninstall := true;
+  FpreferMsiUninstall := True;
   //readconfig;
 end;
 

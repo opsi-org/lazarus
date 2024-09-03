@@ -37,7 +37,8 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
   osd_md_html_dlg,
   osdmeta,
   osdanalyze_by_die,
-  osd_detect_it_easy, osd_jyt_convert;
+  osd_detect_it_easy,
+  osd_jyt_convert;
 
 
 (*
@@ -47,8 +48,8 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
 *)
 
 
-{$R *.res}
-//{$R manifest.rc}
+  {$R *.res}
+  //{$R manifest.rc}
 
 
 
@@ -73,6 +74,6 @@ begin
   Application.Initialize;
   Application.DoRun;
   Application.Free;
-{$ENDIF OSDGUI}
+  {$ENDIF OSDGUI}
 
 end.

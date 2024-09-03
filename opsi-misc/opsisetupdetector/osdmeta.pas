@@ -19,7 +19,7 @@ type
   // Meta data structure
   //********************************
 
-  TMeta_os = (windows, linux, macos, os_unknown);
+  TMeta_os = (Windows, linux, macos, os_unknown);
 
   TMeta_os_arch = (x86, x64, arm64, arm, arch_unknown);
 
@@ -36,16 +36,19 @@ type
 
   TMetaProduct = class(TPersistent)
   private
-        FdoNotInstallInBackground: boolean; // True= do not install in background situation
-    FdoNotCheckInstallDirBinaries: boolean; //True= do not use install directories to check for critical processes
-    FProductIconFilePath : string;  // Path to the icon file inside the opsi product base dir
+    FdoNotInstallInBackground: boolean;
+    // True= do not install in background situation
+    FdoNotCheckInstallDirBinaries: boolean;
+    //True= do not use install directories to check for critical processes
+    FProductIconFilePath: string;
+    // Path to the icon file inside the opsi product base dir
   published
     property doNotInstallInBackground: boolean
       read FdoNotInstallInBackground write FdoNotInstallInBackground;
     property doNotCheckInstallDirBinaries: boolean
       read FdoNotCheckInstallDirBinaries write FdoNotCheckInstallDirBinaries;
-    property productIconFilePath: string
-      read FProductIconFilePath write FProductIconFilePath;
+    property productIconFilePath: string read FProductIconFilePath
+      write FProductIconFilePath;
   public
     { public declarations }
     constructor Create;
@@ -72,19 +75,22 @@ type
   private
     Factive: boolean;   // True= this object is in use
     FdoNotInstallInBackground: boolean; // True= do not install in background situation
-    FdoNotCheckInstallDirBinaries: boolean; //True= do not use install directories to check for critical processes
+    FdoNotCheckInstallDirBinaries: boolean;
+    //True= do not use install directories to check for critical processes
     Fpath: string;  // Path to the installer inside the opsi product base dir
     Finstall_dir: string; // target directory where this installer will install to
-    Fother_install_dirs: TStringList; // other directories that should be used to check for critical processes
-    Fprocesses: TStringList;  // List of processes that should be used to check for critical processes
+    Fother_install_dirs: TStringList;
+    // other directories that should be used to check for critical processes
+    Fprocesses: TStringList;
+    // List of processes that should be used to check for critical processes
     FMetaInstallerRequirement: TMetaInstallerRequirement;
-    FRequiredSpaceMB : cardinal; // MB size of the required space to run this installer
+    FRequiredSpaceMB: cardinal; // MB size of the required space to run this installer
 
-    function readProcesses: Tstrings;
-    procedure writeProcesses(val: Tstrings);
+    function readProcesses: TStrings;
+    procedure writeProcesses(val: TStrings);
     procedure addtoProcesses(val: string);
-    function readOtherDirs: Tstrings;
-    procedure writeOtherDirs(val: Tstrings);
+    function readOtherDirs: TStrings;
+    procedure writeOtherDirs(val: TStrings);
     procedure addtoOtherDirs(val: string);
   published
     property doNotInstallInBackground: boolean
@@ -93,9 +99,8 @@ type
       read FdoNotCheckInstallDirBinaries write FdoNotCheckInstallDirBinaries;
     property path: string read Fpath write Fpath;
     property install_dir: string read Finstall_dir write Finstall_dir;
-    property other_install_dirs: TStrings
-      read readOtherDirs write writeOtherDirs;
-    property processes: Tstrings read readProcesses write writeProcesses;
+    property other_install_dirs: TStrings read readOtherDirs write writeOtherDirs;
+    property processes: TStrings read readProcesses write writeProcesses;
     property InstallerRequirement: TMetaInstallerRequirement
       read FMetaInstallerRequirement write FMetaInstallerRequirement;
     property requiredSpaceMB: cardinal read FRequiredSpaceMB write FRequiredSpaceMB;
@@ -193,7 +198,7 @@ begin
   Fpath := '';
   Finstall_dir := '';
   Fother_install_dirs := TStringList.Create;
-  Fprocesses := TStringlist.Create;
+  Fprocesses := TStringList.Create;
   FMetaInstallerRequirement := TMetaInstallerRequirement.Create;
 end;
 
@@ -206,14 +211,14 @@ begin
 end;
 
 
-function TMetaInstaller.readProcesses: Tstrings;
+function TMetaInstaller.readProcesses: TStrings;
 begin
-  result:= TStrings(Fprocesses);
+  Result := TStrings(Fprocesses);
 end;
 
-procedure TMetaInstaller.writeProcesses(val: Tstrings);
+procedure TMetaInstaller.writeProcesses(val: TStrings);
 begin
-  Fprocesses.text := val.Text;
+  Fprocesses.Text := val.Text;
 end;
 
 procedure TMetaInstaller.addtoProcesses(val: string);
@@ -221,14 +226,14 @@ begin
   Fprocesses.add(val);
 end;
 
-function TMetaInstaller.readOtherDirs: Tstrings;
+function TMetaInstaller.readOtherDirs: TStrings;
 begin
-  result:= TStrings(Fother_install_dirs);
+  Result := TStrings(Fother_install_dirs);
 end;
 
-procedure TMetaInstaller.writeOtherDirs(val: Tstrings);
+procedure TMetaInstaller.writeOtherDirs(val: TStrings);
 begin
-  Fother_install_dirs.text := val.Text;
+  Fother_install_dirs.Text := val.Text;
 end;
 
 procedure TMetaInstaller.addtoOtherDirs(val: string);
@@ -327,7 +332,8 @@ begin
         JSONFinalString);
       //writeln(pfile, JSONString);
       JSONString := Streamer.ObjectToJSONString(aktMeta.productMeta);
-      jsonAsObjectAddKeyAndValue(JSONFinalString, 'product', JSONString, JSONFinalString);
+      jsonAsObjectAddKeyAndValue(JSONFinalString, 'product', JSONString,
+        JSONFinalString);
       //writeln(pfile, JSONString);
       {$IFNDEF DARWIN}
       if Assigned(logdatei) then
@@ -351,7 +357,7 @@ begin
         FreeAndNil(lib_jyt);
       end;
       if Assigned(logdatei) then
-      logdatei.log('write toml metadata to file', LLDebug);
+        logdatei.log('write toml metadata to file', LLDebug);
       AssignFile(pfile, myfilename);
       Rewrite(pfile);
       writeln(pfile, TOMLString);
@@ -361,7 +367,7 @@ begin
       Rewrite(pfile);
       writeln(pfile, JSONFinalString);
       CloseFile(pfile);
-    {$ELSE DARWIN}
+      {$ELSE DARWIN}
       logdatei.log('write json metadata to file', LLDebug);
       AssignFile(pfile, myfilename + '.json');
       Rewrite(pfile);
@@ -371,7 +377,7 @@ begin
       if Assigned(logdatei) then
         logdatei.log('Convert json metadata file to toml', LLDebug);
       convertJsonFileToTomlFile(myfilename + '.json', myfilename);
-    {$EndIF DARWIN}
+      {$EndIF DARWIN}
 
     finally
       Streamer.Destroy;
@@ -389,7 +395,7 @@ end;
 
 function aktprodTargetosToMetaOs(targetos: TTargetOS): TMeta_os;
 begin
-  if targetos = oswin then Result := windows
+  if targetos = oswin then Result := Windows
   else if targetos = oslin then Result := linux
   else if targetos = osmac then Result := macos
   else if targetos = osUnknown then Result := os_unknown
@@ -417,10 +423,11 @@ var
 begin
   strlist := TStringList.Create;
   aktMeta.metaspecification.version := '0.1';
-  aktMeta.productMeta.doNotCheckInstallDirBinaries:=false;
-  aktMeta.productMeta.doNotInstallInBackground:=false;
-  aktMeta.productMeta.productIconFilePath:=
-     aktProduct.productdata.productId+ExtractFileExt(aktProduct.productdata.productImageFullFileName);
+  aktMeta.productMeta.doNotCheckInstallDirBinaries := False;
+  aktMeta.productMeta.doNotInstallInBackground := False;
+  aktMeta.productMeta.productIconFilePath :=
+    aktProduct.productdata.productId + ExtractFileExt(
+    aktProduct.productdata.productImageFullFileName);
   for i := 0 to 2 do
   begin
     if aktProduct.SetupFiles[i].active then
@@ -429,7 +436,8 @@ begin
       aktMeta.InstallerMeta[i].Finstall_dir :=
         aktProduct.SetupFiles[i].installDirectory;
       aktMeta.InstallerMeta[i].path :=
-        aktProduct.SetupFiles[i].installerSourceDir + '\' + aktProduct.SetupFiles[i].setupFileName;
+        aktProduct.SetupFiles[i].installerSourceDir + '\' +
+        aktProduct.SetupFiles[i].setupFileName;
 
       (*
       // process test
@@ -445,7 +453,7 @@ begin
         aktprodTargetosToMetaOs(aktProduct.SetupFiles[i].targetOS);
       aktMeta.InstallerMeta[i].FMetaInstallerRequirement.os_arch :=
         aktprodArchitectureToMetaOsArch(aktProduct.SetupFiles[i].architecture);
-      aktMeta.InstallerMeta[i].FRequiredSpaceMB:=aktProduct.SetupFiles[i].requiredSpace;
+      aktMeta.InstallerMeta[i].FRequiredSpaceMB := aktProduct.SetupFiles[i].requiredSpace;
     end;
   end;
   FreeAndNil(strlist);
