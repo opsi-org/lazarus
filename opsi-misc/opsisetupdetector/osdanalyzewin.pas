@@ -84,6 +84,7 @@ var h:tHandle;
     pe:tProcessEntry32;
     sPrcName:string;
 begin
+  LogDatei.log('Try to kill: '+name,LLinfo);
   h:=CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
   try
     pe.dwSize:=SizeOf(pe);
@@ -91,9 +92,13 @@ begin
       while Process32Next(h,pe) do
       begin
         sPrcName:=pe.szExeFile;
+        LogDatei.log('Found process: '+sPrcName,LLdebug);
         if pos(LowerCase(name),LowerCase(sPrcName))>0 then
         begin
-          TerminateProcess(OpenProcess(Process_Terminate, False, pe.th32ProcessID), 0);
+          LogDatei.log('Will kill: '+sPrcName,LLinfo);
+          if TerminateProcess(OpenProcess(Process_Terminate, False, pe.th32ProcessID), 0) then
+            LogDatei.log('Successful killed: '+sPrcName,LLnotice)
+          else LogDatei.log('Kill failed for: '+sPrcName,LLwarning);
         end;
       end;
     end
@@ -858,51 +863,13 @@ begin
 end;
  *)
 
-procedure get_installshieldmsi_info(myfilename: string; var mysetup: TSetupFile);
+function findMsiAndAnalyze(myfilename: string; opsitmp :string; var mysetup: TSetupFile) : boolean;
 var
-  myoutlines: TStringList;
-  myreport: string;
-  myexitcode: integer;
-  myBatch: string;
-  //FileInfo: TSearchRec;
   smask: string;
   mymsilist: TStringList;
   mymsifilename: string;
 begin
-  write_log_and_memo('Analyzing InstallShield+MSI Setup: ' + myfilename);
-  mysetup.installerId := stInstallShieldMSI;
-  mysetup.SetSetupFullFileName(myfilename);
-
-  if DirectoryExists(opsitmp) then
-    DeleteDirectory(opsitmp, True);
-  if not DirectoryExists(opsitmp) then
-    ForceDirectories(opsitmp);
-  if not DirectoryExists(opsitmp) then
-    LogDatei.log('Error: could not create directory: ' + opsitmp, LLError);
-  {$IFDEF WINDOWS}
-  // extract and analyze MSI from setup
-
-  write_log_and_memo('Analyzing MSI from InstallShield Setup ' + myfilename);
-
-  myoutlines := TStringList.Create;
-  // myBatch := 'cmd.exe /C '+ExtractFilePath(paramstr(0))+'extractMSI.cmd "'+myfilename+'"'; // (does not work with spaces in EXE path)
-  myBatch := '"' + ExtractFilePath(ParamStr(0)) + 'utils' + PathDelim +
-    'extractMSI.cmd" "' + myfilename + '"';
-  // dropped cmd.exe
-  write_log_and_memo(myBatch);
-  write_log_and_memo('!! PLEASE WAIT !!');
-  write_log_and_memo('!! PLEASE WAIT !! Extracting and analyzing MSI ...');
-  write_log_and_memo('!! PLEASE WAIT !!');
-
-  if not RunCommandAndCaptureOut(myBatch, True, myoutlines, myreport,
-    SW_SHOWMINIMIZED, myexitcode) then
-  begin
-    LogDatei.log('Failed to to run "' + myBatch + '": ' + myreport, LLWarning);
-  end
-  else
-  begin
-    logdatei.log_list(myoutlines, LLdebug);
-    //stopped := KillProcessbyname(ExtractFileName(myfilename), found);
+  result := false;
     smask := opsitmp + '*.msi';
     LogDatei.log('Looking for: ' + smask, LLInfo);
     try
@@ -931,6 +898,7 @@ begin
 
       if mymsilist.Count > 0 then
       begin
+        result := true;
         if mymsilist.Count > 1 then
         begin
           LogDatei.log('Found multiple msi files: ' + mymsilist.Text, LLWarning);
@@ -953,10 +921,91 @@ begin
     finally
       mymsilist.Free;
     end;
+
+end;
+
+procedure get_installshieldmsi_info(myfilename: string; var mysetup: TSetupFile);
+var
+  myoutlines: TStringList;
+  myreport: string;
+  myexitcode: integer;
+  myBatch: string;
+  msifound : boolean = false;
+
+begin
+  write_log_and_memo('Analyzing InstallShield+MSI Setup: ' + myfilename);
+  mysetup.installerId := stInstallShieldMSI;
+  mysetup.SetSetupFullFileName(myfilename);
+
+  if DirectoryExists(opsitmp) then
+    DeleteDirectory(opsitmp, True);
+  if not DirectoryExists(opsitmp) then
+    ForceDirectories(opsitmp);
+  if not DirectoryExists(opsitmp) then
+    LogDatei.log('Error: could not create directory: ' + opsitmp, LLError);
+  {$IFDEF WINDOWS}
+  // extract and analyze MSI from setup
+
+  write_log_and_memo('Analyzing MSI from InstallShield Setup ' + myfilename);
+  myoutlines := TStringList.Create;
+  try
+
+    (*
+    // call setup with extract and try to find msi
+    myoutlines.Clear;
+    myBatch := '"' + ExtractFilePath(ParamStr(0)) + 'utils' + PathDelim +
+        'extractMSI_by_param" "' + myfilename + '"';
+
+    write_log_and_memo(myBatch);
+    write_log_and_memo('!! PLEASE WAIT !!');
+    write_log_and_memo('!! PLEASE WAIT !! Extracting and analyzing MSI ...');
+    write_log_and_memo('!! PLEASE WAIT !!');
+
+    if not RunCommandAndCaptureOut(myBatch, True, myoutlines, myreport,
+      SW_SHOWMINIMIZED, myexitcode) then
+    begin
+      LogDatei.log('Failed to to run "' + myBatch + '": ' + myreport, LLWarning);
+    end
+    else
+    begin
+      logdatei.log_list(myoutlines, LLdebug);
+      msifound := findMsiAndAnalyze(myfilename, opsitmp, mysetup);
+      KillProcess('testsetup.exe');
+      if DirectoryExists(opsitmp) then
+        DeleteDirectory(opsitmp, True);
+    end;
+    *)
+
+    if not msifound then
+    begin
+      // call setup interactive and try to find msi
+      myoutlines.Clear;
+      myBatch := '"' + ExtractFilePath(ParamStr(0)) + 'utils' + PathDelim +
+        'extractMSI.cmd" "' + myfilename + '"';
+      write_log_and_memo(myBatch);
+      write_log_and_memo('!! PLEASE WAIT !!');
+      write_log_and_memo('!! PLEASE WAIT !! Extracting and analyzing MSI ...');
+      write_log_and_memo('!! PLEASE WAIT !!');
+
+      if not RunCommandAndCaptureOut(myBatch, True, myoutlines, myreport,
+        SW_SHOWMINIMIZED, myexitcode) then
+      begin
+        LogDatei.log('Failed to to run "' + myBatch + '": ' + myreport, LLWarning);
+      end
+      else
+      begin
+        logdatei.log_list(myoutlines, LLdebug);
+        msifound := findMsiAndAnalyze(myfilename, opsitmp, mysetup);
+        KillProcess('testsetup.exe');
+        if DirectoryExists(opsitmp) then
+          DeleteDirectory(opsitmp, True);
+      end;
+    end;
+  finally
     FreeAndNil(myoutlines);
-    KillProcess(ExtractFileName(myfilename));
   end;
   {$ENDIF WINDOWS}
+
   write_log_and_memo('get_InstallShield_info finished');
   write_log_and_memo('InstallShield+MSI Setup detected');
 end;
@@ -1104,9 +1153,8 @@ var
   myCommand: string;
   myreport: string;
   myexitcode : Integer;
-  smask: string;
-  mymsilist: TStringList;
-  mymsifilename: string;
+  msifound : boolean= false;
+
 begin
   write_log_and_memo('Analyzing generic wixtoolset-Setup:');
   mysetup.uninstallProg := 'C:\ProgramData\{<UNKNOWN GUID>}\' +
@@ -1154,6 +1202,11 @@ begin
       extractedFiles.Free;
     end;
 
+    msifound := findMsiAndAnalyze(myfilename, destDir, mysetup);
+    KillProcess('dark.exe');
+    if DirectoryExists(destDir) then
+       DeleteDirectory(destDir, True);
+  (*
     smask := opsitmp + '*.msi';
     LogDatei.log('Looking for: ' + smask, LLInfo);
     try
@@ -1203,7 +1256,7 @@ begin
     finally
       mymsilist.Free;
     end;
-
+   *)
   end;
     {$ENDIF WINDOWS}
   write_log_and_memo('get_wixtoolset_info finished');
@@ -1234,10 +1287,8 @@ var
   myoutlines: TStringList;
   myreport: string;
   myexitcode: integer;
-  smask: string;
-  mymsilist: TStringList;
-  mymsifilename: string;
   temp_exe: string;
+  msifound : boolean = false;
 begin
   write_log_and_memo('Analyzing advancedInstaller:');
   if DirectoryExists(opsitmp) then
@@ -1268,6 +1319,11 @@ begin
   else
   begin
     logdatei.log_list(myoutlines, LLdebug);
+    msifound := findMsiAndAnalyze(myfilename, opsitmp, mysetup);
+    KillProcess(temp_exe);
+    if DirectoryExists(opsitmp) then
+       DeleteDirectory(opsitmp, True);
+    (*
     //stopped := KillProcessbyname(ExtractFileName(myfilename), found);
     smask := opsitmp + '*.msi';
     LogDatei.log('Looking for: ' + smask, LLInfo);
@@ -1320,8 +1376,9 @@ begin
     finally
       mymsilist.Free;
     end;
+    *)
     FreeAndNil(myoutlines);
-    KillProcess(ExtractFileName(myfilename));
+    KillProcess(ExtractFileName(temp_exe));
   end;
   {$ENDIF WINDOWS}
   if not mysetup.msiUninstallCode then
