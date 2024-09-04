@@ -60,6 +60,11 @@ begin
   RequireDerivedFormResource := True;
   Application.Initialize;
   Application.Title := 'opsi-setup-detector';
+  {$IFDEF WINDOWS}
+  // enable the possibility to share the Application window while a video conference
+  // https://forum.lazarus.freepascal.org/index.php?topic=55417.0
+  Application.MainFormOnTaskBar := True;
+  {$ENDIF WINDOWS}
   Application.CreateForm(TresultForm1, resultForm1);
   Application.CreateForm(TFNewDepDlg, FNewDepDlg);
   Application.CreateForm(TFNewPropDlg, FNewPropDlg);

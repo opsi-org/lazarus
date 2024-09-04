@@ -1,7 +1,7 @@
 object FChooseInstallerDlg: TFChooseInstallerDlg
-  Left = 412
+  Left = 413
   Height = 315
-  Top = 169
+  Top = 171
   Width = 338
   Caption = 'opsi-setup-detector'
   ClientHeight = 315

@@ -171,6 +171,7 @@ todo:
 - get_MsixAppx_info: remove empty entries from powershell output at uninstallcheck
 - do not show installer info_message_html if not osdsettings.showgui (breaks automatic tests)
 - osdanalyzewin: use findMsiAndAnalyze in get_installshieldmsi_info, get_wixtoolset_info, get_advancedInstaller_info
+- enable window sharing in video conference (at windows): Application.MainFormOnTaskBar := True;
 
 (Detlef Oertel <d.oertel@uib.de> 2024-08-26)
 
