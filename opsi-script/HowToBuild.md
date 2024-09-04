@@ -12,9 +12,8 @@ In GitLab under `uib/lazarus` go to `Settings -> CI/CD -> Runners` and check tha
     - 30002 (**grun-laz-linux**) on prodnode3
 
 3. Run CI/CD: 
-a) In GitLab under `uib/lazarus` go to `CI/CD -> Pipelines` and choose `Run pipeline` in the upper right corner.  
-b) Select the branch or tag you like to run the pipline on. Set `RUN_PIPLINE` to `true` and set the `BINARY_VERSION` to the version that you want to release.  
-c) Then click `Run pipeline`. After the stage `build` passed click on the stage `binaryindex` to start it (this stage is not executed automatically).
+a) Manually (for testing): In `GitLab`under `uib/lazarus` go to `Build -> Pipelines` (left side panel). Click there on the `blocked` pipline symbole in column "Status" and run the jobs manually or run the jobs manually direct under the column "Stages". 
+b) By tag (for release): Create a tag for opsi-script (e.g. opsi-script_4.12.16.0). Pipline should run automatically.
 
 
 # How to build a new opsi-script package
