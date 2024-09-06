@@ -367,11 +367,11 @@ begin
           instDirFull := instDirFull.Replace('[ProductName]', myProductName);
           instDirFull := instDirFull.Replace('[Manufacturer]', myManufacturer);
           instDirFull := instDirFull.Replace('[ProgramFilesFolder]',
-            '%ProgramFiles32Dir%');
+            '%ProgramFiles32Dir%\');
           instDirFull := instDirFull.Replace('[ProgramFiles32Folder]',
-            '%ProgramFiles32Dir%');
+            '%ProgramFiles32Dir%\');
           instDirFull := instDirFull.Replace('[ProgramFiles64Folder]',
-            '%ProgramFiles64Dir%');
+            '%ProgramFiles64Dir%\');
           LogDatei.log('Installdir is now: ' + instDirFull, LLinfo);
           Result := instDirFull;
           LogDatei.log('Got Installdir from msi via lessmsi: ' + Result, LLnotice);
