@@ -1090,6 +1090,7 @@ var
   packagepath, cmdStr, versionStr, fullNameStr, displayNameStr: string;
   destDir: string;
   xmlLines, nodeLines: TStringList;
+  manifesFileName : string;
 begin
   write_log_and_memo('Analyzing MsixAppx Package:');
   // Analyze
@@ -1107,10 +1108,13 @@ begin
   if UnzipWithDirStruct(myfilename, destDir) then
   begin
     LogDatei.log('Unzipped ' + myfilename + ' to ' + destDir, LLnotice);
-    if fileexists(destDir + DirectorySeparator + 'AppxManifest.xml') then
+    manifesFileName := destDir + DirectorySeparator + 'AppxManifest.xml';
+    if not fileexists(manifesFileName) then
+    // perhaps  a bundle ?
+      manifesFileName := destDir + DirectorySeparator + 'AppxMetadata\AppxBundleManifest.xml';
+    if fileexists(manifesFileName) then
     begin
-      xmlLines := getXMLDocumentElementfromFile(
-        destDir + DirectorySeparator + 'AppxManifest.xml');
+      xmlLines := getXMLDocumentElementfromFile(manifesFileName);
       if xml2GetFirstChildNodeByName(xmlLines, 'Identity', nodeLines) then
       begin
         if getXml2AttributeValueByKey(nodeLines, 'Version', versionStr) then
@@ -1221,6 +1225,14 @@ begin
     write_log_and_memo('Found installer= ' + installerToInstallerstr(setupType));
   end
   else if '.appx' = lowercase(ExtractFileExt(FileName)) then
+  begin
+    mysetup.analyze_progess := 10;
+    setupType := stMsixAppx;
+    get_aktProduct_general_info_win(stMsixAppx, Filename, mysetup);
+    get_MsixAppx_info(FileName, mysetup);
+    write_log_and_memo('Found installer= ' + installerToInstallerstr(setupType));
+  end
+  else if '.appxbundle' = lowercase(ExtractFileExt(FileName)) then
   begin
     mysetup.analyze_progess := 10;
     setupType := stMsixAppx;
