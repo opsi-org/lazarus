@@ -335,6 +335,7 @@ var
   sSearch: string;
   iPos: integer;
   installdir: string;
+  resultList : TStringList;
 begin
   write_log_and_memo('Analyzing MSI: ' + myfilename);
   {$IFDEF WINDOWS}
