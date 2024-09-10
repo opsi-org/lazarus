@@ -1100,13 +1100,15 @@ begin
       aktProduct.writeProjectFileToPath(prodpath);
 
       // write CLIENT_DATA\opsi-meta-data.toml
-      LogDatei.log('Collect meta data', LLnotice);
-      osdmeta.aktProdToAktMeta;
-      LogDatei.log('Write meta data file to path: ' + clientpath, LLnotice);
-      osdmeta.aktMeta.write_product_metadata_ToPath(clientpath);
+      if myconfiguration.writeMetaDataFile then
+      begin
+        LogDatei.log('Collect meta data', LLnotice);
+        osdmeta.aktProdToAktMeta;
+        LogDatei.log('Write meta data file to path: ' + clientpath, LLnotice);
+        osdmeta.aktMeta.write_product_metadata_ToPath(clientpath);
+      end;
 
       Result := True;
-      ;
     except
       on E: Exception do
       begin

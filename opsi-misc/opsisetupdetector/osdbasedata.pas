@@ -43,6 +43,7 @@ type
     analyzeCreateWithUser,
     // analyze one installer and create opsi package with loggedin user
     createTemplateWithUser, // create template for opsi package with loggedin user
+    createWingetProd, // create winget based product
     gmUnknown);
 
   TTemplateChannels = (training, default, structured, custom);
@@ -107,7 +108,9 @@ type
     amSelectable);
 
   // marker for add installers
-  TKnownInstaller = (stMsixAppx, stWise, stQtInstaller, stSetupFactory,
+  TKnownInstaller = (stWinget,stMsixAppx, stWise,
+    stQtInstaller,
+    stSetupFactory,
     stInstallAnywhere,
     stAdvancedInstaller, stInstall4J, stPortableApps,
     stLinRPM, stLinDeb,
@@ -222,6 +225,8 @@ type
     FinstallerSourceDir: string;
     // directory of the installer inside the opsi package (%scriptpath%\files1)
     FpreferSilent: boolean;
+    FwingetId: string;       // productId in winget command
+    FwingetSource: string;       // source in winget command
     procedure SetMarkerlist(const AValue: TStrings);
     procedure SetInfolist(const AValue: TStrings);
     procedure SetUninstallCheck(const AValue: TStrings);
@@ -286,6 +291,9 @@ type
     property installerSourceDir: string read FinstallerSourceDir
       write FinstallerSourceDir;
     property preferSilent: boolean read FpreferSilent write FpreferSilent;
+    property wingetId: string read FwingetId write FwingetId;
+    property wingetSource: string read FwingetSource write FwingetSource;
+
     procedure initValues;
   public
     { public declarations }
@@ -534,6 +542,7 @@ default: ["xenial_bionic"]
     Fdependencies_for_all_actionrequests: boolean;
     // since opsi 4.3 dependecies are allowed for all action requests
     FpreferMsiUninstall: boolean; // true=prefer uninstall via msi if possible
+    FwriteMetaDataFile : boolean;  // true=write opsi-meta-data.toml file
     procedure SetLibraryLines(const AValue: TStrings);
     procedure SetPreInstallLines(const AValue: TStrings);
     procedure SetPostInstallLines(const AValue: TStrings);
@@ -585,6 +594,8 @@ default: ["xenial_bionic"]
       read Fdependencies_for_all_actionrequests write Fdependencies_for_all_actionrequests;
     property preferMsiUninstall: boolean read FpreferMsiUninstall
       write FpreferMsiUninstall;
+    property writeMetaDataFile: boolean read FwriteMetaDataFile
+      write FwriteMetaDataFile;
 
 
 
@@ -720,6 +731,8 @@ resourcestring
     'If true=prefer uninstall via msi if possible.' + LineEnding +
     'Affects Installer that are wrapper around msi,' + LineEnding +
     'like installshieldMSI, advanced_installer, wix toolset';
+  rsWriteMetaDataFile =
+    'If true=write opsi-meta-data.toml file';
   //************************************************
   //info_message_html.Text
   //************************************************
@@ -1050,6 +1063,8 @@ begin
   FpreferSilent := myconfiguration.preferSilent;
   FmsiUpgradeCode := '';
   FmsiUninstallCode := False; // Do not use msi uninstall code by default
+  FwingetSource := '';
+  FwingetId := '';
 end;
 
 // TPProperty **********************************
@@ -1680,6 +1695,7 @@ begin
     ExtractFileDir(Application.Params[0]) + PathDelim + 'icons';
   {$ENDIF WINDOWS}
   FpreferMsiUninstall := True;
+  FwriteMetaDataFile := False;
   //readconfig;
 end;
 
@@ -2279,6 +2295,8 @@ begin
     info_message_html.Text := mdInstallerInfo_Wise;
   with installerArray[integer(stMsixAppx)] do
     info_message_html.Text := mdInstallerInfo_MsixAppx;
+  with installerArray[integer(stWinget)] do
+    info_message_html.Text := '';
   // marker for add installers
 end;
 
@@ -2292,6 +2310,7 @@ begin
 
   // marker for add installers
   knownInstallerList := TStringList.Create;
+  knownInstallerList.Add('Winget');
   knownInstallerList.Add('Msix_Appx');
   knownInstallerList.Add('Wise');
   knownInstallerList.Add('QtInstaller');
@@ -2962,6 +2981,33 @@ begin
     detected := @detectedbypatternwithor;
   end;
 
+  with installerArray[integer(stWinget)] do
+  begin
+    // https://www.advancedinstaller.com/per-machine-msix.html
+    description :=
+      'Winget Package';
+    silentsetup :=
+      'winget install --id "<#wingetId#>" --exact ' +
+      '--source <#wingetSource#> --accept-source-agreements --silent' +
+      '--disable-interactivity --accept-package-agreements';
+    unattendedsetup :=
+      'winget install --id "<#wingetId#>" --exact ' +
+      '--source <#wingetSource#> --accept-source-agreements --silent' +
+      '--disable-interactivity --accept-package-agreements';
+    silentuninstall :=
+      '';
+    unattendeduninstall :=
+      '';
+    uninstall_waitforprocess := '';
+    uninstallProg := '';
+    installErrorHandlingLines.Add('');
+    link :=
+      'https://learn.microsoft.com/en-us/windows/package-manager/winget/';
+    comment := '';
+    uib_exitcode_function := 'isGenericExitcodeFatal';
+    detected := @detectedbypatternwithor;
+  end;
+
   // marker for add installers
   reload_installer_info_messages;
 
@@ -2982,6 +3028,7 @@ begin
 
 
   FileVerInfo := TFileVersionInfo.Create(nil);
+
 
 try
   FileVerInfo.FileName := ParamStr(0);

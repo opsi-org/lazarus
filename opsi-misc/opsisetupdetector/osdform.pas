@@ -47,7 +47,7 @@ uses
   osmessagedialog,
   oswebservice,
   osdmain,
-  osd_md_html_dlg;
+  osd_md_html_dlg, Types;
 
 type
   TIconDisplay = class(TPersistent)
@@ -63,7 +63,11 @@ type
   { TResultform1 }
 
   TResultform1 = class(TForm)
+    BitBtnChooseInstDir4: TBitBtn;
+    BitBtnChooseTargetProg4: TBitBtn;
+    BitBtnChooseUninstFile4: TBitBtn;
     BitBtnImportControl: TBitBtn;
+    BitBtnOpenMst4: TBitBtn;
     BitBtnRebuild: TBitBtn;
     BitBtnAddDep: TBitBtn;
     BitBtnChooseInstDir2: TBitBtn;
@@ -84,6 +88,7 @@ type
     BtCreateEmptyTemplateMac: TBitBtn;
     BtCreateEmptyTemplateMulti: TBitBtn;
     BtCreateEmptyTemplateWin: TBitBtn;
+    BtCreateWingetPackage: TBitBtn;
     BtCreateEmptyTemplateWithUserWin: TBitBtn;
     BtCreateMeta: TBitBtn;
     BtnOpenIconFolder: TBitBtn;
@@ -104,6 +109,7 @@ type
     BitBtnOpenMst1: TBitBtn;
     BitBtnOpenMst2: TBitBtn;
     BtSetup3NextStep: TBitBtn;
+    BtWingetNextStep: TBitBtn;
     BtSingleAnalyzeAndCreateLin: TBitBtn;
     BtSingleAnalyzeAndCreateMac: TBitBtn;
     BtSingleAnalyzeAndCreateMulti: TBitBtn;
@@ -131,7 +137,12 @@ type
     FlowPanel24: TFlowPanel;
     FlowPanel25: TFlowPanel;
     FlowPanel26: TFlowPanel;
+    FlowPanel27: TFlowPanel;
+    FlowPanel28: TFlowPanel;
+    FlowPanel29: TFlowPanel;
     FlowPanel3: TFlowPanel;
+    FlowPanel30: TFlowPanel;
+    FlowPanel31: TFlowPanel;
     FlowPanel4: TFlowPanel;
     FlowPanel6: TFlowPanel;
     FlowPanel8: TFlowPanel;
@@ -142,8 +153,10 @@ type
     FlowPanelMacosTitle: TFlowPanel;
     FlowPanelMsiId1: TFlowPanel;
     FlowPanelMsiId2: TFlowPanel;
+    FlowPanelMsiId3: TFlowPanel;
     FlowPanelMST1: TFlowPanel;
     FlowPanelMST2: TFlowPanel;
+    FlowPanelMST3: TFlowPanel;
     FlowPanelOsIndendentTitle: TFlowPanel;
     FlowPanelSetup32: TFlowPanel;
     FlowPanelMST: TFlowPanel;
@@ -162,6 +175,10 @@ type
     FlowPanelSetup41: TFlowPanel;
     FlowPanelSetup42: TFlowPanel;
     FlowPanelSetup43: TFlowPanel;
+    FlowPanelSetup44: TFlowPanel;
+    FlowPanelSetup45: TFlowPanel;
+    FlowPanelSetup46: TFlowPanel;
+    FlowPanelSetup47: TFlowPanel;
     FlowPanelWindowsTitle: TFlowPanel;
     GroupBox2: TGroupBox;
     Image1: TImage;
@@ -181,6 +198,21 @@ type
     Label103: TLabel;
     Label104: TLabel;
     Label105: TLabel;
+    Label106: TLabel;
+    Label107: TLabel;
+    Label108: TLabel;
+    Label109: TLabel;
+    Label110: TLabel;
+    Label111: TLabel;
+    Label112: TLabel;
+    Label113: TLabel;
+    Label114: TLabel;
+    Label115: TLabel;
+    Label116: TLabel;
+    Label117: TLabel;
+    Label118: TLabel;
+    Label119: TLabel;
+    Label120: TLabel;
     Label2: TLabel;
     Label3: TLabel;
     Label4: TLabel;
@@ -273,6 +305,7 @@ type
     Panel17: TPanel;
     Panel18: TPanel;
     Panel19: TPanel;
+    Panel20: TPanel;
     PanelChannel: TPanel;
     SpeedButtonHelpMain: TSpeedButton;
     SpeedButtonHelpAnalyze: TSpeedButton;
@@ -283,11 +316,13 @@ type
     SpeedButtonHelpCreate: TSpeedButton;
     SpeedButtonHelpSetup2: TSpeedButton;
     SpeedButtonHelpSetup3: TSpeedButton;
+    SpeedButtonHelpSetup4: TSpeedButton;
     SpeedButtonHelpStartOSIndep: TSpeedButton;
     SpeedButtonHelpStartWin: TSpeedButton;
     SpeedButtonHelpStartLin: TSpeedButton;
     SpeedButtonHelpStartMac: TSpeedButton;
     SpeedButtonHelpStartMulti: TSpeedButton;
+    TabSheetWinget: TTabSheet;
     TaskPanelMulti: TPanel;
     TaskPanelMac: TPanel;
     PanelDepBtns: TPanel;
@@ -335,6 +370,8 @@ type
     TabSheetAnalyze: TTabSheet;
     TICheckBoxCustomdir: TTICheckBox;
     TICheckBoxCustomizeProfile: TTICheckBox;
+    TICheckBoxS4Mst: TTICheckBox;
+    TICheckBoxS4Silent: TTICheckBox;
     TICheckBoxUninstallBefore: TTICheckBox;
     TICheckBoxDesktopIcon: TTICheckBox;
     TICheckBoxHandleLiceneKey: TTICheckBox;
@@ -348,19 +385,31 @@ type
     TIComboBoxChannel: TTIComboBox;
     TIEditInstallDir2: TTIEdit;
     TIEditInstallDir3: TTIEdit;
+    TIEditInstallDir4: TTIEdit;
     TIEditMsiId2: TTIEdit;
     TIEditMsiId3: TTIEdit;
+    TIEditMsiId4: TTIEdit;
+    TIEditMsiName4: TTIEdit;
     TIEditMsiUpCode1: TTIEdit;
     TIEditMsiName1: TTIEdit;
     TIEditMsiName2: TTIEdit;
     TIEditMsiName3: TTIEdit;
     TIEditMsiUpCode2: TTIEdit;
     TIEditMsiUpCode3: TTIEdit;
+    TIEditMsiUpCode4: TTIEdit;
     TIEditMstFile2: TTIEdit;
     TIEditMstFile3: TTIEdit;
+    TIEditMstFile4: TTIEdit;
+    TIEditRequiredSizeMB4: TTIEdit;
     TIEditSetup1TargetProgram: TTIEdit;
+    TIEditSetup4Command: TTIEdit;
     TIEditSetup3TargetProgram: TTIEdit;
     TIEditSetup2TargetProgram: TTIEdit;
+    TIEditSetup4TargetProgram: TTIEdit;
+    TIEditSetup4UnCommand: TTIEdit;
+    TIEditSetup4UnProgram: TTIEdit;
+    TIEditSetupfile4: TTIEdit;
+    TIEditSetupFileSizeMB4: TTIEdit;
     TIEditSoftVersion1: TTIEdit;
     TIEditMsiId1: TTIEdit;
     TIEditSoftVersion2: TTIEdit;
@@ -382,6 +431,7 @@ type
     TIEditSetup1Command: TTIEdit;
     TIEditSetupfile3: TTIEdit;
     TIEditSetupFileSizeMB3: TTIEdit;
+    TIEditSoftVersion4: TTIEdit;
     TIEditworkbenchpath: TTIEdit;
     TIEditSetupFileSizeMB1: TTIEdit;
     TIEditRequiredSizeMB1: TTIEdit;
@@ -395,6 +445,7 @@ type
     TILabelDirSelIcon: TTILabel;
     TILabelInstaller2: TTILabel;
     TILabelInstaller3: TTILabel;
+    TILabelInstaller4: TTILabel;
     TIMemoAdvice: TTIMemo;
     TIMemoDesc: TTIMemo;
     TimerFirstconfig: TTimer;
@@ -404,11 +455,13 @@ type
     TIS1Url: TTILabel;
     TIS2Url: TTILabel;
     TIS3Url: TTILabel;
+    TIS4Url: TTILabel;
     TISpinEditPrio: TTISpinEdit;
     TISpinEditPackageVers: TTISpinEdit;
     TITrackBarPrio: TTITrackBar;
     ToolBar1: TToolBar;
     mysetup1: TSetupFile;
+    TreeView1: TTreeView;
 
     procedure BitBtnAddDepClick(Sender: TObject);
     procedure BitBtnAddPropClick(Sender: TObject);
@@ -442,6 +495,7 @@ type
     procedure BtCreateEmptyTemplateMacClick(Sender: TObject);
     procedure BtCreateMetaClick(Sender: TObject);
     procedure BtCreateProductClick(Sender: TObject);
+    procedure BtCreateWingetPackageClick(Sender: TObject);
     procedure BtnIconsNextStepClick(Sender: TObject);
     procedure BtProduct1NextStepClick(Sender: TObject);
     procedure BtProduct2NextStepClick(Sender: TObject);
@@ -454,6 +508,7 @@ type
     procedure BtSingleAnalyzeAndCreateWinClick(Sender: TObject);
     procedure BtnOpenIconFolderClick(Sender: TObject);
     procedure BtSingleAnalyzeAndCreateWithUserClick(Sender: TObject);
+    procedure BtWingetNextStepClick(Sender: TObject);
     procedure CheckBoxDefaultIconChange(Sender: TObject);
     procedure CheckBoxNoIconChange(Sender: TObject);
     procedure FlowPanel14Click(Sender: TObject);
@@ -521,6 +576,9 @@ type
     procedure TabSheetSetup3Enter(Sender: TObject);
     procedure TabSheetStartExit(Sender: TObject);
     procedure CallMakeProperties(Sender: TObject);
+    procedure TabSheetShow(Sender: TObject);
+    procedure TabSheetWingetContextPopup(Sender: TObject; MousePos: TPoint;
+      var Handled: Boolean);
     procedure TaskPanelWinClick(Sender: TObject);
     procedure TICheckBoxlicenseRequiredChange(Sender: TObject);
     procedure TICheckBoxS1MstChange(Sender: TObject);
@@ -554,6 +612,7 @@ type
     procedure showCheckEntriesWarning;
     function showCompleteDirDlg: boolean;
     procedure showMacOS2StepSelectionDLG;
+    procedure TreeView1Click(Sender: TObject);
     procedure updateGUI;
   private
     { private declarations }
@@ -760,6 +819,7 @@ begin
       TILabelInstaller1.Link.SetObjectAndProperty(SetupFiles[0], 'installerid');
       TILabelInstaller2.Link.SetObjectAndProperty(SetupFiles[1], 'installerid');
       TILabelInstaller3.Link.SetObjectAndProperty(SetupFiles[2], 'installerid');
+      TILabelInstaller4.Link.SetObjectAndProperty(SetupFiles[0], 'installerid');
       TIEditSetupfile1.Link.SetObjectAndProperty(SetupFiles[0], 'setupFullFileName');
       TIEditSetupFile2.Link.SetObjectAndProperty(SetupFiles[1], 'setupFullFileName');
       TIEditSetupFile3.Link.SetObjectAndProperty(SetupFiles[2], 'setupFullFileName');
@@ -772,32 +832,41 @@ begin
       TIEditMsiId1.Link.SetObjectAndProperty(SetupFiles[0], 'msiId');
       TIEditMsiId2.Link.SetObjectAndProperty(SetupFiles[1], 'msiId');
       TIEditMsiId3.Link.SetObjectAndProperty(SetupFiles[2], 'msiId');
+      TIEditMsiId4.Link.SetObjectAndProperty(SetupFiles[0], 'wingetId');
       TIEditMsiName1.Link.SetObjectAndProperty(SetupFiles[0], 'msiProductName');
       TIEditMsiName2.Link.SetObjectAndProperty(SetupFiles[1], 'msiProductName');
       TIEditMsiName3.Link.SetObjectAndProperty(SetupFiles[2], 'msiProductName');
+      TIEditMsiName4.Link.SetObjectAndProperty(SetupFiles[0], 'wingetSource');
       TIEditMsiUpCode1.Link.SetObjectAndProperty(SetupFiles[0], 'msiUpgradeCode');
       TIEditMsiUpCode2.Link.SetObjectAndProperty(SetupFiles[1], 'msiUpgradeCode');
       TIEditMsiUpCode3.Link.SetObjectAndProperty(SetupFiles[2], 'msiUpgradeCode');
       TIEditSoftVersion1.Link.SetObjectAndProperty(SetupFiles[0], 'SoftwareVersion');
       TIEditSoftVersion2.Link.SetObjectAndProperty(SetupFiles[1], 'SoftwareVersion');
       TIEditSoftVersion3.Link.SetObjectAndProperty(SetupFiles[2], 'SoftwareVersion');
+      TIEditSoftVersion4.Link.SetObjectAndProperty(SetupFiles[0], 'SoftwareVersion');
       TIEditSetupFileSizeMB1.Link.SetObjectAndProperty(SetupFiles[0], 'setupFileSize');
       TIEditSetupFileSizeMB2.Link.SetObjectAndProperty(SetupFiles[1], 'setupFileSize');
       TIEditSetupFileSizeMB3.Link.SetObjectAndProperty(SetupFiles[2], 'setupFileSize');
+      TIEditSetupFileSizeMB4.Link.SetObjectAndProperty(SetupFiles[0], 'setupFileSize');
       TIEditRequiredSizeMB1.Link.SetObjectAndProperty(SetupFiles[0], 'requiredSpace');
       TIEditRequiredSizeMB2.Link.SetObjectAndProperty(SetupFiles[1], 'requiredSpace');
       TIEditRequiredSizeMB3.Link.SetObjectAndProperty(SetupFiles[2], 'requiredSpace');
+      TIEditRequiredSizeMB4.Link.SetObjectAndProperty(SetupFiles[0], 'requiredSpace');
       TIEditInstallDir1.Link.SetObjectAndProperty(SetupFiles[0], 'installDirectory');
       TIEditInstallDir2.Link.SetObjectAndProperty(SetupFiles[1], 'installDirectory');
       TIEditInstallDir3.Link.SetObjectAndProperty(SetupFiles[2], 'installDirectory');
+      TIEditInstallDir4.Link.SetObjectAndProperty(SetupFiles[0], 'installDirectory');
       TIEditSetup1Command.Link.SetObjectAndProperty(SetupFiles[0], 'installCommandLine');
       TIEditSetup2Command.Link.SetObjectAndProperty(SetupFiles[1], 'installCommandLine');
       TIEditSetup3Command.Link.SetObjectAndProperty(SetupFiles[2], 'installCommandLine');
+      TIEditSetup4Command.Link.SetObjectAndProperty(SetupFiles[0], 'installCommandLine');
       TIEditSetup1UnCommand.Link.SetObjectAndProperty(SetupFiles[0],
         'uninstallCommandLine');
       TIEditSetup2UnCommand.Link.SetObjectAndProperty(SetupFiles[1],
         'uninstallCommandLine');
       TIEditSetup3UnCommand.Link.SetObjectAndProperty(SetupFiles[2],
+        'uninstallCommandLine');
+      TIEditSetup4UnCommand.Link.SetObjectAndProperty(SetupFiles[0],
         'uninstallCommandLine');
       TIEditSetup1UnProgram.Link.SetObjectAndProperty(SetupFiles[0], 'uninstallProg');
       TIEditSetup2UnProgram.Link.SetObjectAndProperty(SetupFiles[1], 'uninstallProg');
@@ -805,12 +874,15 @@ begin
       TIEditSetup1TargetProgram.Link.SetObjectAndProperty(SetupFiles[0], 'targetProg');
       TIEditSetup2TargetProgram.Link.SetObjectAndProperty(SetupFiles[1], 'targetProg');
       TIEditSetup3TargetProgram.Link.SetObjectAndProperty(SetupFiles[2], 'targetProg');
+      TIEditSetup4TargetProgram.Link.SetObjectAndProperty(SetupFiles[0], 'targetProg');
       TIS1Url.Link.SetObjectAndProperty(SetupFiles[0], 'link');
       TIS2Url.Link.SetObjectAndProperty(SetupFiles[1], 'link');
       TIS3Url.Link.SetObjectAndProperty(SetupFiles[2], 'link');
+      TIS4Url.Link.SetObjectAndProperty(SetupFiles[0], 'link');
       TICheckBoxS1Silent.Link.SetObjectAndProperty(SetupFiles[0], 'preferSilent');
       TICheckBoxS2Silent.Link.SetObjectAndProperty(SetupFiles[1], 'preferSilent');
       TICheckBoxS3Silent.Link.SetObjectAndProperty(SetupFiles[2], 'preferSilent');
+      TICheckBoxS4Silent.Link.SetObjectAndProperty(SetupFiles[0], 'preferSilent');
       // product
       TIEditProdVersion3.Link.SetObjectAndProperty(productdata, 'productVersion');
       TISpinEditPackageVers.Link.SetObjectAndProperty(productdata, 'packageVersion');
@@ -979,6 +1051,8 @@ begin
     TabSheetCreate.Enabled := True;
     // the buttons
     BtSetup1NextStep.Enabled := True;
+    // treeview
+    TreeView1.Select(TreeView1.Items[0]);
     Application.ProcessMessages;
   end;
   LogDatei.log('Finished resetGUI ... ', LLInfo);
@@ -1767,6 +1841,43 @@ begin
     aktProduct.SetupFiles[0].active := True;
     Analyze(OpenDialog1.FileName, aktProduct.SetupFiles[0], True);
     SetTICheckBoxesMST(aktProduct.SetupFiles[0].installerId);
+  end;
+end;
+
+procedure TResultform1.BtWingetNextStepClick(Sender: TObject);
+var
+  checkok: boolean = True;
+begin
+  if ((aktProduct.SetupFiles[0].installDirectory = '') or
+    (aktProduct.SetupFiles[0].installDirectory = 'unknown')) and
+    (aktProduct.SetupFiles[0].installerId <> stMsi) and
+    (aktProduct.SetupFiles[0].targetOS = osWin) then
+  begin
+    // checkok := False;
+    // we warn here only
+    ShowMessage(sWarnInstalldirUnknown);
+  end;
+  if checkok then
+  begin
+
+    case osdsettings.runmode of
+      analyzeOnly, singleAnalyzeCreate, analyzeCreateWithUser,
+      twoAnalyzeCreate_2,
+      createTemplate,
+      createTemplateWithUser,
+      createMeta, gmUnknown,
+      threeAnalyzeCreate_3:
+      begin
+        // we should never be here
+        logdatei.log('Error: in BtWingetNextStepClick RunMode:' +
+          GetEnumName(TypeInfo(TRunMode), Ord(osdsettings.runmode)), LLError);
+      end;
+      createWingetProd:
+      begin
+        PageControl1.ActivePage := resultForm1.TabSheetProduct;
+        Application.ProcessMessages;
+      end;
+    end;
   end;
 end;
 
@@ -2905,6 +3016,27 @@ begin
   logdatei.log('Finished BtCreateProductClick', LLDebug2);
 end;
 
+procedure TResultform1.BtCreateWingetPackageClick(Sender: TObject);
+begin
+  resetGUI;
+  osdsettings.runmode := createWingetProd;
+  setRunMode;
+  MemoAnalyze.Clear;
+  PageControl1.ActivePage := resultForm1.TabSheetWinget;
+  Application.ProcessMessages;
+  initaktproduct;
+  makeProperties;
+  resultform1.updateGUI;
+  aktProduct.SetupFiles[0].active:=true;
+  aktProduct.SetupFiles[0].installerId:= stWinget;
+  aktProduct.productdata.targetOSset := [osWin];
+  aktProduct.productdata.productId := '';
+  aktProduct.productdata.productName := '';
+  aktProduct.productdata.productversion := '1.0.0';
+  aktProduct.productdata.packageversion := 1;
+  aktProduct.productdata.description := 'winget';
+end;
+
 procedure TResultform1.BtnIconsNextStepClick(Sender: TObject);
 begin
   case osdsettings.runmode of
@@ -3435,6 +3567,7 @@ end;
 procedure TResultform1.PageControl1Change(Sender: TObject);
 var
   myimage: TImage;
+  pageIndex : integer;
 begin
   if FileExists(aktProduct.productdata.productImageFullFileName) then
   begin
@@ -3443,7 +3576,8 @@ begin
     PaintPreview(myimage);
     FreeAndNil(myimage);
   end;
-
+  pageIndex := PageControl1.ActivePageIndex;
+  TreeView1.Select(TreeView1.Items[pageIndex]);
 end;
 
 procedure TResultform1.PanelDefaultClick(Sender: TObject);
@@ -3571,6 +3705,14 @@ begin
       Free;
     end;
   end;
+end;
+
+procedure TResultform1.TreeView1Click(Sender: TObject);
+var
+  index : integer;
+begin
+  index := TTreeview(Sender).Selected.SelectedIndex;
+  PageControl1.ActivePageIndex:= index;
 end;
 
 // https://www.lazarusforum.de/viewtopic.php?p=116368#p116368
@@ -3729,6 +3871,8 @@ begin
   OpenDialogSetupfile.Filter := ChangeFileNameFilter(OpenDialogSetupfile.Filter);
   OpenDialog1.Filter := ChangeFileNameFilter(OpenDialog1.Filter);
   //{$endif}
+  TreeView1.Select(TreeView1.Items[0]);
+  PageControl1.ActivePageIndex:=0;
   LogDatei.log('Finished FormCreate ', LLInfo);
 end;
 
@@ -3944,6 +4088,7 @@ end;
 procedure TResultform1.TabSheetCreateShow(Sender: TObject);
 begin
   checkWorkbench;
+  TabSheetShow(Sender);
 end;
 
 procedure TResultform1.TabSheetIconsShow(Sender: TObject);
@@ -3978,6 +4123,20 @@ procedure TResultform1.CallMakeProperties(Sender: TObject);
 begin
   makeProperties;
   resultform1.updateGUI;
+end;
+
+procedure TResultform1.TabSheetShow(Sender: TObject);
+var
+  pageindex : integer;
+begin
+  pageIndex := PageControl1.ActivePageIndex;
+  TreeView1.Select(TreeView1.Items[pageIndex]);
+end;
+
+procedure TResultform1.TabSheetWingetContextPopup(Sender: TObject;
+  MousePos: TPoint; var Handled: Boolean);
+begin
+
 end;
 
 procedure TResultform1.TaskPanelWinClick(Sender: TObject);

@@ -362,11 +362,13 @@ begin
       Rewrite(pfile);
       writeln(pfile, TOMLString);
       CloseFile(pfile);
+      (*
       logdatei.log('write json metadata to file', LLDebug);
       AssignFile(pfile, myfilename + '.json');
       Rewrite(pfile);
       writeln(pfile, JSONFinalString);
       CloseFile(pfile);
+      *)
       {$ELSE DARWIN}
       logdatei.log('write json metadata to file', LLDebug);
       AssignFile(pfile, myfilename + '.json');
@@ -377,6 +379,7 @@ begin
       if Assigned(logdatei) then
         logdatei.log('Convert json metadata file to toml', LLDebug);
       convertJsonFileToTomlFile(myfilename + '.json', myfilename);
+      DeleteFile((myfilename + '.json');
       {$EndIF DARWIN}
 
     finally
