@@ -1,7 +1,7 @@
 object CentralForm: TCentralForm
-  Left = 570
+  Left = 572
   Height = 541
-  Top = 249
+  Top = 251
   Width = 1084
   HorzScrollBar.Range = 519
   HorzScrollBar.Visible = False
@@ -20,7 +20,7 @@ object CentralForm: TCentralForm
   OnCreate = FormCreate
   OnWindowStateChange = FormWindowStateChange
   Position = poScreenCenter
-  LCLVersion = '3.0.0.3'
+  LCLVersion = '3.4.0.0'
   object LabelWinstVersion: TLabel
     Left = 177
     Height = 9
