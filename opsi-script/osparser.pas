@@ -11600,6 +11600,9 @@ begin
         end
         else
         begin
+          // fix: avoid output with one empty element at powershell
+          if (output.Count = 1) and (output[0] = '') and (useext = '.ps1') then
+           output.Delete(0);
 
           LogDatei.log('', LLDebug + logleveloffset);
           LogDatei.log('output:', LLDebug + logleveloffset);
