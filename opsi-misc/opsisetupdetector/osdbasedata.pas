@@ -2995,9 +2995,13 @@ begin
       '--source <#wingetSource#> --accept-source-agreements --silent' +
       '--disable-interactivity --accept-package-agreements';
     silentuninstall :=
-      '';
+      'winget uninstall --id "<#wingetId#>" --exact ' +
+      '--source <#wingetSource#> --accept-source-agreements --silent' +
+      '--disable-interactivity --accept-package-agreements';   ;
     unattendeduninstall :=
-      '';
+      'winget uninstall --id "<#wingetId#>" --exact ' +
+      '--source <#wingetSource#> --accept-source-agreements --silent' +
+      '--disable-interactivity --accept-package-agreements';   ;
     uninstall_waitforprocess := '';
     uninstallProg := '';
     installErrorHandlingLines.Add('');
