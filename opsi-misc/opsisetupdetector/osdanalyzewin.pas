@@ -1194,6 +1194,40 @@ begin
   write_log_and_memo('get_MsixAppx_info finished');
 end;
 
+procedure get_winget_info(myfilename: string; var mysetup: TSetupFile);
+var
+  str1, str2,cmdStr: string;
+  pos1, pos2, i: integer;
+begin
+  write_log_and_memo('Preparing winget-Setup:');
+      mysetup.uninstallProg := '';
+      mysetup.uninstall_waitforprocess := '';
+      mysetup.uninstallCheck.Add('directoryexists($installdir$)');
+    mysetup.uninstallCheck.Add('	set $oldProgFound$ = "true"');
+    mysetup.uninstallCheck.Add('endif');
+
+    // install command
+     if mysetup.preferSilent then
+       cmdStr := installerArray[integer(mysetup.installerId)].silentsetup
+     else
+       cmdStr := installerArray[integer(mysetup.installerId)].unattendedsetup;
+     cmdStr := StringReplace(cmdStr, '<#wingetId#>', '$wingetId$', [rfIgnoreCase]);
+     cmdStr := StringReplace(cmdStr, '<#wingetSource#>', '$wingetSource$', [rfIgnoreCase]);
+     mysetup.installCommandLine := cmdStr;
+
+    // uninstall command
+     if mysetup.preferSilent then
+       cmdStr := installerArray[integer(mysetup.installerId)].silentuninstall
+     else
+       cmdStr := installerArray[integer(mysetup.installerId)].unattendeduninstall;
+     cmdStr := StringReplace(cmdStr, '<#wingetId#>', '$wingetId$', [rfIgnoreCase]);
+     cmdStr := StringReplace(cmdStr, '<#wingetSource#>', '$wingetSource$', [rfIgnoreCase]);
+     mysetup.uninstallCommandLine := cmdStr;
+
+  write_log_and_memo('get_winget_info finished');
+end;
+
+
 
 // marker for add installers
 

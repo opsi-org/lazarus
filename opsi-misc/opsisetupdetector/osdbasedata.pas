@@ -2983,7 +2983,7 @@ begin
 
   with installerArray[integer(stWinget)] do
   begin
-    // https://www.advancedinstaller.com/per-machine-msix.html
+    // https://learn.microsoft.com/en-us/windows/package-manager/winget/
     description :=
       'Winget Package';
     silentsetup :=

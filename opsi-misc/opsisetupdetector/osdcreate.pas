@@ -350,6 +350,13 @@ begin
     if aktProduct.SetupFiles[0].installerId = stMsixAppx then
       str := str + 'DefVar $MsixAppxPackageName$' + LineEnding;
 
+    // special winget
+    if aktProduct.SetupFiles[0].installerId = stWinget then
+    begin
+      str := str + 'DefVar $wingetId$ = "' + aktProduct.SetupFiles[0].wingetId +'"'+ LineEnding;
+      str := str + 'DefVar $wingetSource$ = ' + aktProduct.SetupFiles[0].wingetSource +'"'+ LineEnding;
+    end;
+
     patchlist.add('#@stringVars*#=' + str);
 
     str := '';
