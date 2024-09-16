@@ -30,8 +30,15 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
   oswebservice,
   oscrypt,
   osdmain,
+  {$IFNDEF DARWIN}
+  osd_lessmsi,
+  {$ENDIF DARWIN}
   osdcontrolfile_io,
-  osd_md_html_dlg;
+  osd_md_html_dlg,
+  osdmeta,
+  osdanalyze_by_die,
+  osd_detect_it_easy,
+  osd_jyt_convert;
 
 
 (*
@@ -41,8 +48,8 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
 *)
 
 
-{$R *.res}
-//{$R manifest.rc}
+  {$R *.res}
+  //{$R manifest.rc}
 
 
 
@@ -53,6 +60,11 @@ begin
   RequireDerivedFormResource := True;
   Application.Initialize;
   Application.Title := 'opsi-setup-detector';
+  {$IFDEF WINDOWS}
+  // enable the possibility to share the Application window while a video conference
+  // https://forum.lazarus.freepascal.org/index.php?topic=55417.0
+  Application.MainFormOnTaskBar := True;
+  {$ENDIF WINDOWS}
   Application.CreateForm(TresultForm1, resultForm1);
   Application.CreateForm(TFNewDepDlg, FNewDepDlg);
   Application.CreateForm(TFNewPropDlg, FNewPropDlg);
@@ -67,6 +79,6 @@ begin
   Application.Initialize;
   Application.DoRun;
   Application.Free;
-{$ENDIF OSDGUI}
+  {$ENDIF OSDGUI}
 
 end.

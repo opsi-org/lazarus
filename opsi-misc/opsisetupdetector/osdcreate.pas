@@ -5,10 +5,10 @@ unit osdcreate;
 interface
 
 uses
-    {$IFDEF WINDOWS}
+  {$IFDEF WINDOWS}
   Windows,
   ShlObj,
-    {$ENDIF WINDOWS}
+  {$ENDIF WINDOWS}
   Classes,
   SysUtils,
   strutils,
@@ -25,7 +25,8 @@ uses
   osjson,
   dateutils,
   osfilehelper,
-  oswebservice;
+  oswebservice,
+  osdmeta;
 
 function createProductStructure: boolean;
 function callOpsiPackageBuilder: boolean;
@@ -65,9 +66,9 @@ resourcestring
 implementation
 
 uses
-{$IFDEF OSDGUI}
+  {$IFDEF OSDGUI}
   osdform,
-{$ENDIF OSDGUI}
+  {$ENDIF OSDGUI}
   osdmain;
 
 var
@@ -129,7 +130,7 @@ begin
     if not DirectoryExists(ExtractFileDir(outfile)) then
       ForceDirectories(ExtractFileDir(outfile));
 
-  {$I+}//use exceptions
+    {$I+}//use exceptions
     try
       AssignFile(infileHandle, infile);
       AssignFile(outfileHandle, outfile);
@@ -168,7 +169,7 @@ begin
         logdatei.log('patchScript file error: ' + E.ClassName + '/' +
           E.Message, LLError);
     end;
-  {$I-}//end use exceptions
+    {$I-}//end use exceptions
   end
   else
     logdatei.log('patchScript file warning: infile for: ' +
@@ -347,7 +348,7 @@ begin
     end;
     // special msix
     if aktProduct.SetupFiles[0].installerId = stMsixAppx then
-       str := str + 'DefVar $MsixAppxPackageName$' + LineEnding;
+      str := str + 'DefVar $MsixAppxPackageName$' + LineEnding;
 
     patchlist.add('#@stringVars*#=' + str);
 
@@ -365,7 +366,8 @@ begin
 
     // msi special
     if length(aktProduct.SetupFiles) > 0 then
-      if aktProduct.SetupFiles[0].installerId = stMsi then
+      //if aktProduct.SetupFiles[0].installerId = stMsi then
+      if aktProduct.SetupFiles[0].msiUninstallCode then
       begin
         readFileToList('HandleMsiUninstallSections.opsiscript', sectionlist);
       end;
@@ -507,6 +509,9 @@ begin
 
       patchlist.add('#@MsiProductName' + IntToStr(i + 1) + '*#=' +
         aktProduct.SetupFiles[i].msiProductName);
+
+      patchlist.add('#@MsiUpgradecode' + IntToStr(i + 1) + '*#=' +
+        aktProduct.SetupFiles[i].msiUpgradeCode);
 
       patchlist.add('#@installCommandLine' + IntToStr(i + 1) + '*#=' +
         aktProduct.SetupFiles[i].installCommandLine);
@@ -681,7 +686,8 @@ begin
           infilelist.Add('setupsingle.opsiscript');
           infilelist.Add('delincsingle.opsiinc');
           infilelist.Add('uninstallsingle.opsiscript');
-          if aktProduct.SetupFiles[0].installerId = stMsi then
+          //if aktProduct.SetupFiles[0].installerId = stMsi then
+          if aktProduct.SetupFiles[0].msiUninstallCode then
             infilelist.Add('delincmsisingle.opsiinc');
         end;
         twoAnalyzeCreate_1, twoAnalyzeCreate_2:
@@ -689,7 +695,8 @@ begin
           infilelist.Add('setupdouble.opsiscript');
           infilelist.Add('delincdouble.opsiinc');
           infilelist.Add('uninstalldouble.opsiscript');
-          if aktProduct.SetupFiles[0].installerId = stMsi then
+          //if aktProduct.SetupFiles[0].installerId = stMsi then
+          if aktProduct.SetupFiles[0].msiUninstallCode then
             infilelist.Add('delincmsidouble.opsiinc');
         end;
         createTemplate:
@@ -737,7 +744,8 @@ begin
           infilelist.Add('sections.opsiinc');
           infilelist.Add('declarations.opsiinc');
           infilelist.Add('localsetup\declarations-local.opsiinc');
-          if aktProduct.SetupFiles[0].installerId = stMsi then
+          //if aktProduct.SetupFiles[0].installerId = stMsi then
+          if aktProduct.SetupFiles[0].msiUninstallCode then
             infilelist.Add('localsetup\delsubmsi-local.opsiinc')
           else
             infilelist.Add('localsetup\delsub-local.opsiinc');
@@ -748,8 +756,10 @@ begin
           infilelist.Add('localsetup\update-local.opsiscript');
           for i := 0 to infilelist.Count - 1 do
           begin
-            infilename := getFilePath(infilelist.Strings[i]);
-            outfilename := clientpath + PathDelim + infilelist.Strings[i];
+            // use GetForcedPathDelims to make it work also at unix
+            infilename := getFilePath(GetForcedPathDelims(infilelist.Strings[i]));
+            outfilename := clientpath + PathDelim +
+              GetForcedPathDelims(infilelist.Strings[i]);
             outfilename := StringReplace(outfilename, 'msi', '', []);
             patchScript(infilename, outfilename);
           end;
@@ -886,7 +896,8 @@ begin
       end;
 
       // we did it for analyzeCreateWithUser, createTemplateWithUser right now
-      if not (osdsettings.runmode in [analyzeCreateWithUser, createTemplateWithUser]) then
+      if not (osdsettings.runmode in [analyzeCreateWithUser,
+        createTemplateWithUser]) then
         for i := 0 to infilelist.Count - 1 do
         begin
           tmpname := ExtractFileNameOnly(infilelist.Strings[i]);
@@ -1085,10 +1096,19 @@ begin
       end;
 
       // write project file
+      LogDatei.log('Write project file to path: ' + prodpath, LLnotice);
       aktProduct.writeProjectFileToPath(prodpath);
 
+      // write CLIENT_DATA\opsi-meta-data.toml
+      if myconfiguration.writeMetaDataFile then
+      begin
+        LogDatei.log('Collect meta data', LLnotice);
+        osdmeta.aktProdToAktMeta;
+        LogDatei.log('Write meta data file to path: ' + clientpath, LLnotice);
+        osdmeta.aktMeta.write_product_metadata_ToPath(clientpath);
+      end;
+
       Result := True;
-      ;
     except
       on E: Exception do
       begin
@@ -1104,19 +1124,19 @@ begin
 end;
 
 // escape backslashes and quotes for string
-function escapeStringForToml(instring : string) : string;
+function escapeStringForToml(instring: string): string;
 begin
-  result := StringReplace(instring,'\','\\',[rfReplaceAll, rfIgnoreCase]);
-  result := StringReplace(result,'"','\"',[rfReplaceAll, rfIgnoreCase]);
+  Result := StringReplace(instring, '\', '\\', [rfReplaceAll, rfIgnoreCase]);
+  Result := StringReplace(Result, '"', '\"', [rfReplaceAll, rfIgnoreCase]);
 end;
 
 // escape backslashes and quotes for stringlist
-function escapeListForToml(inlist : TStringlist) : TStringlist;
+function escapeListForToml(inlist: TStringList): TStringList;
 var
-  i : integer;
+  i: integer;
 begin
-  escapeListForToml := TStringlist.Create;
-  for i:= 0 to inlist.Count -1 do
+  escapeListForToml := TStringList.Create;
+  for i := 0 to inlist.Count - 1 do
     escapeListForToml.Add(escapeStringForToml(inlist[i]));
 end;
 
@@ -1243,24 +1263,31 @@ begin
       textlist.Add('[Product]');
       textlist.Add('type = "' + aktProduct.productdata.producttype + '"');
       textlist.Add('id = "' + aktProduct.productdata.productId + '"');
-      textlist.Add('name = "' + escapeStringForToml(aktProduct.productdata.productName) + '"');
-      textlist.Add('description = """' + escapeStringForToml(aktProduct.productdata.description) + '"""');
-      textlist.Add('advice = """' + escapeStringForToml(aktProduct.productdata.advice) + '"""');
-      textlist.Add('version = "' + escapeStringForToml(aktProduct.productdata.productversion) + '"');
+      textlist.Add('name = "' +
+        escapeStringForToml(aktProduct.productdata.productName) + '"');
+      textlist.Add('description = """' + escapeStringForToml(
+        aktProduct.productdata.description) + '"""');
+      textlist.Add('advice = """' + escapeStringForToml(
+        aktProduct.productdata.advice) + '"""');
+      textlist.Add('version = "' +
+        escapeStringForToml(aktProduct.productdata.productversion) + '"');
       textlist.Add('priority = ' + IntToStr(aktProduct.productdata.priority));
       textlist.Add('licenseRequired = false');
       textlist.Add('productClasses = []');
-      textlist.Add('setupScript = "' + escapeStringForToml(aktProduct.productdata.setupscript) + '"');
+      textlist.Add('setupScript = "' + escapeStringForToml(
+        aktProduct.productdata.setupscript) + '"');
       // No uninstall for Meta
       if not (osdsettings.runmode in [createMeta]) then
         textlist.Add('uninstallScript = "' +
           escapeStringForToml(aktProduct.productdata.uninstallscript) + '"');
-      textlist.Add('updateScript = "' + escapeStringForToml(aktProduct.productdata.updatescript) + '"');
+      textlist.Add('updateScript = "' + escapeStringForToml(
+        aktProduct.productdata.updatescript) + '"');
       textlist.Add('alwaysScript = ""');
       textlist.Add('onceScript = ""');
       textlist.Add('customScript = ""');
       if aktProduct.productdata.customizeProfile then
-        textlist.Add('userLoginScript = "' + escapeStringForToml(aktProduct.productdata.setupscript) + '"')
+        textlist.Add('userLoginScript = "' + escapeStringForToml(
+          aktProduct.productdata.setupscript) + '"')
       else
         textlist.Add('userLoginScript = ""');
       // the next line avoids a bug in  opsi-makepackage 4.3.0.36 [python-opsi=4.3.0.14]
@@ -1339,42 +1366,20 @@ begin
 
     // changelog
     textlist.Clear;
-    (*
-    utcoffset := (GetLocalTimeOffset div 60) * 100 * -1;
-    if utcoffset >= 0 then
-      utcoffsetstr := '+';
-    utcoffsetstr := utcoffsetstr + format('%4.4d', [utcoffset]);
-    *)
-    (* old 4.2 style:
-    textlist.Add('');
-    textlist.Add('[Changelog]');
-    tmpstr := aktProduct.productdata.productversion + '-' + IntToStr(
-      aktProduct.productdata.packageversion);
-    textlist.Add(aktProduct.productdata.productId + ' (' + tmpstr +
-      ')');
-    textlist.Add('');
-    textlist.Add('  * initial by opsi-setup-detector - Version: ' + myVersion);
-    textlist.Add('');
-    textlist.Add('-- ' + myconfiguration.fullName + ' <' +
-      myconfiguration.email_address + '> ' + FormatDateTime(
-      'ddd, dd mmm yyyy hh:nn:ss', LocalTimeToUniversal(now)));
-    //mon, 04 Jun 12:00:00
-    textlist.SaveToFile(opsipath + pathdelim + 'changelog.txt');
-    *)
     // new 4.3 style
     textlist.Add('');
-    textlist.Add('# Changelog '+aktProduct.productdata.productId);
+    textlist.Add('# Changelog ' + aktProduct.productdata.productId);
     textlist.Add('');
     tmpstr := aktProduct.productdata.productversion + '-' + IntToStr(
       aktProduct.productdata.packageversion);
-    textlist.Add('## ['+tmpstr+'] - '+ FormatDateTime('yyyy-mm-dd',now));
+    textlist.Add('## [' + tmpstr + '] - ' + FormatDateTime('yyyy-mm-dd', now));
     textlist.Add('');
     textlist.Add('### Added');
-    textlist.Add('- created / updated to: '+aktProduct.productdata.productId+' '+tmpstr);
+    textlist.Add('- created / updated to: ' + aktProduct.productdata.productId + ' ' + tmpstr);
     textlist.Add('  using opsi-setup-detector - Version: ' + myVersion);
     textlist.Add('');
     textlist.Add('(' + myconfiguration.fullName + ' <' +
-      myconfiguration.email_address+'>)');
+      myconfiguration.email_address + '>)');
     textlist.SaveToFile(opsipath + pathdelim + 'changelog.md');
 
     // readme.txt
@@ -1405,7 +1410,7 @@ begin
     on E: Exception do
     begin
       LogDatei.log('Error in createOpsiFiles', LLError);
-      LogDatei.log('Error: '+e.Message, LLError);
+      LogDatei.log('Error: ' + e.Message, LLError);
       FreeAndNil(textlist);
     end;
   end;
@@ -1419,7 +1424,6 @@ function bakupOldProductDir: boolean;
     backupfiles: TStringList;
     fname, fbakname, bakpostfix: string;
     i, k: integer;
-
   begin
     Result := True;
     backupfiles := TStringList.Create;
@@ -1469,57 +1473,57 @@ begin
       task := '';
       // https://specials.rejbrand.se/TTaskDialog/
       with TTaskDialog.Create(resultForm1) do
-        try
-          Title := rsDirectory + ' ' + prodpath + ' ' +
-            rsStillExitsWarningDeleteOverwrite;
-          Caption := 'opsi-setup-detector';
-          Text := rsConfirmBackupOrRemovalTitle;
-          CommonButtons := [];
-          with TTaskDialogButtonItem(Buttons.Add) do
-          begin
-            Caption := rsConfirmBackupCaption;
-            //CommandLinkHint := rsConfirmBackupHint;
-            ModalResult := mrYes;
-          end;
-          with TTaskDialogButtonItem(Buttons.Add) do
-          begin
-            Caption := rsConfirmDeleteCaption;
-            //CommandLinkHint := rsConfirmDeleteHint;
-            ModalResult := mrNo;
-          end;
-          with TTaskDialogButtonItem(Buttons.Add) do
-          begin
-            Caption := rsConfirmAbortCaption;
-            //CommandLinkHint := rsConfirmAbortHint;
-            ModalResult := mrAbort;
-          end;
-          MainIcon := tdiQuestion;
-          //include(Flags,[tfExpandFooterArea]);
-          Flags := [tfUseCommandLinks, tfAllowDialogCancellation, tfExpandFooterArea];
-          ExpandButtonCaption := rsConfirmExpandButton;
-          ExpandedText := rsConfirmExpandedText;
-          if Execute then
-          begin
-            if ModalResult = mrYes then
-            begin
-              task := 'bak';
-              LogDatei.log('Choosed to make backups', LLinfo);
-            end
-            else if ModalResult = mrNo then
-            begin
-              task := 'del';
-              LogDatei.log('Choosed to make no backups', LLinfo);
-            end
-            else
-              //if ModalResult = mrAbort then
-            begin
-              task := 'abort';
-              LogDatei.log('Choosed to abort', LLinfo);
-            end;
-          end;
-        finally
-          Free;
+      try
+        Title := rsDirectory + ' ' + prodpath + ' ' +
+          rsStillExitsWarningDeleteOverwrite;
+        Caption := 'opsi-setup-detector';
+        Text := rsConfirmBackupOrRemovalTitle;
+        CommonButtons := [];
+        with TTaskDialogButtonItem(Buttons.Add) do
+        begin
+          Caption := rsConfirmBackupCaption;
+          //CommandLinkHint := rsConfirmBackupHint;
+          ModalResult := mrYes;
         end;
+        with TTaskDialogButtonItem(Buttons.Add) do
+        begin
+          Caption := rsConfirmDeleteCaption;
+          //CommandLinkHint := rsConfirmDeleteHint;
+          ModalResult := mrNo;
+        end;
+        with TTaskDialogButtonItem(Buttons.Add) do
+        begin
+          Caption := rsConfirmAbortCaption;
+          //CommandLinkHint := rsConfirmAbortHint;
+          ModalResult := mrAbort;
+        end;
+        MainIcon := tdiQuestion;
+        //include(Flags,[tfExpandFooterArea]);
+        Flags := [tfUseCommandLinks, tfAllowDialogCancellation, tfExpandFooterArea];
+        ExpandButtonCaption := rsConfirmExpandButton;
+        ExpandedText := rsConfirmExpandedText;
+        if Execute then
+        begin
+          if ModalResult = mrYes then
+          begin
+            task := 'bak';
+            LogDatei.log('Choosed to make backups', LLinfo);
+          end
+          else if ModalResult = mrNo then
+          begin
+            task := 'del';
+            LogDatei.log('Choosed to make no backups', LLinfo);
+          end
+          else
+            //if ModalResult = mrAbort then
+          begin
+            task := 'abort';
+            LogDatei.log('Choosed to abort', LLinfo);
+          end;
+        end;
+      finally
+        Free;
+      end;
       {$ENDIF OSDGUI}
     end
     else
@@ -1651,7 +1655,7 @@ begin
 end;
 
 
-function callOpsiPackageBuilder : boolean;
+function callOpsiPackageBuilder: boolean;
 var
   msg1: string;
   description: string;
@@ -1664,9 +1668,8 @@ var
   notused: string = '(not used)';
   output: string;
   paramlist: TStringList;
-
 begin
-  result := true;
+  Result := True;
   {$IFDEF OSDGUI}
   logdatei.log('Start callOpsiPackageBuilder', LLDebug2);
   buildCallparams := TStringList.Create;
@@ -1731,7 +1734,7 @@ begin
     on E: Exception do
     begin
       errorstate := True;
-      result := false;
+      Result := False;
       LogDatei.log('Exception while calling ' + buildCallbinary +
         ' Message: ' + E.message, LLerror);
       if osdsettings.showgui then
@@ -1753,7 +1756,7 @@ begin
       if osdsettings.showgui then
         ShowMessage(sErrOpsiPackageBuilderStart);
     end;
-    result := false;
+    Result := False;
   end;
   logdatei.log('Here comes the OpsiPackageBuilder log', LLnotice);
   logdatei.includelogtail('c:\opsi.org\applog\opb-call.log', 50, 'utf8');
@@ -1790,7 +1793,7 @@ var
 
 begin
   LogDatei.log('Try to call opsi service', LLnotice);
-  result := false;
+  Result := False;
   {$IFDEF OSDGUI}
   resultForm1.PanelProcess.Visible := True;
   resultForm1.processStatement.Caption := 'invoke opsi service ...';
@@ -1809,7 +1812,7 @@ begin
   begin
     if servicecall('workbench_buildPackage', packagedir) then
     begin
-      result := true;
+      Result := True;
       LogDatei.log('Package ' + packagefile + ' successful build', LLnotice);
     end
     else
@@ -1825,7 +1828,7 @@ begin
 
     if servicecall('workbench_installPackage', packagedir) then
     begin
-      result := true;
+      Result := True;
       LogDatei.log('Package ' + packagefile + ' successful build + installed', LLnotice);
     end
     else
@@ -1841,7 +1844,7 @@ begin
 end;
 
 
-function callServiceOrPackageBuilder : boolean;
+function callServiceOrPackageBuilder: boolean;
 var
   callOpB: boolean = True;
 begin
@@ -1855,9 +1858,9 @@ begin
     end;
   end;
 
-  if callOpB then result := callOpsiPackageBuilder
+  if callOpB then Result := callOpsiPackageBuilder
   else
-    result := buildWithOpsiService;
+    Result := buildWithOpsiService;
 end;
 
 end.

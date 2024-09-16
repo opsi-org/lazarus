@@ -43,7 +43,7 @@ uses
   Contnrs,
   oswebservice;
 
-{$IFNDEF OSDGUI}
+  {$IFNDEF OSDGUI}
 type
   { TOSD }
 
@@ -61,7 +61,7 @@ type
 var
   Application: TOSD;
 
-{$ENDIF OSDGUI}
+  {$ENDIF OSDGUI}
 
 
 
@@ -69,6 +69,7 @@ var
 procedure main;
 function checkAktProduct: boolean;
 procedure WriteHelp;
+procedure write_memo(line: string);
 procedure write_log_and_memo(line: string); overload;
 procedure write_log_and_memo(line: string; loglevel: integer); overload;
 //procedure checkWorkbench;
@@ -82,9 +83,9 @@ implementation
 uses
   osdform;
 
-{$ENDIF OSDGUI}
+  {$ENDIF OSDGUI}
 
-{$IFNDEF OSDGUI}
+  {$IFNDEF OSDGUI}
 (*
 type
 { TOSD }
@@ -236,12 +237,7 @@ begin
   Application.Terminate;
 end;
 
-procedure write_log_and_memo(line: string);
-begin
-  write_log_and_memo(line, LLNotice);
-end;
-
-procedure write_log_and_memo(line: string; loglevel: integer);
+procedure write_memo(line: string);
 begin
   {$IFDEF OSDGUI}
   if osdsettings.showgui then
@@ -249,6 +245,17 @@ begin
     resultform1.memoadd(line);
   end;
   {$ENDIF OSDGUI}
+end;
+
+
+procedure write_log_and_memo(line: string);
+begin
+  write_log_and_memo(line, LLNotice);
+end;
+
+procedure write_log_and_memo(line: string; loglevel: integer);
+begin
+  write_memo(line);
   LogDatei.log(line, loglevel);
 end;
 
@@ -261,7 +268,6 @@ var
   buffer: PChar;
   size: word = 0;
   usedsize: word = 0;
-
 begin
   Result := '';
   size := 101;
@@ -386,13 +392,13 @@ var
 begin
   try
     strlist := TStringList.Create;
-    result := true;
+    Result := True;
 
     if not localservicedataConnected then
     begin
       if localservicedata <> nil then FreeAndNil(localservicedata);
       if localservicedata = nil then
-      localservicedata := TOpsi4Data.Create;
+        localservicedata := TOpsi4Data.Create;
       if (myconfiguration.Service_URL <> '') and
         (myconfiguration.Service_user <> '') then
       begin
@@ -420,12 +426,12 @@ begin
           FNewDepDlg.LabelConnect.Caption := rsServiceConnected;
           FNewDepDlg.LabelConnect.Font.Color := clGreen;
           resultForm1.StatusBar1.Panels.Items[1].Text :=
-             rsServiceConnected +': ' + myconfiguration.Service_URL;
+            rsServiceConnected + ': ' + myconfiguration.Service_URL;
           FNewDepDlg.Repaint;
           procmess;
           LogDatei.log('Service connection initialized to :' +
             myconfiguration.Service_URL + ' version: ' + opsiserviceversion, LLinfo);
-          localservicedataConnected := true;
+          localservicedataConnected := True;
           // fetch produtIds from service
           strlist.Text := localservicedata.getLocalbootProductIds.Text;
           strlist.Sort;
@@ -437,7 +443,7 @@ begin
         else
         begin
           // service not connected
-          result := false;
+          Result := False;
           LogDatei.log('Service connection not possible: Url, user or password wrong.',
             LLwarning);
           {$IFDEF OSDGUI}
@@ -454,7 +460,7 @@ begin
       else
       begin
         // service data missing
-        result := false;
+        Result := False;
         LogDatei.log('Service connection not possible: Url or user missing.', LLwarning);
         {$IFDEF OSDGUI}
         FNewDepDlg.LabelConnect.Caption := rsServiceNotConnected;
@@ -467,9 +473,9 @@ begin
     end;
   finally
     FreeAndNil(strlist);
-      {$IFDEF OSDGUI}
+    {$IFDEF OSDGUI}
     Screen.Cursor := crDefault;
-      {$ENDIF OSDGUI}
+    {$ENDIF OSDGUI}
   end;
 end;
 
@@ -506,7 +512,7 @@ begin
   osdsettings.mylang := SetDefaultLang('');
   SetDefaultLang(osdsettings.mylang, osdsettings.mylocaledir);
 
-    {$IFDEF WINDOWS}
+  {$IFDEF WINDOWS}
   // initate console while windows gui
   // https://stackoverflow.com/questions/20134421/can-a-windows-gui-program-written-in-lazarus-create-a-console-and-write-to-it-at
   //AllocConsole;      // in Windows unit
@@ -596,14 +602,14 @@ begin
   if Application.HasOption('n', 'nogui') then
   begin
     osdsettings.showgui := False;
-     {$IFDEF WINDOWS}
+    {$IFDEF WINDOWS}
     // initate console while windows gui
     // https://stackoverflow.com/questions/20134421/can-a-windows-gui-program-written-in-lazarus-create-a-console-and-write-to-it-at
     //AllocConsole;      // in Windows unit
     //IsConsole := True; // in System unit
     //SysInitStdIO;      // in System unit
     // Now you can do Writeln, DebugLn,
-  {$ENDIF WINDOWS}
+    {$ENDIF WINDOWS}
   end;
 
   if osdsettings.showgui then

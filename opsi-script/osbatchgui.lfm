@@ -4,8 +4,8 @@ object FBatchOberflaeche: TFBatchOberflaeche
   Top = 0
   Width = 1564
   Caption = 'opsi-script'
-  ClientHeight = 1000
-  ClientWidth = 1564
+  ClientHeight = 679
+  ClientWidth = 1196
   Color = cl3DDkShadow
   Font.Height = 28
   Font.Name = 'System'
@@ -23,13 +23,13 @@ object FBatchOberflaeche: TFBatchOberflaeche
   LCLVersion = '3.4.0.0'
   object PanelFillScreen: TPanel
     Left = 0
-    Height = 1000
+    Height = 679
     Top = 0
-    Width = 1564
+    Width = 1196
     Align = alClient
     AutoSize = True
-    ClientHeight = 1000
-    ClientWidth = 1564
+    ClientHeight = 679
+    ClientWidth = 1196
     Color = clMenuBar
     Font.Height = 28
     Font.Name = 'System'
@@ -39,9 +39,9 @@ object FBatchOberflaeche: TFBatchOberflaeche
     ParentFont = False
     TabOrder = 0
     object ImageOpsiBackground: TImage
-      Left = 1086
+      Left = 718
       Height = 542
-      Top = 484
+      Top = 163
       Width = 489
       Align = alCustom
       Anchors = [akRight, akBottom]

@@ -5,28 +5,35 @@ unit osdanalyzegeneral;
 interface
 
 uses
-   {$IFDEF WINDOWS}
-  Windows,
-  ShlObj,
-  Registry,
-  verinfo,
+  {$IFDEF WINDOWS}
+  //Windows,
+  //ShlObj,
+  //Registry,
+  //verinfo,
+  //Graphics,
+  // StdCtrls,
   {$ENDIF WINDOWS}
+  {$IFDEF OSDGUI}
+  Forms,
+  Controls,
+  {$ENDIF OSDGUI}
   Dialogs,
   LCLType,
   Classes,
-  osdhelper,
-  Process,
+  //osdhelper,
+  //Process,
   fileutil,
   lazfileutils,
   SysUtils,
   strutils,
-  fileinfo,
+  //fileinfo,
   winpeimagereader,
   oslog,
   osdbasedata,
-  oscheckbinarybitness,
-  masks,
-  osparserhelper;
+  //oscheckbinarybitness,
+  //masks,
+  //osparserhelper,
+  osdanalyze_by_die;
 
 function getPacketIDfromFilename(str: string): string;
 function getPacketIDShort(str: string): string;
@@ -40,14 +47,11 @@ function analyze_binary(myfilename: string; verbose, skipzero: boolean;
 
 implementation
 
-{$IFDEF OSDGUI}
 uses
+  {$IFDEF OSDGUI}
   osdform,
+  {$ENDIF OSDGUI}
   osdmain;
-{$ELSE OSDGUI}
-uses
-  osdmain;
-{$ENDIF OSDGUI}
 
 function getPacketIDfromFilename(str: string): string;
 var
@@ -188,13 +192,12 @@ end;
 function analyze_markerlist(var mysetup: TSetupFile): TKnownInstaller;
 var
   i: integer;
-
 begin
   try
     Result := stUnknown;
     for i := 0 to mysetup.markerlist.Count - 1 do
       LogDatei.log('marker: ' + mysetup.markerlist[i], LLnotice);
-    for i := 0 to integer(stUnknown) - 1 do
+    for i := 0 to integer(stDetectedUnknown) - 1 do
     begin
       if not Assigned(installerArray[i].detected) then
         LogDatei.log('No check implemented for: ' +
@@ -207,8 +210,9 @@ begin
           mysetup.markerlist) then
         begin
           Result := TKnownInstaller(i);
-          LogDatei.log('Detected: ' + installerToInstallerstr(Result), LLnotice);
-          osdsettings.DetectCount := osdsettings.DetectCount +1;
+          write_log_and_memo('Detected by osd: ' + installerToInstallerstr(Result));
+          //LogDatei.log('Detected: ' + installerToInstallerstr(Result), LLnotice);
+          osdsettings.DetectCount := osdsettings.DetectCount + 1;
         end;
       end;
     end;
@@ -253,7 +257,8 @@ var
       begin
         mysetup.markerlist.add(installerArray[integer(instId)].infopatterns[i]);
         LogDatei.log('Infolevel for: ' + installerToInstallerstr(instId) +
-          ' found: ' + LowerCase(installerArray[integer(instId)].infopatterns[i]), LLNotice);
+          ' found: ' + LowerCase(installerArray[integer(instId)].infopatterns[i]),
+          LLNotice);
       end;
     end;
     for i := 0 to installerArray[integer(instId)].notpatterns.Count - 1 do
@@ -263,7 +268,8 @@ var
       begin
         mysetup.markerlist.add(installerArray[integer(instId)].notpatterns[i]);
         LogDatei.log('Against: ' + installerToInstallerstr(instId) +
-          ' found: ' + LowerCase(installerArray[integer(instId)].notpatterns[i]), LLNotice);
+          ' found: ' + LowerCase(installerArray[integer(instId)].notpatterns[i]),
+          LLNotice);
       end;
     end;
   end;
@@ -314,7 +320,6 @@ var
   setuptype: TKnownInstaller;
   progress, lastprogress: int64;
   fileextension: string;
-
 begin
   MinLen := 5;
   MaxLen := 512;
@@ -324,6 +329,8 @@ begin
 
   write_log_and_memo('------------------------------------');
   write_log_and_memo('Analyzing: ' + myfilename);
+
+
   msg := 'stringsgrep started (verbose:';
   if verbose = True then
     msg := msg + 'true'
@@ -341,7 +348,7 @@ begin
     {$IFDEF OSDGUI}
     resultForm1.ProgressBarAnalyze.Position := 0;
     procmess;
-        {$ENDIF OSDGUI}
+    {$ENDIF OSDGUI}
     fullsize := FileStream.Size;
     size := fullsize;
     lastprogress := 0;
@@ -350,7 +357,7 @@ begin
     begin
       charsread := FileStream.Read(buffer, sizeof(buffer));
       size := size - charsread;
-       {$IFDEF OSDGUI}
+      {$IFDEF OSDGUI}
       progress := 100 - trunc((size / fullsize) * 100);
       if progress > lastprogress then
       begin
@@ -359,7 +366,7 @@ begin
         LogDatei.log('AnaProgess: ' + IntToStr(progress), LLDebug);
         lastprogress := progress;
       end;
-       {$ENDIF OSDGUI}
+      {$ENDIF OSDGUI}
 
       for i := 0 to charsread - 1 do
       begin
@@ -426,10 +433,24 @@ begin
     msg := msg + ')';
     write_log_and_memo(msg);
     write_log_and_memo('------------------------------------');
+
   finally
     FileStream.Free;
   end;
-  Result := analyze_markerlist(mysetup);
+  {$IFDEF OSDGUI}
+  Screen.Cursor := crHourGlass;
+  procmess;
+  {$ENDIF OSDGUI}
+  try
+    mysetup.installerId := analyze_markerlist(mysetup);
+    analyze_by_die(myfilename, mysetup);
+    Result := mysetup.installerId;
+    write_log_and_memo('Detected final: ' + installerToInstallerstr(Result));
+  finally
+    {$IFDEF OSDGUI}
+    Screen.Cursor := crDefault;
+    {$ENDIF OSDGUI}
+  end;
 end;
 
 
