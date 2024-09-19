@@ -344,7 +344,11 @@ begin
         str := str + 'DefVar $LicenseHandledByScript$ = "true"' + LineEnding;
       end
       else
-        str := str + 'DefVar $' + proptmpstr + '$' + LineEnding;
+      begin
+        if aktProduct.properties.Items[i].Multivalue then
+          str := str + 'DefStringlist $' + proptmpstr + '$' + LineEnding
+        else str := str + 'DefVar $' + proptmpstr + '$' + LineEnding;
+      end;
     end;
     // special msix
     if aktProduct.SetupFiles[0].installerId = stMsixAppx then
@@ -416,8 +420,16 @@ begin
         str2 := opsiunquotestr2(str2, '[]');
         { take first from list }
         GetWordOrStringConstant(str2, str2, str3, WordDelimiterSet6);
-        str := str + 'set $' + proptmpstr + '$ = GetProductProperty("' +
-          proptmpstr + '", "' + str2 + '")' + LineEnding;
+        if aktProduct.properties.Items[i].Multivalue then
+        begin
+          str := str + 'set $' + proptmpstr + '$ = GetProductPropertyList("' +
+            proptmpstr + '", "' + str2 + '")' + LineEnding;
+        end
+        else
+        begin
+          str := str + 'set $' + proptmpstr + '$ = GetProductProperty("' +
+            proptmpstr + '", "' + str2 + '")' + LineEnding;
+        end;
       end;
     end;
     patchlist.add('#@GetProductProperty*#=' + str);
@@ -1100,13 +1112,16 @@ begin
       aktProduct.writeProjectFileToPath(prodpath);
 
       // write CLIENT_DATA\opsi-meta-data.toml
-      LogDatei.log('Collect meta data', LLnotice);
-      osdmeta.aktProdToAktMeta;
-      LogDatei.log('Write meta data file to path: ' + clientpath, LLnotice);
-      osdmeta.aktMeta.write_product_metadata_ToPath(clientpath);
+      if myconfiguration.writeMetaDataFile then
+      begin
+        LogDatei.log('Collect meta data', LLnotice);
+        osdmeta.aktProdToAktMeta;
+        LogDatei.log('Write meta data file to path: ' + clientpath, LLnotice);
+        osdmeta.aktMeta.write_product_metadata_ToPath(clientpath);
+      end;
+
 
       Result := True;
-      ;
     except
       on E: Exception do
       begin

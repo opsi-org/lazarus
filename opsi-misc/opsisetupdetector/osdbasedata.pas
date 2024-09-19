@@ -534,6 +534,7 @@ default: ["xenial_bionic"]
     Fdependencies_for_all_actionrequests: boolean;
     // since opsi 4.3 dependecies are allowed for all action requests
     FpreferMsiUninstall: boolean; // true=prefer uninstall via msi if possible
+    FwriteMetaDataFile : boolean;  // true=write opsi-meta-data.toml file
     procedure SetLibraryLines(const AValue: TStrings);
     procedure SetPreInstallLines(const AValue: TStrings);
     procedure SetPostInstallLines(const AValue: TStrings);
@@ -585,6 +586,9 @@ default: ["xenial_bionic"]
       read Fdependencies_for_all_actionrequests write Fdependencies_for_all_actionrequests;
     property preferMsiUninstall: boolean read FpreferMsiUninstall
       write FpreferMsiUninstall;
+    property writeMetaDataFile: boolean read FwriteMetaDataFile
+      write FwriteMetaDataFile;
+
 
 
 
@@ -720,6 +724,8 @@ resourcestring
     'If true=prefer uninstall via msi if possible.' + LineEnding +
     'Affects Installer that are wrapper around msi,' + LineEnding +
     'like installshieldMSI, advanced_installer, wix toolset';
+  rsWriteMetaDataFile =
+    'If true=write opsi-meta-data.toml file';
   //************************************************
   //info_message_html.Text
   //************************************************
@@ -1680,6 +1686,7 @@ begin
     ExtractFileDir(Application.Params[0]) + PathDelim + 'icons';
   {$ENDIF WINDOWS}
   FpreferMsiUninstall := True;
+  FwriteMetaDataFile := False;
   //readconfig;
 end;
 

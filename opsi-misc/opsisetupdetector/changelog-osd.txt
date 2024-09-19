@@ -141,6 +141,16 @@ CompanyNameIgor PavlovBFileDescription7z Setup SFX*FileVersion9.200InternalName7
 
 todo:
    *
+# Changelog opsi-setup-detector
+## [4.3.3.2-1] - 2024-09-19
+
+### Add:
+- If properties have multiline, then create code correct wit stringlist var
+  and getproductpropertyList
+  Ticket: uib#2024091717000055 — opsi Setup Detector Multivalue Property Stringlist
+- new configuration: writeMetaDataFile (default=false)
+
+(Detlef Oertel <d.oertel@uib.de> 2024-09-19)
 
 # Changelog opsi-setup-detector
 ## [4.3.3.1-1] - 2024-08-26
