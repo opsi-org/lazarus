@@ -379,7 +379,7 @@ begin
       if Assigned(logdatei) then
         logdatei.log('Convert json metadata file to toml', LLDebug);
       convertJsonFileToTomlFile(myfilename + '.json', myfilename);
-      DeleteFile((myfilename + '.json');
+      DeleteFile(myfilename + '.json');
       {$EndIF DARWIN}
 
     finally
