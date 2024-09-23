@@ -586,6 +586,7 @@ type
     procedure TICheckBoxS2MstChange(Sender: TObject);
     procedure TIComboBoxChannelChange(Sender: TObject);
     procedure TIComboBoxChannelEditingDone(Sender: TObject);
+    procedure WingetInputEditingDone(Sender: TObject);
     procedure TIEditProdIDChange(Sender: TObject);
     procedure TIEditProdIDExit(Sender: TObject);
     procedure TIEditProdIDSizeConstraintsChange(Sender: TObject);
@@ -4242,6 +4243,11 @@ end;
 procedure TResultform1.TIComboBoxChannelEditingDone(Sender: TObject);
 begin
 
+end;
+
+procedure TResultform1.WingetInputEditingDone(Sender: TObject);
+begin
+  osdanalyzewin.get_winget_info(aktProduct.SetupFiles[0]);
 end;
 
 

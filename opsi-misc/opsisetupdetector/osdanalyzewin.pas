@@ -53,6 +53,7 @@ procedure get_advancedInstaller_info(myfilename: string; var mysetup: TSetupFile
 procedure get_installAnywhere_info(myfilename: string; var mysetup: TSetupFile);
 procedure get_QtInstaller_info(myfilename: string; var mysetup: TSetupFile);
 procedure get_MsixAppx_info(myfilename: string; var mysetup: TSetupFile);
+procedure get_winget_info(var mysetup: TSetupFile);
 // marker for add installers
 procedure Analyze(FileName: string; var mysetup: TSetupFile; verbose: boolean);
 function getProductInfoFromResource(infokey: string; filename: string): string;
@@ -1194,7 +1195,7 @@ begin
   write_log_and_memo('get_MsixAppx_info finished');
 end;
 
-procedure get_winget_info(myfilename: string; var mysetup: TSetupFile);
+procedure get_winget_info(var mysetup: TSetupFile);
 var
   str1, str2,cmdStr: string;
   pos1, pos2, i: integer;
