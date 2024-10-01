@@ -805,7 +805,20 @@ resourcestring
     LineEnding + '"C:\Program Files (x86)\Common Files\Wise Installation Wizard"' +
     LineEnding + 'You may use this msi as install file.' + LineEnding +
     'You may perhaps also pass the msi parameters as arguments to your setup.exe.';
-  mdInstallerInfo_MsixAppx = '';
+  mdInstallerInfo_MsixAppx =
+    '## This is a Msix / Appx / AppxBundle file.' + LineEnding +
+    'This kind of packages may be installed via powershell.' +
+    LineEnding + 'In order to check for the dependecies of this package' + LineEnding +
+    'and if this package is aviable from MS store ' +
+    LineEnding + 'then you may use the following web site to check and download' +
+    LineEnding + 'missing packages: ' + LineEnding +
+    '<https://store.rg-adguard.net/>';
+  mdInstallerInfo_winget =
+    '## Making a winget based package.' + LineEnding +
+    'You need to know the winget Id and Source of the software to install.' +
+    LineEnding + 'A tool that may help you to find this data is:' + LineEnding +
+    'UniGetUI (formerly WingetUI), The Graphical Interface for your package managers' + LineEnding +
+    '<https://www.marticliment.com/unigetui/>' +
   // marker for add installers
 
 implementation
