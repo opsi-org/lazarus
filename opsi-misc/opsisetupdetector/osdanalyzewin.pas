@@ -1212,18 +1212,20 @@ begin
        cmdStr := installerArray[integer(mysetup.installerId)].silentsetup
      else
        cmdStr := installerArray[integer(mysetup.installerId)].unattendedsetup;
-     cmdStr := StringReplace(cmdStr, '<#wingetId#>', '$wingetId$', [rfIgnoreCase]);
-     cmdStr := StringReplace(cmdStr, '<#wingetSource#>', '$wingetSource$', [rfIgnoreCase]);
-     mysetup.installCommandLine := cmdStr;
+     //cmdStr := StringReplace(cmdStr, '<#wingetId#>', '$wingetId$', [rfIgnoreCase]);
+     //cmdStr := StringReplace(cmdStr, '<#wingetSource#>', '$wingetSource$', [rfIgnoreCase]);
+     mysetup.installCommandLine := '';
+     mysetup.installCommandStringEx := cmdStr;
 
     // uninstall command
      if mysetup.preferSilent then
        cmdStr := installerArray[integer(mysetup.installerId)].silentuninstall
      else
        cmdStr := installerArray[integer(mysetup.installerId)].unattendeduninstall;
-     cmdStr := StringReplace(cmdStr, '<#wingetId#>', '$wingetId$', [rfIgnoreCase]);
-     cmdStr := StringReplace(cmdStr, '<#wingetSource#>', '$wingetSource$', [rfIgnoreCase]);
-     mysetup.uninstallCommandLine := cmdStr;
+     //cmdStr := StringReplace(cmdStr, '<#wingetId#>', '$wingetId$', [rfIgnoreCase]);
+     //cmdStr := StringReplace(cmdStr, '<#wingetSource#>', '$wingetSource$', [rfIgnoreCase]);
+     mysetup.uninstallCommandLine := '';
+     mysetup.uninstallCommandStringEx := cmdStr;
 
   write_log_and_memo('get_winget_info finished');
 end;

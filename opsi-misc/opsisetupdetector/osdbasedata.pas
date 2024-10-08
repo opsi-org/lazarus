@@ -203,6 +203,8 @@ type
     //Fwinbatch_del_argument: string;
     FinstallCommandLine: string;   // command line to install the software
     FuninstallCommandLine: string; // command line to uninstall the software
+    FinstallCommandStringEx: string;   // String expression for prim section to install the software
+    FuninstallCommandStringEx: string; // String expression for prim section to uninstall the software
     FuninstallProg: string;        // path + name of the uninstall.prog
     FuninstallDirectory: string;   // dir of the uninstall.prog
     FtargetProg: string;
@@ -272,6 +274,11 @@ type
       read FisExitcodeFatalFunction write FisExitcodeFatalFunction;
     property uninstallCommandLine: string read FuninstallCommandLine
       write FuninstallCommandLine;
+    property installCommandStringEx: string read FinstallCommandStringEx
+      write FinstallCommandStringEx;
+    property uninstallCommandStringEx: string read FuninstallCommandStringEx
+      write FuninstallCommandStringEx;
+
     property uninstallProg: string read FuninstallProg write SetUninstallProg;
     property uninstallDirectory: string read FuninstallDirectory
       write SetUninstallDirectory;
@@ -818,7 +825,7 @@ resourcestring
     'You need to know the winget Id and Source of the software to install.' +
     LineEnding + 'A tool that may help you to find this data is:' + LineEnding +
     'UniGetUI (formerly WingetUI), The Graphical Interface for your package managers' + LineEnding +
-    '<https://www.marticliment.com/unigetui/>' +
+    '<https://www.marticliment.com/unigetui/>' ;
   // marker for add installers
 
 implementation
@@ -3000,19 +3007,19 @@ begin
     description :=
       'Winget Package';
     silentsetup :=
-      'winget install --id "<#wingetId#>" --exact ' +
+      ' install --id "<#wingetId#>" --exact ' +
       '--source <#wingetSource#> --accept-source-agreements --silent' +
       '--disable-interactivity --accept-package-agreements';
     unattendedsetup :=
-      'winget install --id "<#wingetId#>" --exact ' +
+      ' install --id "<#wingetId#>" --exact ' +
       '--source <#wingetSource#> --accept-source-agreements --silent' +
       '--disable-interactivity --accept-package-agreements';
     silentuninstall :=
-      'winget uninstall --id "<#wingetId#>" --exact ' +
+      ' uninstall --id "<#wingetId#>" --exact ' +
       '--source <#wingetSource#> --accept-source-agreements --silent' +
       '--disable-interactivity --accept-package-agreements';   ;
     unattendeduninstall :=
-      'winget uninstall --id "<#wingetId#>" --exact ' +
+      ' uninstall --id "<#wingetId#>" --exact ' +
       '--source <#wingetSource#> --accept-source-agreements --silent' +
       '--disable-interactivity --accept-package-agreements';   ;
     uninstall_waitforprocess := '';

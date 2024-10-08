@@ -353,8 +353,10 @@ begin
     // special winget
     if aktProduct.SetupFiles[0].installerId = stWinget then
     begin
-      str := str + 'DefVar $wingetId$ = "' + aktProduct.SetupFiles[0].wingetId +'"'+ LineEnding;
-      str := str + 'DefVar $wingetSource$ = ' + aktProduct.SetupFiles[0].wingetSource +'"'+ LineEnding;
+      //str := str + 'DefVar $wingetId$ = "' + aktProduct.SetupFiles[0].wingetId +'"'+ LineEnding;
+      //str := str + 'DefVar $wingetSource$ = ' + aktProduct.SetupFiles[0].wingetSource +'"'+ LineEnding;
+      str := str + 'DefVar $wingetBin$' + LineEnding;
+      str := str + 'DefVar $wingetCommandParam$' + LineEnding;
     end;
 
     patchlist.add('#@stringVars*#=' + str);
@@ -523,6 +525,9 @@ begin
       patchlist.add('#@installCommandLine' + IntToStr(i + 1) + '*#=' +
         aktProduct.SetupFiles[i].installCommandLine);
 
+      patchlist.add('#@installCommandStringEx' + IntToStr(i + 1) + '*#=' +
+        aktProduct.SetupFiles[i].installCommandStringEx);
+
       str := aktProduct.SetupFiles[i].install_waitforprocess;
       if str <> '' then
         str := '/WaitForProcessEnding "' +
@@ -537,6 +542,9 @@ begin
 
       patchlist.add('#@uninstallCommandLine' + IntToStr(i + 1) +
         '*#=' + aktProduct.SetupFiles[i].uninstallCommandLine);
+
+      patchlist.add('#@uninstallCommandStringEx' + IntToStr(i + 1) +
+        '*#=' + aktProduct.SetupFiles[i].uninstallCommandStringEx);
 
       patchlist.add('#@uninstallProg' + IntToStr(i + 1) + '*#=' +
         aktProduct.SetupFiles[0].uninstallProg);
@@ -688,6 +696,14 @@ begin
       fillPatchList;
       infilelist := TStringList.Create;
       case osdsettings.runmode of
+        createWingetProd:
+        begin
+          infilelist.Add('setupwinget.opsiscript');
+          infilelist.Add('delincwinget.opsiinc');
+          infilelist.Add('uninstallsingle.opsiscript');
+          infilelist.Add('declarations.opsiinc');
+          infilelist.Add('sections.opsiinc');
+        end;
         singleAnalyzeCreate:
         begin
           infilelist.Add('setupsingle.opsiscript');
@@ -930,6 +946,7 @@ begin
           begin
             infilename := getFilePath(infilelist.Strings[i]);
           end;
+          tmpname := StringReplace(tmpname, 'winget', '', []);
           tmpname := StringReplace(tmpname, 'single', '', []);
           tmpname := StringReplace(tmpname, 'double', '', []);
           tmpname := StringReplace(tmpname, 'templ', '', []);

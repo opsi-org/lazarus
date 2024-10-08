@@ -143,15 +143,26 @@ todo:
    *
 
 # Changelog opsi-setup-detector
-## [4.3.3.2-1] - 2024-09-10
+## [4.3.4.0-1] - 2024-10-08
 
 ### Add:
 
-- new configuration: writeMetaDataFile (default=true)
 - new installer type stWinget
 - support for winget based installation
 - new winget tab
 - moved tab selection to left vertcal side (treeView)
+
+### TODO:
+- do not analyze .appx , ....
+- support msixbundle
+- check for existing winget.exe
+
+(Detlef Oertel <d.oertel@uib.de>
+
+## [4.3.3.2-1] - 2024-09-10
+
+### Add:
+- new configuration: writeMetaDataFile (default=true)
 
 (Detlef Oertel <d.oertel@uib.de> 2024-09-10)
 
