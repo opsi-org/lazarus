@@ -357,6 +357,8 @@ begin
       //str := str + 'DefVar $wingetSource$ = ' + aktProduct.SetupFiles[0].wingetSource +'"'+ LineEnding;
       str := str + 'DefVar $wingetBin$' + LineEnding;
       str := str + 'DefVar $wingetCommandParam$' + LineEnding;
+
+      readFileToList('HandleWingetSections.opsiscript', sectionlist);
     end;
 
     patchlist.add('#@stringVars*#=' + str);

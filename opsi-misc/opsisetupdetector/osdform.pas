@@ -3056,7 +3056,8 @@ begin
     twoAnalyzeCreate_2,
     threeAnalyzeCreate_1,
     threeAnalyzeCreate_2,
-    threeAnalyzeCreate_3:
+    threeAnalyzeCreate_3,
+    createWingetProd:
     begin
       PageControl1.ActivePage := resultForm1.TabSheetCreate;
       Application.ProcessMessages;
@@ -3104,7 +3105,8 @@ begin
       twoAnalyzeCreate_2,
       threeAnalyzeCreate_1,
       threeAnalyzeCreate_2,
-      threeAnalyzeCreate_3:
+      threeAnalyzeCreate_3,
+      createWingetProd:
       begin
         updateGUI;
         PageControl1.ActivePage := resultForm1.TabSheetProduct2;
@@ -3139,7 +3141,8 @@ begin
     twoAnalyzeCreate_2,
     threeAnalyzeCreate_1,
     threeAnalyzeCreate_2,
-    threeAnalyzeCreate_3:
+    threeAnalyzeCreate_3,
+    createWingetProd:
     begin
       PageControl1.ActivePage := resultForm1.TabSheetIcons;
       Application.ProcessMessages;

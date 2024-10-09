@@ -3008,27 +3008,27 @@ begin
       'Winget Package';
     silentsetup :=
       ' install --id "<#wingetId#>" --exact ' +
-      '--source <#wingetSource#> --accept-source-agreements --silent' +
+      '--source "<#wingetSource#>" --accept-source-agreements --silent ' +
       '--disable-interactivity --accept-package-agreements';
     unattendedsetup :=
       ' install --id "<#wingetId#>" --exact ' +
-      '--source <#wingetSource#> --accept-source-agreements --silent' +
+      '--source "<#wingetSource#>" --accept-source-agreements --silent ' +
       '--disable-interactivity --accept-package-agreements';
     silentuninstall :=
       ' uninstall --id "<#wingetId#>" --exact ' +
-      '--source <#wingetSource#> --accept-source-agreements --silent' +
-      '--disable-interactivity --accept-package-agreements';   ;
+      '--source "<#wingetSource#>" --accept-source-agreements --silent ' +
+      '--disable-interactivity';
     unattendeduninstall :=
       ' uninstall --id "<#wingetId#>" --exact ' +
-      '--source <#wingetSource#> --accept-source-agreements --silent' +
-      '--disable-interactivity --accept-package-agreements';   ;
+      '--source "<#wingetSource#>" --accept-source-agreements --silent ' +
+      '--disable-interactivity';
     uninstall_waitforprocess := '';
     uninstallProg := '';
     installErrorHandlingLines.Add('');
     link :=
       'https://learn.microsoft.com/en-us/windows/package-manager/winget/';
     comment := '';
-    uib_exitcode_function := 'isGenericExitcodeFatal';
+    uib_exitcode_function := 'isWingetExitcodeFatal';
     detected := @detectedbypatternwithor;
   end;
 

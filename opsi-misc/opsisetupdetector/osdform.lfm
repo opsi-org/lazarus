@@ -165,12 +165,12 @@ object resultForm1: TresultForm1
       Height = 609
       Top = 1
       Width = 1038
-      ActivePage = TabSheetWinget
+      ActivePage = TabSheetStart
       Align = alClient
       Images = ImageList1
       ParentFont = False
       ShowTabs = False
-      TabIndex = 5
+      TabIndex = 0
       TabOrder = 0
       OnChange = PageControl1Change
       object TabSheetStart: TTabSheet
@@ -11063,6 +11063,7 @@ object resultForm1: TresultForm1
             BorderSpacing.Left = 9
             BorderSpacing.Around = 4
             Caption = 'Uninstall Program'
+            Enabled = False
             Font.Height = -16
             ParentColor = False
             ParentFont = False
@@ -11077,6 +11078,7 @@ object resultForm1: TresultForm1
             BorderSpacing.Around = 2
             BorderSpacing.InnerBorder = 2
             Constraints.MinWidth = 267
+            Enabled = False
             OnChange = genRttiEditChange
             OnEditingDone = TIEditSetup3UnProgramEditingDone
             ParentFont = False
@@ -11091,6 +11093,7 @@ object resultForm1: TresultForm1
             AutoSize = True
             BorderSpacing.Left = 3
             BorderSpacing.InnerBorder = 2
+            Enabled = False
             Glyph.Data = {
               36040000424D3604000000000000360000002800000010000000100000000100
               2000000000000004000064000000640000000000000000000000000000000000
@@ -15161,18 +15164,24 @@ object resultForm1: TresultForm1
       Width = 230
       Align = alClient
       AutoExpand = True
+      BackgroundColor = clBtnFace
+      BorderStyle = bsNone
+      Color = clBtnFace
       Font.Height = -16
+      HideSelection = False
       Images = ImageList1
-      Indent = 5
+      Indent = 15
       ParentFont = False
+      ParentShowHint = False
       ReadOnly = True
       RowSelect = True
       ScrollBars = ssAutoBoth
+      ShowHint = True
       ShowLines = False
       ShowSeparators = True
       TabOrder = 0
       OnClick = TreeView1Click
-      Options = [tvoAutoExpand, tvoAutoItemHeight, tvoHideSelection, tvoKeepCollapsedNodes, tvoReadOnly, tvoRowSelect, tvoShowButtons, tvoShowRoot, tvoShowSeparators, tvoToolTips]
+      Options = [tvoAutoExpand, tvoAutoItemHeight, tvoKeepCollapsedNodes, tvoReadOnly, tvoRowSelect, tvoShowButtons, tvoShowRoot, tvoShowSeparators, tvoToolTips]
       Items.Data = {
         F9FFFFFF02000A000000000000000000000000000000FFFFFFFF000000000000
         000000050000005374617274010000000100000001000000FFFFFFFF00000000

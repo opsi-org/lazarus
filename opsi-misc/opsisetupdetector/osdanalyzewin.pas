@@ -1201,9 +1201,10 @@ var
   pos1, pos2, i: integer;
 begin
   write_log_and_memo('Preparing winget-Setup:');
-      mysetup.uninstallProg := '';
-      mysetup.uninstall_waitforprocess := '';
-      mysetup.uninstallCheck.Add('directoryexists($installdir$)');
+    mysetup.uninstallProg := '';
+    mysetup.uninstall_waitforprocess := '';
+    mysetup.uninstallCheck.Clear;
+    mysetup.uninstallCheck.Add('if directoryexists($installdir$)');
     mysetup.uninstallCheck.Add('	set $oldProgFound$ = "true"');
     mysetup.uninstallCheck.Add('endif');
 
@@ -1212,9 +1213,10 @@ begin
        cmdStr := installerArray[integer(mysetup.installerId)].silentsetup
      else
        cmdStr := installerArray[integer(mysetup.installerId)].unattendedsetup;
-     //cmdStr := StringReplace(cmdStr, '<#wingetId#>', '$wingetId$', [rfIgnoreCase]);
-     //cmdStr := StringReplace(cmdStr, '<#wingetSource#>', '$wingetSource$', [rfIgnoreCase]);
-     mysetup.installCommandLine := '';
+
+     cmdStr := StringReplace(cmdStr, '<#wingetId#>', mysetup.wingetId, [rfIgnoreCase]);
+     cmdStr := StringReplace(cmdStr, '<#wingetSource#>', mysetup.wingetSource, [rfIgnoreCase]);
+     mysetup.installCommandLine := cmdStr;
      mysetup.installCommandStringEx := cmdStr;
 
     // uninstall command
@@ -1222,10 +1224,13 @@ begin
        cmdStr := installerArray[integer(mysetup.installerId)].silentuninstall
      else
        cmdStr := installerArray[integer(mysetup.installerId)].unattendeduninstall;
-     //cmdStr := StringReplace(cmdStr, '<#wingetId#>', '$wingetId$', [rfIgnoreCase]);
-     //cmdStr := StringReplace(cmdStr, '<#wingetSource#>', '$wingetSource$', [rfIgnoreCase]);
-     mysetup.uninstallCommandLine := '';
+
+     cmdStr := StringReplace(cmdStr, '<#wingetId#>', mysetup.wingetId, [rfIgnoreCase]);
+     cmdStr := StringReplace(cmdStr, '<#wingetSource#>', mysetup.wingetSource, [rfIgnoreCase]);
+     mysetup.uninstallCommandLine := cmdStr;
      mysetup.uninstallCommandStringEx := cmdStr;
+
+
 
   write_log_and_memo('get_winget_info finished');
 end;

@@ -156,6 +156,7 @@ todo:
 - do not analyze .appx , ....
 - support msixbundle
 - check for existing winget.exe
+- Build modes disabled if no service address #4881
 
 (Detlef Oertel <d.oertel@uib.de>
 
