@@ -1230,6 +1230,16 @@ begin
      mysetup.uninstallCommandLine := cmdStr;
      mysetup.uninstallCommandStringEx := cmdStr;
 
+    // akt product
+    if (aktProduct.productdata.productId = '') or
+      (aktProduct.productdata.productId = copy(mysetup.wingetId,0,mysetup.wingetId.Length -1)) then
+      aktProduct.productdata.productId:=mysetup.wingetId;
+    if (aktProduct.productdata.productName = '') or
+      (aktProduct.productdata.productName = copy(mysetup.wingetId,0,mysetup.wingetId.Length -1)) then
+      aktProduct.productdata.productName :=mysetup.wingetId;
+    mysetup.isExitcodeFatalFunction :=
+    installerArray[integer(mysetup.installerId)].uib_exitcode_function;
+
 
 
   write_log_and_memo('get_winget_info finished');
