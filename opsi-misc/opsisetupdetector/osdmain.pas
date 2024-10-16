@@ -454,7 +454,7 @@ begin
           resultForm1.StatusBar1.Panels.Items[1].Text := rsServiceNotConnected;
           {$ENDIF OSDGUI}
           // reset password from input dialog to empty in order to ask again on reconnect
-          if myconfiguration.Service_pass = '' then passwordToUse := '';
+          passwordToUse := '';
         end;
       end
       else

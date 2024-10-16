@@ -346,7 +346,6 @@ type
     SBtnExit: TSpeedButton;
     ScrollBox1: TScrollBox;
     SelectDirectoryDialog1: TSelectDirectoryDialog;
-    Splitter2: TSplitter;
     Splitter3: TSplitter;
     StatusBar1: TStatusBar;
     TabSheetSetup3: TTabSheet;
@@ -521,6 +520,7 @@ type
     procedure IpHtmlPanelAdviceHotClick(Sender: TObject);
     procedure IpHtmlPanelDescClick(Sender: TObject);
     procedure IpHtmlPanelDescHotClick(Sender: TObject);
+    procedure Label88Click(Sender: TObject);
     procedure MenuHelpLogClick(Sender: TObject);
     procedure MenuItem1Click(Sender: TObject);
     procedure MenuItemLogClick(Sender: TObject);
@@ -1205,6 +1205,11 @@ begin
     OpenUrl(URL);
   end;
   *)
+end;
+
+procedure TResultform1.Label88Click(Sender: TObject);
+begin
+
 end;
 
 procedure TResultform1.MenuHelpLogClick(Sender: TObject);
