@@ -14,7 +14,7 @@ object resultForm1: TresultForm1
   OnMouseLeave = FormMouseLeave
   OnShow = FormShow
   Position = poScreenCenter
-  LCLVersion = '3.4.0.0'
+  LCLVersion = '3.6.0.0'
   object Panel1: TPanel
     Left = 0
     Height = 40
@@ -15170,7 +15170,6 @@ object resultForm1: TresultForm1
       Font.Height = -16
       HideSelection = False
       Images = ImageList1
-      Indent = 15
       ParentFont = False
       ParentShowHint = False
       ReadOnly = True
@@ -15204,7 +15203,7 @@ object resultForm1: TresultForm1
     OnCanClose = OpenDialog1CanClose
     OnShow = OpenDialog1Show
     DefaultExt = '.*.msi'
-    Filter = 'Setup|*.exe;*.msi;*.mst;*.msix;*.appx;*.appxbundle|EXE|*.exe|MSI|*.msi|MST|*.mst|MacOS|*.dmg;*.pkg;*.app;*.zip|Linux|*.deb;*.rpm;*.tgz;*.tar.gz|Any File|*.*|OSD Project file|*.osd|control|control;control.toml|MSIX|*.msix|APPX|*.appx|APPXBUNDLE|*.appxbundle'
+    Filter = 'Setup|*.exe;*.msi;*.mst;*.msix;*.appx;*.appxbundle;*.msixbundle|EXE|*.exe|MSI|*.msi|MST|*.mst|MacOS|*.dmg;*.pkg;*.app;*.zip|Linux|*.deb;*.rpm;*.tgz;*.tar.gz|Any File|*.*|OSD Project file|*.osd|control|control;control.toml|MSIX|*.msix;*.msixbundle|APPX|*.appx;*.appxbundle|APPXBUNDLE|*.appxbundle'
     FilterIndex = 2
     Options = [ofAllowMultiSelect, ofPathMustExist, ofEnableSizing, ofViewDetail]
     OnFolderChange = OpenDialog1FolderChange

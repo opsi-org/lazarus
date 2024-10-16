@@ -150,13 +150,10 @@ todo:
 - new installer type stWinget
 - support for winget based installation
 - new winget tab
-- moved tab selection to left vertcal side (treeView)
+- moved tab selection to left vertical side (treeView)
+- support msixbundle
 
 ### TODO:
-- do not analyze .appx , ....
-- support msixbundle
-- check for existing winget.exe
-- Build modes disabled if no service address #4881
 
 (Detlef Oertel <d.oertel@uib.de>
 

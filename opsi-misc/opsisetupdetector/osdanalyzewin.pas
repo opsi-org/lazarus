@@ -1293,6 +1293,14 @@ begin
     get_MsixAppx_info(FileName, mysetup);
     write_log_and_memo('Found installer= ' + installerToInstallerstr(setupType));
   end
+  else if '.msixbundle' = lowercase(ExtractFileExt(FileName)) then
+  begin
+    mysetup.analyze_progess := 10;
+    setupType := stMsixAppx;
+    get_aktProduct_general_info_win(stMsixAppx, Filename, mysetup);
+    get_MsixAppx_info(FileName, mysetup);
+    write_log_and_memo('Found installer= ' + installerToInstallerstr(setupType));
+  end
   else
   begin
     setupType := analyze_binary(FileName, verbose, False, mysetup);

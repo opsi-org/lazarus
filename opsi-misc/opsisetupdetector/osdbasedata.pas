@@ -813,7 +813,7 @@ resourcestring
     LineEnding + 'You may use this msi as install file.' + LineEnding +
     'You may perhaps also pass the msi parameters as arguments to your setup.exe.';
   mdInstallerInfo_MsixAppx =
-    '## This is a Msix / Appx / AppxBundle file.' + LineEnding +
+    '## This is a Msix / Appx / AppxBundle / MsixBundle file.' + LineEnding +
     'This kind of packages may be installed via powershell.' +
     LineEnding + 'In order to check for the dependecies of this package' + LineEnding +
     'and if this package is aviable from MS store ' +
