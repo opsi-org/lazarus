@@ -1022,6 +1022,17 @@ begin
       //RadioButtonBuildPackage.Enabled := False;
       //CheckGroupBuildMode.Enabled := True;
     end;
+
+    // colors
+    {$IFDEF WINDOWS}
+    TreeView1.BackgroundColor := clBtnFace;
+    TreeView1.SelectionColor := clWhite;
+    {$ELSE}
+    TreeView1.BackgroundColor := clWhite;
+    TreeView1.SelectionColor := clBtnFace;
+    {$ENDIF WINDOWS}
+
+
     EditLogInfo.Caption := 'More info in Log file: ' + LogDatei.FileName;
     Application.ProcessMessages;
   end;
