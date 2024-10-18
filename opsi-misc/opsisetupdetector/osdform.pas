@@ -3720,7 +3720,7 @@ procedure TResultform1.TreeView1Click(Sender: TObject);
 var
   index : integer;
 begin
-  index := TTreeview(Sender).Selected.SelectedIndex;
+  index := TTreeview(Sender).Selected.Index;
   PageControl1.ActivePageIndex:= index;
 end;
 
@@ -4256,6 +4256,8 @@ end;
 procedure TResultform1.WingetInputEditingDone(Sender: TObject);
 begin
   osdanalyzewin.get_winget_info(aktProduct.SetupFiles[0]);
+  TIEditSetup4Command.Refresh;
+  TIEditSetup4UnCommand.Refresh;
 end;
 
 

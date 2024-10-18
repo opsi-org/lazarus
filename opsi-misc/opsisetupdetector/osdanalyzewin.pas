@@ -1200,7 +1200,7 @@ var
   str1, str2,cmdStr: string;
   pos1, pos2, i: integer;
 begin
-  write_log_and_memo('Preparing winget-Setup:');
+  LogDatei.log('Preparing winget-Setup:',LLnotice);
     mysetup.uninstallProg := '';
     mysetup.uninstall_waitforprocess := '';
     mysetup.uninstallCheck.Clear;
@@ -1218,6 +1218,7 @@ begin
      cmdStr := StringReplace(cmdStr, '<#wingetSource#>', mysetup.wingetSource, [rfIgnoreCase]);
      mysetup.installCommandLine := cmdStr;
      mysetup.installCommandStringEx := cmdStr;
+     LogDatei.log('winget installCommandLine: '+cmdStr,LLinfo);
 
     // uninstall command
      if mysetup.preferSilent then
@@ -1229,6 +1230,7 @@ begin
      cmdStr := StringReplace(cmdStr, '<#wingetSource#>', mysetup.wingetSource, [rfIgnoreCase]);
      mysetup.uninstallCommandLine := cmdStr;
      mysetup.uninstallCommandStringEx := cmdStr;
+     LogDatei.log('winget uninstallCommandLine: '+cmdStr,LLinfo);
 
     // akt product
     if (aktProduct.productdata.productId = '') or
@@ -1242,7 +1244,7 @@ begin
 
 
 
-  write_log_and_memo('get_winget_info finished');
+  LogDatei.log('get_winget_info finished',LLnotice);
 end;
 
 
