@@ -1035,8 +1035,8 @@ begin
     TreeView1.SelectionFontColor:= clNavy;
     {$ENDIF LINUX}
     {$IFDEF DARWIN}
-    TreeView1.BackgroundColor := clBtnFace;
-    TreeView1.SelectionColor := clWhite;
+    TreeView1.BackgroundColor := clWhite;
+    TreeView1.SelectionColor := clMenuBar;
     TreeView1.SelectionFontColor:= clNavy;
     {$ENDIF DARWIN}
 
