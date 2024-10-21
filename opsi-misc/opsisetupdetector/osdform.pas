@@ -3034,6 +3034,8 @@ begin
 end;
 
 procedure TResultform1.BtCreateWingetPackageClick(Sender: TObject);
+var
+  tmpstr : string;
 begin
   resetGUI;
   osdsettings.runmode := createWingetProd;
@@ -3044,16 +3046,24 @@ begin
   initaktproduct;
   makeProperties;
   resultform1.updateGUI;
-  aktProduct.SetupFiles[0].active:=true;
-  aktProduct.SetupFiles[0].installerId:= stWinget;
+  aktProduct.SetupFiles[0].active := True;
+  aktProduct.SetupFiles[0].installerId := stWinget;
   aktProduct.productdata.targetOSset := [osWin];
   aktProduct.productdata.productId := '';
   aktProduct.productdata.productName := '';
   aktProduct.productdata.productversion := '1.0.0';
   aktProduct.productdata.packageversion := 1;
   aktProduct.productdata.description := 'winget';
+  {$IFDEF OSDGUI}
+  tmpstr := installerArray[integer(stWinget)].info_message_html.Text;
+  if tmpstr <> '' then
+  begin
+    OSD_info.mdContent := tmpstr;
+    if osdsettings.showgui then
+      OSD_info.ShowModal;
+  end;
+  {$ENDIF OSDGUI}
 end;
-
 procedure TResultform1.BtnIconsNextStepClick(Sender: TObject);
 begin
   case osdsettings.runmode of

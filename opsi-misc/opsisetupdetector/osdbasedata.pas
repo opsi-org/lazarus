@@ -814,17 +814,19 @@ resourcestring
     'You may perhaps also pass the msi parameters as arguments to your setup.exe.';
   mdInstallerInfo_MsixAppx =
     '## This is a Msix / Appx / AppxBundle / MsixBundle file.' + LineEnding +
-    'This kind of packages may be installed via powershell.' +
+    'This kind of packages may be installed via powershell.' + LineEnding +
     LineEnding + 'In order to check for the dependecies of this package' + LineEnding +
-    'and if this package is aviable from MS store ' +
-    LineEnding + 'then you may use the following web site to check and download' +
+    'and if this package is aviable from MS store,' + LineEnding +
+    LineEnding + 'then you may use the following web site to check and download' + LineEnding +
     LineEnding + 'missing packages: ' + LineEnding +
-    '<https://store.rg-adguard.net/>';
+    LineEnding + '<https://store.rg-adguard.net/>' + LineEnding +
+    LineEnding + 'There also is often a problem with the uninstallation.' + LineEnding +
+    LineEnding + 'So the use of the "uninstall_before_install" checkbox is recommended.';
   mdInstallerInfo_winget =
-    '## Making a winget based package.' + LineEnding +
-    'You need to know the winget Id and Source of the software to install.' +
-    LineEnding + 'A tool that may help you to find this data is:' + LineEnding +
-    'UniGetUI (formerly WingetUI), The Graphical Interface for your package managers' + LineEnding +
+    '## Making a winget based package.' + LineEnding + LineEnding +
+    'You need to know the winget Id and Source of the software to install.' + LineEnding +
+    LineEnding + 'A tool that may help you to find this data is:' + LineEnding + LineEnding +
+    'UniGetUI (formerly WingetUI), The Graphical Interface for your package managers' + LineEnding + LineEnding +
     '<https://www.marticliment.com/unigetui/>' ;
   // marker for add installers
 
@@ -2316,7 +2318,7 @@ begin
   with installerArray[integer(stMsixAppx)] do
     info_message_html.Text := mdInstallerInfo_MsixAppx;
   with installerArray[integer(stWinget)] do
-    info_message_html.Text := '';
+    info_message_html.Text := mdInstallerInfo_winget;
   // marker for add installers
 end;
 
