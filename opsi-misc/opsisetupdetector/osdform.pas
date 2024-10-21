@@ -1027,10 +1027,18 @@ begin
     {$IFDEF WINDOWS}
     TreeView1.BackgroundColor := clBtnFace;
     TreeView1.SelectionColor := clWhite;
-    {$ELSE}
+    TreeView1.SelectionFontColor:= clNavy;
+    {$ENDIF WINDOWS}
+    {$IFDEF LINUX}
     TreeView1.BackgroundColor := clWhite;
     TreeView1.SelectionColor := clBtnFace;
-    {$ENDIF WINDOWS}
+    TreeView1.SelectionFontColor:= clNavy;
+    {$ENDIF LINUX}
+    {$IFDEF DARWIN}
+    TreeView1.BackgroundColor := clBtnFace;
+    TreeView1.SelectionColor := clWhite;
+    TreeView1.SelectionFontColor:= clNavy;
+    {$ENDIF DARWIN}
 
 
     EditLogInfo.Caption := 'More info in Log file: ' + LogDatei.FileName;
