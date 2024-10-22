@@ -383,7 +383,19 @@ begin
         readFileToList('HandleMsiUninstallSections.opsiscript', sectionlist);
       end;
 
+    str := '';
+    // msix special
+    if aktProduct.SetupFiles[0].installerId = stMsixAppx then
+    begin
+      if aktProduct.SetupFiles[0].optionalUninstallLines.Count > 0 then
+      begin
+        str := aktProduct.SetupFiles[0].optionalUninstallLines.Text;
+      end;
+    end;
+    patchlist.add('#@optionalUninstallLines*#=' + str);
+
     // #@GetProductProperty*#:
+    str := '';
     for i := 0 to aktProduct.properties.Count - 1 do
     begin
       proptmpstr := LowerCase(aktProduct.properties.Items[i].Property_Name);
@@ -447,6 +459,7 @@ begin
       str := 'comment "Start Pre UnInstall hook :"' + LineEnding +
         myconfiguration.preUninstallLines.Text;
     patchlist.add('#@preUninstallLines*#=' + str);
+
 
     str := myconfiguration.postUnInstallLines.Text;
     if str <> '' then

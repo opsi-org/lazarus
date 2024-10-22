@@ -211,6 +211,8 @@ type
     // file name of the main program (used for desktop icons)
     FuninstallCheck: TStrings;
     // list of opsi-script code to detect an existing installation
+    FoptionalUninstallLines: TStrings;
+    // list of opsi-script code to uninstall an existing installation
     FisExitcodeFatalFunction: string;
     // name of the exitcode function in the library uib_exitcode, that matches to this installer type
     Funinstall_waitforprocess: string;
@@ -232,6 +234,7 @@ type
     procedure SetMarkerlist(const AValue: TStrings);
     procedure SetInfolist(const AValue: TStrings);
     procedure SetUninstallCheck(const AValue: TStrings);
+    procedure SetOptionalUninstallLines(const AValue: TStrings);
     procedure SetInstallErrorHandlingLines(const AValue: TStrings);
     procedure SetUninstallProg(const AValue: string);
     procedure SetTargetProg(const AValue: string);
@@ -284,6 +287,7 @@ type
       write SetUninstallDirectory;
     property targetProg: string read FtargetProg write SetTargetProg;
     property uninstallCheck: TStrings read FuninstallCheck write SetUninstallCheck;
+    property optionalUninstallLines: TStrings read FoptionalUninstallLines write SetOptionalUninstallLines;
     property uninstall_waitforprocess: string
       read Funinstall_waitforprocess write Funinstall_waitforprocess;
     property install_waitforprocess: string
@@ -940,6 +944,7 @@ begin
   Fmarkerlist := TStringList.Create;
   Finfolist := TStringList.Create;
   FuninstallCheck := TStringList.Create;
+  FoptionalUninstallLines := TStringList.Create;
   FinstallErrorHandlingLines := TStringList.Create;
   inherited;
   //initValues;
@@ -950,6 +955,7 @@ begin
   FreeAndNil(Fmarkerlist);
   FreeAndNil(Finfolist);
   FreeAndNil(FuninstallCheck);
+  FreeAndNil(FoptionalUninstallLines);
   FreeAndNil(FinstallErrorHandlingLines);
   inherited;
 end;
@@ -988,6 +994,11 @@ end;
 procedure TSetupFile.SetUninstallCheck(const AValue: TStrings);
 begin
   FuninstallCheck.Assign(AValue);
+end;
+
+procedure TSetupFile.SetOptionalUninstallLines(const AValue: TStrings);
+begin
+  FoptionalUninstallLines.Assign(AValue);
 end;
 
 procedure TSetupFile.SetMarkerlist(const AValue: TStrings);
@@ -1074,6 +1085,7 @@ begin
   FuninstallProg := '';
   FtargetProg := '';
   FuninstallCheck.Clear;
+  FoptionalUninstallLines.Clear;
   Fanalyze_progess := 0;
   FisExitcodeFatalFunction := 'isGenericExitcodeFatal';
   Funinstall_waitforprocess := '';
@@ -2990,9 +3002,12 @@ begin
     unattendedsetup :=
       'powershell.exe Add-AppProvisionedPackage -online -packagepath <#packagePath#> -skiplicense';
     silentuninstall :=
-      'powershell.exe Remove-AppPackage -AllUsers -package <#packageFullName#>';
+      'powershell.exe Remove-AppPackage -AllUsers -package <#packageFullName#> -Confirm:$False';
+    //additional uninstall command will be filled to the optionalUninstallCommandLines
+    // in get_msixAppx_info
+    // 'Get-AppxProvisionedPackage -Online | Where-Object {$_.PackageName -eq "<#packageFullName#>"} | Remove-AppxProvisionedPackage -Online';
     unattendeduninstall :=
-      'powershell.exe Remove-AppPackage -AllUsers -package <#packageFullName#>';
+      'powershell.exe Remove-AppPackage -AllUsers -package <#packageFullName#> -Confirm:$False';
     uninstall_waitforprocess := '';
     uninstallProg := '';
     installErrorHandlingLines.Add('');

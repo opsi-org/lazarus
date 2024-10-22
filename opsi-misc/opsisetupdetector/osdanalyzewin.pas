@@ -1192,6 +1192,20 @@ begin
     [rfIgnoreCase]);
   mysetup.uninstallCommandLine := cmdStr;
 
+  mysetup.optionalUninstallLines.Add('set $cmdStr$ = "Get-AppxProvisionedPackage -Online | Where-Object {$_.PackageName -eq "');
+  mysetup.optionalUninstallLines.Add('set $cmdStr$ = $cmdStr$ +''"''');
+  mysetup.optionalUninstallLines.Add('set $cmdStr$ = $cmdStr$ + $MsixAppxPackageName$');
+  mysetup.optionalUninstallLines.Add('set $cmdStr$ = $cmdStr$ +''"''');
+  mysetup.optionalUninstallLines.Add('set $cmdStr$ = $cmdStr$ + "} | Remove-AppxProvisionedPackage -Online"');
+  mysetup.optionalUninstallLines.Add('Set $Exitcode$ = powershellcall($cmdStr$)');
+
+  mysetup.optionalUninstallLines.Add('if "true" = isGenericExitcodeFatal($exitcode$, "true", $ErrorString$ )');
+  mysetup.optionalUninstallLines.Add('	LogError $ErrorString$');
+  mysetup.optionalUninstallLines.Add('	;isfatalerror $ErrorString$');
+  mysetup.optionalUninstallLines.Add('else');
+  mysetup.optionalUninstallLines.Add('	Comment $ErrorString$');
+  mysetup.optionalUninstallLines.Add('endif');
+
   write_log_and_memo('get_MsixAppx_info finished');
 end;
 
@@ -1205,7 +1219,7 @@ begin
     mysetup.uninstall_waitforprocess := '';
     mysetup.uninstallCheck.Clear;
     mysetup.uninstallCheck.Add('if directoryexists($installdir$)');
-    mysetup.uninstallCheck.Add('	set $oldProgFound$ = "true"');
+    mysetup.uninstallCheck.Add('	set $progFound$ = "true"');
     mysetup.uninstallCheck.Add('endif');
 
     // install command
