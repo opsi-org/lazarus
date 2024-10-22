@@ -544,9 +544,11 @@ begin
   optionlist.Append('productId::');
   optionlist.Append('mode::');
   optionlist.Append('template-channel::');
+  optionlist.Append('wingetId::');
+  optionlist.Append('wingetSource::');
 
   // quick check parameters
-  ErrorMsg := Application.CheckOptions('hfnltpmc', optionlist);
+  ErrorMsg := Application.CheckOptions('hfnltpmcws', optionlist);
   if ErrorMsg <> '' then
   begin
     LogDatei.log('Exception while handling parameters.', LLcritical);
@@ -663,7 +665,7 @@ begin
         Ord(osdsettings.runmode)), LLInfo);
     except
       myerror := 'Error: Given mode: ' + tmpstr +
-        ' is not valid. Should be on of singleAnalyzeCreate, createTemplate';
+        ' is not valid. Should be on of singleAnalyzeCreate, createTemplate, createWingetProd';
       {$IFNDEF WINDOWS}
       writeln(myerror);
       {$ENDIF WINDOWS}
@@ -680,6 +682,7 @@ begin
   {$IFDEF OSDGUI}
   resultform1.updateGUI;
   {$ENDIF OSDGUI}
+
 
   if Application.HasOption('p', 'productId') then
   begin
@@ -712,7 +715,76 @@ begin
     end;
   end;
 
-  if Application.HasOption('f', 'filename') then
+  if osdsettings.runmode = createWingetProd then
+  begin
+    if not osdsettings.showgui then
+    begin
+      if Application.HasOption('w', 'wingetId') then
+      begin
+        aktProduct.SetupFiles[0].wingetId :=
+          trim(Application.GetOptionValue('w', 'wingetId'));
+        LogDatei.log('Will use as wingetId: ' +
+          aktProduct.SetupFiles[0].wingetId, LLInfo);
+        if Application.HasOption('s', 'wingetSource') then
+        begin
+          aktProduct.SetupFiles[0].wingetSource :=
+            trim(Application.GetOptionValue('s', 'wingetSource'));
+          LogDatei.log('Will use as wingetSource: ' +
+            aktProduct.SetupFiles[0].wingetSource, LLInfo);
+        end
+        else
+        begin
+          myerror :=
+            'Warning: Runmode=createWingetProd but no wingetSource given - Fall back to "winget".';
+          {$IFNDEF WINDOWS}
+          writeln(myerror);
+          {$ENDIF WINDOWS}
+          LogDatei.log(myerror, LLwarning);
+          aktProduct.SetupFiles[0].wingetSource := 'winget';
+          LogDatei.log('Will use as wingetSource: ' +
+            aktProduct.SetupFiles[0].wingetSource, LLInfo);
+        end;
+        //setRunMode;
+        //MemoAnalyze.Clear;
+        //PageControl1.ActivePage := resultForm1.TabSheetWinget;
+        //Application.ProcessMessages;
+        //initaktproduct;
+        makeProperties;
+        //resultform1.updateGUI;
+        aktProduct.SetupFiles[0].active := True;
+        aktProduct.SetupFiles[0].installerId := stWinget;
+        aktProduct.productdata.targetOSset := [osWin];
+        aktProduct.productdata.productId := '';
+        aktProduct.productdata.productName := '';
+        aktProduct.productdata.productversion := '1.0.0';
+        aktProduct.productdata.packageversion := 1;
+        aktProduct.productdata.description := 'winget';
+        aktProduct.SetupFiles[0].targetOS := osWin;
+        // start to process
+        get_winget_info(aktProduct.SetupFiles[0]);
+        if forceProductId <> '' then
+          aktProduct.productdata.productId := forceProductId;
+        if osdsettings.runmode <> analyzeOnly then
+        begin
+          LogDatei.log('Start createProductStructure in NOGUI mode: ', LLnotice);
+          createProductStructure;
+        end;
+      end
+      else
+      begin
+        myerror := 'Error: Runmode=createWingetProd but no wingetId given.';
+        {$IFNDEF WINDOWS}
+        writeln(myerror);
+        {$ENDIF WINDOWS}
+        LogDatei.log(myerror, LLCritical);
+        system.ExitCode := 1;
+        WriteHelp;
+        Application.Terminate;
+        Exit;
+      end;
+    end;
+  end
+  else if Application.HasOption('f', 'filename') then
   begin
     myfilename := trim(Application.GetOptionValue('f', 'filename'));
     if not FileExists(myfilename) then

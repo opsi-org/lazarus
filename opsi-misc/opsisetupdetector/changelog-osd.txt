@@ -152,6 +152,9 @@ todo:
 - new winget tab
 - moved tab selection to left vertical side (treeView)
 - support msixbundle
+- msix now with additional uninstall method
+- msix now with Unstall_before_install=false by default
+- new commandline parameter wingetId and wingetSource for automatic testing
 
 ### TODO:
 

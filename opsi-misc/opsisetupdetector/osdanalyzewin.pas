@@ -1090,9 +1090,10 @@ end;
 procedure get_MsixAppx_info(myfilename: string; var mysetup: TSetupFile);
 var
   packagepath, cmdStr, versionStr, fullNameStr, displayNameStr: string;
-  destDir: string;
+  destDir, proptmpstr: string;
   xmlLines, nodeLines: TStringList;
   manifesFileName : string;
+  i : integer;
 begin
   write_log_and_memo('Analyzing MsixAppx Package:');
   // Analyze
@@ -1205,6 +1206,16 @@ begin
   mysetup.optionalUninstallLines.Add('else');
   mysetup.optionalUninstallLines.Add('	Comment $ErrorString$');
   mysetup.optionalUninstallLines.Add('endif');
+
+  // add uninstall_before_install with default = false
+  aktProduct.productdata.uninstallBeforeInstall:= true;
+  makeProperties;
+   for i := 0 to aktProduct.properties.Count - 1 do
+    begin
+      proptmpstr := LowerCase(aktProduct.properties.Items[i].Property_Name);
+      if (proptmpstr = LowerCase('uninstall_before_install')) then
+        aktProduct.properties.Items[i].BoolDefault:= false;
+    end;
 
   write_log_and_memo('get_MsixAppx_info finished');
 end;
