@@ -718,6 +718,11 @@ begin
           infilelist.Add('uninstallsingle.opsiscript');
           infilelist.Add('declarations.opsiinc');
           infilelist.Add('sections.opsiinc');
+          //osd-winget-exitcode.opsiscript
+          infilename := genericTemplatePath + Pathdelim + 'osd-winget-exitcode.opsiscript';
+          outfilename := clientpath + PathDelim + 'osd-winget-exitcode.opsiscript';
+          copyfile(infilename, outfilename, [cffOverwriteFile,
+            cffCreateDestDirectory, cffPreserveTime], True);
         end;
         singleAnalyzeCreate:
         begin
@@ -803,7 +808,6 @@ begin
           end;
         end;
       end;
-
       // additional files for 'default'
       if (aktProduct.productdata.channelDir = 'default') then
       begin

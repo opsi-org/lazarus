@@ -155,6 +155,7 @@ todo:
 - msix now with additional uninstall method
 - msix now with Unstall_before_install=false by default
 - new commandline parameter wingetId and wingetSource for automatic testing
+- winget: copy also osd-winget-exitcode.opsiscript
 
 ### TODO:
 

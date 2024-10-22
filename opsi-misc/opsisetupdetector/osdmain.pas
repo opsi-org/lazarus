@@ -764,6 +764,22 @@ begin
         get_winget_info(aktProduct.SetupFiles[0]);
         if forceProductId <> '' then
           aktProduct.productdata.productId := forceProductId;
+        // write osd-analyze-result.txt
+        AssignFile(anaoutfile, 'c:\opsi.org\applog\osd-analyze-result.txt');
+        Rewrite(anaoutfile);
+        writeln(anaoutfile, 'installertype=' + installerToInstallerstr(
+          aktProduct.SetupFiles[0].installerId));
+        writeln(anaoutfile, 'SoftwareVersion=' +
+          aktProduct.SetupFiles[0].SoftwareVersion);
+        writeln(anaoutfile, 'installCommandLine=' +
+          aktProduct.SetupFiles[0].installCommandLine);
+        writeln(anaoutfile, '');
+        writeln(anaoutfile, '');
+        writeln(anaoutfile, '');
+        writeln(anaoutfile, '');
+        writeln(anaoutfile, '');
+        writeln(anaoutfile, '');
+        CloseFile(anaoutfile);
         if osdsettings.runmode <> analyzeOnly then
         begin
           LogDatei.log('Start createProductStructure in NOGUI mode: ', LLnotice);
