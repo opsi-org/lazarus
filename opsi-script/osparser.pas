@@ -11312,6 +11312,7 @@ var
   tmplist: TStringList;
   AllSignedHack: boolean = false;
   catcommand: string = 'cat ';
+  success: boolean = false;
 
 begin
   try
@@ -11588,7 +11589,10 @@ begin
           FExtremeErrorLevel := LevelFatal;
         end
         else
+        begin
+          success := True;
           LogDatei.log(Report, LLinfo + logleveloffset);
+        end;
       end
       else
       begin
@@ -11603,7 +11607,18 @@ begin
         end
         else
         begin
+          success := True;
+        end;
+      end;
 
+      if success then
+      begin
+        // fix: avoid output with one empty element at powershell
+        if (output.Count = 1) and (output[0] = '') and (useext = '.ps1') then
+         output.Delete(0);
+
+        if output.Count > 0 then
+        begin
           LogDatei.log('', LLDebug + logleveloffset);
           LogDatei.log('output:', LLDebug + logleveloffset);
           LogDatei.log('--------------', LLDebug + logleveloffset);
@@ -11613,9 +11628,11 @@ begin
             LogDatei.log(output.strings[i], LLDebug + logleveloffset);
           end;
 
-
-          LogDatei.log('', LLDebug + logleveloffset);
-        end;
+           LogDatei.log('', LLDebug + logleveloffset);
+        end
+        else
+          if (use_sp and catchout) or not use_sp then
+            LogDatei.log('Shell command produce no or empty output', LLDebug2);
       end;
 
       {$IFDEF WIN32}
