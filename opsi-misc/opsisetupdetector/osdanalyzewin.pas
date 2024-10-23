@@ -1229,6 +1229,12 @@ begin
     mysetup.uninstallProg := '';
     mysetup.uninstall_waitforprocess := '';
     mysetup.uninstallCheck.Clear;
+    mysetup.uninstallCheck.Add('set $wingetCommandParam$ = " list --id '+mysetup.wingetId+' --exact --accept-source-agreements"');
+    mysetup.uninstallCheck.Add('set $UninstallList$ = shellCall($wingetBin$ + $wingetCommandParam$)');
+    mysetup.uninstallCheck.Add('if not("" = getIndexFromListByContaining($UninstallList$, "'+mysetup.wingetId+'"))');
+    mysetup.uninstallCheck.Add('	set $progFound$ = "true"');
+    mysetup.uninstallCheck.Add('endif');
+    mysetup.uninstallCheck.Add('; alternate check:');
     mysetup.uninstallCheck.Add('if directoryexists($installdir$)');
     mysetup.uninstallCheck.Add('	set $progFound$ = "true"');
     mysetup.uninstallCheck.Add('endif');

@@ -715,7 +715,7 @@ begin
         begin
           infilelist.Add('setupwinget.opsiscript');
           infilelist.Add('delincwinget.opsiinc');
-          infilelist.Add('uninstallsingle.opsiscript');
+          infilelist.Add('uninstallwinget.opsiscript');
           infilelist.Add('declarations.opsiinc');
           infilelist.Add('sections.opsiinc');
           //osd-winget-exitcode.opsiscript

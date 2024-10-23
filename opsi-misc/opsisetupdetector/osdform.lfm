@@ -1,7 +1,7 @@
 object resultForm1: TresultForm1
-  Left = 545
+  Left = 546
   Height = 674
-  Top = 252
+  Top = 271
   Width = 1278
   Caption = 'opsi Setup Detector'
   ClientHeight = 674
@@ -10964,7 +10964,7 @@ object resultForm1: TresultForm1
           FlowLayout = tlTop
           FlowStyle = fsLeftRightTopBottom
           ParentFont = False
-          TabOrder = 1
+          TabOrder = 4
           object Label109: TLabel
             Left = 16
             Height = 21
@@ -11017,7 +11017,7 @@ object resultForm1: TresultForm1
           FlowLayout = tlTop
           FlowStyle = fsLeftRightTopBottom
           ParentFont = False
-          TabOrder = 2
+          TabOrder = 5
           object Label110: TLabel
             Left = 16
             Height = 21
@@ -11090,7 +11090,7 @@ object resultForm1: TresultForm1
           FlowLayout = tlTop
           FlowStyle = fsLeftRightTopBottom
           ParentFont = False
-          TabOrder = 3
+          TabOrder = 6
           object Label111: TLabel
             Left = 16
             Height = 21
@@ -11282,7 +11282,7 @@ object resultForm1: TresultForm1
           FlowLayout = tlTop
           FlowStyle = fsLeftRightTopBottom
           ParentFont = False
-          TabOrder = 4
+          TabOrder = 2
           object Label116: TLabel
             Left = 16
             Height = 21
@@ -11390,7 +11390,7 @@ object resultForm1: TresultForm1
           FlowLayout = tlTop
           FlowStyle = fsLeftRightTopBottom
           ParentFont = False
-          TabOrder = 5
+          TabOrder = 3
           object Label118: TLabel
             Left = 249
             Height = 21
@@ -11547,7 +11547,7 @@ object resultForm1: TresultForm1
           FlowLayout = tlTop
           FlowStyle = fsLeftRightTopBottom
           ParentFont = False
-          TabOrder = 6
+          TabOrder = 7
           object Label108: TLabel
             Left = 16
             Height = 21
@@ -11610,7 +11610,7 @@ object resultForm1: TresultForm1
           FlowLayout = tlTop
           FlowStyle = fsLeftRightTopBottom
           ParentFont = False
-          TabOrder = 7
+          TabOrder = 1
           object Label113: TLabel
             Left = 16
             Height = 21
@@ -13248,10 +13248,10 @@ object resultForm1: TresultForm1
                 TIOptions = [tgoStartIndexAtOne, tgoShowOnlyProperties]
                 ColWidths = (
                   64
-                  129
-                  129
-                  129
-                  128
+                  125
+                  125
+                  124
+                  124
                 )
               end
               object PanelDepBtns: TPanel
@@ -13674,10 +13674,10 @@ object resultForm1: TresultForm1
                 TIOptions = [tgoStartIndexAtOne, tgoShowOnlyProperties]
                 ColWidths = (
                   64
-                  242
-                  242
-                  242
-                  242
+                  238
+                  238
+                  238
+                  237
                 )
               end
             end
