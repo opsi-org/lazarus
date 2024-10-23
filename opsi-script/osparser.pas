@@ -5802,7 +5802,8 @@ begin
     UserPath := profilepath + '\NTUser.dat';
     if FileExists(UserPath) then
     begin
-      if not FileGetWriteAccess(UserPath, Info) then
+      // do not set dir acl
+      if not FileGetWriteAccess(UserPath, Info,false) then
       begin
         LogDatei.log('Error: ' + Info, LLError);
       end
@@ -6003,7 +6004,8 @@ begin
     end;
     if FileExists(UserPath) then
     begin
-      if not FileGetWriteAccess(UserPath, Info) then
+      // do not set dir acl
+      if not FileGetWriteAccess(UserPath, Info,false) then
       begin
         LogDatei.log('Error: ' + Info, LLError);
       end
@@ -6163,7 +6165,8 @@ begin
      *)
   if FileExists(UserPath) then
   begin
-    if not FileGetWriteAccess(UserPath, Info) then
+    // do not set dir acl
+    if not FileGetWriteAccess(UserPath, Info,false) then
     begin
       LogDatei.log('Error: ' + Info, LLError);
     end

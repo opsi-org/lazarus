@@ -530,7 +530,8 @@ function ExtractFileDir(const FileName: string): string;
 function ExpandFileName(const FileName: string): string;
 
 
-function FileGetWriteAccess(const Filename: string; var ActionInfo: string): boolean;
+//function FileGetWriteAccess(const Filename: string; var ActionInfo: string): boolean;
+function FileGetWriteAccess(const Filename: string; var ActionInfo: string; handleDir : boolean = true): boolean;
 
 
 procedure MakeBakFile(const FName: string);
@@ -4976,7 +4977,7 @@ begin
 end;
 
 
-function FileGetWriteAccess(const Filename: string; var ActionInfo: string): boolean;
+function FileGetWriteAccess(const Filename: string; var ActionInfo: string; handleDir : boolean = true): boolean;
 var
   Attr: integer = 0;
   ErrorNo: integer = 0;
@@ -4998,10 +4999,21 @@ begin
     JwaWindows.SET_ACCESS, JwaWindows.SUB_CONTAINERS_AND_OBJECTS_INHERIT) = True then
     LogDatei.log('Access Rights (file) modified and granted to :' +
       runninguser, LLDebug);
-  if AddAccessRightsToACL(ExtractFileDir(Filename), runninguser,
-    JwaWindows.GENERIC_ALL, JwaWindows.SET_ACCESS,
-    JwaWindows.NO_INHERITANCE) = True then
-    LogDatei.log('Access Rights (dir) modified and granted to :' + runninguser, LLDebug);
+  // Setting a ACL for a directory take time that seems to be proportional to the number of objects below
+  // even with NO_INHERITANCE or INHERIT_NO_PROPAGATE
+  // so if we do not need it - let it be
+  // Ticket: uib#2024090617000021 — Registry für alle User modifizieren
+  // in this Ticket it takes about 30 Minutes to set the ACL for the profile directory
+  // if setting the ACL for the directory using INHERIT_NO_PROPAGATE seems to be a little bit faster then NO_INHERITANCE
+  if handleDir then
+  begin
+    if AddAccessRightsToACL(ExtractFileDir(Filename), runninguser,
+      JwaWindows.GENERIC_ALL, JwaWindows.SET_ACCESS,
+      JwaWindows.INHERIT_NO_PROPAGATE) = True then
+      //JwaWindows.NO_INHERITANCE) = True then
+      LogDatei.log('Access Rights (dir) modified and granted to :' + runninguser, LLDebug);
+  end
+  else LogDatei.log('Access Rights (dir) not modified.', LLDebug);
 
   // does the file path points to a user profile ?
   userPos := Pos(':\Users\', Filename) + 8;
@@ -5016,7 +5028,7 @@ begin
     if AddAccessRightsToACL(Filename, user, JwaWindows.GENERIC_ALL,
       JwaWindows.SET_ACCESS, JwaWindows.SUB_CONTAINERS_AND_OBJECTS_INHERIT) =
       True then
-      LogDatei.log_prog('Access Rights modified and granted to ' + user, LLInfo);
+      LogDatei.log('Access Rights (file) modified and granted to ' + user, LLDebug);
   end;
   // else: we assume that the file is not in a user profile
   //else
