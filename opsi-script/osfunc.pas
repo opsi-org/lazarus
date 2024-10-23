@@ -5028,7 +5028,7 @@ begin
     if AddAccessRightsToACL(Filename, user, JwaWindows.GENERIC_ALL,
       JwaWindows.SET_ACCESS, JwaWindows.SUB_CONTAINERS_AND_OBJECTS_INHERIT) =
       True then
-      LogDatei.log('Access Rights (file) modified and granted to ' + user, LLInfo);
+      LogDatei.log('Access Rights (file) modified and granted to ' + user, LLDebug);
   end;
   // else: we assume that the file is not in a user profile
   //else
