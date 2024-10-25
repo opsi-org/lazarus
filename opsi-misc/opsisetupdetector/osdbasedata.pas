@@ -740,7 +740,7 @@ resourcestring
     'Be careful when creating dependencies for other action requests than "setup"';
   rsPreferMsiUninstall =
     'If true=prefer uninstall via msi if possible.' + LineEnding +
-    'Affects Installer that are wrapper around msi,' + LineEnding +
+    'Affects Installers that are wrappers around msi,' + LineEnding +
     'like installshieldMSI, advanced_installer, wix toolset';
   rsWriteMetaDataFile =
     'If true=write opsi-meta-data.toml file';

@@ -189,7 +189,7 @@ todo:
 - display msi upgradeCode
 - new configuration: preferMsiUninstall (default=true):
   If true=prefer uninstall via msi if possible (if msi is found).
-  Affects Installer that are wrapper around msi,
+  Affects Installers that are wrappers around msi,
   like installshieldMSI, advanced_installer, wix toolset
   extend use of linux msiiinfo in unit lessmsi
   use jyt binary to vonvert opsi meta file at macos
