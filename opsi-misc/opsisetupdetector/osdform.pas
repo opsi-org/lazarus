@@ -984,6 +984,7 @@ begin
     osdsettings.BuildModeIndex := myconfiguration.BuildRadioIndex;
 
     Visible := True;
+    // Tabsheet icons
     TabSheetStart.ImageIndex := 0;
     TabSheetAnalyze.ImageIndex := 1;
     TabSheetSetup1.ImageIndex := 2;
@@ -993,6 +994,18 @@ begin
     TabSheetProduct2.ImageIndex := 3;
     TabSheetIcons.ImageIndex := 3;
     TabSheetCreate.ImageIndex := 4;
+    // Tabsheet all enabled since 4.3.4
+    TabSheetStart.Enabled := True;
+    TabSheetAnalyze.Enabled := True;
+    TabSheetSetup1.Enabled := True;
+    TabSheetSetup2.Enabled := True;
+    TabSheetSetup3.Enabled := True;
+    TabSheetWinget.Enabled := True;
+    TabSheetProduct.Enabled := True;
+    TabSheetProduct2.Enabled := True;
+    TabSheetIcons.Enabled := True;
+    TabSheetCreate.Enabled := True;
+
     TimerFirstconfig.Enabled := True;
     // check if we may call package builder
     if fileexists(myconfiguration.PathToOpsiPackageBuilder) then
@@ -1023,7 +1036,7 @@ begin
       //CheckGroupBuildMode.Enabled := True;
     end;
 
-    // colors
+    //Treeview colors
     {$IFDEF WINDOWS}
     TreeView1.BackgroundColor := clBtnFace;
     TreeView1.SelectionColor := clWhite;
@@ -1039,6 +1052,17 @@ begin
     TreeView1.SelectionColor := clMenuBar;
     TreeView1.SelectionFontColor:= clNavy;
     {$ENDIF DARWIN}
+    //Treeview items
+    TreeView1.Items[0].Enabled:= true;  // start
+    TreeView1.Items[1].Enabled:= true;  // analyze
+    TreeView1.Items[2].Enabled:= true;  // setup1
+    TreeView1.Items[3].Enabled:= false;  // setup2
+    TreeView1.Items[4].Enabled:= false;  // setup3
+    TreeView1.Items[5].Enabled:= false;  // winget
+    TreeView1.Items[6].Enabled:= true;  // product1
+    TreeView1.Items[7].Enabled:= true;  // product2
+    TreeView1.Items[8].Enabled:= true;  // product3
+    TreeView1.Items[9].Enabled:= true;  // create
 
 
     EditLogInfo.Caption := 'More info in Log file: ' + LogDatei.FileName;
@@ -1061,6 +1085,7 @@ begin
     TICheckBoxDesktopIcon.Enabled := True;
     TICheckBoxCustomizeProfile.Enabled := True;
     TICheckBoxUninstallBefore.Enabled := True;
+    (* disabled  for 4.3.4 with treeview control
     // the tabsheets
     TabSheetStart.Enabled := True;
     TabSheetAnalyze.Enabled := True;
@@ -1069,6 +1094,19 @@ begin
     TabSheetProduct.Enabled := True;
     TabSheetProduct2.Enabled := True;
     TabSheetCreate.Enabled := True;
+    *)
+    //Treeview items
+    TreeView1.Items[0].Enabled:= true;  // start
+    TreeView1.Items[1].Enabled:= true;  // analyze
+    TreeView1.Items[2].Enabled:= true;  // setup1
+    TreeView1.Items[3].Enabled:= false;  // setup2
+    TreeView1.Items[4].Enabled:= false;  // setup3
+    TreeView1.Items[5].Enabled:= false;  // winget
+    TreeView1.Items[6].Enabled:= true;  // product1
+    TreeView1.Items[7].Enabled:= true;  // product2
+    TreeView1.Items[8].Enabled:= true;  // product3
+    TreeView1.Items[9].Enabled:= true;  // create
+
     // the buttons
     BtSetup1NextStep.Enabled := True;
     // treeview
@@ -1131,30 +1169,69 @@ begin
 
     analyzeOnly:
     begin
+      (*
       TabSheetSetup2.Enabled := False;
       TabSheetProduct.Enabled := False;
       TabSheetProduct2.Enabled := False;
       TabSheetCreate.Enabled := False;
+      *)
       BtSetup1NextStep.Enabled := False;
+      (* lookup comment:
+      //Treeview items in  resetgui
+      TreeView1.Items[0].Enabled:= true;  // start
+      TreeView1.Items[1].Enabled:= true;  // analyze
+      TreeView1.Items[2].Enabled:= true;  // setup1
+      TreeView1.Items[3].Enabled:= false;  // setup2
+      TreeView1.Items[4].Enabled:= false;  // setup3
+      TreeView1.Items[5].Enabled:= false;  // winget
+      TreeView1.Items[6].Enabled:= true;  // product1
+      TreeView1.Items[7].Enabled:= true;  // product2
+      TreeView1.Items[8].Enabled:= true;  // product3
+      TreeView1.Items[9].Enabled:= true;  // create
+      *)
+      //Treeview items in difference to default from resetgui
+      TreeView1.Items[6].Enabled:= false;  // product1
+      TreeView1.Items[7].Enabled:= false;  // product2
+      TreeView1.Items[8].Enabled:= false;  // product3
+      TreeView1.Items[9].Enabled:= false;  // create
     end;
     singleAnalyzeCreate, analyzeCreateWithUser:
     begin
-      TabSheetSetup2.Enabled := False;
+      //Treeview items  in difference to default from resetgui
+      // Nothing todo
     end;
     twoAnalyzeCreate_1, twoAnalyzeCreate_2:
     begin
+      //Treeview items  in difference to default from resetgui
+      TreeView1.Items[3].Enabled:= true;  // setup2
+    end;
+     threeAnalyzeCreate_1, threeAnalyzeCreate_2, threeAnalyzeCreate_3:
+    begin
+      //Treeview items  in difference to default from resetgui
+      TreeView1.Items[3].Enabled:= true;  // setup2
+      TreeView1.Items[4].Enabled:= true;  // setup3
     end;
     createTemplate, createTemplateWithUser:
     begin
+      (*
       TabSheetAnalyze.Enabled := False;
       TabSheetSetup1.Enabled := False;
       TabSheetSetup2.Enabled := False;
+      *)
+      //Treeview items  in difference to default from resetgui
+      TreeView1.Items[1].Enabled:= false;  // analyze
+      TreeView1.Items[2].Enabled:= false;  // setup1
     end;
     createMeta:
     begin
+      (*
       TabSheetAnalyze.Enabled := False;
       TabSheetSetup1.Enabled := False;
       TabSheetSetup2.Enabled := False;
+      *)
+      //Treeview items  in difference to default from resetgui
+      TreeView1.Items[1].Enabled:= false;  // analyze
+      TreeView1.Items[2].Enabled:= false;  // setup1
     end;
   end;
 
@@ -1168,6 +1245,7 @@ begin
       TICheckBoxUninstallBefore.Enabled := False;
     end;
   end;
+  Application.ProcessMessages;
 end;
 
 procedure TResultform1.FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -1385,6 +1463,8 @@ begin
     TIGridProp.ListObject := osdbasedata.aktproduct.properties;
     TIGridProp.ReloadTIList;
     TIGridProp.Update;
+    // process osdsettings.runmode
+    setRunMode;
     LogDatei.log('Finished import Project file from: ' + OpenDialog1.FileName, LLnotice);
   end;
 end;
@@ -3063,6 +3143,11 @@ begin
   aktProduct.productdata.packageversion := 1;
   aktProduct.productdata.description := 'winget';
   {$IFDEF OSDGUI}
+  TreeView1.Items[1].Enabled:= false;  // analyze
+  TreeView1.Items[2].Enabled:= false;  // setup1
+  TreeView1.Items[3].Enabled:= false;  // setup2
+  TreeView1.Items[4].Enabled:= false;  // setup3
+  TreeView1.Items[5].Enabled:= true;  // winget
   tmpstr := installerArray[integer(stWinget)].info_message_html.Text;
   if tmpstr <> '' then
   begin
@@ -3468,6 +3553,10 @@ var
 begin
   goon := False;
   isapp := False;
+  MessageDlg('',
+            rsSelectAppOrDir, mtInformation,
+            [mbOK], '');
+  SelectDirectoryDialog1.Title := rsSelectAppOrDir;
   if DirectoryExists(myconfiguration.LastSetupFileDir) then
     SelectDirectoryDialog1.InitialDir := myconfiguration.LastSetupFileDir;
   if SelectDirectoryDialog1.Execute then
@@ -3481,6 +3570,9 @@ begin
   end;
   if goon and not isapp then
   begin
+    MessageDlg('',
+              rsSelectMacFile, mtInformation,
+              [mbOK], '');
     OpenDialog1.InitialDir := filename;
     ;
     OpenDialog1.FilterIndex := 5;   // macos

@@ -309,6 +309,7 @@ begin
   end;
   {$IFDEF OSDGUI}
   resetGUI;
+  resultForm1.setRunMode;
   procmess;
   {$ENDIF OSDGUI}
 end; //get_aktProduct_general_info_win

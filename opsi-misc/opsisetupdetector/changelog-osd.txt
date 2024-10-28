@@ -143,6 +143,20 @@ todo:
    *
 
 # Changelog opsi-setup-detector
+## [4.3.4.1-1] - 2024-10-28
+
+### Change:
+
+- Do not enable /disbale tabsheets any more
+- Enable / Disable Treeview1 Items according to runmode
+- Init Tabsheets in initgui and resetgui
+- set differences to init in setrunmode
+- call set runmode after loading projectfile
+- additional messages for macos two step file selection
+  for macos single file analyze and create
+
+(Detlef Oertel <d.oertel@uib.de>)
+
 ## [4.3.4.0-1] - 2024-10-08
 
 ### Add:
@@ -157,9 +171,7 @@ todo:
 - new commandline parameter wingetId and wingetSource for automatic testing
 - winget: copy also osd-winget-exitcode.opsiscript
 
-### TODO:
-
-(Detlef Oertel <d.oertel@uib.de>
+(Detlef Oertel <d.oertel@uib.de>)
 
 ## [4.3.3.2-1] - 2024-09-10
 
