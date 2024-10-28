@@ -6,9 +6,11 @@ mac getIpByName liefert name von IPnum
 opsi-script (4.12.17.0) unreleased; urgency=medium
 
  * [fix] oslog.pas, opsiscript.lpr: include cwstring, clocale (j.werner. !249)
+ * [fix] osparser.pas -> execwith powershell: remove empty string from output also for StartProcess 
+         and not only for RunCommandandCaptureOut, see changelog for opsi.script 4.12.16.1 (d.oertel, j.werner, !251)
+ * [update] osfunc: FileGetWriteAccess: additional boolean parameter: handleDir, to fix performance problems in same cases (!252)
 
-
--- j.werner <j.werner@uib.de> 30 August 2024
+-- j.werner <j.werner@uib.de> 28 October 2024
 
 opsi-script (4.12.16.1) unreleased/unreleased (4.2/4.3); urgency=medium
 
