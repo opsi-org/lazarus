@@ -146,7 +146,7 @@ todo:
 ## [4.3.4.2-1] - 2024-11-05
 
 ### Fix
-- reset execution level back to highest available
+- reset execution level back to 'as invoker'
 - Treeview Items Text as resource strings
 
 (Detlef Oertel <d.oertel@uib.de>)
