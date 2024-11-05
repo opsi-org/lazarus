@@ -792,6 +792,18 @@ resourcestring
     'The unqoted path to the detected uninstall program.' + LineEnding +
     'You may also choose the file via the selection button on the right (if the product is installed).';
 
+  // Tabs
+  rsTabStart = 'Start';
+  rsTabAnalyze = 'Analyze';
+  rsTabSetup1 = '1. Setup';
+  rsTabSetup2 = '2. Setup';
+  rsTabSetup3 = '3. Setup';
+  rsTabWinget = 'winget';
+  rsTabProduct1 = 'Product Configuration 1';
+  rsTabProduct2 = 'Product Configuration 2';
+  rsTabProductIcon = 'Product Icon';
+  rsTabCreate = 'Create';
+
 
 implementation
 
@@ -1052,7 +1064,7 @@ begin
     TreeView1.SelectionColor := clMenuBar;
     TreeView1.SelectionFontColor:= clNavy;
     {$ENDIF DARWIN}
-    //Treeview items
+    //Treeview items enabled
     TreeView1.Items[0].Enabled:= true;  // start
     TreeView1.Items[1].Enabled:= true;  // analyze
     TreeView1.Items[2].Enabled:= true;  // setup1
@@ -1063,6 +1075,17 @@ begin
     TreeView1.Items[7].Enabled:= true;  // product2
     TreeView1.Items[8].Enabled:= true;  // product3
     TreeView1.Items[9].Enabled:= true;  // create
+    //Treeview items names
+    TreeView1.Items[0].Text := rsTabStart;
+    TreeView1.Items[1].Text := rsTabAnalyze;
+    TreeView1.Items[2].Text := rsTabSetup1;
+    TreeView1.Items[3].Text := rsTabSetup2;
+    TreeView1.Items[4].Text := rsTabSetup3;
+    TreeView1.Items[5].Text := rsTabWinget;
+    TreeView1.Items[6].Text := rsTabProduct1;
+    TreeView1.Items[7].Text := rsTabProduct2;
+    TreeView1.Items[8].Text := rsTabProductIcon;
+    TreeView1.Items[9].Text := rsTabCreate;
 
 
     EditLogInfo.Caption := 'More info in Log file: ' + LogDatei.FileName;
