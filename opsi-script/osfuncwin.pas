@@ -120,7 +120,7 @@ var
   sa: TSecurityAttributes;
   si: TStartupInfo;
   pi: TProcessInformation;
-  lpBuffer: array[0..ReadBufferSize] of char;
+  lpBuffer: array[0..ReadBufferSize-1] of char;
   BytesRead: dword = 0;
   BytesToRead: dword = 0;
   BytesAvail: dword = 0;
