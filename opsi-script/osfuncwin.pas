@@ -85,25 +85,6 @@ uses
   {$ENDIF GUI}
   osmain;
 
-(*
-const
-  ReadBufferSize = 2048;
-
-var
-  hReadPipe: THandle = 0;
-  lpBuffer: array[0..ReadBufferSize] of char;
-  BytesRead: dword = 0;
-  BytesToRead: dword = 0;
-  rb: boolean = False;
-
-
-procedure  Treadthread.execute;
-  begin
-    lpBuffer := '';
-    rb := ReadFile(hReadPipe, lpBuffer, BytesToRead, BytesRead, nil);
-  end;
-*)
-
 
 function RunCommandAndCaptureOut
   (cmd: string; catchOut: boolean; var outlines: TXStringList;
