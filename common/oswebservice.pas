@@ -3815,7 +3815,10 @@ begin
       LLError);
   end
   else
-    LogDatei.log('Mapped result of productPropertyState_getValues: ' + Result.Text, LLDebug);
+  begin
+    LogDatei.log('Got ProductProperty state values', LLDebug);
+    LogDatei.log('Mapped result of productPropertyState_getValues: ' + Result.Text, LLDebug3);
+  end;
 end;
 
 function TOpsi4Data.getProductPropertiesOpsi42: TStringList;
