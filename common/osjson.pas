@@ -355,31 +355,48 @@ end;
 function StringListToJsonArray(strlist: TStringList; var strresult: string): boolean;
 var
   j: integer;
-  JsonArray: TJSONArray;
+  jsonstring: string;
+  elementstr: string;
+  new_obj: ISuperObject;
 begin
-  Result := False;
-  if (strlist <> nil) and (strlist.Count > 0) then
-  begin
-    JsonArray := TJSONArray.Create;
-    try
-      for j := 0 to strlist.Count-1 do
+  try
+    jsonstring := '[';
+    Result := False;
+    if (strlist <> nil) and (strlist.Count > 0) then
+    begin
+      for j := 0 to strlist.Count - 1 do
       begin
+        elementstr := trim(strlist.Strings[j]);
+        // if quoted then escape inside the quotes:
+        if (elementstr.Chars[0] = '"') and (elementstr.Chars[elementstr.Length-1] = '"') then
+          elementstr := '"'+escapeControlChars(copy(elementstr,2,elementstr.Length-2))+'"';
         try
-          JsonArray.Add(GetJSON(strlist.Strings[j]));
-        except
-          On EJSONParser do JsonArray.Add(strlist.Strings[j]);
+         new_obj := SO(elementstr);
+         if new_obj <> nil then elementstr := new_obj.asJson;
+        finally
+          AppendStr(jsonstring, elementstr);
+          if (j < strlist.Count - 1) then
+            AppendStr(jsonstring, ',');
         end;
       end;
-      if JsonArray.JSONType = jtArray then
-      begin
-        strresult := JsonArray.AsJson;
-        Result := True;
-      end;
-    finally
-      FreeAndNil(JsonArray);
     end;
+    AppendStr(jsonstring, ']');
+    new_obj := SO(jsonstring);
+    if new_obj.IsType(stArray) then
+    begin
+      strresult := new_obj.AsJson;
+      Result := True;
+    end;
+  except
+    Result := False;
   end;
 end;
+
+
+
+
+
+
 
 function jsonAsArrayToStringList(str: string; var strListResult: TStringList): boolean;
 var
