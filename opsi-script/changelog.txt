@@ -2,8 +2,19 @@ todo:
 isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-package-requires-a-reboot-of-my-system
 mac getIpByName liefert name von IPnum
 
+opsi-script (4.12.17.1) unreleased; urgency=medium
 
-opsi-script (4.12.17.0) unreleased; urgency=medium
+ * [fix] osfuncwin.pas: RunCommandAndCaptureOut: fix array size,
+         because array starts with 0 it must be 0...ReadBuffersize-1 (j.werner, !253)
+ * [fix] osjson.pas: StringListToJsonArray: fix for special chars in json (j.werner, !254)
+ * [fix] oswebservice.pas: do not log product property states on lower log level than 9 during startup
+         due to potential confidential content. (j.werner, !255)
+
+-- j.werner <j.werner@uib.de> 22 January 2025
+
+
+
+opsi-script (4.12.17.0) released; urgency=medium
 
  * [fix] oslog.pas, opsiscript.lpr: include cwstring, clocale (j.werner. !249)
  * [fix] osparser.pas -> execwith powershell: remove empty string from output also for StartProcess 
@@ -12,7 +23,7 @@ opsi-script (4.12.17.0) unreleased; urgency=medium
 
 -- j.werner <j.werner@uib.de> 28 October 2024
 
-opsi-script (4.12.16.1) unreleased/unreleased (4.2/4.3); urgency=medium
+opsi-script (4.12.16.1) unreleased/released (4.2/4.3); urgency=medium
 
 * [fix] powershellcall/ExecWith powershell:
    output is at least a stringlist with one empty element instead of empty list
