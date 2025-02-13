@@ -2,7 +2,15 @@ todo:
 isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-package-requires-a-reboot-of-my-system
 mac getIpByName liefert name von IPnum
 
-opsi-script (4.12.17.1) unreleased; urgency=medium
+opsi-script (4.12.17.2) unreleased; urgency=medium
+
+ * [fix] oswebservice.pas: remove productPropertyState_getObjects used in
+         GetProductPropertyList and replace it with productPropertyState_getValues (j.werner, !256)
+
+-- j.werner <j.werner@uib.de> 13 February 2025
+
+
+opsi-script (4.12.17.1) released/testing; urgency=medium
 
  * [fix] osfuncwin.pas: RunCommandAndCaptureOut: fix array size,
          because array starts with 0 it must be 0...ReadBuffersize-1 (j.werner, !253)
@@ -11,7 +19,6 @@ opsi-script (4.12.17.1) unreleased; urgency=medium
          due to potential confidential content. (j.werner, !255)
 
 -- j.werner <j.werner@uib.de> 22 January 2025
-
 
 
 opsi-script (4.12.17.0) released; urgency=medium
