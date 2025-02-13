@@ -306,7 +306,7 @@ type
     function getActualProductVersion: string;
     function getSpecialScriptPath: string;
     function getProductProperties: TStringList;
-    function parse_JSONResult_productPropertyState_getValues(const JSONResult: string): TStringList;
+    function parse_JSONResult_productPropertyState_getValues(const JSONResult: string; SinglePropertyValuesList: boolean = False): TStringList;
     function getBeforeRequirements: TStringList;
     function getAfterRequirements: TStringList;
     function getListOfProductIDs: TStringList;
@@ -3753,7 +3753,7 @@ begin
     Result := getProductPropertiesOpsi42;
 end;
 
-function TOpsi4Data.parse_JSONResult_productPropertyState_getValues(const JSONResult: string): TStringList;
+function TOpsi4Data.parse_JSONResult_productPropertyState_getValues(const JSONResult: string; SinglePropertyValuesList: boolean = False): TStringList;
 var
   JSONData: TJSONData;
   JSONObject: TJSONObject;
@@ -3782,12 +3782,21 @@ begin
               PropertyValue := '';
               for j := 0 to JSONArray.Count -1 do
               begin
-                if j = 0 then
-                  PropertyValue := JSONArray.Items[j].AsString
+                if not SinglePropertyValuesList then
+                //Property Value(s) as string
+                begin
+                  if j = 0 then
+                    PropertyValue := JSONArray.Items[j].AsString
+                  else
+                    PropertyValue := PropertyValue + ',' + JSONArray.Items[j].AsString;
+                end
                 else
-                  PropertyValue := PropertyValue + ',' + JSONArray.Items[j].AsString;
+                  //Property value(s) as StringList
+                  Result.Add(JSONArray.Items[j].AsString);
               end;
-              Result.Add(PropertyName + '=' + PropertyValue);
+              if not SinglePropertyValuesList then
+                //Properties as Key=Value-Map
+                Result.Add(PropertyName + '=' + PropertyValue);
             end;
         end;
       end;
@@ -3992,59 +4001,34 @@ function TOpsi4Data.getProductPropertyList(myproperty: string;
   var usedefault: boolean): TStringList;
 var
   omc: TOpsiMethodCall;
+  JSONResult: string;
+  error: boolean;
 begin
   usedefault := False;
-  omc := TOpsiMethodCall.Create('productPropertyState_getObjects',
-    ['', '{"objectId": "' + myClientId + '", "propertyId": "' +
-    myproperty + '", "productId": "' + myProductId + '"}']);
+  omc := TOpsiMethodCall.Create('productPropertyState_getValues',
+    [myProductId, myProperty, myClientId, 'True']); ;
   try
     try
-      LogDatei.log('Try to get PRODUCT PROPERTY STATE object for CLIENT(' + myClientId + ') (productPropertyState_getObjects)', LLDebug);
-      Result := FjsonExecutioner.getSubListResult(omc, 'values');
+      LogDatei.log('Try to get PRODUCT PROPERTY for CLIENT(' + myClientId + ') (productPropertyState_getvalues)', LLDebug);
+      JSONResult := self.checkAndRetrieveString(omc, error);
+      if not error then
+        Result := parse_JSONResult_productPropertyState_getValues(JSONResult,True)
+      else
+        LogDatei.log('Error while calling API method productPropertyState_getValues: ' + FServiceLastErrorInfo.Text, LLError);
 
-      //result is probably empty because productPropertyState_getObjects returns
-      //an empty value if the property has the depot or server default value
-      if (Result[0] = 'Empty result') or (Result[0] = 'Error')  then
+      if (Result.Count > 0) then
       begin
-        LogDatei.log('Got no PRODUCT PROPERTY STATE object for CLIENT(' + myClientId + ') from service (productPropertyState_getObjects)', LLDebug);
-        if assigned(omc) then omc.Free;
-        //get depot default value
-        LogDatei.log('Try to get PRODUCT PROPERTY STATE object for DEPOT(' + DepotId + ') (productPropertyState_getObjects)', LLDebug);
-        omc := TOpsiMethodCall.Create('productPropertyState_getObjects',
-          ['', '{"objectId": "' + DepotId + '", "propertyId": "' +
-          myproperty + '", "productId": "' + myProductId + '"}']);
-        Result := FjsonExecutioner.getSubListResult(omc, 'values');
-
-        //result is probably empty because productPropertyState_getObjects returns
-        //an empty value if the property has the server default value
-        if (Result[0] = 'Empty result') or (Result[0] = 'Error')  then
-        begin
-          LogDatei.log('Got no PRODUCT PROPERTY STATE object for DEPOT(' + DepotId + ') from service (productPropertyState_getObjects)', LLDebug);
-          if assigned(omc) then omc.Free;
-          //get server default value
-          LogDatei.log('Try to get PRODUCT PROPERTY object (SERVER defaults) from service (productProperty_getObjects)', LLDebug);
-          omc := TOpsiMethodCall.Create('productProperty_getObjects',
-          ['', '{"propertyId": "' + myproperty + '", "productId": "' + myProductId + '"}']);
-          Result := FjsonExecutioner.getSubListResult(omc, 'defaultValues');
-        end;
-      end;
-
-
-      if (Result[0] = 'Empty value') then
-      begin
-        Result.Text := '';
-        LogDatei.log('Got empty property value from service', LLInfo);
+        if (Result[0] = '') then
+          LogDatei.log('Got empty property list from service', LLInfo);
       end
       else
       begin
-        if (Result[0] = 'Empty result') or (Result[0] = 'Error') then
-        begin
-          LogDatei.log('Got no property from service - using default',
-            LLWarning);
-          Result.AddStrings(TStrings(defaultlist));
-          usedefault := True;
-        end;
+        LogDatei.log('Got no property from service - using default',
+          LLWarning);
+        Result.AddStrings(TStrings(defaultlist));
+        usedefault := True;
       end;
+
     except
       on E: Exception do
       begin
@@ -4432,6 +4416,7 @@ begin
     LogDatei.log('Error while calling API method productPropertyState_getValues: ' + FServiceLastErrorInfo.Text, LLError);
   omc.Free;
 end;
+
 
 function TOpsi4Data.getProductState: TProductState;
 begin
