@@ -263,6 +263,7 @@ type
       var errorOccured: boolean): string;
     function SetProductOnClientData(const ProductOnClientData: TStringList):TStringList;
     function GetSortedProductOnClientListFromService: TStringList;
+    function ConvertJsonValueToString(Value:TJSONData):string;
   protected
     actualProduct: string;
     actualVersion: string;
@@ -3753,6 +3754,17 @@ begin
     Result := getProductPropertiesOpsi42;
 end;
 
+function TOpsi4Data.ConvertJsonValueToString(Value: TJSONData): string;
+begin
+  If not Value.IsNull then
+    Result := Value.AsString
+  else
+  begin
+    Result := '';
+    LogDatei.log('Value was NULL. Converted to empty string.',LLWarning);
+  end;
+end;
+
 function TOpsi4Data.parse_JSONResult_productPropertyState_getValues(const JSONResult: string; SinglePropertyValuesList: boolean = False): TStringList;
 var
   JSONData: TJSONData;
@@ -3786,13 +3798,13 @@ begin
                 //Property Value(s) as string
                 begin
                   if j = 0 then
-                    PropertyValue := JSONArray.Items[j].AsString
+                    PropertyValue := ConvertJsonValueToString(JSONArray.Items[j])
                   else
-                    PropertyValue := PropertyValue + ',' + JSONArray.Items[j].AsString;
+                    PropertyValue := PropertyValue + ',' + ConvertJsonValueToString(JSONArray.Items[j]);
                 end
                 else
                   //Property value(s) as StringList
-                  Result.Add(JSONArray.Items[j].AsString);
+                  Result.Add(ConvertJsonValueToString(JSONArray.Items[j]));
               end;
               if not SinglePropertyValuesList then
                 //Properties as Key=Value-Map
