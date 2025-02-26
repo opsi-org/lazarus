@@ -39,11 +39,11 @@ type
     procedure RemoveOldDownloadedOpsiPackageFolder;
     procedure InstallExtractionPackages;
     procedure CreateNewOpsiPackageFolderDir;
-    procedure ExtractCpioFile(fileName: string);
-    procedure ExtractCpioFilesFromOpsiPackage;
+    procedure ExtractFile(fileName: string);
+    procedure ExtractFilesFromOpsiPackage;
     procedure CheckOutputForError;
-    procedure MoveCpioFilesToOpsiPackageFolder;
-    procedure ExtractFoldersFromCpioFiles;
+    procedure MoveFilesToOpsiPackageFolder;
+    procedure ExtractFoldersFromFiles;
     procedure RemoveDownloadLeftovers;
     procedure ExtractOpsiPackage;
   public
@@ -64,7 +64,7 @@ type
 function RunShellCommandWithoutSpecialRights(CommandLine: string;
   out Output: string; Shell: string = '/bin/sh'): boolean;
 
-function ExtractFileWithCpio(FileName: string): boolean;
+function ExtractFileWithTar(FileName: string): boolean;
 
 function DownloadOpsiPackage(OpsiPackageId: string; DownloadDir: string;
   OpsiPackageDownloadCommand: TRunCommandElevated;
@@ -94,12 +94,12 @@ begin
   end;
 end;
 
-function ExtractFileWithCpio(FileName: string): boolean;
+function ExtractFileWithTar(FileName: string): boolean;
 var
   Output: string;
 begin
   Result := True;
-  if RunShellCommandWithoutSpecialRights('cpio --extract < ' + FileName,
+  if RunShellCommandWithoutSpecialRights('tar -vixf ' + FileName,
     Output, '/bin/bash') then
   begin
     LogDatei.log(FileName + ' successfully extracted', LLInfo);
@@ -201,25 +201,23 @@ begin
     '/OPSI', Output);
 end;
 
-procedure TOpsiPackageDownloader.ExtractCpioFile(FileName: string);
+procedure TOpsiPackageDownloader.ExtractFile(FileName: string);
 begin
-  if not ExtractFileWithCpio(FileName) then
+  if not ExtractFileWithTar(FileName) then
     FDownloadResult := False;
 end;
 
 procedure TOpsiPackageDownloader.InstallExtractionPackages;
 begin
   FOpsiPackageDownloadCommand.Run(FPackageManagementShellCommand +
-    'install cpio', Output);
-  FOpsiPackageDownloadCommand.Run(FPackageManagementShellCommand +
     'install gzip', Output);
 end;
 
-procedure TOpsiPackageDownloader.ExtractCpioFilesFromOpsiPackage;
+procedure TOpsiPackageDownloader.ExtractFilesFromOpsiPackage;
 begin
   InstallExtractionPackages;
-  ExtractCpioFile(FOpsiPackageId + '_*.opsi');
-  RunShellCommandWithoutSpecialRights('gunzip CLIENT_DATA.cpio.gz OPSI.cpio.gz', Output);
+  ExtractFile(FOpsiPackageId + '_*.opsi');
+  RunShellCommandWithoutSpecialRights('gunzip CLIENT_DATA.tar.gz OPSI.tar.gz', Output);
 end;
 
 procedure TOpsiPackageDownloader.CheckOutputForError;
@@ -228,22 +226,22 @@ begin
     FDownloadResult := False;
 end;
 
-procedure TOpsiPackageDownloader.MoveCpioFilesToOpsiPackageFolder;
+procedure TOpsiPackageDownloader.MoveFilesToOpsiPackageFolder;
 begin
-  RunShellCommandWithoutSpecialRights('mv CLIENT_DATA.cpio ../' +
+  RunShellCommandWithoutSpecialRights('mv CLIENT_DATA.tar ../' +
     FDownloadedOpsiPackageFolder + '/CLIENT_DATA/', Output);
   CheckOutputForError;
-  RunShellCommandWithoutSpecialRights('mv OPSI.cpio ../' +
+  RunShellCommandWithoutSpecialRights('mv OPSI.tar ../' +
     FDownloadedOpsiPackageFolder + '/OPSI/', Output);
   CheckOutputForError;
 end;
 
-procedure TOpsiPackageDownloader.ExtractFoldersFromCpioFiles;
+procedure TOpsiPackageDownloader.ExtractFoldersFromFiles;
 begin
   SetCurrentDir('../' + FDownloadedOpsiPackageFolder + '/CLIENT_DATA/');
-  ExtractCpioFile('CLIENT_DATA.cpio');
+  ExtractFile('CLIENT_DATA.tar');
   SetCurrentDir('../OPSI/');
-  ExtractCpioFile('OPSI.cpio');
+  ExtractFile('OPSI.tar');
   SetCurrentDir(ExtractFilePath(ParamStr(0)));
 end;
 
@@ -252,10 +250,10 @@ begin
   RunShellCommandWithoutSpecialRights('rm ' + FOpsiPackageId + '_*.opsi', Output);
   CheckOutputForError;
   RunShellCommandWithoutSpecialRights(
-    'rm ../' + FDownloadedOpsiPackageFolder + '/CLIENT_DATA/CLIENT_DATA.cpio', Output);
+    'rm ../' + FDownloadedOpsiPackageFolder + '/CLIENT_DATA/CLIENT_DATA.tar', Output);
   CheckOutputForError;
   RunShellCommandWithoutSpecialRights(
-    'rm ../' + FDownloadedOpsiPackageFolder + '/OPSI/OPSI.cpio', Output);
+    'rm ../' + FDownloadedOpsiPackageFolder + '/OPSI/OPSI.tar', Output);
   CheckOutputForError;
 end;
 
@@ -263,9 +261,9 @@ procedure TOpsiPackageDownloader.ExtractOpsiPackage;
 begin
   RemoveOldDownloadedOpsiPackageFolder;
   CreateNewOpsiPackageFolderDir;
-  ExtractCpioFilesFromOpsiPackage;
-  MoveCpioFilesToOpsiPackageFolder;
-  ExtractFoldersFromCpioFiles;
+  ExtractFilesFromOpsiPackage;
+  MoveFilesToOpsiPackageFolder;
+  ExtractFoldersFromFiles;
   RemoveDownloadLeftovers;
 end;
 
