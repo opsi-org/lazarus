@@ -44,14 +44,11 @@ function getPacketIDShort(str: string): string;
 
 implementation
 
-{$IFDEF OSDGUI}
 uses
+  {$IFDEF OSDGUI}
   osdform,
+  {$ENDIF OSDGUI}
   osdmain;
-{$ELSE OSDGUI}
-uses
-  osdmain;
-{$ENDIF OSDGUI}
 
 function getPacketIDfromFilename(str: string): string;
 var
@@ -169,14 +166,13 @@ var
   product: string;
   installerstr: string;
   str1: string;
-
 begin
   installerstr := installerToInstallerstr(installerId);
   write_log_and_memo('Analyzing ' + installerstr + ' Setup: ' + myfilename);
 
   mysetup.installerId := installerId;
   mysetup.link := installerArray[integer(mysetup.installerId)].Link;
-  mysetup.setupFullFileName := myfilename;
+  mysetup.SetSetupFullFileName(myfilename);
   mysetup.installerSourceDir := '%scriptpath%/files' + IntToStr(mysetup.ID);
   mysetup.installCommandLine :=
     'set $installSuccess$ = install_macos_generic($installerSourceDir$ + ' +
@@ -290,7 +286,6 @@ procedure AnalyzeMac(FileName: string; var mysetup: TSetupFile; verbose: boolean
 var
   setupType: TKnownInstaller;
   extension: string;
-
 begin
   LogDatei.log('Start Analyze for Mac ... ', LLInfo);
   {$IFDEF OSDGUI}
@@ -328,11 +323,16 @@ begin
   // marker for add installers
   // stMacZip, stMacDmg, stMacPKG, stMacApp
   case setupType of
-    stMacZip: write_log_and_memo('Found installer= ' + installerToInstallerstr(setupType));
-    stMacDmg: write_log_and_memo('Found installer= ' + installerToInstallerstr(setupType));
-    stMacPKG: write_log_and_memo('Found installer= ' + installerToInstallerstr(setupType));
-    stMacApp: write_log_and_memo('Found installer= ' + installerToInstallerstr(setupType));
-    stUnknown: write_log_and_memo('Found installer= ' + installerToInstallerstr(setupType));
+    stMacZip: write_log_and_memo('Found installer= ' +
+        installerToInstallerstr(setupType));
+    stMacDmg: write_log_and_memo('Found installer= ' +
+        installerToInstallerstr(setupType));
+    stMacPKG: write_log_and_memo('Found installer= ' +
+        installerToInstallerstr(setupType));
+    stMacApp: write_log_and_memo('Found installer= ' +
+        installerToInstallerstr(setupType));
+    stUnknown: write_log_and_memo('Found installer= ' +
+        installerToInstallerstr(setupType));
     else
       write_log_and_memo('Found installer= ' + installerToInstallerstr(setupType));
   end;

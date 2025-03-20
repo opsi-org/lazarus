@@ -6,26 +6,17 @@ unit osdanalyzeLin;
 interface
 
 uses
-  {$IFDEF WINDOWS}
-  Windows,
-  ShlObj,
-  Registry,
-  verinfo,
-  {$ENDIF WINDOWS}
   Dialogs,
   LCLType,
   Classes,
-  osdhelper,
   Process,
   fileutil,
   lazfileutils,
   SysUtils,
   strutils,
-  fileinfo,
   winpeimagereader,
   oslog,
   osdbasedata,
-  oscheckbinarybitness,
   osdanalyzegeneral,
   osparserhelper;
 
@@ -39,42 +30,29 @@ procedure AnalyzeLin(FileName: string; var mysetup: TSetupFile; verbose: boolean
 
 implementation
 
-{$IFDEF OSDGUI}
 uses
+  {$IFDEF OSDGUI}
   osdform,
+  {$ENDIF OSDGUI}
   osdmain;
-{$ELSE OSDGUI}
-uses
-  osdmain;
-{$ENDIF OSDGUI}
 
 procedure get_aktProduct_general_info_lin(installerId: TKnownInstaller;
   myfilename: string; var mysetup: TSetupFile);
 var
-  myoutlines: TStringList;
-  myreport: string;
-  myexitcode: integer;
-  i: integer;
   fsize: int64;
   fsizemb, rsizemb: double;
-  sMsiSize: string;
   sReqSize: string;
   sFileSize: string;
-  sSearch: string;
-  iPos: integer;
-  destDir: string;
-  myArch: string;
   product: string;
   installerstr: string;
   str1: string;
-
 begin
   installerstr := installerToInstallerstr(installerId);
   write_log_and_memo('Analyzing ' + installerstr + ' Setup: ' + myfilename);
 
   mysetup.installerId := installerId;
   mysetup.link := installerArray[integer(mysetup.installerId)].Link;
-  mysetup.setupFullFileName := myfilename;
+  mysetup.SetSetupFullFileName(myfilename);
   mysetup.installerSourceDir := '%scriptpath%/files' + IntToStr(mysetup.ID);
   mysetup.installCommandLine :=
     'set $exitcode$ = shellCall(''' + '$installerSourceDir$ + ' +
@@ -182,7 +160,7 @@ begin
   mysetup.installCommandLine :=
     'set $exitcode$ = linuxInstallOneFile($installerSourceDir$ + ' +
     '"/' + mysetup.setupFileName + '") ';
-    {$IFDEF LINUX}
+  {$IFDEF LINUX}
   mysetup.installDirectory := '<none>';
   // product ID
   packageId := getFieldInfoFromRpm(myfilename, 'name');
@@ -352,7 +330,6 @@ procedure AnalyzeLin(FileName: string; var mysetup: TSetupFile; verbose: boolean
 var
   setupType: TKnownInstaller;
   extension, tmpstr: string;
-
 begin
   LogDatei.log('Start Analyze ... ', LLInfo);
   {$IFDEF OSDGUI}

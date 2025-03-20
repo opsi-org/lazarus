@@ -1,30 +1,31 @@
 object FChooseInstallerDlg: TFChooseInstallerDlg
-  Left = 421
-  Height = 251
-  Top = 205
+  Left = 413
+  Height = 315
+  Top = 171
   Width = 338
   Caption = 'opsi-setup-detector'
-  ClientHeight = 251
+  ClientHeight = 315
   ClientWidth = 338
   OnCreate = FormCreate
   OnShow = FormShow
-  LCLVersion = '2.2.6.0'
+  LCLVersion = '3.4.0.0'
   object Panel1: TPanel
     Left = 0
-    Height = 127
+    Height = 200
     Top = 0
     Width = 338
     Align = alTop
-    ClientHeight = 127
+    ClientHeight = 200
     ClientWidth = 338
     TabOrder = 0
     object LabelChooseMsg: TLabel
       Left = 12
-      Height = 80
-      Top = 35
+      Height = 84
+      Top = 104
       Width = 314
-      Align = alClient
+      Align = alBottom
       Alignment = taCenter
+      AutoSize = False
       BorderSpacing.Around = 11
       ParentColor = False
     end
@@ -42,11 +43,19 @@ object FChooseInstallerDlg: TFChooseInstallerDlg
       ParentColor = False
       ParentFont = False
     end
+    object LabelDetected: TLabel
+      Left = 1
+      Height = 69
+      Top = 24
+      Width = 336
+      Align = alClient
+      AutoSize = False
+    end
   end
   object ComboBoxChooseInstaller: TComboBox
     Left = 5
     Height = 23
-    Top = 132
+    Top = 205
     Width = 328
     Align = alTop
     BorderSpacing.Around = 5
@@ -56,8 +65,8 @@ object FChooseInstallerDlg: TFChooseInstallerDlg
   end
   object FlowPanel1: TFlowPanel
     Left = 0
-    Height = 91
-    Top = 160
+    Height = 82
+    Top = 233
     Width = 338
     Align = alClient
     BevelOuter = bvNone

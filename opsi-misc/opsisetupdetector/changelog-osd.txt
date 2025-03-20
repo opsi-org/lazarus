@@ -143,6 +143,96 @@ todo:
    *
 
 # Changelog opsi-setup-detector
+## [4.3.4.2-1] - 2024-11-05
+
+### Fix
+- reset execution level back to 'as invoker'
+- Treeview Items Text as resource strings
+
+(Detlef Oertel <d.oertel@uib.de>)
+
+## [4.3.4.1-1] - 2024-10-28
+
+### Change:
+
+- Do not enable /disbale tabsheets any more
+- Enable / Disable Treeview1 Items according to runmode
+- Init Tabsheets in initgui and resetgui
+- set differences to init in setrunmode
+- call set runmode after loading projectfile
+- additional messages for macos two step file selection
+  for macos single file analyze and create
+
+(Detlef Oertel <d.oertel@uib.de>)
+
+## [4.3.4.0-1] - 2024-10-08
+
+### Add:
+
+- new installer type stWinget
+- support for winget based installation
+- new winget tab
+- moved tab selection to left vertical side (treeView)
+- support msixbundle
+- msix now with additional uninstall method
+- msix now with Unstall_before_install=false by default
+- new commandline parameter wingetId and wingetSource for automatic testing
+- winget: copy also osd-winget-exitcode.opsiscript
+
+(Detlef Oertel <d.oertel@uib.de>)
+
+## [4.3.3.2-1] - 2024-09-10
+
+### Add:
+- new configuration: writeMetaDataFile (default=true)
+
+(Detlef Oertel <d.oertel@uib.de> 2024-09-10)
+
+## [4.3.3.1-1] - 2024-08-26
+
+### Add:
+- write opsi meta data file:  CLIENT_DATA\opsi-meta-data.toml
+  use jyt to convert it to toml:
+  https://github.com/ken-matsui/jyt
+- add detection via 'detect it easy' (die)
+  https://github.com/horsicq/Detect-It-Easy
+- Integrate osd detection and die detection
+- remove msgeninstaller -> wixtoolset
+- new stDetectedUnknown for deteted by die but known by osd
+- modified unknown insaller dialog for stDetectedUnknown
+- analyze msi with lessmsi.exe (windows only)
+  https://lessmsi.activescott.com/
+  https://github.com/activescott/lessmsi
+  License : MIT
+- analyze msi from InstallshieldMSI, wixtool, advanced_installer
+- guess software architecture from installdir
+- display msi upgradeCode
+- new configuration: preferMsiUninstall (default=true):
+  If true=prefer uninstall via msi if possible (if msi is found).
+  Affects Installers that are wrappers around msi,
+  like installshieldMSI, advanced_installer, wix toolset
+  extend use of linux msiiinfo in unit lessmsi
+  use jyt binary to vonvert opsi meta file at macos
+- get_MsixAppx_info: remove empty entries from powershell output at uninstallcheck
+- do not show installer info_message_html if not osdsettings.showgui (breaks automatic tests)
+- osdanalyzewin: use findMsiAndAnalyze in get_installshieldmsi_info, get_wixtoolset_info, get_advancedInstaller_info
+- enable window sharing in video conference (at windows): Application.MainFormOnTaskBar := True;
+- add experimental support for *.appxbundle
+
+(Detlef Oertel <d.oertel@uib.de> 2024-08-26)
+
+
+# Changelog opsi-setup-detector
+## [4.3.3.0-1] - 2024-07-24
+
+### feature:
+- detect msi upgradeCode and store in setup object (msiUpgradeCode)
+  place holder #@MsiUpgradecode1*# (for example)
+  https://learn.microsoft.com/de-de/windows/win32/msi/upgradecode
+
+
+(Detlef Oertel <d.oertel@uib.de> 2024-07-24)
+
 
 ## [4.3.2.6-1] - 2024-05-22
 

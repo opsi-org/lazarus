@@ -51,9 +51,9 @@ implementation
 uses
   osdform;
 
-{$R *.lfm}
+  {$R *.lfm}
 
-{ TFOSDConfigdlg }
+  { TFOSDConfigdlg }
 
 procedure TFOSDConfigdlg.FormActivate(Sender: TObject);
 begin
@@ -90,6 +90,8 @@ begin
   myconfigurationhints.Add('control_in_toml_format=' + rsControl_in_toml_format);
   myconfigurationhints.Add('dependencies_for_all_actionrequests=' +
     rsDependencies_for_all_actionrequests);
+  myconfigurationhints.Add('preferMsiUninstall=' + rsPreferMsiUninstall);
+  myconfigurationhints.Add('writeMetaDataFile=' + rsWriteMetaDataFile);
 
   SetDefaultLang(osdsettings.mylang, osdsettings.mylocaledir);
   Repaint;
@@ -109,7 +111,7 @@ begin
   // the first path is in the development environment
   resourcedir := ExtractFileDir(Application.ExeName);
   {$IFDEF DARWIN}
-    resourcedir := ExtractFileDir(Application.ExeName) + PathDelim + '../Resources';
+  resourcedir := ExtractFileDir(Application.ExeName) + PathDelim + '../Resources';
   {$ENDIF DARWIN}
   tmpimage.LoadFromFile(resourcedir + PathDelim + 'images' + PathDelim +
     'help-circle20.png');

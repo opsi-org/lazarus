@@ -132,8 +132,8 @@ tt { font-size: 110%; }
 <small>if the above link does not work, please go to the
 <a href="http://sourceforge.net/project/showfiles.php?group_id=102423">download page</a></small></div>-->
 <p>innounp, the Inno Setup Unpacker<br>
-Version 0.49<br>
-Supports Inno Setup versions 2.0.7 through 6.0.2</p>
+Version 0.50<br>
+Supports Inno Setup versions 2.0.7 through 6.1.2</p>
 <p><a href="http://www.jrsoftware.org/isinfo.php">Inno Setup</a> is a popular program
 for making software installations. Unfortunately, there is no official unpacker - the
 only method of getting the files out of the self-extracting executable
@@ -249,6 +249,11 @@ Questions the Smart Way</i></a> by Eric Raymond<br>
 Bugs Effectively</i></a> by Simon Tatham</p>
 
 <h2><a name="History"></a>What's new / History</h2>
+<p><b>0.50</b> <small>(2020.12.18)</small></p>
+<ul>
+<li>Added support for IS 6.1.</li>
+<li>Fixed broken paths that originally were in UNC format.</li>
+</ul>
 <p><b>0.49</b> <small>(2019.05.09)</small></p>
 <ul>
 <li>Added support for IS 6.0.</li>
@@ -654,7 +659,7 @@ SkipLIST=1
 Debug=0</pre>
 
 <h2><a name="Copyrights"></a>Copyrights and licensing</h2>
-<p>Copyright &copy; 2004-2019 QuickeneR, 2009-2019 Ariman<br>
+<p>Copyright &copy; 2004-2020 QuickeneR, 2009-2020 Ariman<br>
 This program is licensed under the terms of the <a href="http://www.gnu.org/copyleft/gpl.html">
 GNU General Public License (GPL)</a>. A copy of the license is included with the source files.<br>
 If you distribute innounp on the WWW, please put a link to its home page,

@@ -43,7 +43,7 @@ uses
   Contnrs,
   oswebservice;
 
-{$IFNDEF OSDGUI}
+  {$IFNDEF OSDGUI}
 type
   { TOSD }
 
@@ -61,7 +61,7 @@ type
 var
   Application: TOSD;
 
-{$ENDIF OSDGUI}
+  {$ENDIF OSDGUI}
 
 
 
@@ -69,6 +69,7 @@ var
 procedure main;
 function checkAktProduct: boolean;
 procedure WriteHelp;
+procedure write_memo(line: string);
 procedure write_log_and_memo(line: string); overload;
 procedure write_log_and_memo(line: string; loglevel: integer); overload;
 //procedure checkWorkbench;
@@ -82,9 +83,9 @@ implementation
 uses
   osdform;
 
-{$ENDIF OSDGUI}
+  {$ENDIF OSDGUI}
 
-{$IFNDEF OSDGUI}
+  {$IFNDEF OSDGUI}
 (*
 type
 { TOSD }
@@ -236,12 +237,7 @@ begin
   Application.Terminate;
 end;
 
-procedure write_log_and_memo(line: string);
-begin
-  write_log_and_memo(line, LLNotice);
-end;
-
-procedure write_log_and_memo(line: string; loglevel: integer);
+procedure write_memo(line: string);
 begin
   {$IFDEF OSDGUI}
   if osdsettings.showgui then
@@ -249,6 +245,17 @@ begin
     resultform1.memoadd(line);
   end;
   {$ENDIF OSDGUI}
+end;
+
+
+procedure write_log_and_memo(line: string);
+begin
+  write_log_and_memo(line, LLNotice);
+end;
+
+procedure write_log_and_memo(line: string; loglevel: integer);
+begin
+  write_memo(line);
   LogDatei.log(line, loglevel);
 end;
 
@@ -261,7 +268,6 @@ var
   buffer: PChar;
   size: word = 0;
   usedsize: word = 0;
-
 begin
   Result := '';
   size := 101;
@@ -386,13 +392,13 @@ var
 begin
   try
     strlist := TStringList.Create;
-    result := true;
+    Result := True;
 
     if not localservicedataConnected then
     begin
       if localservicedata <> nil then FreeAndNil(localservicedata);
       if localservicedata = nil then
-      localservicedata := TOpsi4Data.Create;
+        localservicedata := TOpsi4Data.Create;
       if (myconfiguration.Service_URL <> '') and
         (myconfiguration.Service_user <> '') then
       begin
@@ -420,12 +426,12 @@ begin
           FNewDepDlg.LabelConnect.Caption := rsServiceConnected;
           FNewDepDlg.LabelConnect.Font.Color := clGreen;
           resultForm1.StatusBar1.Panels.Items[1].Text :=
-             rsServiceConnected +': ' + myconfiguration.Service_URL;
+            rsServiceConnected + ': ' + myconfiguration.Service_URL;
           FNewDepDlg.Repaint;
           procmess;
           LogDatei.log('Service connection initialized to :' +
             myconfiguration.Service_URL + ' version: ' + opsiserviceversion, LLinfo);
-          localservicedataConnected := true;
+          localservicedataConnected := True;
           // fetch produtIds from service
           strlist.Text := localservicedata.getLocalbootProductIds.Text;
           strlist.Sort;
@@ -437,7 +443,7 @@ begin
         else
         begin
           // service not connected
-          result := false;
+          Result := False;
           LogDatei.log('Service connection not possible: Url, user or password wrong.',
             LLwarning);
           {$IFDEF OSDGUI}
@@ -448,13 +454,13 @@ begin
           resultForm1.StatusBar1.Panels.Items[1].Text := rsServiceNotConnected;
           {$ENDIF OSDGUI}
           // reset password from input dialog to empty in order to ask again on reconnect
-          if myconfiguration.Service_pass = '' then passwordToUse := '';
+          passwordToUse := '';
         end;
       end
       else
       begin
         // service data missing
-        result := false;
+        Result := False;
         LogDatei.log('Service connection not possible: Url or user missing.', LLwarning);
         {$IFDEF OSDGUI}
         FNewDepDlg.LabelConnect.Caption := rsServiceNotConnected;
@@ -467,9 +473,9 @@ begin
     end;
   finally
     FreeAndNil(strlist);
-      {$IFDEF OSDGUI}
+    {$IFDEF OSDGUI}
     Screen.Cursor := crDefault;
-      {$ENDIF OSDGUI}
+    {$ENDIF OSDGUI}
   end;
 end;
 
@@ -506,7 +512,7 @@ begin
   osdsettings.mylang := SetDefaultLang('');
   SetDefaultLang(osdsettings.mylang, osdsettings.mylocaledir);
 
-    {$IFDEF WINDOWS}
+  {$IFDEF WINDOWS}
   // initate console while windows gui
   // https://stackoverflow.com/questions/20134421/can-a-windows-gui-program-written-in-lazarus-create-a-console-and-write-to-it-at
   //AllocConsole;      // in Windows unit
@@ -538,9 +544,11 @@ begin
   optionlist.Append('productId::');
   optionlist.Append('mode::');
   optionlist.Append('template-channel::');
+  optionlist.Append('wingetId::');
+  optionlist.Append('wingetSource::');
 
   // quick check parameters
-  ErrorMsg := Application.CheckOptions('hfnltpmc', optionlist);
+  ErrorMsg := Application.CheckOptions('hfnltpmcws', optionlist);
   if ErrorMsg <> '' then
   begin
     LogDatei.log('Exception while handling parameters.', LLcritical);
@@ -596,14 +604,14 @@ begin
   if Application.HasOption('n', 'nogui') then
   begin
     osdsettings.showgui := False;
-     {$IFDEF WINDOWS}
+    {$IFDEF WINDOWS}
     // initate console while windows gui
     // https://stackoverflow.com/questions/20134421/can-a-windows-gui-program-written-in-lazarus-create-a-console-and-write-to-it-at
     //AllocConsole;      // in Windows unit
     //IsConsole := True; // in System unit
     //SysInitStdIO;      // in System unit
     // Now you can do Writeln, DebugLn,
-  {$ENDIF WINDOWS}
+    {$ENDIF WINDOWS}
   end;
 
   if osdsettings.showgui then
@@ -657,7 +665,7 @@ begin
         Ord(osdsettings.runmode)), LLInfo);
     except
       myerror := 'Error: Given mode: ' + tmpstr +
-        ' is not valid. Should be on of singleAnalyzeCreate, createTemplate';
+        ' is not valid. Should be on of singleAnalyzeCreate, createTemplate, createWingetProd';
       {$IFNDEF WINDOWS}
       writeln(myerror);
       {$ENDIF WINDOWS}
@@ -674,6 +682,7 @@ begin
   {$IFDEF OSDGUI}
   resultform1.updateGUI;
   {$ENDIF OSDGUI}
+
 
   if Application.HasOption('p', 'productId') then
   begin
@@ -706,7 +715,92 @@ begin
     end;
   end;
 
-  if Application.HasOption('f', 'filename') then
+  if osdsettings.runmode = createWingetProd then
+  begin
+    if not osdsettings.showgui then
+    begin
+      if Application.HasOption('w', 'wingetId') then
+      begin
+        aktProduct.SetupFiles[0].wingetId :=
+          trim(Application.GetOptionValue('w', 'wingetId'));
+        LogDatei.log('Will use as wingetId: ' +
+          aktProduct.SetupFiles[0].wingetId, LLInfo);
+        if Application.HasOption('s', 'wingetSource') then
+        begin
+          aktProduct.SetupFiles[0].wingetSource :=
+            trim(Application.GetOptionValue('s', 'wingetSource'));
+          LogDatei.log('Will use as wingetSource: ' +
+            aktProduct.SetupFiles[0].wingetSource, LLInfo);
+        end
+        else
+        begin
+          myerror :=
+            'Warning: Runmode=createWingetProd but no wingetSource given - Fall back to "winget".';
+          {$IFNDEF WINDOWS}
+          writeln(myerror);
+          {$ENDIF WINDOWS}
+          LogDatei.log(myerror, LLwarning);
+          aktProduct.SetupFiles[0].wingetSource := 'winget';
+          LogDatei.log('Will use as wingetSource: ' +
+            aktProduct.SetupFiles[0].wingetSource, LLInfo);
+        end;
+        //setRunMode;
+        //MemoAnalyze.Clear;
+        //PageControl1.ActivePage := resultForm1.TabSheetWinget;
+        //Application.ProcessMessages;
+        //initaktproduct;
+        makeProperties;
+        //resultform1.updateGUI;
+        aktProduct.SetupFiles[0].active := True;
+        aktProduct.SetupFiles[0].installerId := stWinget;
+        aktProduct.productdata.targetOSset := [osWin];
+        aktProduct.productdata.productId := '';
+        aktProduct.productdata.productName := '';
+        aktProduct.productdata.productversion := '1.0.0';
+        aktProduct.productdata.packageversion := 1;
+        aktProduct.productdata.description := 'winget';
+        aktProduct.SetupFiles[0].targetOS := osWin;
+        // start to process
+        get_winget_info(aktProduct.SetupFiles[0]);
+        if forceProductId <> '' then
+          aktProduct.productdata.productId := forceProductId;
+        // write osd-analyze-result.txt
+        AssignFile(anaoutfile, 'c:\opsi.org\applog\osd-analyze-result.txt');
+        Rewrite(anaoutfile);
+        writeln(anaoutfile, 'installertype=' + installerToInstallerstr(
+          aktProduct.SetupFiles[0].installerId));
+        writeln(anaoutfile, 'SoftwareVersion=' +
+          aktProduct.SetupFiles[0].SoftwareVersion);
+        writeln(anaoutfile, 'installCommandLine=' +
+          aktProduct.SetupFiles[0].installCommandLine);
+        writeln(anaoutfile, '');
+        writeln(anaoutfile, '');
+        writeln(anaoutfile, '');
+        writeln(anaoutfile, '');
+        writeln(anaoutfile, '');
+        writeln(anaoutfile, '');
+        CloseFile(anaoutfile);
+        if osdsettings.runmode <> analyzeOnly then
+        begin
+          LogDatei.log('Start createProductStructure in NOGUI mode: ', LLnotice);
+          createProductStructure;
+        end;
+      end
+      else
+      begin
+        myerror := 'Error: Runmode=createWingetProd but no wingetId given.';
+        {$IFNDEF WINDOWS}
+        writeln(myerror);
+        {$ENDIF WINDOWS}
+        LogDatei.log(myerror, LLCritical);
+        system.ExitCode := 1;
+        WriteHelp;
+        Application.Terminate;
+        Exit;
+      end;
+    end;
+  end
+  else if Application.HasOption('f', 'filename') then
   begin
     myfilename := trim(Application.GetOptionValue('f', 'filename'));
     if not FileExists(myfilename) then
