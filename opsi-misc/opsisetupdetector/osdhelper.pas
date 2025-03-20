@@ -30,14 +30,11 @@ function detect_opb_path(path: string): string;
 
 implementation
 
-{$IFDEF OSDGUI}
 uses
+  {$IFDEF OSDGUI}
   osdform,
+  {$ENDIF OSDGUI}
   osdmain;
-{$ELSE OSDGUI}
-uses
-  osdmain;
-{$ENDIF OSDGUI}
 
 {$IFDEF WINDOWS}
 procedure registerForWinExplorer(doregister: boolean);
@@ -135,14 +132,12 @@ function RunCommandAndCaptureOut
   var report: string; showcmd: integer; var ExitCode: longint): boolean;
 const
   ReadBufferSize = 2048;
-
 var
   S: TStringList;
   M: TMemoryStream;
   FpcProcess: TProcess;
   n: longint;
   BytesRead: longint;
-
 begin
 
   Result := True;
@@ -208,6 +203,7 @@ begin
     end;
   finally
     S.Free;
+    ExitCode := FpcProcess.ExitCode;
     FpcProcess.Free;
     M.Free;
   end;
@@ -318,7 +314,6 @@ var
   doublevalue2: double;
   string1: string;
   string2: string;
-
 begin
 
   Result := True;

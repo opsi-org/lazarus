@@ -19,7 +19,7 @@ EXECUTABLE_SOURCE_x86=`pwd`/compiler_out/binarys/x86_64-darwin/${EXECUTABLE_NAME
 EXECUTABLE_DIR=`pwd`/${EXECUTABLE_NAME}.app
 FULLPATHTOEXE=${EXECUTABLE_DIR}/Contents/MacOS/${EXECUTABLE_NAME}
 ENTITLEMENTS="--entitlements opsi-script.entitlements"
-
+FULLPATHTOJYT=${EXECUTABLE_DIR}/Contents/Frameworks/libjyt.dylib
 
 
 
@@ -52,6 +52,13 @@ echo ver $EXECUTABLE_VER
 echo "Verifying Info.plist"
 launchctl plist $FULLPATHTOEXE
 launchctl plist $EXECUTABLE_DIR
+
+## Codesign the libjyt by enabling the hardened runtime (--options=runtime) and include a timestamp (--timestamp)
+#echo "Code signing..."
+#codesign -vvv --force --strict  --timestamp -s "$CODE_SIGN_SIGNATURE" $FULLPATHTOJYT
+#codesign --verify --verbose --strict $FULLPATHTOJYT
+#codesign -dv -r- $FULLPATHTOJYT
+#codesign -vvv --deep --strict $FULLPATHTOJYT
 
 # Codesign the executable by enabling the hardened runtime (--options=runtime) and include a timestamp (--timestamp)
 echo "Code signing..."

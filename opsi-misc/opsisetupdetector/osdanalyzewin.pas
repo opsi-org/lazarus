@@ -6,18 +6,16 @@ interface
 
 uses
   {$IFDEF WINDOWS}
-  Windows,
-  ShlObj,
-  Registry,
   verinfo,
-  jwatlhelp32,
   jwawindows,
   {$ENDIF WINDOWS}
+  {$IFNDEF DARWIN}
+  osd_lessmsi,
+  {$ENDIF DARWIN}
   Dialogs,
   LCLType,
   Classes,
   osdhelper,
-  Process,
   fileutil,
   lazfileutils,
   strutils,
@@ -45,7 +43,7 @@ procedure get_installshieldmsi_info(myfilename: string; var mysetup: TSetupFile)
 //procedure get_advancedmsi_info(myfilename: string; var mysetup: TSetupFile);
 procedure get_null_info(myfilename: string; var mysetup: TSetupFile);
 procedure get_installaware_info(myfilename: string; var mysetup: TSetupFile);
-procedure get_genmsinstaller_info(myfilename: string; var mysetup: TSetupFile);
+//procedure get_genmsinstaller_info(myfilename: string; var mysetup: TSetupFile);
 procedure get_wixtoolset_info(myfilename: string; var mysetup: TSetupFile);
 procedure get_boxstub_info(myfilename: string; var mysetup: TSetupFile);
 procedure get_sfxcab_info(myfilename: string; var mysetup: TSetupFile);
@@ -55,6 +53,7 @@ procedure get_advancedInstaller_info(myfilename: string; var mysetup: TSetupFile
 procedure get_installAnywhere_info(myfilename: string; var mysetup: TSetupFile);
 procedure get_QtInstaller_info(myfilename: string; var mysetup: TSetupFile);
 procedure get_MsixAppx_info(myfilename: string; var mysetup: TSetupFile);
+procedure get_winget_info(var mysetup: TSetupFile);
 // marker for add installers
 procedure Analyze(FileName: string; var mysetup: TSetupFile; verbose: boolean);
 function getProductInfoFromResource(infokey: string; filename: string): string;
@@ -65,36 +64,44 @@ resourcestring
 
 implementation
 
-{$IFDEF OSDGUI}
 uses
+  {$IFDEF OSDGUI}
   osdform,
-  osdmain,
-  ChooseInstallerDlg;
-{$ELSE OSDGUI}
-uses
+  ChooseInstallerDlg,
+  {$ENDIF OSDGUI}
   osdmain;
-{$ENDIF OSDGUI}
+
 
 {$IFDEF WINDOWS}
-procedure KillProcess(name: String);
-var h:tHandle;
-    pe:tProcessEntry32;
-    sPrcName:string;
+procedure KillProcess(Name: string);
+var
+  h: tHandle;
+  pe: tProcessEntry32;
+  sPrcName: string;
 begin
-  h:=CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+  LogDatei.log('Try to kill: ' + Name, LLinfo);
+  h := CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
   try
-    pe.dwSize:=SizeOf(pe);
-    if Process32First(h,pe) then begin
-      while Process32Next(h,pe) do
+    pe.dwSize := SizeOf(pe);
+    if Process32First(h, pe) then
+    begin
+      while Process32Next(h, pe) do
       begin
-        sPrcName:=pe.szExeFile;
-        if pos(LowerCase(name),LowerCase(sPrcName))>0 then
+        sPrcName := pe.szExeFile;
+        LogDatei.log('Found process: ' + sPrcName, LLdebug);
+        if pos(LowerCase(Name), LowerCase(sPrcName)) > 0 then
         begin
-          TerminateProcess(OpenProcess(Process_Terminate, False, pe.th32ProcessID), 0);
+          LogDatei.log('Will kill: ' + sPrcName, LLinfo);
+          if TerminateProcess(OpenProcess(Process_Terminate, False,
+            pe.th32ProcessID), 0) then
+            LogDatei.log('Successful killed: ' + sPrcName, LLnotice)
+          else
+            LogDatei.log('Kill failed for: ' + sPrcName, LLwarning);
         end;
       end;
     end
-    else RaiseLastOSError;
+    else
+      RaiseLastOSError;
   finally
   end;
 end;
@@ -117,7 +124,7 @@ var
   {$IFDEF WINDOWS}
   VerInf: verinfo.TVersionInfo;
   {$ENDIF WINDOWS}
-  extension : string;
+  extension: string;
 begin
   extension := ExtractFileExt(filename);
   if extension = '.exe' then
@@ -131,8 +138,8 @@ begin
       except
         on E: Exception do
         begin
-          LogDatei.log('Exception while reading fileversion2: ' +
-            E.ClassName + ': ' + E.Message, LLError);
+          LogDatei.log('Exception while reading fileversion1: ' +
+            infokey + ' Exception: ' + E.ClassName + ': ' + E.Message, LLError);
           Result := '';
         end;
         else // close the 'on else' block here;
@@ -154,7 +161,7 @@ begin
         on E: Exception do
         begin
           LogDatei.log('Exception while reading fileversion2: ' +
-            E.ClassName + ': ' + E.Message, LLError);
+            infokey + ' Exception: ' + E.ClassName + ': ' + E.Message, LLError);
           Result := '';
         end;
         else // close the 'on else' block here;
@@ -167,30 +174,23 @@ end;
 procedure get_aktProduct_general_info_win(installerId: TKnownInstaller;
   myfilename: string; var mysetup: TSetupFile);
 var
-  myoutlines: TStringList;
-  myreport: string;
-  myexitcode: integer;
   i: integer;
   fsize: int64;
   fsizemb, rsizemb: double;
-  sMsiSize: string;
   sReqSize: string;
   sFileSize: string;
-  sSearch: string;
-  iPos: integer;
-  destDir: string;
   myArch: string;
   product: string;
   installerstr: string;
   str1, uninstcheckstr: string;
-
 begin
   installerstr := installerToInstallerstr(installerId);
   write_log_and_memo('Analyzing ' + installerstr + ' Setup: ' + myfilename);
 
   mysetup.installerId := installerId;
   mysetup.link := installerArray[integer(mysetup.installerId)].Link;
-  mysetup.setupFullFileName := myfilename;
+  //mysetup.setupFullFileName := myfilename;
+  mysetup.SetSetupFullFileName(myfilename);
   mysetup.installerSourceDir := '%scriptpath%\files' + IntToStr(mysetup.ID);
   if mysetup.preferSilent then
     mysetup.installCommandLine :=
@@ -283,10 +283,17 @@ begin
     // no known uninstall program
     mysetup.uninstallCheck.Add('set $oldProgFound$ = "false"');
   end;
+
   {$IFDEF WINDOWS}
+  (*
+  Many setup programs that install 64 bit only software
+  are 32 bit.
+  So: having a 32 bit installer means nothing
+  but having a 64 bit installer means we have a 64 bit architecture for sure
+  *)
   myArch := getBinaryArchitecture(myfilename);
   if myArch = '32' then
-    mysetup.architecture := a32;
+    mysetup.architecture := aUnknown;
   if myArch = '64' then
     mysetup.architecture := a64;
   if myArch = 'unknown' then
@@ -300,12 +307,18 @@ begin
       mysetup.installErrorHandlingLines.Add(
         installerArray[integer(mysetup.installerId)].installErrorHandlingLines[i]);
   end;
+  {$IFDEF OSDGUI}
+  resetGUI;
+  resultForm1.setRunMode;
+  procmess;
+  {$ENDIF OSDGUI}
 end; //get_aktProduct_general_info_win
 
 procedure get_null_info(myfilename: string; var mysetup: TSetupFile);
 begin
   // This is a dummy procedure
-  write_log_and_memo('No special analyze for: '+ installerToInstallerstr(mysetup.installerId));
+  write_log_and_memo('No special analyze for: ' +
+    installerToInstallerstr(mysetup.installerId));
 end;
 
 procedure get_msi_info(myfilename: string; var mysetup: TSetupFile);
@@ -321,10 +334,10 @@ var
   myreport: string;
   myexitcode: integer;
   i: integer;
-
   sSearch: string;
   iPos: integer;
-
+  installdir: string;
+  resultList : TStringList;
 begin
   write_log_and_memo('Analyzing MSI: ' + myfilename);
   {$IFDEF WINDOWS}
@@ -341,11 +354,6 @@ begin
   else
   begin
     mysetup.analyze_progess := mysetup.analyze_progess + 10;
-    if not uninstall_only then
-    begin
-      mysetup.installerId := stMsi;
-      mysetup.setupFullFileName := myfilename;
-    end;
     write_log_and_memo('........');
     for i := 0 to myoutlines.Count - 1 do
     begin
@@ -375,91 +383,134 @@ begin
           Copy(myoutlines.Strings[i], Length(sSearch) + 1,
           Length(myoutlines.Strings[i]) - Length(sSearch));
 
+      sSearch := 'UpgradeCode: ';
+      iPos := Pos(sSearch, myoutlines.Strings[i]);
+      if (iPos <> 0) then
+        mysetup.msiUpgradeCode :=
+          Copy(myoutlines.Strings[i], Length(sSearch) + 1,
+          Length(myoutlines.Strings[i]) - Length(sSearch));
+
     end;
+    // we have an msi, so we use msi uninstall mode
+    // always if installer = msi
+    if mysetup.installerId = stMsi then mysetup.msiUninstallCode := True
+    // under conditions if it is a msi wrapper exe
+    else if (mysetup.msiId <> '') and ((mysetup.msiProductName <> '') or
+      (mysetup.msiUpgradeCode <> '')) and myconfiguration.preferMsiUninstall then
+      mysetup.msiUninstallCode := True;
+    LogDatei.log('msiUninstallCode: ' + BoolToStr(mysetup.msiUninstallCode, True),
+      LLNotice);
+
     aktproduct.productdata.productversion := trim(mysetup.softwareversion);
+
   end;
   myoutlines.Free;
   {$ENDIF WINDOWS}
+
   {$IFDEF LINUX}
-  mycommand := 'bash -c ''msiinfo export "' + myfilename + '" Property''';
-  write_log_and_memo(mycommand);
   myoutlines := TStringList.Create;
-  if not RunCommandAndCaptureOut(mycommand, True, myoutlines, myreport,
-    SW_SHOWMINIMIZED, myexitcode) then
+  resultList := TStringList.Create;
+  try
+    if not readMsiTable(myfilename, 'Property', myoutlines) then
+    begin
+      write_log_and_memo('Failed to analyze: ' + myfilename);
+      mysetup.analyze_progess := 0;
+    end
+    else
+    begin
+      mysetup.analyze_progess := mysetup.analyze_progess + 10;
+      LogDatei.log('........', LLDebug);
+      for i := 0 to myoutlines.Count - 1 do
+      begin
+        LogDatei.log(myoutlines.Strings[i], LLDebug);
+        mysetup.analyze_progess := mysetup.analyze_progess + 1;
+        if myoutlines[i].StartsWith('ProductName', True) then
+        begin
+          resultList.Clear;
+          resultList.AddStrings(myoutlines[i].Split(','));
+          mysetup.msiProductName := trim(resultlist[1]);
+          aktProduct.productdata.productName := mysetup.msiProductName;
+        end;
+        if myoutlines[i].StartsWith('ProductVersion', True) then
+        begin
+          resultList.Clear;
+          resultList.AddStrings(myoutlines[i].Split(','));
+          mysetup.SoftwareVersion := trim(resultlist[1]);
+          aktproduct.productdata.productversion := mysetup.softwareversion;
+        end;
+        if myoutlines[i].StartsWith('ProductCode', True) then
+        begin
+          resultList.Clear;
+          resultList.AddStrings(myoutlines[i].Split(','));
+          mysetup.msiId := trim(resultlist[1]);
+        end;
+        if myoutlines[i].StartsWith('UpgradeCode', True) then
+        begin
+          resultList.Clear;
+          resultList.AddStrings(myoutlines[i].Split(','));
+          mysetup.msiUpgradeCode := trim(resultlist[1]);
+        end;
+      end;
+
+      // we have an msi, so we use msi uninstall mode
+      // always if installer = msi
+      if mysetup.installerId = stMsi then
+      begin
+        mysetup.msiUninstallCode := True;
+        mysetup.SetSetupFullFileName(myfilename);
+      end
+      // under conditions if it is a msi wrapper exe
+      else if (mysetup.msiId <> '') and (mysetup.msiProductName <> '') or
+        (mysetup.msiUpgradeCode <> '') and myconfiguration.preferMsiUninstall then
+        mysetup.msiUninstallCode := True;
+      LogDatei.log('msiUninstallCode: ' + BoolToStr(mysetup.msiUninstallCode, True),
+        LLNotice);
+    end;
+  finally
+    FreeAndNil(myoutlines);
+    FreeAndNil(resultList);
+  end;
+  {$ENDIF LINUX}
+
+  {$IFNDEF DARWIN}
+  // use lessmsi / msiinfo
+  installdir := getInstallDirFromMsi(myfilename);
+  mysetup.installDirectory := installdir;
+
+  // guess architecture from installdir
+  if installdir.StartsWith('%ProgramFiles64Dir%') then
+    mysetup.architecture := a64
+  else if installdir.StartsWith('%ProgramFiles32Dir%') then
+    mysetup.architecture := a32;
+  {$ENDIF DARWIN}
+
+  if mysetup.msiUninstallCode then
   begin
-    write_log_and_memo('Failed to analyze: ' + myreport);
-    mysetup.analyze_progess := 0;
-  end
-  else
-  begin
-    mysetup.analyze_progess := mysetup.analyze_progess + 10;
     if not uninstall_only then
     begin
-      mysetup.installerId := stMsi;
-      mysetup.setupFullFileName := myfilename;
+      if mysetup.preferSilent then
+        mysetup.installCommandLine :=
+          'msiexec /i "$installerSourceDir$\' + mysetup.setupFileName +
+          '" ' + installerArray[integer(mysetup.installerId)].silentsetup
+      else
+        mysetup.installCommandLine :=
+          'msiexec /i "$installerSourceDir$\' + mysetup.setupFileName +
+          '" ' + installerArray[integer(mysetup.installerId)].unattendedsetup;
+
+      mysetup.mstAllowed := True;
     end;
-    LogDatei.log('........', LLDebug);
-    for i := 0 to myoutlines.Count - 1 do
-    begin
-      LogDatei.log(myoutlines.Strings[i], LLDebug);
-      mysetup.analyze_progess := mysetup.analyze_progess + 1;
-      sSearch := 'ProductName';
-      iPos := Pos(sSearch, myoutlines.Strings[i]);
-      if (iPos <> 0) then
-      begin
-        aktProduct.productdata.productName :=
-          trim(Copy(myoutlines.Strings[i], Length(sSearch) + 1,
-          Length(myoutlines.Strings[i]) - Length(sSearch)));
-        LogDatei.log('Found ProductName: ' +
-          aktProduct.productdata.productName, LLNotice);
-      end;
 
-      sSearch := 'ProductVersion';
-      iPos := Pos(sSearch, myoutlines.Strings[i]);
-      if (iPos <> 0) then
-      begin
-        mysetup.softwareversion :=
-          trim(Copy(myoutlines.Strings[i], Length(sSearch) + 1,
-          Length(myoutlines.Strings[i]) - Length(sSearch)));
-        LogDatei.log('Found ProductVersion: ' + mysetup.softwareversion, LLNotice);
-      end;
-
-      sSearch := 'ProductCode';
-      iPos := Pos(sSearch, myoutlines.Strings[i]);
-      if (iPos <> 0) then
-      begin
-        mysetup.msiId :=
-          trim(Copy(myoutlines.Strings[i], Length(sSearch) + 1,
-          Length(myoutlines.Strings[i]) - Length(sSearch)));
-        LogDatei.log('Found ProductCode: ' + mysetup.msiId, LLNotice);
-      end;
-
-    end;
-    //if aktproduct.productdata.productversion = '' then
-    aktproduct.productdata.productversion := trim(mysetup.softwareversion);
-  end;
-  myoutlines.Free;
-  {$ENDIF LINUX}
-  if not uninstall_only then
-  begin
     if mysetup.preferSilent then
-      mysetup.installCommandLine :=
-        'msiexec /i "$installerSourceDir$\' + mysetup.setupFileName +
-        '" ' + installerArray[integer(mysetup.installerId)].silentsetup
+      mysetup.uninstallCommandLine :=
+        'msiexec /x $MsiId$ ' + installerArray[integer(stMsi)].silentuninstall
     else
-      mysetup.installCommandLine :=
-        'msiexec /i "$installerSourceDir$\' + mysetup.setupFileName +
-        '" ' + installerArray[integer(mysetup.installerId)].unattendedsetup;
+      mysetup.uninstallCommandLine :=
+        'msiexec /x $MsiId$ ' + installerArray[integer(stMsi)].unattendeduninstall;
 
-    mysetup.mstAllowed := True;
+    // clear non msi uninstall entries
+    mysetup.uninstallProg := '';
+    mysetup.uninstallCheck.Clear;
   end;
-
-  if mysetup.preferSilent then
-    mysetup.uninstallCommandLine :=
-      'msiexec /x $MsiId$ ' + installerArray[integer(stMsi)].silentuninstall
-  else
-    mysetup.uninstallCommandLine :=
-      'msiexec /x $MsiId$ ' + installerArray[integer(stMsi)].unattendeduninstall;
 
 
   LogDatei.log('get_MSI_info finished', LLInfo);
@@ -475,13 +526,6 @@ var
   myreport: string;
   myexitcode: integer;
   i: integer;
-  fsize: int64;
-  fsizemb: double;
-  rsizemb: double;
-  sFileSize: string;
-  sReqSize: string;
-  sSearch: string;
-  iPos: integer;
   destDir: string;
   destfile: string;
   myCommand: string;
@@ -493,9 +537,8 @@ var
   AppVersion: string = '';
   AppVerName: string = '';
   DefaultDirName: string = '';
-  tmpint: integer;
-  ArchitecturesAllowed: string = '';
   ArchitecturesInstallIn64BitMode: string = '';
+  ArchitecturesAllowed: string = '';
   UninstallFilesDir: string = '';
   uninstfile: string = '';
 
@@ -554,7 +597,7 @@ begin
   destDir := destDir + DirectorySeparator + 'INNO';
   // cleanup destination
   if DirectoryExists(destDir) then
-    DeleteDirectory(destDir,true);
+    DeleteDirectory(destDir, True);
   // create destination
   if not DirectoryExists(destDir) then
     ForceDirectories(destDir);
@@ -656,7 +699,7 @@ begin
       end;
       // if installdir is resolved at runtime by code then it is unknown
       if (0 < pos(lowercase('{code:'), lowercase(DefaultDirName))) then
-          DefaultDirName := '{code:UNKNOWN}';
+        DefaultDirName := '{code:UNKNOWN}';
       // try to translate well known inno constants to opsi
       if (0 < pos('x64', lowercase(ArchitecturesInstallIn64BitMode))) and
         (0 = pos('x86', lowercase(ArchitecturesInstallIn64BitMode))) then
@@ -672,14 +715,17 @@ begin
       begin
         UninstallFilesDir := StringReplace(UninstallFilesDir, '{app}',
           DefaultDirName, [rfIgnoreCase]);
-        mysetup.uninstallDirectory:= UninstallFilesDir;
-        uninstfile := ExtractFileName(ReplaceText(mysetup.uninstallProg,'$installdir$', mysetup.installDirectory));
+        mysetup.uninstallDirectory := UninstallFilesDir;
+        uninstfile := ExtractFileName(ReplaceText(mysetup.uninstallProg, '$installdir$',
+          mysetup.installDirectory));
         // use $installdir$ if possible
-        mysetup.uninstallDirectory := ReplaceText(mysetup.uninstallDirectory, mysetup.installDirectory, '$installdir$');
+        mysetup.uninstallDirectory :=
+          ReplaceText(mysetup.uninstallDirectory, mysetup.installDirectory, '$installdir$');
         mysetup.uninstallProg := mysetup.uninstallDirectory + '\' + uninstfile;
         resultForm1.updateUninstaller(mysetup);
       end
-      else mysetup.uninstallDirectory:= DefaultDirName;
+      else
+        mysetup.uninstallDirectory := DefaultDirName;
 
       aktProduct.productdata.comment := AppVerName;
       with mysetup do
@@ -696,23 +742,74 @@ begin
       end;
     end;
   end;
- {$ENDIF WINDOWS}
+  {$ENDIF WINDOWS}
   write_log_and_memo('get_inno_info finished');
   write_log_and_memo('Inno Setup detected');
   write_log_and_memo('Finished analyzing Inno-Setup');
 end;
 
-(*
-procedure get_installshield_info(myfilename: string; var mysetup: TSetupFile);
-var
-  product: string;
 
+function findMsiAndAnalyze(myfilename: string; opsitmp: string;
+  var mysetup: TSetupFile): boolean;
+var
+  smask: string;
+  mymsilist: TStringList;
+  mymsifilename: string;
 begin
-  write_log_and_memo('Analyzing InstallShield-Setup:');
-  write_log_and_memo('get_InstallShield_info finished');
-  write_log_and_memo('InstallShield Setup detected');
+  Result := False;
+  smask := opsitmp + '*.msi';
+  LogDatei.log('Looking for: ' + smask, LLInfo);
+  try
+    mymsilist := FindAllFiles(opsitmp, '*.msi', True);
+    // some wait retry
+    if mymsilist.Count = 0 then
+    begin
+      Sleep(2000);
+      mymsilist := FindAllFiles(opsitmp, '*.msi', True);
+    end;
+    if mymsilist.Count = 0 then
+    begin
+      Sleep(2000);
+      mymsilist := FindAllFiles(opsitmp, '*.msi', True);
+    end;
+    if mymsilist.Count = 0 then
+    begin
+      Sleep(2000);
+      mymsilist := FindAllFiles(opsitmp, '*.msi', True);
+    end;
+    if mymsilist.Count = 0 then
+    begin
+      Sleep(2000);
+      mymsilist := FindAllFiles(opsitmp, '*.msi', True);
+    end;
+
+    if mymsilist.Count > 0 then
+    begin
+      Result := True;
+      if mymsilist.Count > 1 then
+      begin
+        LogDatei.log('Found multiple msi files: ' + mymsilist.Text, LLWarning);
+        if osdsettings.showgui then
+          ShowMessage(sWarnMultipleMsi + opsitmp);
+        mymsifilename := mymsilist.Strings[0];
+        LogDatei.log('Analyzing msi file: ' + mymsifilename, LLInfo);
+      end
+      else
+      begin
+        mymsifilename := mymsilist.Strings[0];
+        LogDatei.log('Analyzing found msi file: ' + mymsifilename, LLInfo);
+      end;
+      get_msi_info(mymsifilename, mysetup, True);
+    end
+    else
+    begin
+      LogDatei.log('Could not extract msi from: ' + myfilename, LLNotice);
+    end;
+  finally
+    mymsilist.Free;
+  end;
+
 end;
- *)
 
 procedure get_installshieldmsi_info(myfilename: string; var mysetup: TSetupFile);
 var
@@ -720,15 +817,11 @@ var
   myreport: string;
   myexitcode: integer;
   myBatch: string;
-  //FileInfo: TSearchRec;
-  smask: string;
-  mymsilist: TStringList;
-  mymsifilename: string;
-
+  msifound: boolean = False;
 begin
   write_log_and_memo('Analyzing InstallShield+MSI Setup: ' + myfilename);
   mysetup.installerId := stInstallShieldMSI;
-  mysetup.setupFullFileName := myfilename;
+  mysetup.SetSetupFullFileName(myfilename);
 
   if DirectoryExists(opsitmp) then
     DeleteDirectory(opsitmp, True);
@@ -740,151 +833,69 @@ begin
   // extract and analyze MSI from setup
 
   write_log_and_memo('Analyzing MSI from InstallShield Setup ' + myfilename);
-
   myoutlines := TStringList.Create;
-  // myBatch := 'cmd.exe /C '+ExtractFilePath(paramstr(0))+'extractMSI.cmd "'+myfilename+'"'; // (does not work with spaces in EXE path)
-  myBatch := '"' + ExtractFilePath(ParamStr(0)) + 'utils' + PathDelim +
-    'extractMSI.cmd" "' + myfilename + '"';
-  // dropped cmd.exe
-  write_log_and_memo(myBatch);
-  write_log_and_memo('!! PLEASE WAIT !!');
-  write_log_and_memo('!! PLEASE WAIT !! Extracting and analyzing MSI ...');
-  write_log_and_memo('!! PLEASE WAIT !!');
+  try
 
-  if not RunCommandAndCaptureOut(myBatch, True, myoutlines, myreport,
-    SW_SHOWMINIMIZED, myexitcode) then
-  begin
-    LogDatei.log('Failed to to run "' + myBatch + '": ' + myreport, LLWarning);
-  end
-  else
-  begin
-    logdatei.log_list(myoutlines,LLdebug);
-    //stopped := KillProcessbyname(ExtractFileName(myfilename), found);
-    smask := opsitmp + '*.msi';
-    LogDatei.log('Looking for: ' + smask, LLInfo);
-    try
-      mymsilist := FindAllFiles(opsitmp, '*.msi', True);
-      if mymsilist.Count > 0 then
+    (*
+    // call setup with extract and try to find msi
+    myoutlines.Clear;
+    myBatch := '"' + ExtractFilePath(ParamStr(0)) + 'utils' + PathDelim +
+        'extractMSI_by_param" "' + myfilename + '"';
+
+    write_log_and_memo(myBatch);
+    write_log_and_memo('!! PLEASE WAIT !!');
+    write_log_and_memo('!! PLEASE WAIT !! Extracting and analyzing MSI ...');
+    write_log_and_memo('!! PLEASE WAIT !!');
+
+    if not RunCommandAndCaptureOut(myBatch, True, myoutlines, myreport,
+      SW_SHOWMINIMIZED, myexitcode) then
+    begin
+      LogDatei.log('Failed to to run "' + myBatch + '": ' + myreport, LLWarning);
+    end
+    else
+    begin
+      logdatei.log_list(myoutlines, LLdebug);
+      msifound := findMsiAndAnalyze(myfilename, opsitmp, mysetup);
+      KillProcess('testsetup.exe');
+      if DirectoryExists(opsitmp) then
+        DeleteDirectory(opsitmp, True);
+    end;
+    *)
+
+    if not msifound then
+    begin
+      // call setup interactive and try to find msi
+      myoutlines.Clear;
+      myBatch := '"' + ExtractFilePath(ParamStr(0)) + 'utils' + PathDelim +
+        'extractMSI.cmd" "' + myfilename + '"';
+      write_log_and_memo(myBatch);
+      write_log_and_memo('!! PLEASE WAIT !!');
+      write_log_and_memo('!! PLEASE WAIT !! Extracting and analyzing MSI ...');
+      write_log_and_memo('!! PLEASE WAIT !!');
+
+      if not RunCommandAndCaptureOut(myBatch, True, myoutlines, myreport,
+        SW_SHOWMINIMIZED, myexitcode) then
       begin
-        if mymsilist.Count > 1 then
-        begin
-          LogDatei.log('Found multiple msi files: ' + mymsilist.Text, LLWarning);
-          if osdsettings.showgui then
-            ShowMessage(sWarnMultipleMsi + opsitmp);
-          mymsifilename := mymsilist.Strings[0];
-          LogDatei.log('Analyzing msi file: ' + mymsifilename, LLInfo);
-        end
-        else
-        begin
-          mymsifilename := mymsilist.Strings[0];
-          LogDatei.log('Analyzing found msi file: ' + mymsifilename, LLInfo);
-        end;
-        get_msi_info(mymsifilename, mysetup, True);
+        LogDatei.log('Failed to to run "' + myBatch + '": ' + myreport, LLWarning);
       end
       else
       begin
-        LogDatei.log('Could not extract msi from: ' + myfilename, LLNotice);
+        logdatei.log_list(myoutlines, LLdebug);
+        msifound := findMsiAndAnalyze(myfilename, opsitmp, mysetup);
+        KillProcess('testsetup.exe');
+        if DirectoryExists(opsitmp) then
+          DeleteDirectory(opsitmp, True);
       end;
-    finally
-      mymsilist.Free;
     end;
+  finally
     FreeAndNil(myoutlines);
-    KillProcess(ExtractFileName(myfilename));
   end;
   {$ENDIF WINDOWS}
+
   write_log_and_memo('get_InstallShield_info finished');
   write_log_and_memo('InstallShield+MSI Setup detected');
 end;
 
-
-(*
-procedure get_advancedmsi_info(myfilename: string; var mysetup: TSetupFile);
-var
-  myoutlines: TStringList;
-  myreport: string;
-  myexitcode: integer;
-  myBatch: string;
-  FileInfo: TSearchRec;
-  //exefile: string;
-  smask: string;
-  mymsilist: TStringList;
-  mymsifilename: string;
-
-begin
-  write_log_and_memo('Analyzing AdvancedMSI Setup: ' + myfilename);
-  mysetup.installerId := stAdvancedMSI;
-  mysetup.setupFileName := ExtractFileName(myfilename);
-
-  {$IFDEF WINDOWS}
-  // extract and analyze MSI from setup
-
-  write_log_and_memo('Analyzing MSI from Setup ' + myfilename);
-
-  myoutlines := TStringList.Create;
-  myBatch := 'cmd.exe /C "' + myfilename + '" /extract:' + opsitmp;
-  write_log_and_memo(myBatch);
-  write_log_and_memo('!! PLEASE WAIT !!');
-  write_log_and_memo('!! PLEASE WAIT !! Extracting and analyzing MSI ...');
-  write_log_and_memo('!! PLEASE WAIT !!');
-
-  if DirectoryExists(opsitmp) then
-    DeleteDirectory(opsitmp, True);
-  if not DirectoryExists(opsitmp) then
-    ForceDirectories(opsitmp);
-  if not DirectoryExists(opsitmp) then
-    write_log_and_memo('Error: could not create directory: ' + opsitmp);
-
-  if not RunCommandAndCaptureOut(myBatch, True, myoutlines, myreport,
-    SW_SHOWMINIMIZED, myexitcode) then
-  begin
-    LogDatei.log('Failed to to run "' + myBatch + '": ' + myreport, LLWarning);
-  end
-  else
-  begin
-    smask := opsitmp + '*.msi';
-    LogDatei.log('Looking for: ' + smask, LLInfo);
-    try
-      mymsilist := FindAllFiles(opsitmp, '*.msi', True);
-      if mymsilist.Count > 0 then
-      begin
-        if mymsilist.Count > 1 then
-        begin
-          LogDatei.log('Found multiple msi files: ' + mymsilist.Text, LLWarning);
-          if osdsettings.showgui then
-            ShowMessage(sWarnMultipleMsi + opsitmp);
-          mymsifilename := mymsilist.Strings[0];
-          LogDatei.log('Analyzing msi file: ' + mymsifilename, LLInfo);
-        end
-        else
-        begin
-          mymsifilename := mymsilist.Strings[0];
-          LogDatei.log('Analyzing found msi file: ' + mymsifilename, LLInfo);
-        end;
-        get_msi_info(mymsifilename, mysetup, True);
-      end
-      else
-      begin
-        LogDatei.log('Could not extract msi from: ' + myfilename, LLNotice);
-      end;
-    finally
-      mymsilist.Free;
-    end;
-  end;
-  {$ENDIF WINDOWS}
-
-  write_log_and_memo('get_AdvancedMSI_info finished');
-  write_log_and_memo('Advanced Installer Setup (with embedded MSI) detected');
-end;
-*)
-(*
-procedure get_7zip_info(myfilename: string);
-var
-  product: string;
-begin
-  write_log_and_memo('Analyzing 7zip-Setup:');
-  write_log_and_memo('get_7zip_info finished');
-end;
-*)
 
 procedure get_installaware_info(myfilename: string; var mysetup: TSetupFile);
 var
@@ -917,29 +928,15 @@ begin
   write_log_and_memo('get_installaware_info finished');
 end;
 
-procedure get_genmsinstaller_info(myfilename: string; var mysetup: TSetupFile);
-var
-  str1, str2: string;
-  pos1, pos2, i: integer;
-begin
-  write_log_and_memo('Analyzing generic MS Installer-Setup:');
-  mysetup.uninstallProg := 'C:\ProgramData\{<UNKNOWN GUID>}\' +
-    ExtractFileName(myfilename);
-  write_log_and_memo('get_genmsinstaller_info finished');
-end;
-
 procedure get_wixtoolset_info(myfilename: string; var mysetup: TSetupFile);
 var
-  str1, str2: string;
-  pos1, pos2, i: integer;
+  i: integer;
   myoutlines, extractedFiles: TStringList;
   destDir: string;
   myCommand: string;
   myreport: string;
-  myexitcode : Integer;
-  smask: string;
-  mymsilist: TStringList;
-  mymsifilename: string;
+  myexitcode: integer;
+  msifound: boolean = False;
 begin
   write_log_and_memo('Analyzing generic wixtoolset-Setup:');
   mysetup.uninstallProg := 'C:\ProgramData\{<UNKNOWN GUID>}\' +
@@ -953,7 +950,7 @@ begin
   destDir := destDir + DirectorySeparator + 'wixbundle';
   // cleanup destination
   if DirectoryExists(destDir) then
-    DeleteDirectory(destDir,true);
+    DeleteDirectory(destDir, True);
   // create destination
   if not DirectoryExists(destDir) then
     ForceDirectories(destDir);
@@ -967,11 +964,11 @@ begin
     SW_SHOWMINIMIZED, myexitcode) then
   begin
     LogDatei.log('Failed to extract files from wix bundle: ' + myreport, LLerror);
-    osdsettings.myexitcode:= myexitcode;
+    osdsettings.myexitcode := myexitcode;
   end
   else
   begin
-    osdsettings.myexitcode:= myexitcode;
+    osdsettings.myexitcode := myexitcode;
     for i := 0 to myoutlines.Count - 1 do
       write_log_and_memo(myoutlines.Strings[i]);
     myoutlines.Free;
@@ -987,44 +984,16 @@ begin
       extractedFiles.Free;
     end;
 
-    smask := opsitmp + '*.msi';
-    LogDatei.log('Looking for: ' + smask, LLInfo);
-    try
-      mymsilist := FindAllFiles(destDir, '*.msi', True);
-      if mymsilist.Count > 0 then
-      begin
-        if mymsilist.Count > 1 then
-        begin
-          LogDatei.log('Found multiple msi files: ' + mymsilist.Text, LLWarning);
-          if osdsettings.showgui then
-            ShowMessage(sWarnMultipleMsi + opsitmp);
-          mymsifilename := mymsilist.Strings[0];
-          LogDatei.log('Analyzing msi file: ' + mymsifilename, LLInfo);
-        end
-        else
-        begin
-          mymsifilename := mymsilist.Strings[0];
-          LogDatei.log('Analyzing found msi file: ' + mymsifilename, LLInfo);
-        end;
-        get_msi_info(mymsifilename, mysetup, True);
-      end
-      else
-      begin
-        LogDatei.log('Could not extract msi from: ' + myfilename, LLNotice);
-      end;
-    finally
-      mymsilist.Free;
-    end;
-
+    msifound := findMsiAndAnalyze(myfilename, destDir, mysetup);
+    KillProcess('dark.exe');
+    if DirectoryExists(destDir) then
+      DeleteDirectory(destDir, True);
   end;
-    {$ENDIF WINDOWS}
+  {$ENDIF WINDOWS}
   write_log_and_memo('get_wixtoolset_info finished');
 end;
 
 procedure get_boxstub_info(myfilename: string; var mysetup: TSetupFile);
-var
-  str1, str2: string;
-  pos1, pos2, i: integer;
 begin
   write_log_and_memo('Analyzing generic boxstub-Setup:');
   mysetup.uninstallProg := 'C:\ProgramData\{<UNKNOWN GUID>}\' +
@@ -1033,9 +1002,6 @@ begin
 end;
 
 procedure get_sfxcab_info(myfilename: string; var mysetup: TSetupFile);
-var
-  str1, str2: string;
-  pos1, pos2, i: integer;
 begin
   write_log_and_memo('Analyzing sfxcabr-Setup:');
   mysetup.uninstallProg := 'C:\ProgramData\{<UNKNOWN GUID>}\' +
@@ -1045,71 +1011,90 @@ end;
 
 procedure get_advancedInstaller_info(myfilename: string; var mysetup: TSetupFile);
 var
-  str1, str2: string;
-  pos1, pos2, i: integer;
+  commandline: string;
+  myoutlines: TStringList;
+  myreport: string;
+  myexitcode: integer;
+  temp_exe: string;
+  msifound: boolean = False;
 begin
   write_log_and_memo('Analyzing advancedInstaller:');
-  (*
-  todo:
-  create temp dir
-  copy setup to tmp dir
-  call setup with /extract
-  search for msi file
-  get msiid and display name from msi
-  force msi uninstall
+  if DirectoryExists(opsitmp) then
+    DeleteDirectory(opsitmp, True);
+  if not DirectoryExists(opsitmp) then
+    ForceDirectories(opsitmp);
+  if not DirectoryExists(opsitmp) then
+    LogDatei.log('Error: could not create directory: ' + opsitmp, LLError);
+  {$IFDEF WINDOWS}
+  // extract and analyze MSI from setup
 
-  destDir := GetTempDir(False);
-  destDir := destDir + DirectorySeparator + 'msixAppx';
-  // cleanup destination
-  if DirectoryExists(destDir) then
-    DeleteDirectory(destDir,true);
-  // create destination
-  if not DirectoryExists(destDir) then
-    ForceDirectories(destDir);
-    *)
-  mysetup.uninstallDirectory:= '$installerSourceDir$';
-  mysetup.uninstallProg:= mysetup.uninstallDirectory +'\'+ mysetup.setupFileName;
+  write_log_and_memo('Analyzing MSI from advancedInstaller Setup ' + myfilename);
+  temp_exe := opsitmp + '\' + ExtractFileName(myfilename);
+  CopyFile(myfilename, temp_exe);
+  commandline := '"' + temp_exe + '" /extract "' + opsitmp + '"';
 
-  if mysetup.preferSilent then
+  myoutlines := TStringList.Create;
+  write_log_and_memo(commandline);
+  write_log_and_memo('!! PLEASE WAIT !!');
+  write_log_and_memo('!! PLEASE WAIT !! Extracting and analyzing MSI ...');
+  write_log_and_memo('!! PLEASE WAIT !!');
+
+  if not RunCommandAndCaptureOut(commandline, True, myoutlines, myreport,
+    SW_SHOWMINIMIZED, myexitcode) then
+  begin
+    LogDatei.log('Failed to to run "' + commandline + '": ' + myreport, LLWarning);
+  end
+  else
+  begin
+    logdatei.log_list(myoutlines, LLdebug);
+    msifound := findMsiAndAnalyze(myfilename, opsitmp, mysetup);
+    KillProcess(temp_exe);
+    if DirectoryExists(opsitmp) then
+      DeleteDirectory(opsitmp, True);
+    FreeAndNil(myoutlines);
+    KillProcess(ExtractFileName(temp_exe));
+  end;
+  {$ENDIF WINDOWS}
+  if not mysetup.msiUninstallCode then
+  begin
+    mysetup.uninstallDirectory := '$installerSourceDir$';
+    mysetup.uninstallProg := mysetup.uninstallDirectory + '\' + mysetup.setupFileName;
+
+    if mysetup.preferSilent then
       mysetup.uninstallCommandLine :=
-        '"' + mysetup.uninstallDirectory + '\'+mysetup.setupFileName+'" ' +
-        installerArray[integer(mysetup.installerId)].silentuninstall
+        '"' + mysetup.uninstallDirectory + '\' + mysetup.setupFileName +
+        '" ' + installerArray[integer(mysetup.installerId)].silentuninstall
     else
       mysetup.uninstallCommandLine :=
-        '"' + mysetup.uninstallDirectory + '\'+mysetup.setupFileName+'" ' +
-        installerArray[integer(mysetup.installerId)].unattendeduninstall;
+        '"' + mysetup.uninstallDirectory + '\' + mysetup.setupFileName +
+        '" ' + installerArray[integer(mysetup.installerId)].unattendeduninstall;
 
+  end;
   resultForm1.updateUninstaller(mysetup);
 
   write_log_and_memo('get_advancedInstaller_info finished');
 end;
 
 procedure get_installAnywhere_info(myfilename: string; var mysetup: TSetupFile);
-var
-  str1, str2: string;
-  pos1, pos2, i: integer;
 begin
   write_log_and_memo('Analyzing installAnywhere:');
   write_log_and_memo('get_installAnywhere_info finished');
 end;
 
 procedure get_QtInstaller_info(myfilename: string; var mysetup: TSetupFile);
-var
-  str1, str2: string;
-  pos1, pos2, i: integer;
 begin
   write_log_and_memo('Analyzing QtInstaller:');
-  mysetup.installDirectory:= '%Programfiles64Dir%\"+$ProductId$+"';
+  mysetup.installDirectory := '%Programfiles64Dir%\"+$ProductId$+"';
   write_log_and_memo('get_QtInstaller_info finished');
 end;
 
 procedure get_MsixAppx_info(myfilename: string; var mysetup: TSetupFile);
 var
-  str1, str2: string;
-  pos1, pos2, i: integer;
-  packagepath,cmdStr, versionStr, fullNameStr, displayNameStr : string;
-  destDir : string;
-  xmlLines, nodeLines : TStringlist;
+  packagepath, cmdStr, versionStr, fullNameStr, displayNameStr: string;
+  destDir, proptmpstr: string;
+  xmlLines, nodeLines: TStringList;
+  manifesFileName : string;
+  i : integer;
 begin
   write_log_and_memo('Analyzing MsixAppx Package:');
   // Analyze
@@ -1120,100 +1105,183 @@ begin
   destDir := destDir + DirectorySeparator + 'msixAppx';
   // cleanup destination
   if DirectoryExists(destDir) then
-    DeleteDirectory(destDir,true);
+    DeleteDirectory(destDir, True);
   // create destination
   if not DirectoryExists(destDir) then
     ForceDirectories(destDir);
-  if UnzipWithDirStruct(myfilename,destDir) then
+  if UnzipWithDirStruct(myfilename, destDir) then
   begin
-    LogDatei.log('Unzipped '+myfilename+' to '+destDir,LLnotice);
-    if fileexists(destDir+DirectorySeparator+'AppxManifest.xml') then
+    LogDatei.log('Unzipped ' + myfilename + ' to ' + destDir, LLnotice);
+    manifesFileName := destDir + DirectorySeparator + 'AppxManifest.xml';
+    if not fileexists(manifesFileName) then
+    // perhaps  a bundle ?
+      manifesFileName := destDir + DirectorySeparator + 'AppxMetadata\AppxBundleManifest.xml';
+    if fileexists(manifesFileName) then
     begin
-      xmlLines := getXMLDocumentElementfromFile(destDir+DirectorySeparator+'AppxManifest.xml');
-      if xml2GetFirstChildNodeByName(xmlLines,'Identity',nodeLines) then
+      xmlLines := getXMLDocumentElementfromFile(manifesFileName);
+      if xml2GetFirstChildNodeByName(xmlLines, 'Identity', nodeLines) then
       begin
-        if getXml2AttributeValueByKey(nodeLines,'Version',versionStr) then
+        if getXml2AttributeValueByKey(nodeLines, 'Version', versionStr) then
         begin
           mysetup.SoftwareVersion := versionStr;
-          aktProduct.productdata.productversion:= versionStr;
-          LogDatei.log('Got Version: '+versionStr+' from node Identity in AppxManifest.xml',LLnotice);
+          aktProduct.productdata.productversion := versionStr;
+          LogDatei.log('Got Version: ' + versionStr +
+            ' from node Identity in AppxManifest.xml', LLnotice);
         end
-        else LogDatei.log('Could not get Version from AppxManifest.xml.',LLwarning);
-        if getXml2AttributeValueByKey(nodeLines,'Name',fullNameStr) then
+        else
+          LogDatei.log('Could not get Version from AppxManifest.xml.', LLwarning);
+        if getXml2AttributeValueByKey(nodeLines, 'Name', fullNameStr) then
         begin
-          aktProduct.productdata.productName:= fullNameStr;
-          LogDatei.log('Got FullName: '+fullNameStr+' from node Identity in AppxManifest.xml',LLnotice);
+          aktProduct.productdata.productName := fullNameStr;
+          LogDatei.log('Got FullName: ' + fullNameStr +
+            ' from node Identity in AppxManifest.xml', LLnotice);
         end
-        else LogDatei.log('Could not get FullName from AppxManifest.xml.',LLwarning);
+        else
+          LogDatei.log('Could not get FullName from AppxManifest.xml.', LLwarning);
       end
-      else LogDatei.log('Could not get node Identity from AppxManifest.xml.',LLwarning);
-      if xml2GetFirstChildNodeByName(xmlLines,'DisplayName',nodeLines) then
+      else
+        LogDatei.log('Could not get node Identity from AppxManifest.xml.', LLwarning);
+      if xml2GetFirstChildNodeByName(xmlLines, 'DisplayName', nodeLines) then
       begin
         displayNameStr := getXml2NodeText(nodeLines);
-        aktProduct.productdata.productId:= LowerCase(displayNameStr);
-        LogDatei.log('Got productId: '+productId+' from node DisplayName in AppxManifest.xml',LLnotice);
+        aktProduct.productdata.productId := LowerCase(displayNameStr);
+        LogDatei.log('Got productId: ' + productId +
+          ' from node DisplayName in AppxManifest.xml', LLnotice);
       end
-      else LogDatei.log('Could not get node Displayname from AppxManifest.xml.',LLwarning);
-      if xml2GetFirstChildNodeByName(xmlLines,'Description',nodeLines) then
+      else
+        LogDatei.log('Could not get node Displayname from AppxManifest.xml.', LLwarning);
+      if xml2GetFirstChildNodeByName(xmlLines, 'Description', nodeLines) then
       begin
         aktProduct.productdata.description := getXml2NodeText(nodeLines);
-        LogDatei.log('Got description: '+aktProduct.productdata.description+' from node Description in AppxManifest.xml',LLnotice);
+        LogDatei.log('Got description: ' + aktProduct.productdata.description +
+          ' from node Description in AppxManifest.xml', LLnotice);
       end
-      else LogDatei.log('Could not get node Displayname from AppxManifest.xml.',LLwarning);
+      else
+        LogDatei.log('Could not get node Displayname from AppxManifest.xml.', LLwarning);
     end
-    else LogDatei.log('File AppxManifest.xml not found.',LLwarning);
+    else
+      LogDatei.log('File AppxManifest.xml not found.', LLwarning);
   end
-  else write_log_and_memo('Could not unzip: '+myfilename);
+  else
+    write_log_and_memo('Could not unzip: ' + myfilename);
 
   // install cmd
   packagepath := '"$installerSourceDir$\' + mysetup.setupFileName + '"';
   cmdStr := installerArray[integer(mysetup.installerId)].silentsetup;
-  cmdStr := StringReplace(cmdStr,'<#packagePath#>',packagepath,[rfIgnoreCase]);
-  mysetup.installCommandLine:= cmdStr;
+  cmdStr := StringReplace(cmdStr, '<#packagePath#>', packagepath, [rfIgnoreCase]);
+  mysetup.installCommandLine := cmdStr;
 
   // uninstall check
   mysetup.uninstallCheck.Clear;
-  cmdStr := 'Get-AppxPackage -AllUsers -Name '+ fullNameStr +' | select -expandProperty PackageFullName';
-  mysetup.uninstallCheck.Add('set $UninstallList$ = powershellCall("'+cmdStr+'")');
+  cmdStr := 'Get-AppxPackage -AllUsers -Name ' +
+    fullNameStr + ' | select -expandProperty PackageFullName';
+  mysetup.uninstallCheck.Add('set $UninstallList$ = powershellCall("' + cmdStr + '")');
+  mysetup.uninstallCheck.Add('; remove empty entries');
+  mysetup.uninstallCheck.Add(
+    'set $UninstallList$ = removeFromListByMatch("", $UninstallList$)');
   mysetup.uninstallCheck.Add('if count($UninstallList$) int> "0"');
-  mysetup.uninstallCheck.Add('	set $MsixAppxPackageName$ = takeString(0,$UninstallList$)');
+  mysetup.uninstallCheck.Add(
+    '	set $MsixAppxPackageName$ = takeString(0,$UninstallList$)');
   mysetup.uninstallCheck.Add('	set $oldProgFound$ = "true"');
   mysetup.uninstallCheck.Add('endif');
 
   // uninstall command
-    if mysetup.preferSilent then
-      cmdStr := installerArray[integer(mysetup.installerId)].silentuninstall
-    else
-       cmdStr :=  installerArray[integer(mysetup.installerId)].unattendeduninstall;
-  cmdStr := StringReplace(cmdStr,'<#packageFullName#>','$MsixAppxPackageName$',[rfIgnoreCase]);
+  if mysetup.preferSilent then
+    cmdStr := installerArray[integer(mysetup.installerId)].silentuninstall
+  else
+    cmdStr := installerArray[integer(mysetup.installerId)].unattendeduninstall;
+  cmdStr := StringReplace(cmdStr, '<#packageFullName#>', '$MsixAppxPackageName$',
+    [rfIgnoreCase]);
   mysetup.uninstallCommandLine := cmdStr;
+
+  mysetup.optionalUninstallLines.Add('set $cmdStr$ = "Get-AppxProvisionedPackage -Online | Where-Object {$_.PackageName -eq "');
+  mysetup.optionalUninstallLines.Add('set $cmdStr$ = $cmdStr$ +''"''');
+  mysetup.optionalUninstallLines.Add('set $cmdStr$ = $cmdStr$ + $MsixAppxPackageName$');
+  mysetup.optionalUninstallLines.Add('set $cmdStr$ = $cmdStr$ +''"''');
+  mysetup.optionalUninstallLines.Add('set $cmdStr$ = $cmdStr$ + "} | Remove-AppxProvisionedPackage -Online"');
+  mysetup.optionalUninstallLines.Add('Set $Exitcode$ = powershellcall($cmdStr$)');
+
+  mysetup.optionalUninstallLines.Add('if "true" = isGenericExitcodeFatal($exitcode$, "true", $ErrorString$ )');
+  mysetup.optionalUninstallLines.Add('	LogError $ErrorString$');
+  mysetup.optionalUninstallLines.Add('	;isfatalerror $ErrorString$');
+  mysetup.optionalUninstallLines.Add('else');
+  mysetup.optionalUninstallLines.Add('	Comment $ErrorString$');
+  mysetup.optionalUninstallLines.Add('endif');
+
+  // add uninstall_before_install with default = false
+  aktProduct.productdata.uninstallBeforeInstall:= true;
+  makeProperties;
+   for i := 0 to aktProduct.properties.Count - 1 do
+    begin
+      proptmpstr := LowerCase(aktProduct.properties.Items[i].Property_Name);
+      if (proptmpstr = LowerCase('uninstall_before_install')) then
+        aktProduct.properties.Items[i].BoolDefault:= false;
+    end;
 
   write_log_and_memo('get_MsixAppx_info finished');
 end;
 
+procedure get_winget_info(var mysetup: TSetupFile);
+var
+  str1, str2,cmdStr: string;
+  pos1, pos2, i: integer;
+begin
+  LogDatei.log('Preparing winget-Setup:',LLnotice);
+    mysetup.uninstallProg := '';
+    mysetup.uninstall_waitforprocess := '';
+    mysetup.uninstallCheck.Clear;
+    mysetup.uninstallCheck.Add('set $wingetCommandParam$ = " list --id '+mysetup.wingetId+' --exact --accept-source-agreements"');
+    mysetup.uninstallCheck.Add('set $UninstallList$ = shellCall($wingetBin$ + $wingetCommandParam$)');
+    mysetup.uninstallCheck.Add('if not("" = getIndexFromListByContaining($UninstallList$, "'+mysetup.wingetId+'"))');
+    mysetup.uninstallCheck.Add('	set $progFound$ = "true"');
+    mysetup.uninstallCheck.Add('endif');
+    mysetup.uninstallCheck.Add('; alternate check:');
+    mysetup.uninstallCheck.Add('if directoryexists($installdir$)');
+    mysetup.uninstallCheck.Add('	set $progFound$ = "true"');
+    mysetup.uninstallCheck.Add('endif');
+
+    // install command
+     if mysetup.preferSilent then
+       cmdStr := installerArray[integer(mysetup.installerId)].silentsetup
+     else
+       cmdStr := installerArray[integer(mysetup.installerId)].unattendedsetup;
+
+     cmdStr := StringReplace(cmdStr, '<#wingetId#>', mysetup.wingetId, [rfIgnoreCase]);
+     cmdStr := StringReplace(cmdStr, '<#wingetSource#>', mysetup.wingetSource, [rfIgnoreCase]);
+     mysetup.installCommandLine := cmdStr;
+     mysetup.installCommandStringEx := cmdStr;
+     LogDatei.log('winget installCommandLine: '+cmdStr,LLinfo);
+
+    // uninstall command
+     if mysetup.preferSilent then
+       cmdStr := installerArray[integer(mysetup.installerId)].silentuninstall
+     else
+       cmdStr := installerArray[integer(mysetup.installerId)].unattendeduninstall;
+
+     cmdStr := StringReplace(cmdStr, '<#wingetId#>', mysetup.wingetId, [rfIgnoreCase]);
+     cmdStr := StringReplace(cmdStr, '<#wingetSource#>', mysetup.wingetSource, [rfIgnoreCase]);
+     mysetup.uninstallCommandLine := cmdStr;
+     mysetup.uninstallCommandStringEx := cmdStr;
+     LogDatei.log('winget uninstallCommandLine: '+cmdStr,LLinfo);
+
+    // akt product
+    if (aktProduct.productdata.productId = '') or
+      (aktProduct.productdata.productId = copy(mysetup.wingetId,0,mysetup.wingetId.Length -1)) then
+      aktProduct.productdata.productId:=mysetup.wingetId;
+    if (aktProduct.productdata.productName = '') or
+      (aktProduct.productdata.productName = copy(mysetup.wingetId,0,mysetup.wingetId.Length -1)) then
+      aktProduct.productdata.productName :=mysetup.wingetId;
+    mysetup.isExitcodeFatalFunction :=
+    installerArray[integer(mysetup.installerId)].uib_exitcode_function;
+
+
+
+  LogDatei.log('get_winget_info finished',LLnotice);
+end;
+
+
 
 // marker for add installers
-
-(*
-procedure get_bitrock_info(myfilename: string; var mysetup: TSetupFile);
-var
-  str1, str2: string;
-  pos1, pos2, i: integer;
-begin
-  write_log_and_memo('Analyzing Windows Bitrock Installer:');
-  write_log_and_memo('get_bitrock_info finished');
-end;
-
-procedure get_selfextrackting_info(myfilename: string; var mysetup: TSetupFile);
-var
-  str1, str2: string;
-  pos1, pos2, i: integer;
-begin
-  write_log_and_memo('Analyzing selfextrackting Installer:');
-  write_log_and_memo('get_selfextrackting_info finished');
-end;
-*)
-
 
 procedure Analyze(FileName: string; var mysetup: TSetupFile; verbose: boolean);
 var
@@ -1251,6 +1319,22 @@ begin
     get_MsixAppx_info(FileName, mysetup);
     write_log_and_memo('Found installer= ' + installerToInstallerstr(setupType));
   end
+  else if '.appxbundle' = lowercase(ExtractFileExt(FileName)) then
+  begin
+    mysetup.analyze_progess := 10;
+    setupType := stMsixAppx;
+    get_aktProduct_general_info_win(stMsixAppx, Filename, mysetup);
+    get_MsixAppx_info(FileName, mysetup);
+    write_log_and_memo('Found installer= ' + installerToInstallerstr(setupType));
+  end
+  else if '.msixbundle' = lowercase(ExtractFileExt(FileName)) then
+  begin
+    mysetup.analyze_progess := 10;
+    setupType := stMsixAppx;
+    get_aktProduct_general_info_win(stMsixAppx, Filename, mysetup);
+    get_MsixAppx_info(FileName, mysetup);
+    write_log_and_memo('Found installer= ' + installerToInstallerstr(setupType));
+  end
   else
   begin
     setupType := analyze_binary(FileName, verbose, False, mysetup);
@@ -1258,7 +1342,7 @@ begin
     sleep(2000);
 
     {$IFDEF OSDGUI}
-    if setupType = stUnknown then
+    if (setupType = stUnknown) or (setupType = stDetectedUnknown) then
     begin
       FChooseInstallerDlg.ComboBoxChooseInstaller.Clear;
       for i := 0 to integer(stUnknown) do
@@ -1266,6 +1350,17 @@ begin
           installerToInstallerstr(TKnownInstaller(i)));
       FChooseInstallerDlg.ComboBoxChooseInstaller.Text :=
         installerToInstallerstr(stUnknown);
+      if setupType = stDetectedUnknown then
+      begin
+        FChooseInstallerDlg.LabelDetected.Caption :=
+          'Detected: ' + mysetup.installerName + ' Version: ' + mysetup.installerVersion;
+        FChooseInstallerDlg.SetLabelUnknown(True);
+      end
+      else
+      begin
+        FChooseInstallerDlg.LabelDetected.Caption := '';
+        FChooseInstallerDlg.SetLabelUnknown(False);
+      end;
       if FChooseInstallerDlg.ShowModal = mrOk then
       begin
         setupType := installerstrToInstaller(
@@ -1273,7 +1368,7 @@ begin
         mysetup.installerId := setupType;
       end;
     end;
-     {$ENDIF OSDGUI}
+    {$ENDIF OSDGUI}
 
     get_aktProduct_general_info_win(setupType, Filename, mysetup);
 
@@ -1286,7 +1381,7 @@ begin
       stMsi: ;// nothing to do here - see above;
       stMsixAppx: ;// nothing to do here - see above;
       stInstallAware: get_installaware_info(FileName, mysetup);
-      stMSGenericInstaller: get_genmsinstaller_info(FileName, mysetup);
+      //stMSGenericInstaller: get_genmsinstaller_info(FileName, mysetup);
       stWixToolset: get_wixtoolset_info(FileName, mysetup);
       stBoxStub: get_boxstub_info(FileName, mysetup);
       stSFXcab: get_sfxcab_info(FileName, mysetup);
@@ -1338,9 +1433,9 @@ begin
   resultForm1.ProgressBarAnalyze.Position := 100;
   procmess;
   if osdsettings.DetectCount > 1 then
-    MyMessageDlg.showMessage('Warning','More than one installertype detected:' +LineEnding+
-      osdsettings.DetectionSummary.Text +LineEnding+
-      'Please check log file.', [mrOK]);
+    MyMessageDlg.ShowMessage('Warning', 'More than one installertype detected:' +
+      LineEnding + osdsettings.DetectionSummary.Text + LineEnding +
+      'Please check log file.', [mrOk]);
   {$ENDIF OSDGUI}
   //sleep(2000);
   mysetup.installerId := setupType;
@@ -1355,8 +1450,9 @@ begin
     if tmpstr <> '' then
     begin
       //MyMessageDlg.wiMessageSized(tmpstr,[mrOk], 950, 740);
-      OSD_info.mdContent:= tmpstr;
-      OSD_info.ShowModal;
+      OSD_info.mdContent := tmpstr;
+      if osdsettings.showgui then
+        OSD_info.ShowModal;
     end;
     {$ENDIF OSDGUI}
   end;

@@ -1,7 +1,7 @@
 object OSD_info: TOSD_info
-  Left = 463
+  Left = 453
   Height = 378
-  Top = 355
+  Top = 291
   Width = 705
   Caption = 'opsi-setup-detector Info'
   ClientHeight = 378
@@ -9,7 +9,7 @@ object OSD_info: TOSD_info
   OnCreate = FormCreate
   OnShow = FormShow
   Position = poMainFormCenter
-  LCLVersion = '3.2.0.0'
+  LCLVersion = '3.4.0.0'
   object Panel1: TPanel
     Left = 0
     Height = 336

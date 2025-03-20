@@ -25,7 +25,7 @@ object FBatchOberflaeche: TFBatchOberflaeche
     Left = 0
     Height = 828
     Top = 0
-    Width = 1564
+    Width = 1196
     Align = alClient
     AutoSize = True
     ClientHeight = 828
@@ -39,7 +39,7 @@ object FBatchOberflaeche: TFBatchOberflaeche
     ParentFont = False
     TabOrder = 0
     object ImageOpsiBackground: TImage
-      Left = 1086
+      Left = 718
       Height = 542
       Top = 312
       Width = 489

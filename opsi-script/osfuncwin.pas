@@ -328,7 +328,7 @@ var
   buffer: PChar;
   len: integer = 0;
   errorcode: integer = 0;
-  WSAData: TWSAData;
+  //WSAData: TWSAData;
 begin
   Result := False;
   try
@@ -453,12 +453,14 @@ end;
 function WinIsUefi: boolean;
 var
   lastError: DWORD;
-  tmpstr, outstr, stringResult, BiosMode: string;
-  releaseint, i, versionint: integer;
-  outlines: TXStringlist;
-  exitcode: longint;
+  //tmpstr, outstr, stringResult,
+  BiosMode: string;
+  //releaseint, i,
+  versionint: integer;
+  //outlines: TXStringlist;
+  //exitcode: longint;
   oldDisableWow64FsRedirectionStatus: pointer = nil;
-  Wow64FsRedirectionDisabled, boolresult: boolean;
+  //Wow64FsRedirectionDisabled, boolresult: boolean;
   { http://theroadtodelphi.wordpress.com/2013/02/19/how-distinguish-when-windows-was-installed-in-legacy-bios-or-uefi-mode-using-delphi/ }
 begin
   Result := False;
