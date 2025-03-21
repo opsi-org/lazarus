@@ -3093,9 +3093,18 @@ begin
     done := createProductStructure;
     procmess;
     case TIRadioGroupCreateMode.ItemIndex of
-      0: ; // do nothing else
-      1: callServiceOrPackageBuilder;
-      2: callOpsiPackageBuilder;
+      0: begin
+        logdatei.log('Create Mode is files only - so we finished', LLnotice);
+      end; // do nothing else
+      1: begin
+        logdatei.log('Create Mode is files and build - so we try to call the service', LLnotice);
+        callServiceOrPackageBuilder;
+      end;
+      2: begin
+        logdatei.log('Create Mode is files and interactive packageBuilder - so we try to call the opsiPackageBuilder', LLnotice);
+        callOpsiPackageBuilder;
+
+      end;
     end;
     (*
     if RadioButtonCreateOnly.Checked then

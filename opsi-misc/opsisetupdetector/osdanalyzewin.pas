@@ -21,6 +21,7 @@ uses
   strutils,
   SysUtils,
   fileinfo,
+  typinfo,
   winpeimagereader,
   oslog,
   osdbasedata,
@@ -604,6 +605,10 @@ begin
   destfile := ExtractFileName(myfilename);
   destfile := ExtractFileName(destfile);
   installScriptISS := destDir + DirectorySeparator + 'install_script.iss';
+  // innounp works only until inno version 6.1  (Supports Inno Setup versions 2.0.7 through 6.1.2)
+  // inno version > 6.2 needs innounp-2
+  // https://www.rathlev-home.de/index-e.html?tools/prog-e.html#unpack
+  // https://www.rathlev-home.de/tools/download/innounp-2.zip
 
   LogDatei.log('extract install_script.iss from ' + myfilename + ' to', LLInfo);
   LogDatei.log(installScriptISS, LLInfo);
@@ -705,11 +710,18 @@ begin
         (0 = pos('x86', lowercase(ArchitecturesInstallIn64BitMode))) then
       begin
         DefaultDirName := translateInnoConstants(DefaultDirName, '64');
+        mysetup.architecture:= a64;
       end
       else
       begin
         DefaultDirName := translateInnoConstants(DefaultDirName, '32');
+        mysetup.architecture:= a32;
       end;
+      // guess architecture from installdir
+  if DefaultDirName.StartsWith('%ProgramFiles64Dir%') then
+    mysetup.architecture := a64
+  else if DefaultDirName.StartsWith('%ProgramFiles32Dir%') then
+    mysetup.architecture := a32;
       mysetup.installDirectory := DefaultDirName;
       if UninstallFilesDir <> '' then
       begin
@@ -732,6 +744,7 @@ begin
       begin
         LogDatei.log('installDirectory: ' + installDirectory, LLDebug);
         LogDatei.log('SoftwareVersion: ' + SoftwareVersion, LLDebug);
+        LogDatei.log('Architecture: ' + GetEnumName(typeInfo(TArchitecture), Ord(architecture)), LLDebug);
       end;
       with aktProduct.productdata do
       begin
@@ -1085,13 +1098,14 @@ procedure get_QtInstaller_info(myfilename: string; var mysetup: TSetupFile);
 begin
   write_log_and_memo('Analyzing QtInstaller:');
   mysetup.installDirectory := '%Programfiles64Dir%\"+$ProductId$+"';
+  mysetup.architecture:= a64;
   write_log_and_memo('get_QtInstaller_info finished');
 end;
 
 procedure get_MsixAppx_info(myfilename: string; var mysetup: TSetupFile);
 var
   packagepath, cmdStr, versionStr, fullNameStr, displayNameStr: string;
-  destDir, proptmpstr: string;
+  destDir, proptmpstr, architectureStr: string;
   xmlLines, nodeLines: TStringList;
   manifesFileName : string;
   i : integer;
@@ -1138,6 +1152,18 @@ begin
         end
         else
           LogDatei.log('Could not get FullName from AppxManifest.xml.', LLwarning);
+        if getXml2AttributeValueByKey(nodeLines, 'ProcessorArchitecture', architectureStr) then
+        begin
+          if architectureStr = 'X86' then mysetup.architecture:= a32
+          else if architectureStr = 'X64' then mysetup.architecture:= a64
+          else if architectureStr = 'Neutral' then mysetup.architecture:= aUnknown
+          else mysetup.architecture:= aUnknown;
+          LogDatei.log('Got Architecture: ' + architectureStr +
+            ' from node Identity in AppxManifest.xml', LLnotice);
+          LogDatei.log('Architecture: ' + GetEnumName(typeInfo(TArchitecture), Ord(mysetup.architecture)), LLDebug);
+        end
+        else
+          LogDatei.log('Could not get Architecture from AppxManifest.xml.', LLwarning);
       end
       else
         LogDatei.log('Could not get node Identity from AppxManifest.xml.', LLwarning);
