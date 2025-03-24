@@ -19,7 +19,7 @@ type
   // Meta data structure
   //********************************
 
-  TMeta_os = (Windows, linux, macos, os_unknown);
+  TMeta_os = (windows, linux, macos, os_unknown);
 
   TMeta_os_arch = (x86, x64, arm64, arm, arch_unknown);
 
