@@ -154,7 +154,7 @@ implementation
 constructor TMetaspecification.Create;
 begin
   inherited;
-  Fversion := '';
+  //Fversion := '';
 end;
 
 destructor TMetaspecification.Destroy;
@@ -170,10 +170,6 @@ end;
 constructor TMetaProduct.Create;
 begin
   inherited;
-  (*
-  FdoNotInstallInBackground := False;
-  FdoNotCheckInstallDirBinaries := False;
-  *)
 end;
 
 destructor TMetaProduct.Destroy;
@@ -189,8 +185,10 @@ end;
 constructor TMetaInstallerRequirement.Create;
 begin
   inherited;
+  (*
   Fos := os_unknown;
   Fos_arch := arch_unknown;
+  *)
 end;
 
 destructor TMetaInstallerRequirement.Destroy;
@@ -206,14 +204,12 @@ end;
 constructor TMetaInstaller.Create;
 begin
   inherited;
-  Factive := False;
   (*
-  FdoNotInstallInBackground := False;
-  FdoNotCheckInstallDirBinaries := False;
-  *)
+  Factive := False;
   Finstall_in_background := True;
   Fpath := '';
   Finstall_dir := '';
+  *)
   Fcheck_processes_from_dirs := TStringList.Create;
   Fprocesses := TStringList.Create;
   FMetaInstallerRequirement := TMetaInstallerRequirement.Create;
@@ -264,6 +260,27 @@ end;
 //********************************
 // Meta data TopsiMeta
 //********************************
+
+procedure initMeta;
+var
+  i: integer;
+begin
+  aktMeta.metaspecification.Fversion:='';
+  aktMeta.productMeta.FProductIconFilePath:='';
+  for i := 0 to 2 do
+  begin
+    aktMeta.InstallerMeta[i].Factive:= False;
+  aktMeta.InstallerMeta[i].Finstall_in_background := True;
+  aktMeta.InstallerMeta[i].Fpath := '';
+  aktMeta.InstallerMeta[i].Finstall_dir := '';
+  aktMeta.InstallerMeta[i].Fcheck_processes_from_dirs.Clear;
+  aktMeta.InstallerMeta[i].Fprocesses.Clear;
+  aktMeta.InstallerMeta[i].FMetaInstallerRequirement.Fos := os_unknown;
+  aktMeta.InstallerMeta[i].FMetaInstallerRequirement.Fos_arch := arch_unknown;
+  aktMeta.InstallerMeta[i].FMetaInstallerRequirement.FRequiredSpaceMB:=0;
+  end;
+end;
+
 
 
 constructor TopsiMeta.Create;
@@ -446,10 +463,11 @@ var
   i, k: integer;
   strlist: TStringList;
 begin
+  // reinitialize meta data structure
+  initMeta;
+
   strlist := TStringList.Create;
   aktMeta.metaspecification.version := '0.1';
-  //aktMeta.productMeta.doNotCheckInstallDirBinaries := False;
-  //aktMeta.productMeta.doNotInstallInBackground := False;
   aktMeta.productMeta.productIconFilePath :=
     aktProduct.productdata.productId + ExtractFileExt(
     aktProduct.productdata.productImageFullFileName);
@@ -465,17 +483,6 @@ begin
         aktProduct.SetupFiles[i].setupFileName;
 
       aktMeta.InstallerMeta[i].addtoCheckDirs(aktProduct.SetupFiles[i].installDirectory);
-
-      (*
-      // process test
-      strlist.Add('7zip.exe');
-      strlist.Add('%ProgramFiles64Dir%\7-Zip\7zFM.exe');
-      //aktMeta.InstallerMeta[i].processes
-      for k := 0 to strlist.Count - 1 do
-        aktMeta.InstallerMeta[i].addtoProcesses(strlist[k]);
-        *)
-
-
       aktMeta.InstallerMeta[i].FMetaInstallerRequirement.os :=
         aktprodTargetosToMetaOs(aktProduct.SetupFiles[i].targetOS);
       aktMeta.InstallerMeta[i].FMetaInstallerRequirement.os_arch :=
@@ -490,4 +497,5 @@ end;
 
 begin
   aktMeta := TopsiMeta.Create;
+  initMeta;
 end.

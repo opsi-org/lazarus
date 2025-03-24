@@ -3771,7 +3771,8 @@ var
 begin
   list := TStringList.Create;
   progname := ExtractFileName(ParamStr(0));
-  msg := progname + ' Version: ' + myVersion;
+  msg := progname + ' Version: ' + myVersion + '      ('+{$i %DATE%} + ', ' +{$i %TIME%}+')';
+  //msg := progname + ' Version: ' + myVersion;
   list.Add(msg);
   list.Add('(c) uib gmbh under AGPLv3');
   list.Add('This is a part of the opsi.org project: https://opsi.org');
