@@ -1,3 +1,11 @@
+genericlaunch 4.3.0.1
+
+* added new icon
+* recompiled with laz 3.6
+* signed by uib gmbh
+
+-- detlef oertel <d.oertel@uib.de> 2025-04-04
+
 genericlaunch 4.1.0.1
 
 * add new option: -conffile [path]
