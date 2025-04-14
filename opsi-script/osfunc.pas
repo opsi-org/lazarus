@@ -47,6 +47,7 @@ uses
   //unitImpersonator,
   osfuncwin2,
   osfuncwin3,
+  oswmi,
 {$IFDEF WIN32}
   osregistry,
   DSiWin32,
@@ -4842,16 +4843,42 @@ begin
 end;
 
 function getOSArchitecture: string;
+var
+  WMIResults: TStringList;
+  WMIProperties: TStringList;
+  WMIResult: string;
+  ErrorMsg: string;
 begin
   Result := 'unknown';
-  {$IFDEF WIN32}
-  if DSiIsWow64 then Result := 'x86_64'
-  else
-    Result := 'x86_32';
-  {$ENDIF WIN32}
-  {$IFDEF WIN64}
-  Result := 'x86_64';
-  {$ENDIF WIN64}
+  {$IFDEF WINDOWS}
+  WMIResults := TStringlist.Create;
+  WMIProperties := TStringList.Create;
+  WMIProperties.Add('OSArchitecture');
+  try
+    if osGetWMI('root\cimv2', 'Win32_OperatingSystem', WMIProperties,
+        '', WMIResults, ErrorMsg) then
+    begin
+      WMIResult := WMIResults.Values['OSArchitecture'];
+      if WMIResult = '32-Bit'then
+        Result := 'x86_32'
+      else if WMIResult = '64-Bit' then
+        Result := 'x86_64'
+      else if WMIResult = '64-Bit-ARM-Prozessor' then
+        Result := 'arm_64';
+    end;
+  finally
+     FreeAndNil(WMIResults);
+     FreeAndNil(WMIProperties);
+  end;
+  {$ENDIF WINDOWS}
+  //{$IFDEF WIN32}
+  //if DSiIsWow64 then Result := 'x86_64'
+  //else
+  //  Result := 'x86_32';
+  //{$ENDIF WIN32}
+  //{$IFDEF WIN64}
+  //Result := 'x86_64';
+  //{$ENDIF WIN64}
   {$IFDEF LINUX}
   // At the moment the only supported architecture at Linux
   Result := 'x86_64';
