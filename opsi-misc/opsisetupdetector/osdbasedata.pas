@@ -830,7 +830,7 @@ resourcestring
     LineEnding + '<https://store.rg-adguard.net/>' + LineEnding +
     LineEnding + 'There also is often a problem with the uninstallation.' +
     LineEnding + LineEnding +
-    'So the use of the "uninstall_before_install" checkbox is recommended.';
+    'So the use of the "uninstall\_before\_install" checkbox is recommended.';
   mdInstallerInfo_winget =
     '## Making a winget based package.' + LineEnding + LineEnding +
     'You need to know the winget Id and Source of the software to install.' +

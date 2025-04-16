@@ -143,6 +143,13 @@ todo:
    *
 
 # Changelog opsi-setup-detector
+## [4.3.5.1-1] - 2025-04-16
+
+### Fix
+- markdown typo in msix info
+
+(Detlef Oertel <d.oertel@uib.de>)
+
 ## [4.3.5.0-1] - 2025-03-21
 
 ### Fix
