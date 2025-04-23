@@ -69,7 +69,7 @@ get version:
   rules:
     - if: ($PROJECT_NAME != "opsiscript")
       when: never
-    - if: $CI_COMMIT_TAG
+    - if: $CI_COMMIT_TAG =~ /^opsi-script/
       when: always
     - when: manual
 
