@@ -10,7 +10,6 @@ uses
   oslog,
   opsiDynamicLibJYT,
   osjson,
-  osdbasedata,
   osd_jyt_convert;
 
 type
@@ -145,6 +144,9 @@ var
   aktMeta: TopsiMeta;
 
 implementation
+
+uses
+    osdbasedata;
 
 //********************************
 // Meta data TMetaspecification
@@ -495,7 +497,10 @@ begin
 end;
 
 
-begin
+initialization
   aktMeta := TopsiMeta.Create;
   initMeta;
+finalization
+   FreeAndNil(aktMeta)
+
 end.

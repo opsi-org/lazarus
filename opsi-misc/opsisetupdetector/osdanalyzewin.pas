@@ -1156,6 +1156,7 @@ begin
         begin
           if architectureStr = 'X86' then mysetup.architecture:= a32
           else if architectureStr = 'X64' then mysetup.architecture:= a64
+          // we have no equivalent to 'neutral' right now but perhaps we should have ....(do 25.4.2025)
           else if architectureStr = 'Neutral' then mysetup.architecture:= aUnknown
           else mysetup.architecture:= aUnknown;
           LogDatei.log('Got Architecture: ' + architectureStr +

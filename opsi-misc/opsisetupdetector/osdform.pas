@@ -47,7 +47,9 @@ uses
   osmessagedialog,
   oswebservice,
   osdmain,
-  osd_md_html_dlg, Types;
+  osd_md_html_dlg,
+  osdmeta,
+  Types;
 
 type
   TIconDisplay = class(TPersistent)
@@ -64,6 +66,8 @@ type
 
   TResultform1 = class(TForm)
     BitBtnChooseInstDir4: TBitBtn;
+    BitBtnChooseInstDir5: TBitBtn;
+    BitBtnBgChooseInstDir: TBitBtn;
     BitBtnChooseTargetProg4: TBitBtn;
     BitBtnChooseUninstFile4: TBitBtn;
     BitBtnImportControl: TBitBtn;
@@ -91,6 +95,7 @@ type
     BtCreateWingetPackage: TBitBtn;
     BtCreateEmptyTemplateWithUserWin: TBitBtn;
     BtCreateMeta: TBitBtn;
+    BtCreateBackgroundInfo: TBitBtn;
     BtnOpenIconFolder: TBitBtn;
     BitBtnAddProp: TBitBtn;
     BitBtnDelProp: TBitBtn;
@@ -115,6 +120,7 @@ type
     BtSingleAnalyzeAndCreateMulti: TBitBtn;
     BtSingleAnalyzeAndCreateWin: TBitBtn;
     BtSingleAnalyzeAndCreateWithUser: TBitBtn;
+    BtBgNextStep: TBitBtn;
     CheckBoxDefaultIcon: TCheckBox;
     CheckBoxNoIcon: TCheckBox;
     EditLogInfo: TEdit;
@@ -143,6 +149,9 @@ type
     FlowPanel3: TFlowPanel;
     FlowPanel30: TFlowPanel;
     FlowPanel31: TFlowPanel;
+    FlowPanel32: TFlowPanel;
+    FlowPanel33: TFlowPanel;
+    FlowPanel34: TFlowPanel;
     FlowPanel4: TFlowPanel;
     FlowPanel6: TFlowPanel;
     FlowPanel8: TFlowPanel;
@@ -192,6 +201,7 @@ type
     IpHtmlPanelAdvice: TIpHtmlPanel;
     IpHtmlPanelDesc: TIpHtmlPanel;
     Label1: TLabel;
+    Label10: TLabel;
     Label100: TLabel;
     Label101: TLabel;
     Label102: TLabel;
@@ -213,6 +223,16 @@ type
     Label118: TLabel;
     Label119: TLabel;
     Label120: TLabel;
+    Label121: TLabel;
+    Label122: TLabel;
+    Label123: TLabel;
+    Label125: TLabel;
+    Label126: TLabel;
+    Label127: TLabel;
+    Label128: TLabel;
+    Label129: TLabel;
+    Label130: TLabel;
+    Label131: TLabel;
     Label2: TLabel;
     Label3: TLabel;
     Label4: TLabel;
@@ -227,6 +247,7 @@ type
     Label87: TLabel;
     Label88: TLabel;
     Label89: TLabel;
+    Label9: TLabel;
     Label90: TLabel;
     Label91: TLabel;
     Label92: TLabel;
@@ -293,8 +314,11 @@ type
     MenuItemConfig: TMenuItem;
     OpenDialogSetupfile: TOpenDialog;
     PairSplitter1: TPairSplitter;
+    PairSplitterbackground: TPairSplitter;
     PairSplitterSide1: TPairSplitterSide;
     PairSplitterSide2: TPairSplitterSide;
+    PairSplitterSide3: TPairSplitterSide;
+    PairSplitterSide4: TPairSplitterSide;
     Panel10: TPanel;
     Panel11: TPanel;
     Panel12: TPanel;
@@ -306,6 +330,13 @@ type
     Panel18: TPanel;
     Panel19: TPanel;
     Panel20: TPanel;
+    Panel21: TPanel;
+    Panel22: TPanel;
+    Panel23: TPanel;
+    Panel24: TPanel;
+    Panel25: TPanel;
+    Panel26: TPanel;
+    Panel27: TPanel;
     PanelChannel: TPanel;
     SpeedButtonHelpMain: TSpeedButton;
     SpeedButtonHelpAnalyze: TSpeedButton;
@@ -322,6 +353,7 @@ type
     SpeedButtonHelpStartLin: TSpeedButton;
     SpeedButtonHelpStartMac: TSpeedButton;
     SpeedButtonHelpStartMulti: TSpeedButton;
+    TabSheetBackground: TTabSheet;
     TabSheetWinget: TTabSheet;
     TaskPanelMulti: TPanel;
     TaskPanelMac: TPanel;
@@ -367,6 +399,7 @@ type
     Panel2: TPanel;
     Panel3: TPanel;
     TabSheetAnalyze: TTabSheet;
+    TICheckBoxBgInstall: TTICheckBox;
     TICheckBoxCustomdir: TTICheckBox;
     TICheckBoxCustomizeProfile: TTICheckBox;
     TICheckBoxS4Mst: TTICheckBox;
@@ -381,10 +414,15 @@ type
     TICheckBoxS2Silent: TTICheckBox;
     TICheckBoxS2Mst: TTICheckBox;
     TICheckBoxS3Mst: TTICheckBox;
+    TIComboBoxBgOS1: TTIComboBox;
+    TIComboBoxBgOsArch1: TTIComboBox;
     TIComboBoxChannel: TTIComboBox;
+    TIEditBgProductId1: TTIEdit;
     TIEditInstallDir2: TTIEdit;
     TIEditInstallDir3: TTIEdit;
     TIEditInstallDir4: TTIEdit;
+    TIEditInstallDir5: TTIEdit;
+    TIEditBgInstallDir1: TTIEdit;
     TIEditMsiId2: TTIEdit;
     TIEditMsiId3: TTIEdit;
     TIEditMsiId4: TTIEdit;
@@ -400,6 +438,7 @@ type
     TIEditMstFile3: TTIEdit;
     TIEditMstFile4: TTIEdit;
     TIEditRequiredSizeMB4: TTIEdit;
+    TIEditRequiredSizeMB5: TTIEdit;
     TIEditSetup1TargetProgram: TTIEdit;
     TIEditSetup4Command: TTIEdit;
     TIEditSetup3TargetProgram: TTIEdit;
@@ -409,6 +448,7 @@ type
     TIEditSetup4UnProgram: TTIEdit;
     TIEditSetupfile4: TTIEdit;
     TIEditSetupFileSizeMB4: TTIEdit;
+    TIEditSetupFileSizeMB5: TTIEdit;
     TIEditSoftVersion1: TTIEdit;
     TIEditMsiId1: TTIEdit;
     TIEditSoftVersion2: TTIEdit;
@@ -445,7 +485,9 @@ type
     TILabelInstaller2: TTILabel;
     TILabelInstaller3: TTILabel;
     TILabelInstaller4: TTILabel;
+    TIMemoBgCheckdirs1: TTIMemo;
     TIMemoAdvice: TTIMemo;
+    TIMemoBgProcesses1: TTIMemo;
     TIMemoDesc: TTIMemo;
     TimerFirstconfig: TTimer;
     TIRadioGroupCreateMode: TTIRadioGroup;
@@ -464,6 +506,7 @@ type
 
     procedure BitBtnAddDepClick(Sender: TObject);
     procedure BitBtnAddPropClick(Sender: TObject);
+    procedure BitBtnBgChooseInstDirClick(Sender: TObject);
     procedure BitBtnChooseInstDir1Click(Sender: TObject);
     procedure BitBtnChooseInstDir2Click(Sender: TObject);
     procedure BitBtnChooseInstDir3Click(Sender: TObject);
@@ -487,6 +530,8 @@ type
     procedure BitBtnWorkBenchPathClick(Sender: TObject);
     procedure BtAnalyzeNextStepClick(Sender: TObject);
     procedure BtATwonalyzeAndCreateClick(Sender: TObject);
+    procedure BtBgNextStepClick(Sender: TObject);
+    procedure BtCreateBackgroundInfoClick(Sender: TObject);
     procedure BtCreateEmptyTemplateMultiClick(Sender: TObject);
     procedure BtCreateEmptyTemplateWinClick(Sender: TObject);
     procedure BtCreateEmptyTemplateWithUserWinClick(Sender: TObject);
@@ -569,6 +614,7 @@ type
     procedure SpeedButtonHelpStartMacClick(Sender: TObject);
     procedure SpeedButtonHelpStartMultiClick(Sender: TObject);
     procedure SpeedButtonHelpStartWinClick(Sender: TObject);
+    procedure TabSheetBackgroundShow(Sender: TObject);
     procedure TabSheetCreateShow(Sender: TObject);
     procedure TabSheetIconsShow(Sender: TObject);
     procedure TabSheetSetup1Enter(Sender: TObject);
@@ -578,7 +624,7 @@ type
     procedure CallMakeProperties(Sender: TObject);
     procedure TabSheetShow(Sender: TObject);
     procedure TabSheetWingetContextPopup(Sender: TObject; MousePos: TPoint;
-      var Handled: Boolean);
+      var Handled: boolean);
     procedure TaskPanelWinClick(Sender: TObject);
     procedure TICheckBoxlicenseRequiredChange(Sender: TObject);
     procedure TICheckBoxS1MstChange(Sender: TObject);
@@ -801,6 +847,7 @@ resourcestring
   rsTabWinget = 'winget';
   rsTabProduct1 = 'Product Configuration 1';
   rsTabProduct2 = 'Product Configuration 2';
+  rsTabBackGround = 'Product Background Info';
   rsTabProductIcon = 'Product Icon';
   rsTabCreate = 'Create';
 
@@ -822,6 +869,8 @@ var
 
 
 procedure initGUI;
+var
+  i: integer;
 begin
   LogDatei.log('Start initGUI ... ', LLInfo);
   with resultform1 do
@@ -924,6 +973,31 @@ begin
       TIComboBoxChannel.Link.SetObjectAndProperty(productdata, 'channelDir');
       // initialize drop down
       TIComboBoxChannel.Items.Text := templateChannelList.Text;
+      // background install meta data
+      TIEditBgProductId1.Link.SetObjectAndProperty(aktProduct.productdata,
+        'productId');
+      TIEditBgInstallDir1.Link.SetObjectAndProperty(aktMeta.InstallerMeta[0],
+        'install_dir');
+      TIMemoBgCheckdirs1.Link.SetObjectAndProperty(aktMeta.InstallerMeta[0],
+        'check_processes_from_dirs');
+      TIMemoBgProcesses1.Link.SetObjectAndProperty(aktMeta.InstallerMeta[0],
+        'processes');
+      TICheckBoxBgInstall.Link.SetObjectAndProperty(aktMeta.InstallerMeta[0],
+        'install_in_background');
+      TIComboBoxBgOS1.Link.SetObjectAndProperty(aktMeta.InstallerMeta[0].requirement,
+        'os');
+      (*
+       TIComboBoxBgOS1.Items.Clear;
+      for i := 0 to GetEnumNameCount(TypeInfo(TMeta_os)) -1 do
+        TIComboBoxBgOS1.Items.Add(GetEnumName(TypeInfo(TMeta_os),i));
+        *)
+      TIComboBoxBgOsArch1.Link.SetObjectAndProperty(aktMeta.InstallerMeta[0].requirement,
+        'os_arch');
+      (*
+      TIComboBoxBgOsArch1.Items.Clear;
+      for i := 0 to GetEnumNameCount(TypeInfo(TMeta_os_arch)) -1 do
+        TIComboBoxBgOsArch1.Items.Add(GetEnumName(TypeInfo(TMeta_os_arch),i));
+      *)
 
       // reinit osd settings (changed language ?)
       osdsettings.BuildMode.Clear;
@@ -1052,29 +1126,30 @@ begin
     {$IFDEF WINDOWS}
     TreeView1.BackgroundColor := clBtnFace;
     TreeView1.SelectionColor := clWhite;
-    TreeView1.SelectionFontColor:= clNavy;
+    TreeView1.SelectionFontColor := clNavy;
     {$ENDIF WINDOWS}
     {$IFDEF LINUX}
     TreeView1.BackgroundColor := clWhite;
     TreeView1.SelectionColor := clBtnFace;
-    TreeView1.SelectionFontColor:= clNavy;
+    TreeView1.SelectionFontColor := clNavy;
     {$ENDIF LINUX}
     {$IFDEF DARWIN}
     TreeView1.BackgroundColor := clWhite;
     TreeView1.SelectionColor := clMenuBar;
-    TreeView1.SelectionFontColor:= clNavy;
+    TreeView1.SelectionFontColor := clNavy;
     {$ENDIF DARWIN}
     //Treeview items enabled
-    TreeView1.Items[0].Enabled:= true;  // start
-    TreeView1.Items[1].Enabled:= true;  // analyze
-    TreeView1.Items[2].Enabled:= true;  // setup1
-    TreeView1.Items[3].Enabled:= false;  // setup2
-    TreeView1.Items[4].Enabled:= false;  // setup3
-    TreeView1.Items[5].Enabled:= false;  // winget
-    TreeView1.Items[6].Enabled:= true;  // product1
-    TreeView1.Items[7].Enabled:= true;  // product2
-    TreeView1.Items[8].Enabled:= true;  // product3
-    TreeView1.Items[9].Enabled:= true;  // create
+    TreeView1.Items[0].Enabled := True;  // start
+    TreeView1.Items[1].Enabled := True;  // analyze
+    TreeView1.Items[2].Enabled := True;  // setup1
+    TreeView1.Items[3].Enabled := False;  // setup2
+    TreeView1.Items[4].Enabled := False;  // setup3
+    TreeView1.Items[5].Enabled := False;  // winget
+    TreeView1.Items[6].Enabled := True;  // product1
+    TreeView1.Items[7].Enabled := True;  // product2
+    TreeView1.Items[8].Enabled := True;  // background
+    TreeView1.Items[9].Enabled := True;  // icons
+    TreeView1.Items[10].Enabled := True;  // create
     //Treeview items names
     TreeView1.Items[0].Text := rsTabStart;
     TreeView1.Items[1].Text := rsTabAnalyze;
@@ -1084,8 +1159,9 @@ begin
     TreeView1.Items[5].Text := rsTabWinget;
     TreeView1.Items[6].Text := rsTabProduct1;
     TreeView1.Items[7].Text := rsTabProduct2;
-    TreeView1.Items[8].Text := rsTabProductIcon;
-    TreeView1.Items[9].Text := rsTabCreate;
+    TreeView1.Items[8].Text := rsTabBackGround;
+    TreeView1.Items[9].Text := rsTabProductIcon;
+    TreeView1.Items[10].Text := rsTabCreate;
 
 
     EditLogInfo.Caption := 'More info in Log file: ' + LogDatei.FileName;
@@ -1119,16 +1195,16 @@ begin
     TabSheetCreate.Enabled := True;
     *)
     //Treeview items
-    TreeView1.Items[0].Enabled:= true;  // start
-    TreeView1.Items[1].Enabled:= true;  // analyze
-    TreeView1.Items[2].Enabled:= true;  // setup1
-    TreeView1.Items[3].Enabled:= false;  // setup2
-    TreeView1.Items[4].Enabled:= false;  // setup3
-    TreeView1.Items[5].Enabled:= false;  // winget
-    TreeView1.Items[6].Enabled:= true;  // product1
-    TreeView1.Items[7].Enabled:= true;  // product2
-    TreeView1.Items[8].Enabled:= true;  // product3
-    TreeView1.Items[9].Enabled:= true;  // create
+    TreeView1.Items[0].Enabled := True;  // start
+    TreeView1.Items[1].Enabled := True;  // analyze
+    TreeView1.Items[2].Enabled := True;  // setup1
+    TreeView1.Items[3].Enabled := False;  // setup2
+    TreeView1.Items[4].Enabled := False;  // setup3
+    TreeView1.Items[5].Enabled := False;  // winget
+    TreeView1.Items[6].Enabled := True;  // product1
+    TreeView1.Items[7].Enabled := True;  // product2
+    TreeView1.Items[8].Enabled := True;  // product3
+    TreeView1.Items[9].Enabled := True;  // create
 
     // the buttons
     BtSetup1NextStep.Enabled := True;
@@ -1213,10 +1289,10 @@ begin
       TreeView1.Items[9].Enabled:= true;  // create
       *)
       //Treeview items in difference to default from resetgui
-      TreeView1.Items[6].Enabled:= false;  // product1
-      TreeView1.Items[7].Enabled:= false;  // product2
-      TreeView1.Items[8].Enabled:= false;  // product3
-      TreeView1.Items[9].Enabled:= false;  // create
+      TreeView1.Items[6].Enabled := False;  // product1
+      TreeView1.Items[7].Enabled := False;  // product2
+      TreeView1.Items[8].Enabled := False;  // product3
+      TreeView1.Items[9].Enabled := False;  // create
     end;
     singleAnalyzeCreate, analyzeCreateWithUser:
     begin
@@ -1226,13 +1302,13 @@ begin
     twoAnalyzeCreate_1, twoAnalyzeCreate_2:
     begin
       //Treeview items  in difference to default from resetgui
-      TreeView1.Items[3].Enabled:= true;  // setup2
+      TreeView1.Items[3].Enabled := True;  // setup2
     end;
-     threeAnalyzeCreate_1, threeAnalyzeCreate_2, threeAnalyzeCreate_3:
+    threeAnalyzeCreate_1, threeAnalyzeCreate_2, threeAnalyzeCreate_3:
     begin
       //Treeview items  in difference to default from resetgui
-      TreeView1.Items[3].Enabled:= true;  // setup2
-      TreeView1.Items[4].Enabled:= true;  // setup3
+      TreeView1.Items[3].Enabled := True;  // setup2
+      TreeView1.Items[4].Enabled := True;  // setup3
     end;
     createTemplate, createTemplateWithUser:
     begin
@@ -1242,8 +1318,8 @@ begin
       TabSheetSetup2.Enabled := False;
       *)
       //Treeview items  in difference to default from resetgui
-      TreeView1.Items[1].Enabled:= false;  // analyze
-      TreeView1.Items[2].Enabled:= false;  // setup1
+      TreeView1.Items[1].Enabled := False;  // analyze
+      TreeView1.Items[2].Enabled := False;  // setup1
     end;
     createMeta:
     begin
@@ -1253,8 +1329,8 @@ begin
       TabSheetSetup2.Enabled := False;
       *)
       //Treeview items  in difference to default from resetgui
-      TreeView1.Items[1].Enabled:= false;  // analyze
-      TreeView1.Items[2].Enabled:= false;  // setup1
+      TreeView1.Items[1].Enabled := False;  // analyze
+      TreeView1.Items[2].Enabled := False;  // setup1
     end;
   end;
 
@@ -2107,6 +2183,98 @@ begin
   end;
 end;
 
+procedure TResultform1.BtBgNextStepClick(Sender: TObject);
+begin
+  case osdsettings.runmode of
+    analyzeOnly, gmUnknown:
+    begin
+      // we should never be here
+      logdatei.log('Error: in BtBgNextStepClick RunMode: ' +
+        GetEnumName(TypeInfo(TRunMode), Ord(osdsettings.runmode)), LLError);
+    end;
+    analyzeCreateWithUser,
+    createTemplate,
+    createTemplateWithUser,
+    createMultiTemplate,
+    singleAnalyzeCreate,
+    twoAnalyzeCreate_1,
+    twoAnalyzeCreate_2,
+    threeAnalyzeCreate_1,
+    threeAnalyzeCreate_2,
+    threeAnalyzeCreate_3,
+    createWingetProd:
+    begin
+      PageControl1.ActivePage := resultForm1.TabSheetIcons;
+      Application.ProcessMessages;
+    end;
+    // no icons for meta product
+    createMeta:
+    begin
+      PageControl1.ActivePage := resultForm1.TabSheetCreate;
+      Application.ProcessMessages;
+    end;
+  end;
+end;
+
+procedure TResultform1.BtCreateBackgroundInfoClick(Sender: TObject);
+var
+  localTOSset: TTargetOSset;
+begin
+  resetGUI;
+  osdsettings.runmode := createBackgroundInfo;
+  setRunMode;
+  initaktproduct;
+
+  OpenDialog1.FilterIndex := 9;   // control file
+  if DirectoryExists(myconfiguration.LastProjectFileDir) then
+    OpenDialog1.InitialDir := myconfiguration.LastProjectFileDir
+  else if DirectoryExists(myconfiguration.workbench_Path) then
+    OpenDialog1.InitialDir := myconfiguration.workbench_Path;
+  if OpenDialog1.Execute then
+  begin
+    myconfiguration.LastProjectFileDir := ExtractFileDir(OpenDialog1.FileName);
+    LogDatei.log('Start import control file to existing data from: ' +
+      OpenDialog1.FileName, LLnotice);
+    // do not init product data structure here
+    // we just want to add the data to the existing data structure
+    //initaktproduct;
+    resultform1.updateGUI;
+    // we want to import everything : filter = false
+    aktProduct.readControlFile(OpenDialog1.FileName, False);
+    TIGridDep.ListObject := osdbasedata.aktproduct.dependencies;
+    TIGridDep.ReloadTIList;
+    TIGridDep.Update;
+    TIGridProp.ListObject := osdbasedata.aktproduct.properties;
+    TIGridProp.ReloadTIList;
+    TIGridProp.Update;
+    LogDatei.log('Finished import control file to existing data from: ' +
+      OpenDialog1.FileName, LLnotice);
+    aktProdToAktMeta;
+  end;
+
+  OpenDialog1.FilterIndex := 8;   // project file
+  if DirectoryExists(myconfiguration.LastProjectFileDir) then
+    OpenDialog1.InitialDir := myconfiguration.LastProjectFileDir
+  else if DirectoryExists(myconfiguration.workbench_Path) then
+    OpenDialog1.InitialDir := myconfiguration.workbench_Path;
+  if OpenDialog1.Execute then
+  begin
+    myconfiguration.LastProjectFileDir := ExtractFileDir(OpenDialog1.FileName);
+    LogDatei.log('Start import Project file from: ' + OpenDialog1.FileName, LLnotice);
+    aktProduct.readProjectFile(OpenDialog1.FileName);
+    TIGridDep.ListObject := osdbasedata.aktproduct.dependencies;
+    TIGridDep.ReloadTIList;
+    TIGridDep.Update;
+    TIGridProp.ListObject := osdbasedata.aktproduct.properties;
+    TIGridProp.ReloadTIList;
+    TIGridProp.Update;
+    aktProdToAktMeta;
+    LogDatei.log('Finished import Project file from: ' + OpenDialog1.FileName, LLnotice);
+  end;
+  PageControl1.ActivePage := resultForm1.TabSheetBackground;
+  Application.ProcessMessages;
+end;
+
 procedure TResultform1.BtCreateEmptyTemplateMultiClick(Sender: TObject);
 begin
   resetGUI;
@@ -2369,6 +2537,22 @@ begin
   begin
     // cancel add
   end;
+end;
+
+procedure TResultform1.BitBtnBgChooseInstDirClick(Sender: TObject);
+var
+  installdir : string;
+begin
+  aktProduct.SetupFiles[0].active:=true;
+  aktProduct.SetupFiles[0].targetOS:=osWin;
+  chooseInstallDir(aktProduct.SetupFiles[0]);
+  installdir := aktProduct.SetupFiles[0].installDirectory;
+  // guess architecture from installdir
+  if installdir.StartsWith('%ProgramFiles64Dir%') then
+    aktProduct.SetupFiles[0].architecture := a64
+  else if installdir.StartsWith('%ProgramFiles32Dir%') then
+    aktProduct.SetupFiles[0].architecture := a32;
+  aktProdToAktMeta;
 end;
 
 procedure TResultform1.BitBtnChooseInstDir1Click(Sender: TObject);
@@ -3097,11 +3281,14 @@ begin
         logdatei.log('Create Mode is files only - so we finished', LLnotice);
       end; // do nothing else
       1: begin
-        logdatei.log('Create Mode is files and build - so we try to call the service', LLnotice);
+        logdatei.log('Create Mode is files and build - so we try to call the service',
+          LLnotice);
         callServiceOrPackageBuilder;
       end;
       2: begin
-        logdatei.log('Create Mode is files and interactive packageBuilder - so we try to call the opsiPackageBuilder', LLnotice);
+        logdatei.log(
+          'Create Mode is files and interactive packageBuilder - so we try to call the opsiPackageBuilder',
+          LLnotice);
         callOpsiPackageBuilder;
 
       end;
@@ -3117,7 +3304,8 @@ begin
     procmess;
     PanelProcess.Visible := False;
     if done and (system.ExitCode = 0) then
-      OSD_info.mdContent := '<span style="color:green"> **OK**  ' + sInfoFinished + '</span>'
+      OSD_info.mdContent := '<span style="color:green"> **OK**  ' +
+        sInfoFinished + '</span>'
     //ShowMessage(sInfoFinished)
     else if done and (system.ExitCode = 1) then
       //ShowMessage(sInfoFailedBuild)
@@ -3155,7 +3343,7 @@ end;
 
 procedure TResultform1.BtCreateWingetPackageClick(Sender: TObject);
 var
-  tmpstr : string;
+  tmpstr: string;
 begin
   resetGUI;
   osdsettings.runmode := createWingetProd;
@@ -3175,11 +3363,11 @@ begin
   aktProduct.productdata.packageversion := 1;
   aktProduct.productdata.description := 'winget';
   {$IFDEF OSDGUI}
-  TreeView1.Items[1].Enabled:= false;  // analyze
-  TreeView1.Items[2].Enabled:= false;  // setup1
-  TreeView1.Items[3].Enabled:= false;  // setup2
-  TreeView1.Items[4].Enabled:= false;  // setup3
-  TreeView1.Items[5].Enabled:= true;  // winget
+  TreeView1.Items[1].Enabled := False;  // analyze
+  TreeView1.Items[2].Enabled := False;  // setup1
+  TreeView1.Items[3].Enabled := False;  // setup2
+  TreeView1.Items[4].Enabled := False;  // setup3
+  TreeView1.Items[5].Enabled := True;  // winget
   tmpstr := installerArray[integer(stWinget)].info_message_html.Text;
   if tmpstr <> '' then
   begin
@@ -3189,6 +3377,7 @@ begin
   end;
   {$ENDIF OSDGUI}
 end;
+
 procedure TResultform1.BtnIconsNextStepClick(Sender: TObject);
 begin
   case osdsettings.runmode of
@@ -3295,7 +3484,7 @@ begin
     threeAnalyzeCreate_3,
     createWingetProd:
     begin
-      PageControl1.ActivePage := resultForm1.TabSheetIcons;
+      PageControl1.ActivePage := resultForm1.TabSheetBackground;
       Application.ProcessMessages;
     end;
     // no icons for meta product
@@ -3350,6 +3539,7 @@ begin
           aktProduct.SetupFiles[1].active := True;
           Analyze(OpenDialog1.FileName,
             aktProduct.SetupFiles[1], True);
+          aktProduct.SetupFiles[1].targetOS := osWin;
           SetTICheckBoxesMST(aktProduct.SetupFiles[1].installerId);
         end;
       end;
@@ -3586,8 +3776,8 @@ begin
   goon := False;
   isapp := False;
   MessageDlg('',
-            rsSelectAppOrDir, mtInformation,
-            [mbOK], '');
+    rsSelectAppOrDir, mtInformation,
+    [mbOK], '');
   SelectDirectoryDialog1.Title := rsSelectAppOrDir;
   if DirectoryExists(myconfiguration.LastSetupFileDir) then
     SelectDirectoryDialog1.InitialDir := myconfiguration.LastSetupFileDir;
@@ -3603,8 +3793,8 @@ begin
   if goon and not isapp then
   begin
     MessageDlg('',
-              rsSelectMacFile, mtInformation,
-              [mbOK], '');
+      rsSelectMacFile, mtInformation,
+      [mbOK], '');
     OpenDialog1.InitialDir := filename;
     ;
     OpenDialog1.FilterIndex := 5;   // macos
@@ -3729,7 +3919,7 @@ end;
 procedure TResultform1.PageControl1Change(Sender: TObject);
 var
   myimage: TImage;
-  pageIndex : integer;
+  pageIndex: integer;
 begin
   if FileExists(aktProduct.productdata.productImageFullFileName) then
   begin
@@ -3771,7 +3961,8 @@ var
 begin
   list := TStringList.Create;
   progname := ExtractFileName(ParamStr(0));
-  msg := progname + ' Version: ' + myVersion + '      ('+{$i %DATE%} + ', ' +{$i %TIME%}+')';
+  msg := progname + ' Version: ' + myVersion + '      (' + {$i %DATE%} +
+    ', ' + {$i %TIME%} + ')';
   //msg := progname + ' Version: ' + myVersion;
   list.Add(msg);
   list.Add('(c) uib gmbh under AGPLv3');
@@ -3872,10 +4063,10 @@ end;
 
 procedure TResultform1.TreeView1Click(Sender: TObject);
 var
-  index : integer;
+  index: integer;
 begin
   index := TTreeview(Sender).Selected.Index;
-  PageControl1.ActivePageIndex:= index;
+  PageControl1.ActivePageIndex := index;
 end;
 
 // https://www.lazarusforum.de/viewtopic.php?p=116368#p116368
@@ -4035,7 +4226,7 @@ begin
   OpenDialog1.Filter := ChangeFileNameFilter(OpenDialog1.Filter);
   //{$endif}
   TreeView1.Select(TreeView1.Items[0]);
-  PageControl1.ActivePageIndex:=0;
+  PageControl1.ActivePageIndex := 0;
   LogDatei.log('Finished FormCreate ', LLInfo);
 end;
 
@@ -4234,6 +4425,12 @@ begin
   OpenURL(myUrl);
 end;
 
+procedure TResultform1.TabSheetBackgroundShow(Sender: TObject);
+begin
+  aktProdToAktMeta;
+  Application.ProcessMessages;
+end;
+
 procedure checkWorkbench;
 begin
   if DirectoryExists(myconfiguration.workbench_Path) then
@@ -4290,14 +4487,14 @@ end;
 
 procedure TResultform1.TabSheetShow(Sender: TObject);
 var
-  pageindex : integer;
+  pageindex: integer;
 begin
   pageIndex := PageControl1.ActivePageIndex;
   TreeView1.Select(TreeView1.Items[pageIndex]);
 end;
 
 procedure TResultform1.TabSheetWingetContextPopup(Sender: TObject;
-  MousePos: TPoint; var Handled: Boolean);
+  MousePos: TPoint; var Handled: boolean);
 begin
 
 end;

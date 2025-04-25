@@ -143,6 +143,20 @@ todo:
    *
 
 # Changelog opsi-setup-detector
+
+## [4.3.6.0-1] - 2025-04-25
+
+### Fix
+- osdmeta: use initialization / finalization
+- osdanalyzewin: get_MsixAppx_info: comments on arch: neutral
+- osdform: BtSetup1NextStepClick: correct os (win) for second win setup
+
+### Add:
+- New Windows task 'Create Background info file'
+
+(Detlef Oertel <d.oertel@uib.de>)
+
+
 ## [4.3.5.1-1] - 2025-04-16
 
 ### Fix

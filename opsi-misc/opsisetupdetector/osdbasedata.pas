@@ -25,7 +25,8 @@ uses
   oscrypt,
   osparserhelper,
   oswebservice,
-  osdhelper;
+  osdhelper,
+  osdmeta;
 
 type
 
@@ -44,6 +45,7 @@ type
     // analyze one installer and create opsi package with loggedin user
     createTemplateWithUser, // create template for opsi package with loggedin user
     createWingetProd, // create winget based product
+    createBackgroundInfo, // create background info file
     gmUnknown);
 
   TTemplateChannels = (training, default, structured, custom);
@@ -1532,6 +1534,8 @@ begin
       deactivateImportMode;
       JSONString := Streamer.ObjectToJSONString(aktProduct.dependencies);
       writeln(pfile, JSONString);
+      JSONString := Streamer.ObjectToJSONString(aktMeta);
+      writeln(pfile, JSONString);
       CloseFile(pfile);
 
     finally
@@ -1557,6 +1561,7 @@ var
   myfilename: string;
   pfile: TextFile;
   aktproperty: TPProperty;
+  // even if the compiler tell this it is not used - it is used !!
   i: integer;
 begin
   try
@@ -1606,10 +1611,9 @@ begin
               begin
                 aktproperty := TPProperty.Create;
                 jsonAsArrayGetElementByIndex(JSONString, i, JSONObjString);
-                // if Assigned(logdatei) then
-                // logdatei.log('JSONObjString: ' + JSONObjString, LLDebug);
+                // this adds a new property object to akt product:
                 aktproperty := aktProduct.properties.Add;
-                //DeStreamer.JSONToObject(JSONObjString, aktproperty);
+                // here is the new property object used
                 DeStreamer.JSONToObject(JSONObjString, aktProduct.properties.Items[i]);
                 if Assigned(logdatei) then
                   logdatei.log('Property_Name: ' +
@@ -1619,7 +1623,18 @@ begin
           end;
         deactivateImportMode;
         readln(pfile, JSONString);
+        if Assigned(logdatei) then
+          logdatei.log('dependencies line: ' + JSONString, LLDebug);
         DeStreamer.JSONToObject(JSONString, aktProduct.dependencies);
+        // read meta data if existing
+        if not EOF(pfile) then
+        begin
+          readln(pfile, JSONString);
+          if Assigned(logdatei) then
+            logdatei.log('Meta data line: ' + JSONString, LLDebug);
+          if JSONString <> '' then
+            DeStreamer.JSONToObject(JSONString, aktMeta);
+        end;
         // Cleanup
       finally
         FreeAndNil(DeStreamer);
