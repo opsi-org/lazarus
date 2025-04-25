@@ -143,6 +143,25 @@ todo:
    *
 
 # Changelog opsi-setup-detector
+## [4.3.5.1-1] - 2025-04-16
+
+### Fix
+- markdown typo in msix info
+
+(Detlef Oertel <d.oertel@uib.de>)
+
+## [4.3.5.0-1] - 2025-03-21
+
+### Fix
+- more logging in  osdform:BtCreateProductClick for build or not build
+- change meta data according to
+  '2024-OTW18-PRODUCT-METADATASTRUCTURE' VERSION 0.1.6: 13.11.2024
+- osdanalyzewin: get_inno_info: detect architecture from iss file or installdir
+- osdanalyzewin: get_QtInstaller_info assume architecture is x64
+
+
+(Detlef Oertel <d.oertel@uib.de>)
+
 ## [4.3.4.2-1] - 2024-11-05
 
 ### Fix

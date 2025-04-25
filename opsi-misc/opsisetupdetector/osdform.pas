@@ -3093,9 +3093,18 @@ begin
     done := createProductStructure;
     procmess;
     case TIRadioGroupCreateMode.ItemIndex of
-      0: ; // do nothing else
-      1: callServiceOrPackageBuilder;
-      2: callOpsiPackageBuilder;
+      0: begin
+        logdatei.log('Create Mode is files only - so we finished', LLnotice);
+      end; // do nothing else
+      1: begin
+        logdatei.log('Create Mode is files and build - so we try to call the service', LLnotice);
+        callServiceOrPackageBuilder;
+      end;
+      2: begin
+        logdatei.log('Create Mode is files and interactive packageBuilder - so we try to call the opsiPackageBuilder', LLnotice);
+        callOpsiPackageBuilder;
+
+      end;
     end;
     (*
     if RadioButtonCreateOnly.Checked then
@@ -3762,7 +3771,8 @@ var
 begin
   list := TStringList.Create;
   progname := ExtractFileName(ParamStr(0));
-  msg := progname + ' Version: ' + myVersion;
+  msg := progname + ' Version: ' + myVersion + '      ('+{$i %DATE%} + ', ' +{$i %TIME%}+')';
+  //msg := progname + ' Version: ' + myVersion;
   list.Add(msg);
   list.Add('(c) uib gmbh under AGPLv3');
   list.Add('This is a part of the opsi.org project: https://opsi.org');
