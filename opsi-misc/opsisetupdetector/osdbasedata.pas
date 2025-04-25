@@ -108,7 +108,7 @@ type
     amSelectable);
 
   // marker for add installers
-  TKnownInstaller = (stWinget,stMsixAppx, stWise,
+  TKnownInstaller = (stWinget, stMsixAppx, stWise,
     stQtInstaller,
     stSetupFactory,
     stInstallAnywhere,
@@ -203,8 +203,10 @@ type
     //Fwinbatch_del_argument: string;
     FinstallCommandLine: string;   // command line to install the software
     FuninstallCommandLine: string; // command line to uninstall the software
-    FinstallCommandStringEx: string;   // String expression for prim section to install the software
-    FuninstallCommandStringEx: string; // String expression for prim section to uninstall the software
+    FinstallCommandStringEx: string;
+    // String expression for prim section to install the software
+    FuninstallCommandStringEx: string;
+    // String expression for prim section to uninstall the software
     FuninstallProg: string;        // path + name of the uninstall.prog
     FuninstallDirectory: string;   // dir of the uninstall.prog
     FtargetProg: string;
@@ -277,17 +279,18 @@ type
       read FisExitcodeFatalFunction write FisExitcodeFatalFunction;
     property uninstallCommandLine: string read FuninstallCommandLine
       write FuninstallCommandLine;
-    property installCommandStringEx: string read FinstallCommandStringEx
-      write FinstallCommandStringEx;
-    property uninstallCommandStringEx: string read FuninstallCommandStringEx
-      write FuninstallCommandStringEx;
+    property installCommandStringEx: string
+      read FinstallCommandStringEx write FinstallCommandStringEx;
+    property uninstallCommandStringEx: string
+      read FuninstallCommandStringEx write FuninstallCommandStringEx;
 
     property uninstallProg: string read FuninstallProg write SetUninstallProg;
     property uninstallDirectory: string read FuninstallDirectory
       write SetUninstallDirectory;
     property targetProg: string read FtargetProg write SetTargetProg;
     property uninstallCheck: TStrings read FuninstallCheck write SetUninstallCheck;
-    property optionalUninstallLines: TStrings read FoptionalUninstallLines write SetOptionalUninstallLines;
+    property optionalUninstallLines: TStrings
+      read FoptionalUninstallLines write SetOptionalUninstallLines;
     property uninstall_waitforprocess: string
       read Funinstall_waitforprocess write Funinstall_waitforprocess;
     property install_waitforprocess: string
@@ -553,7 +556,7 @@ default: ["xenial_bionic"]
     Fdependencies_for_all_actionrequests: boolean;
     // since opsi 4.3 dependecies are allowed for all action requests
     FpreferMsiUninstall: boolean; // true=prefer uninstall via msi if possible
-    FwriteMetaDataFile : boolean;  // true=write opsi-meta-data.toml file
+    FwriteMetaDataFile: boolean;  // true=write opsi-meta-data.toml file
     procedure SetLibraryLines(const AValue: TStrings);
     procedure SetPreInstallLines(const AValue: TStrings);
     procedure SetPostInstallLines(const AValue: TStrings);
@@ -817,21 +820,24 @@ resourcestring
     LineEnding + 'You may use this msi as install file.' + LineEnding +
     'You may perhaps also pass the msi parameters as arguments to your setup.exe.';
   mdInstallerInfo_MsixAppx =
-    '## This is a Msix / Appx / AppxBundle / MsixBundle file.' + LineEnding +
-    'This kind of packages may be installed via powershell.' + LineEnding +
-    LineEnding + 'In order to check for the dependecies of this package' + LineEnding +
-    'and if this package is aviable from MS store,' + LineEnding +
-    LineEnding + 'then you may use the following web site to check and download' + LineEnding +
-    LineEnding + 'missing packages: ' + LineEnding +
+    '## This is a Msix / Appx / AppxBundle / MsixBundle file.' +
+    LineEnding + 'This kind of packages may be installed via powershell.' +
+    LineEnding + LineEnding + 'In order to check for the dependecies of this package' +
+    LineEnding + 'and if this package is aviable from MS store,' +
+    LineEnding + LineEnding +
+    'then you may use the following web site to check and download' +
+    LineEnding + LineEnding + 'missing packages: ' + LineEnding +
     LineEnding + '<https://store.rg-adguard.net/>' + LineEnding +
-    LineEnding + 'There also is often a problem with the uninstallation.' + LineEnding +
-    LineEnding + 'So the use of the "uninstall_before_install" checkbox is recommended.';
+    LineEnding + 'There also is often a problem with the uninstallation.' +
+    LineEnding + LineEnding +
+    'So the use of the "uninstall\_before\_install" checkbox is recommended.';
   mdInstallerInfo_winget =
     '## Making a winget based package.' + LineEnding + LineEnding +
-    'You need to know the winget Id and Source of the software to install.' + LineEnding +
-    LineEnding + 'A tool that may help you to find this data is:' + LineEnding + LineEnding +
-    'UniGetUI (formerly WingetUI), The Graphical Interface for your package managers' + LineEnding + LineEnding +
-    '<https://www.marticliment.com/unigetui/>' ;
+    'You need to know the winget Id and Source of the software to install.' +
+    LineEnding + LineEnding + 'A tool that may help you to find this data is:' +
+    LineEnding + LineEnding +
+    'UniGetUI (formerly WingetUI), The Graphical Interface for your package managers' +
+    LineEnding + LineEnding + '<https://www.marticliment.com/unigetui/>';
   // marker for add installers
 
 implementation
@@ -1588,17 +1594,27 @@ begin
           if jsonIsValid(JSONString) then
           begin
             jsonAsObjectGetValueByKey(JSONString, 'Items', JSONString);
+            if Assigned(logdatei) then
+              logdatei.log('Import property JSONString: ' + JSONString, LLDebug);
             if jsonIsArray(JSONString) then
             begin
-              aktproperty := TPProperty.Create;
+              aktProduct.properties.Clear;
+              //if Assigned(logdatei) then
+              //logdatei.log('count: ' + inttostr(jsonAsArrayCountElements(JSONString) - 1), LLDebug);
+              //   if jsonAsArrayCountElements(JSONString) > 0 then
               for i := 0 to jsonAsArrayCountElements(JSONString) - 1 do
               begin
+                aktproperty := TPProperty.Create;
                 jsonAsArrayGetElementByIndex(JSONString, i, JSONObjString);
+                // if Assigned(logdatei) then
+                // logdatei.log('JSONObjString: ' + JSONObjString, LLDebug);
                 aktproperty := aktProduct.properties.Add;
-                DeStreamer.JSONToObject(JSONObjString, aktproperty);
-
+                //DeStreamer.JSONToObject(JSONObjString, aktproperty);
+                DeStreamer.JSONToObject(JSONObjString, aktProduct.properties.Items[i]);
+                if Assigned(logdatei) then
+                  logdatei.log('Property_Name: ' +
+                    aktProduct.properties.Items[i].Property_Name, LLDebug);
               end;
-              if Assigned(aktproperty) then FreeAndNil(aktproperty);
             end;
           end;
         deactivateImportMode;
