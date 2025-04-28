@@ -24,7 +24,7 @@ unit osparser;
 interface
 
 uses
-{$IFDEF WINDOWS}
+  {$IFDEF WINDOWS}
   DynLibs, Windows,
   //JwaTlHelp32,
   registry,
@@ -35,19 +35,19 @@ uses
   oswmi,
   osswaudit,
   shlwapi,
-{$IFDEF WIN32}
+  {$IFDEF WIN32}
   DSiWin32,
   osfuncwin2,
-{$ENDIF WIN32}
+  {$ENDIF WIN32}
   osfuncwin,
   wispecfolder,
   shlobj,
   VersionInfoX,
-{$IFNDEF WIN64}
+  {$IFNDEF WIN64}
   oslocaladmin,
-{$ENDIF WIN64}
-{$ENDIF}
-{$IFDEF UNIX}
+  {$ENDIF WIN64}
+  {$ENDIF}
+  {$IFDEF UNIX}
   oslinmount,
   lispecfolder,
   osfunclin,
@@ -56,11 +56,11 @@ uses
   unix,
   osprocessux,
   osfuncunix,
-{$ENDIF}
-{$IFDEF DARWIN}
+  {$ENDIF}
+  {$IFDEF DARWIN}
   osfuncmac,
-{$ENDIF DARWIN}
-{$IFDEF GUI}
+  {$ENDIF DARWIN}
+  {$IFDEF GUI}
   Dialogs,
   osmessagedialog,
   osservicepassdlg,
@@ -75,7 +75,7 @@ uses
   osinputstring,
   CustomMessageBox,
   StdCtrls,
-{$ENDIF GUI}
+  {$ENDIF GUI}
   TypInfo,
   osparserhelper,
   osEvaluateBooleanFunctions,
@@ -281,8 +281,8 @@ type
   end;
 
 
-{$IFDEF FPC}
-{$ELSE}
+  {$IFDEF FPC}
+  {$ELSE}
   TuibXMLNodeDescription = class(TObject)
   private
     Fxmldoc: TuibXMLDocument;
@@ -304,7 +304,7 @@ type
     procedure evaluateText;
   end;
 
-{$ENDIF}
+  {$ENDIF}
 
 
   { TuibInstScript }
@@ -349,10 +349,11 @@ type
 
 
     function AllsignedHackCommand(var powershellpara: string;
-      var tempfilename: string; var passparas: string;
-      var programparas: string; var programfilename: string): string;
+      var tempfilename: string; var passparas: string; var programparas: string;
+      var programfilename: string): string;
     function IsPowershellExecutionPolicyRestricted: boolean;
-    function GetPowershellExecutionPolicy(Scope:string='EffectiveExecutionPolicy'): string;
+    function GetPowershellExecutionPolicy(
+      Scope: string = 'EffectiveExecutionPolicy'): string;
     procedure parsePowershellCall(var Command: string; var AccessString: string;
       var HandlePolicy: string; var Option: string; var Remaining: string;
       var syntaxCheck: boolean; var InfoSyntaxError: string;
@@ -479,10 +480,10 @@ type
 
 
     (* Spezielle Methoden *)
-  {$IFDEF WINDOWS}
+    {$IFDEF WINDOWS}
     function StartConnection(LocalName, NetResourceName: string;
       WaitTime: longint): TSectionResult;
-  {$ENDIF WINDOWS}
+    {$ENDIF WINDOWS}
 
     (* Sektion erstellen *)
     procedure loadValidLinesFromFile(FName: string; expectedEncoding: string;
@@ -527,7 +528,8 @@ type
     function doTests(const Sektion: TWorkSection;
       TestParameter: string): TSectionResult;
 
-    function doInifilePatches(const Sektion: TWorkSection; Filename: string): TSectionResult;
+    function doInifilePatches(const Sektion: TWorkSection;
+      Filename: string): TSectionResult;
 
     function doHostsPatch(const Sektion: TWorkSection;
       HostsFilename: string): TSectionResult;
@@ -538,7 +540,7 @@ type
       (const Sektion: TWorkSection; cacheRequest: TLDAPsearchCacheRequest;
       outputRequest: TLDAPsearchOutputRequest;
       var output: TXStringList): TSectionResult;
-{$IFDEF WINDOWS}
+    {$IFDEF WINDOWS}
     function doRegistryHack(const Sektion: TWorkSection;
       const RegParameter: string; const flag_force64: boolean): TSectionResult;
     function doRegistryHackInfSource(const Sektion: TWorkSection;
@@ -554,7 +556,7 @@ type
       const UserPath: string): TSectionResult;
 
 
-{$ENDIF WINDOWS}
+    {$ENDIF WINDOWS}
 
     function doXMLPatch(const Sektion: TWorkSection; const XMLFilename: string;
       var output: TXStringList): TSectionResult;
@@ -601,16 +603,15 @@ type
       var output: TXStringList): TSectionResult;
 
     function execShellCall(command: string; archparam: string;
-      logleveloffset: integer; FetchExitCodePublic: boolean): TStringList;
-      overload;
+      logleveloffset: integer; FetchExitCodePublic: boolean): TStringList; overload;
     function execShellCall(command: string; archparam: string;
       logleveloffset: integer;
       FetchExitCodePublic, FatalOnFail: boolean): TStringList; overload;
-{$IFDEF WINDOWS}
+    {$IFDEF WINDOWS}
     function execPowershellCall(command: string; archparam: string;
       logleveloffset: integer; FetchExitCodePublic, FatalOnFail: boolean;
       optionstr: string = ''): TStringList; overload;
- {$ENDIF WINDOWS}
+    {$ENDIF WINDOWS}
   end;
 
 
@@ -740,8 +741,8 @@ var
   // we are between deffunc and endfunc line (even in a not active code)
   cmd64checked: boolean = False;
 
-//PreDefinedVariableSkinDirectorybinaryName : String;
-//PreDefinedVariableSkinDirectoryValue : String;
+  //PreDefinedVariableSkinDirectorybinaryName : String;
+  //PreDefinedVariableSkinDirectoryValue : String;
 
 resourcestring
   rsGetServiceUrl = 'Please enter opsi service URL:';
@@ -778,7 +779,7 @@ var
   outputRequest: TLDAPsearchOutputRequest;
   ldapResult: TStringList;
 
-//labelinfoAlignmentSave : TAlignment;
+  //labelinfoAlignmentSave : TAlignment;
 
 type
   TConditions = array [0..100] of boolean;
@@ -787,11 +788,12 @@ var
   Conditions: TConditions;   // used for if else endif
   ThenBranch: TConditions;   // used for if else endif
   elseifConditions: TConditions;   // used for elseif:
-// becomes true if we had found a true condition
-// it is the marker that we do not go into any other elseif / else
 
-//const
-//zaehler  : Integer = 0;
+  // becomes true if we had found a true condition
+  // it is the marker that we do not go into any other elseif / else
+
+  //const
+  //zaehler  : Integer = 0;
 
 (*
 {$IFDEF WINDOWS}
@@ -1113,7 +1115,6 @@ var
 
   ///partCompareResult : Integer;
   ///isEqual : Boolean;
-
 begin
 
   Result := True;
@@ -1271,7 +1272,6 @@ function GetString
    of the appropriate kind as being contained in the string.
    resultstring takes the correctly interpreted chars
    remaining gets the original value s if result is false *)
-
 var
   TheMark: char;
   r, Info, DoubleMark: string;
@@ -1282,7 +1282,6 @@ var
   //foundDelimiter : Boolean;
 
   rorg, rnew: string;
-
 begin
   Result := False;
   resultString := '';
@@ -1449,7 +1448,6 @@ function GetStringA
   // of the appropriate kind as being contained in the string.
   // resultstring takes the correctly interpreted chars
   // remaining gets the original value s if result is false
-
 var
   TheMark: char;
   r, Info, DoubleMark: string;
@@ -1458,7 +1456,6 @@ var
 
   //i : Integer;
   //foundDelimiter : Boolean;
-
 begin
   info := '';
   Result := False;
@@ -1541,7 +1538,6 @@ function SeekString
   (const s: string; var ResultString, Remaining, errorinfo: string): boolean;
   {looks for next string in s, delimited by ",
    escaping of " by \ possible}
-
 var
   i: integer;
   state: integer;
@@ -1737,23 +1733,23 @@ end;
 {$IFDEF FPC}
 //function LSGetMACAddress: string;
 function GetMACAddress2: string;
-{$IFDEF MSWINDOWS}
+  {$IFDEF MSWINDOWS}
 type
   TCreateGUIDFunction = function(AGUID: PGUID): longint; stdcall;
-{$ENDIF}
+  {$ENDIF}
 var
-{$IFDEF UNIX}
+  {$IFDEF UNIX}
   VPath, VDevice: string;
-{$ENDIF}
-{$IFDEF MSWINDOWS}
+  {$ENDIF}
+  {$IFDEF MSWINDOWS}
   VLibHandle: TLibHandle;
   VCreateGUIDFunction: TCreateGUIDFunction;
   VGUID1, VGUID2: TGUID;
-{$ENDIF}
+  {$ENDIF}
 const
   CLSFormatMACMask = '%2.2x-%2.2x-%2.2x-%2.2x-%2.2x-%2.2x';
 begin
-{$IFDEF UNIX}
+  {$IFDEF UNIX}
   //VDevice := 'eth0';
   VDevice := getMyIpDeciceByDefaultRoute;
   VPath := Format('/sys/class/net/%s/address', [VDevice]);
@@ -1761,8 +1757,8 @@ begin
     Result := readFirstLineFromFile(VPath)
   else
     Result := 'Could not find the device "' + VDevice + '".';
-{$ENDIF}
-{$IFDEF MSWINDOWS}
+  {$ENDIF}
+  {$IFDEF MSWINDOWS}
   VLibHandle := LoadLibrary('rpcrt4.dll');
   try
     if VLibHandle <> NilHandle then
@@ -1775,13 +1771,14 @@ begin
           (VGUID1.D4[3] = VGUID2.D4[3]) and (VGUID1.D4[4] = VGUID2.D4[4]) and
           (VGUID1.D4[5] = VGUID2.D4[5]) and (VGUID1.D4[6] = VGUID2.D4[6]) and
           (VGUID1.D4[7] = VGUID2.D4[7]) then
-          Result := Format(CLSFormatMACMask, [VGUID1.D4[2],
-            VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5], VGUID1.D4[6], VGUID1.D4[7]]);
+          Result := Format(CLSFormatMACMask,
+            [VGUID1.D4[2], VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5],
+            VGUID1.D4[6], VGUID1.D4[7]]);
     end;
   finally
     UnloadLibrary(VLibHandle);
   end;
-{$ENDIF}
+  {$ENDIF}
 end;
 
 {$ELSE}
@@ -1981,13 +1978,11 @@ end;
 
 function TuibXMLNodeDescription.evaluate(s: string; var Remaining: string;
   var InfoSyntaxError: string): boolean;
-
 var
   r: string;
   syntaxCheck: boolean;
   syntaxInfo: string;
   elementname: string;
-
 begin
   r := lowercase(s);
 
@@ -2049,7 +2044,6 @@ end;
 
 
 constructor TuibInstScript.Create;
-
 begin
   inherited Create;
   FNumberOfErrors := 0;
@@ -2379,26 +2373,27 @@ function CreatePatchFileIfFileNotExists(const FileName: string): boolean;
 var
   ErrorInfo: string = '';
 begin
-    Result := True;
-    if not FileExists(FileName) then
+  Result := True;
+  if not FileExists(FileName) then
+  begin
+    LogDatei.log(LogDatei.LogSIndentPlus(+3) + 'The file "' +
+      FileName + '" does not exist and will be created ', LLInfo);
+    LogDatei.NumberOfHints := Logdatei.NumberOfHints + 1;
+    if CreateTextfile(FileName, ErrorInfo) then
     begin
-      LogDatei.log(LogDatei.LogSIndentPlus(+3) + 'The file "' +
-        FileName + '" does not exist and will be created ', LLInfo);
-      LogDatei.NumberOfHints := Logdatei.NumberOfHints + 1;
-      if CreateTextfile(FileName, ErrorInfo) then
-      begin
-        if ErrorInfo <> '' then
-          LogDatei.log(LogDatei.LogSIndentPlus(+3) + ErrorInfo, LLWarning);
-      end
-      else
-      begin
-        LogDatei.log(LogDatei.LogSIndentPlus(+3) + ErrorInfo, LLError);
-        Result := False;
-      end;
+      if ErrorInfo <> '' then
+        LogDatei.log(LogDatei.LogSIndentPlus(+3) + ErrorInfo, LLWarning);
+    end
+    else
+    begin
+      LogDatei.log(LogDatei.LogSIndentPlus(+3) + ErrorInfo, LLError);
+      Result := False;
     end;
+  end;
 end;
 
-function GetWorkSection(const Section: TXStringList; const presetDir: string): TXStringList;
+function GetWorkSection(const Section: TXStringList;
+  const presetDir: string): TXStringList;
 begin
   // create working object, i.e. a copy of the section that can be modified
   Result := TXStringList.Create;
@@ -2418,13 +2413,12 @@ end;
 
 function TuibInstScript.doTextpatch(const Sektion: TWorkSection;
   Filename: string): TSectionResult;
-
 var
   ProfileList: TStringList;
   pc: integer = 0;
 
   procedure doTextpatchMain(const Section: TXStringList; const presetDir: string;
-    const PatchFilename: string);
+  const PatchFilename: string);
   var
     saveToOriginalFile: boolean = True;
     lastfind: boolean = False;
@@ -2491,7 +2485,7 @@ var
       r := cutLeftBlanks(workingSection.strings[i - 1]);
       if (r = '') or (r[1] = LineIsCommentChar) then
         syntaxCheck := True
-        // continue
+      // continue
       else
       begin
         logdatei.log('Patchtextfile: command: ' + r, LLDebug3);
@@ -2571,12 +2565,12 @@ var
           if r = '' then
             d := 1
           else
-            try
-              d := StrToInt(r);
-            except
-              syntaxCheck := False;
-              errorInfo := r + ' is not an integer value ';
-            end;
+          try
+            d := StrToInt(r);
+          except
+            syntaxCheck := False;
+            errorInfo := r + ' is not an integer value ';
+          end;
 
           if SyntaxCheck then
           begin
@@ -2840,16 +2834,16 @@ var
               s1 := ExpandFileName(s1);
               working := FileExists(s1) or CreateTextFile(s1, FileError);
               if working then
-                try
-                  //PatchListe.SaveToFile(s1);
-                  PatchListe.SaveToFile(s1, flag_encoding)
-                except
-                  on ex: Exception do
-                  begin
-                    FileError := ex.message;
-                    working := False;
-                  end;
+              try
+                //PatchListe.SaveToFile(s1);
+                PatchListe.SaveToFile(s1, flag_encoding)
+              except
+                on ex: Exception do
+                begin
+                  FileError := ex.message;
+                  working := False;
                 end;
+              end;
 
               if working then
                 LogDatei.log('The lines are saved to "' + s1 + '"', LLinfo)
@@ -3204,7 +3198,6 @@ var
   Remaining: string = '';
   Filename: string = '';
   Comment: string = '';
-
 begin
   Result := tsrPositive;
 
@@ -3385,7 +3378,7 @@ var
   ProfileList: TStringList;
 
   procedure doInifilePatchesMain(Section: TXStringList; const presetDir: string;
-    const PatchdateiName: string);
+  const PatchdateiName: string);
   var
     i: integer = 0;
     workingSection: TXStringList;
@@ -3395,7 +3388,6 @@ var
     Bereich: string = '';
     Eintrag: string = '';
     AlterEintrag: string = '';
-
   begin
     Logdatei.log('', LLInfo);
     Logdatei.log('Patching: ' + PatchdateiName, LLInfo);
@@ -3532,7 +3524,6 @@ end;
 
 function TuibInstScript.doHostsPatch(const Sektion: TWorkSection;
   HostsFilename: string): TSectionResult;
-
 var
   HostsLocation: string;
   Expressionstr, remaining: string;
@@ -3541,7 +3532,6 @@ var
 
 
   procedure patchHosts(HostsLocation: string; var SectionResult: TSectionResult);
-
   var
     i: integer = 0;
     HostsImage: TuibPatchHostsFile;
@@ -3551,7 +3541,6 @@ var
     ipAdresse: string = '';
     Alias: string = '';
     ErrorInfo: string = '';
-
   begin
     HostsLocation := ExpandFileName(HostsLocation);
     ps := LogDatei.LogSIndentPlus(+2) + 'FILE ' + HostsLocation;
@@ -3662,7 +3651,6 @@ var
     HostsImage.Free;
     HostsImage := nil;
 
-
   end;
 
 begin
@@ -3708,7 +3696,6 @@ end;
 
 function TuibInstScript.doIdapiConfig(const Sektion: TWorkSection;
   IdapiParameter: string): TSectionResult;
-
 begin
   // is not supported any more
   Result := -1;
@@ -3757,12 +3744,10 @@ end;
 function produceLDAPsearchParameters
   (const LDAPparameter: string; var cacheRequest: TLDAPsearchCacheRequest;
   var outputRequest: TLDAPsearchOutputRequest; var errorinfo: string): boolean;
-
 var
   remainingParameter: string = '';
   checkParameter: string = '';
   syntaxcheck: boolean;
-
 begin
   cacheRequest := tlcrNone;
   outputRequest := tlorNone;
@@ -4140,7 +4125,6 @@ var
   end; //callLDAP
 
   function buildOutput: boolean;
-
   var
     iLines: integer = 0;
     ///iObjects : Integer;
@@ -4154,7 +4138,6 @@ var
     n: integer = 0;
     rem: string = '';
     err: string = '';
-
   begin
 
     errorOccurred := False;
@@ -4325,11 +4308,12 @@ begin
 end;
 
 {$IFDEF WINDOWS}
-function CheckDWord(var ReadValue: string; var Value: string; RegeditFormat:boolean;
-  var ErrorInfo: string): boolean;
+function CheckDWord(var ReadValue: string; var Value: string;
+  RegeditFormat: boolean; var ErrorInfo: string): boolean;
 begin
   try
-    if RegeditFormat then ReadValue := '$' + ReadValue; //in regedit format (file) all numbers are hexdecimal without leading $ or 0x
+    if RegeditFormat then ReadValue := '$' + ReadValue;
+    //in regedit format (file) all numbers are hexdecimal without leading $ or 0x
     StrToDWord(ReadValue); //converts decimal value or hex with leading $ or 0x
     Value := ReadValue;
     ReadValue := '';
@@ -4342,12 +4326,13 @@ begin
   end;
 end;
 
-function CheckQWord(var ReadValue: string; var Value: string; RegeditFormat:boolean;
-  var ErrorInfo: string): boolean;
+function CheckQWord(var ReadValue: string; var Value: string;
+  RegeditFormat: boolean; var ErrorInfo: string): boolean;
 begin
   Result := False;
   try
-    if RegeditFormat then ReadValue := '$' + ReadValue; //in regedit format (file) all numbers are hexdecimal without leading $ or 0x
+    if RegeditFormat then ReadValue := '$' + ReadValue;
+    //in regedit format (file) all numbers are hexdecimal without leading $ or 0x
     StrToQWord(ReadValue); //converts decimal value or hex with leading $ or 0x
     Value := ReadValue;
     ReadValue := '';
@@ -4380,7 +4365,6 @@ var
     regTStr: string = '';
     regTInt: longint;
     regType: TuibRegDataType;
-
   begin
     Result := False;
     syntaxCheck := True;
@@ -4573,7 +4557,6 @@ var
   function GetTypedValue_RegEditSyntax
     (s, regtypeinfo: string; var regtype: TuibRegDataType;
   var Value, r, ErrorInfo: string): boolean;
-
   var
     ///PartValue,Info : String;
     ///Continue : Boolean;
@@ -4584,7 +4567,6 @@ var
 
     j: integer = 0;
     startvalue: string = '';
-
   begin
     Result := True;
     Value := '';
@@ -4730,8 +4712,8 @@ begin
       GetWord(key, key0, key, ['\']);
       LogDatei.log('Key0 is: ' + key0, LLdebug2);
       if (flag_all_ntuser or flag_ntuser or flag_all_usrclass or runLoginScripts) and
-        (('HKEY_CURRENT_USER' = UpperCase(key0)) or ('HKCU' = UpperCase(key0)) or ('HKEY_USERS' = UpperCase(key0)) or
-              ('HKU' = UpperCase(key0))) then
+        (('HKEY_CURRENT_USER' = UpperCase(key0)) or ('HKCU' = UpperCase(key0)) or
+        ('HKEY_USERS' = UpperCase(key0)) or ('HKU' = UpperCase(key0))) then
       begin
         // remove HKCU/HKU from the beginning and update key accordingly
         //if runLoginScripts and not (flag_all_ntuser or flag_ntuser or flag_all_usrclass) then
@@ -4934,7 +4916,6 @@ var
   function GetTypedValue
     (s, regtypeinfo: string; var regtype: TuibRegDataType;
   var Value, r, ErrorInfo: string): boolean;
-
   var
     ///PartValue, Info : String;
     ///Continue : Boolean;
@@ -4942,7 +4923,6 @@ var
     binValue: string = '';
     lpdata: Pointer = nil;
     cbdata: DWord = 0;
-
   begin
     Result := True;
     Value := '';
@@ -5315,7 +5295,7 @@ begin
             oldDisableWow64FsRedirectionStatus);
           LogDatei.log('RevertWow64FsRedirection succeeded',
             LLinfo);
-              {$ENDIF WIN32}
+          {$ENDIF WIN32}
         end
         else // workaround
         begin
@@ -5651,7 +5631,6 @@ end;
 {$IFDEF WIN32}
 function TuibInstScript.doRegistryAllNTUserDats(const Sektion: TWorkSection;
   rfSelected: TRegistryFormat; const flag_force64: boolean): TSectionResult;
-
 var
   profilename, profilepath: string;
   ProfileList: TStringList;
@@ -5708,8 +5687,6 @@ var
 
   procedure workOnNtUserDat;
   begin
-
-
 
     case rfSelected of
       trfRegedit: doRegistryHackRegeditFormat(Sektion, 'HKEY_USERS\' +
@@ -5803,7 +5780,7 @@ begin
     if FileExists(UserPath) then
     begin
       // do not set dir acl
-      if not FileGetWriteAccess(UserPath, Info,false) then
+      if not FileGetWriteAccess(UserPath, Info, False) then
       begin
         LogDatei.log('Error: ' + Info, LLError);
       end
@@ -5819,15 +5796,13 @@ begin
         end
         else
         begin
-          LogDatei.log('NTUSER.dat locked for ' +
-            ProfileList.Strings[pc] + '. Thus it is loaded and we can work directly on it.', LLDebug);
+          LogDatei.log('NTUSER.dat locked for ' + ProfileList.Strings[pc] +
+            '. Thus it is loaded and we can work directly on it.', LLDebug);
           workOnHkuserSid(ProfileList.Strings[pc]);
         end;
       end;
     end;
   end;
-
-
 
 
 
@@ -5852,7 +5827,6 @@ end;
 {$IFDEF WIN32}
 function TuibInstScript.doRegistryAllUsrClassDats(const Sektion: TWorkSection;
   rfSelected: TRegistryFormat; const flag_force64: boolean): TSectionResult;
-
 var
   //SearchPath : String='';
   //SearchRec  : TSearchRec;
@@ -5913,8 +5887,6 @@ var
   procedure workOnUsrClassDat;
   begin
 
-
-
     case rfSelected of
       trfRegedit: doRegistryHackRegeditFormat(Sektion, 'HKEY_USERS\' +
           TempUserRegKey, flag_force64);
@@ -5951,7 +5923,6 @@ var
   var
     sidStr: string = '';
   begin
-
 
     sidStr := SID;
     LogDatei.log('sidStr :' + sidStr, LLDebug);
@@ -6005,7 +5976,7 @@ begin
     if FileExists(UserPath) then
     begin
       // do not set dir acl
-      if not FileGetWriteAccess(UserPath, Info,false) then
+      if not FileGetWriteAccess(UserPath, Info, False) then
       begin
         LogDatei.log('Error: ' + Info, LLError);
       end
@@ -6021,14 +5992,13 @@ begin
         end
         else
         begin
-          LogDatei.log('UsrClass.dat locked for ' +
-            ProfileList.Strings[pc] + '. Thus it is loaded and we can work directly on it.', LLDebug);
+          LogDatei.log('UsrClass.dat locked for ' + ProfileList.Strings[pc] +
+            '. Thus it is loaded and we can work directly on it.', LLDebug);
           workOnHkuserSid(ProfileList.Strings[pc]);
         end;
       end;
     end;
   end;
-
 
 
 
@@ -6054,7 +6024,6 @@ end;
 function TuibInstScript.doRegistryNTUserDat(const Sektion: TWorkSection;
   rfSelected: TRegistryFormat; const flag_force64: boolean;
   const UserPath: string): TSectionResult;
-
 var
   //SearchPath : String='';
   //SearchRec  : TSearchRec;
@@ -6111,8 +6080,6 @@ var
   procedure workOnNtUserDat;
   begin
 
-
-
     case rfSelected of
       trfRegedit: doRegistryHackRegeditFormat(Sektion, 'HKEY_USERS\' +
           TempUserRegKey, flag_force64);
@@ -6166,7 +6133,7 @@ begin
   if FileExists(UserPath) then
   begin
     // do not set dir acl
-    if not FileGetWriteAccess(UserPath, Info,false) then
+    if not FileGetWriteAccess(UserPath, Info, False) then
     begin
       LogDatei.log('Error: ' + Info, LLError);
     end
@@ -6202,11 +6169,9 @@ end;
 function TuibInstScript.doOpsiServiceCall
   (const Sektion: TWorkSection; const parameter: string;
   var output: TXStringList): TSectionResult;
-
 type
   TServiceChoice = (tscGlobal, tscReuse, tscLogin, tscInteractiveLogin,
     tscOpsiclientd, tscOpsiclientdOnce);
-
 var
   startSIndentLevel: integer = 0;
   serviceChoice: TServicechoice;
@@ -6236,14 +6201,14 @@ var
   inParams, paramsFound, paramsValueListFound: boolean;
   stopIt: boolean;
   testresult: string = '';
-   {$IFDEF GUI}
+  {$IFDEF GUI}
   passwordDialog: TDialogServicePassword;
-   {$ENDIF GUI}
+  {$ENDIF GUI}
   opsiServiceVersion: string = '';
   myconf: TIniFile;
   opsiclientd_conf: string = '';
   tmplist: TStringList;
-  ProductID:string;
+  ProductID: string;
 
   procedure getNextValidLine(var line: string; var lineno: integer;
   const Lines: TStrings);
@@ -6272,7 +6237,8 @@ begin
     except
       on ex: Exception do
       begin
-        LogDatei.log('Exception in doOpsiServiceCall: setting user agent' + ex.message, LLError);
+        LogDatei.log('Exception in doOpsiServiceCall: setting user agent' +
+          ex.message, LLError);
       end;
     end;
     // initializing
@@ -6572,17 +6538,17 @@ begin
               errorOccured := True;
             end
             else
-              try
-                if opsidata.getOpsiServiceVersion = '4' then
-                  local_opsidata := TOpsi4Data(opsidata);
-                LogDatei.log_prog('Calling opsi service at ' +
-                  local_opsidata.serviceUrl, LLDebug);
-                UserAgent := ProductID + ' (opsiservicecall:global)';
-                local_opsidata.setUserAgent(UserAgent);
-              except
-                errorOccured := True;
-                testresult := 'not in service mode';
-              end;
+            try
+              if opsidata.getOpsiServiceVersion = '4' then
+                local_opsidata := TOpsi4Data(opsidata);
+              LogDatei.log_prog('Calling opsi service at ' +
+                local_opsidata.serviceUrl, LLDebug);
+              UserAgent := ProductID + ' (opsiservicecall:global)';
+              local_opsidata.setUserAgent(UserAgent);
+            except
+              errorOccured := True;
+              testresult := 'not in service mode';
+            end;
 
           end;
 
@@ -6611,7 +6577,8 @@ begin
               begin
                 local_opsidata := TOpsi4Data.Create;
                 UserAgent := ProductID + ' (opsiservicecall:login)';
-                local_opsidata.initOpsiConf(serviceurl, username, password, sessionid, '', '', UserAgent);
+                local_opsidata.initOpsiConf(serviceurl, username,
+                  password, sessionid, '', '', UserAgent);
                 //Topsi4data(local_opsidata).initOpsiConf(serviceurl, username, password);
                 //OpsiData.setOptions (opsiclientd_serviceoptions);
 
@@ -6668,7 +6635,8 @@ begin
                 begin
                   local_opsidata := TOpsi4Data.Create;
                   UserAgent := ProductID + ' (opsiservicecall:InteractiveLogin)';
-                  local_opsidata.initOpsiConf(serviceurl, username, password, sessionid, '', '', UserAgent);
+                  local_opsidata.initOpsiConf(serviceurl, username,
+                    password, sessionid, '', '', UserAgent);
                   //Topsi4data(local_opsidata).initOpsiConf(serviceurl, username, password);
                   //OpsiData.setOptions (opsiclientd_serviceoptions);
                   omc := TOpsiMethodCall.Create('backend_info', []);
@@ -6715,7 +6683,8 @@ begin
                 begin
                   local_opsidata := TOpsi4Data.Create;
                   UserAgent := ProductID + ' (opsiservicecall:InteractiveLogin)';
-                  local_opsidata.initOpsiConf(serviceurl, username, password, sessionid, '', '', UserAgent);
+                  local_opsidata.initOpsiConf(serviceurl, username,
+                    password, sessionid, '', '', UserAgent);
                   omc := TOpsiMethodCall.Create('backend_info', []);
                   testresult := local_opsidata.CheckAndRetrieve(omc, errorOccured);
                   omc.Free;
@@ -6748,14 +6717,15 @@ begin
             {$ENDIF UNIX}
             if FileExists(opsiclientd_conf) then
             begin
-              LogDatei.log('Found opsiclientd.conf: '+ opsiclientd_conf, LLDebug2);
+              LogDatei.log('Found opsiclientd.conf: ' + opsiclientd_conf, LLDebug2);
               myconf := TInifile.Create(opsiclientd_conf);
               password := myconf.ReadString('global', 'opsi_host_key', '');
               username := myconf.ReadString('global', 'host_id', '');
               myconf.Free;
             end
             else
-              LogDatei.log('opsiclientd.conf does not exist or could not accessed at ' + opsiclientd_conf, LLError);
+              LogDatei.log('opsiclientd.conf does not exist or could not accessed at ' +
+                opsiclientd_conf, LLError);
 
             if password = '' then
             begin
@@ -6767,7 +6737,8 @@ begin
             begin
               local_opsidata := TOpsi4Data.Create;
               UserAgent := ProductID + ' (opsiservicecall:opsiclientd)';
-              local_opsidata.initOpsiConf(serviceurl, username, password, '', '', '', UserAgent);
+              local_opsidata.initOpsiConf(serviceurl, username, password,
+                '', '', '', UserAgent);
               omc := TOpsiMethodCall.Create('backend_info', []);
               testresult := local_opsidata.CheckAndRetrieve(omc, errorOccured);
               omc.Free;
@@ -6905,7 +6876,9 @@ begin
     except
       on ex: Exception do
       begin
-        LogDatei.log('Exception in doOpsiServiceCall while setting user agent back to opsi-script' + ex.message, LLError);
+        LogDatei.log(
+          'Exception in doOpsiServiceCall while setting user agent back to opsi-script' +
+          ex.message, LLError);
       end;
     end;
 
@@ -6940,10 +6913,8 @@ end;
 function TuibInstScript.doOpsiServiceHashList
   (const Sektion: TWorkSection; const parameter: string;
   var output: TXStringList): TSectionResult;
-
 type
   TServiceChoice = (tscGlobal, tscReuse, tscLogin, tscInteractiveLogin);
-
 var
   startSIndentLevel: integer = 0;
   serviceChoice: TServicechoice;
@@ -6969,9 +6940,9 @@ var
   inParams, paramsFound, paramsValueListFound: boolean;
   stopIt: boolean;
   testresult: string = '';
-   {$IFDEF GUI}
+  {$IFDEF GUI}
   passwordDialog: TDialogServicePassword;
-   {$ENDIF GUI}
+  {$ENDIF GUI}
   listname: string = '';
   list: TStringList;
   varindex: integer = 0;
@@ -7223,15 +7194,15 @@ begin
           errorOccured := True;
         end
         else
-          try
-            if opsidata.getOpsiServiceVersion = '4' then
-              local_opsidata := opsidata;
-            LogDatei.log('Calling opsi service on existing connection at ' +
-              local_opsidata.serviceUrl, LLinfo);
-          except
-            errorOccured := True;
-            testresult := 'not in service mode';
-          end;
+        try
+          if opsidata.getOpsiServiceVersion = '4' then
+            local_opsidata := opsidata;
+          LogDatei.log('Calling opsi service on existing connection at ' +
+            local_opsidata.serviceUrl, LLinfo);
+        except
+          errorOccured := True;
+          testresult := 'not in service mode';
+        end;
 
       end;
 
@@ -7271,7 +7242,7 @@ begin
 
       tscInteractiveLogin:
       begin
-          {$IFDEF GUI}
+        {$IFDEF GUI}
         stopIt := False;
         passwordDialog := TDialogServicePassword.Create(nil);
 
@@ -7319,7 +7290,7 @@ begin
 
         passwordDialog.Free;
 
-          {$ENDIF GUI}
+        {$ENDIF GUI}
       end;
     end;
 
@@ -7450,7 +7421,6 @@ var
     regexMatchList, helperlist: TStringList;
     rootnodeOnCreate: string;
     infostr: string = '';
-
   begin
 
     Logdatei.log('', LLInfo);
@@ -7733,18 +7703,18 @@ var
           if SyntaxCheck then
           begin
             if not testSyntax then
-              try
-                XMLDocObject.delNode(nodepath, openstrict, errorinfo);
-                // After a deleteNode you must use opennode in order to work with open nodes
-                nodeOpened := False;
-                nodeOpenCommandExists := False;
-                LogDatei.log('successfully deleted node: ' + nodepath, oslog.LLinfo);
-              except
-                on e: Exception do
-                begin
-                  LogDatei.log('Exception in xml2: DeleteNode: ' + e.message, LLError);
-                end;
+            try
+              XMLDocObject.delNode(nodepath, openstrict, errorinfo);
+              // After a deleteNode you must use opennode in order to work with open nodes
+              nodeOpened := False;
+              nodeOpenCommandExists := False;
+              LogDatei.log('successfully deleted node: ' + nodepath, oslog.LLinfo);
+            except
+              on e: Exception do
+              begin
+                LogDatei.log('Exception in xml2: DeleteNode: ' + e.message, LLError);
               end;
+            end;
           end
           else
             reportError(Sektion, i, Sektion.strings[i - 1], ErrorInfo);
@@ -7775,15 +7745,15 @@ var
             if SyntaxCheck then
             begin
               if not testSyntax then
-                try
-                  XMLDocObject.setNodeTextActNode(newtext);
-                  LogDatei.log('successfully setText node: ' + newtext, oslog.LLinfo);
-                except
-                  on e: Exception do
-                  begin
-                    LogDatei.log('Exception in xml2:stettext: ' + e.message, LLError);
-                  end;
+              try
+                XMLDocObject.setNodeTextActNode(newtext);
+                LogDatei.log('successfully setText node: ' + newtext, oslog.LLinfo);
+              except
+                on e: Exception do
+                begin
+                  LogDatei.log('Exception in xml2:stettext: ' + e.message, LLError);
                 end;
+              end;
             end
             else
               reportError(Sektion, i, Sektion.strings[i - 1], ErrorInfo);
@@ -7804,17 +7774,17 @@ var
             if SyntaxCheck then
             begin
               if not testSyntax then
-                try
-                  LogDatei.log('We will gotoParentNode : ' + newtext, LLdebug);
-                  XMLDocObject.setParentNodeAsActNode();
-                  LogDatei.log('successfully gotoParentNode ', oslog.LLinfo);
-                except
-                  on e: Exception do
-                  begin
-                    LogDatei.log('Exception in xml2:gotoParentNode: ' +
-                      e.message, LLError);
-                  end;
+              try
+                LogDatei.log('We will gotoParentNode : ' + newtext, LLdebug);
+                XMLDocObject.setParentNodeAsActNode();
+                LogDatei.log('successfully gotoParentNode ', oslog.LLinfo);
+              except
+                on e: Exception do
+                begin
+                  LogDatei.log('Exception in xml2:gotoParentNode: ' +
+                    e.message, LLError);
                 end;
+              end;
             end
             else
               reportError(Sektion, i, Sektion.strings[i - 1], ErrorInfo);
@@ -7847,15 +7817,15 @@ var
             if SyntaxCheck then
             begin
               if not testSyntax then
-                try
-                  XMLDocObject.makeNode(newtext, '', '');
-                  LogDatei.log('successfully addNewNode: ' + newtext, oslog.LLinfo);
-                except
-                  on e: Exception do
-                  begin
-                    LogDatei.log('Exception in xml2:addNewNode: ' + e.message, LLError);
-                  end;
+              try
+                XMLDocObject.makeNode(newtext, '', '');
+                LogDatei.log('successfully addNewNode: ' + newtext, oslog.LLinfo);
+              except
+                on e: Exception do
+                begin
+                  LogDatei.log('Exception in xml2:addNewNode: ' + e.message, LLError);
                 end;
+              end;
             end
             else
               reportError(Sektion, i, Sektion.strings[i - 1], ErrorInfo);
@@ -7904,17 +7874,17 @@ var
             if SyntaxCheck then
             begin
               if not testSyntax then
-                try
-                  XMLDocObject.setAttribute(newname, newvalue);
-                  LogDatei.log('successfully setAttribute : ' + newname +
-                    ' : ' + newvalue, LLinfo);
-                except
-                  on e: Exception do
-                  begin
-                    LogDatei.log('Exception in xml2:setAttribute: ' +
-                      e.message, LLError);
-                  end;
+              try
+                XMLDocObject.setAttribute(newname, newvalue);
+                LogDatei.log('successfully setAttribute : ' + newname +
+                  ' : ' + newvalue, LLinfo);
+              except
+                on e: Exception do
+                begin
+                  LogDatei.log('Exception in xml2:setAttribute: ' +
+                    e.message, LLError);
                 end;
+              end;
             end
             else
               reportError(Sektion, i, Sektion.strings[i - 1], ErrorInfo);
@@ -7962,17 +7932,17 @@ var
             if SyntaxCheck then
             begin
               if not testSyntax then
-                try
-                  XMLDocObject.addAttribute(newname, newvalue);
-                  LogDatei.log('successfully addAttribute : ' + newname +
-                    ' : ' + newvalue, LLinfo);
-                except
-                  on e: Exception do
-                  begin
-                    LogDatei.log('Exception in xml2:addAttribute: ' +
-                      e.message, LLError);
-                  end;
+              try
+                XMLDocObject.addAttribute(newname, newvalue);
+                LogDatei.log('successfully addAttribute : ' + newname +
+                  ' : ' + newvalue, LLinfo);
+              except
+                on e: Exception do
+                begin
+                  LogDatei.log('Exception in xml2:addAttribute: ' +
+                    e.message, LLError);
                 end;
+              end;
             end
             else
               reportError(Sektion, i, Sektion.strings[i - 1], ErrorInfo);
@@ -8006,17 +7976,17 @@ var
             begin
               //LogDatei.log('We will delAttribute : '+newname, LLdebug);
               if not testSyntax then
-                try
-                  XMLDocObject.delAttribute(newname);
-                  LogDatei.log('successfully delAttribute node: ' +
-                    newname, oslog.LLinfo);
-                except
-                  on e: Exception do
-                  begin
-                    LogDatei.log('Exception in xml2:delAttribute: ' +
-                      e.message, LLError);
-                  end;
+              try
+                XMLDocObject.delAttribute(newname);
+                LogDatei.log('successfully delAttribute node: ' +
+                  newname, oslog.LLinfo);
+              except
+                on e: Exception do
+                begin
+                  LogDatei.log('Exception in xml2:delAttribute: ' +
+                    e.message, LLError);
                 end;
+              end;
             end
             else
               reportError(Sektion, i, Sektion.strings[i - 1], ErrorInfo);
@@ -8183,7 +8153,6 @@ var
     tmpstr, searchmask: string;
     retryOnReboot: boolean = False;
     FilenameCodepage: string = '';  // for non UTF8 zipped filenames
-
   begin
     targetDirectory := presetDir;
     targetDirectory := ExpandFileName(targetDirectory);
@@ -8223,7 +8192,7 @@ var
       SyntaxCheck := True;
 
       if (Remaining = '') or (Remaining[1] = LineIsCommentChar) then
-        // continue
+      // continue
       else
       begin
         GetWord(Remaining, Expressionstr, Remaining, WordDelimiterSet0);
@@ -8774,17 +8743,20 @@ var
           begin
             if not GetString(Remaining, Expressionstr, Remaining, errorinfo, False)
             then
-               Expressionstr := remaining;
+              Expressionstr := remaining;
             if Expressionstr <> '' then
             begin
               Expressionstr := osNormalizeEncoding(Expressionstr);
               if isSupportedEncoding(Expressionstr) then
-                 FilenameCodepage := Expressionstr
+                FilenameCodepage := Expressionstr
               else
-                 LogDatei.log('UNZIPFILE: codepage ' + Expressionstr + ' not supported.', LLWarning);
+                LogDatei.log('UNZIPFILE: codepage ' + Expressionstr +
+                  ' not supported.', LLWarning);
             end;
           end;
-          LogDatei.log('non UTF8 filenames will be converted to UTF8 assuming codepage ' + FilenameCodepage, lldebug3);
+          LogDatei.log('non UTF8 filenames will be converted to UTF8 assuming codepage '
+            +
+            FilenameCodepage, lldebug3);
 
 
           if not testSyntax then
@@ -9056,7 +9028,7 @@ var
                 LogDatei.log('we try to symlink: ' + Source + ' to ' + target, LLDebug2);
                 if Install.symlink(Source, target) then
                   LogDatei.log('symlinked: ' + Source + ' to ' + target, LLInfo);
-             {$IFDEF WINDOWS}
+                {$IFDEF WINDOWS}
                 LogDatei.log('Reading symlink via dir to reread the cache', LLInfo);
                 if Wow64FsRedirectionDisabled then
                   shellcallArchParam := '64'
@@ -9068,7 +9040,7 @@ var
                   shellcallArchParam, 4, False, False).Text;
                 //calling shellCall with FetchExitCodePublic=false result is on FLastPrivateExitCode
                 list1.Free;
-             {$ENDIF WINDOWS}
+                {$ENDIF WINDOWS}
               end;
           end;
         end
@@ -9258,7 +9230,7 @@ begin
   end
   else
     Wow64FsRedirectionDisabled := False;
-   {$ENDIF WIN32}
+  {$ENDIF WIN32}
 
   if (0 < pos(lowercase(Parameter_AllNTUserProfiles), lowercase(CopyParameter))) or
     (0 < pos(lowercase(Parameter_AllUserProfiles), lowercase(CopyParameter))) or
@@ -9313,7 +9285,6 @@ begin
   if ExitOnError and (DiffNumberOfErrors > 0) then
     Result := tsrExitProcess;
 
-
 end;
 
 
@@ -9333,52 +9304,53 @@ begin
 end;
 
 
-procedure linkActionsMain(const Sektion: TWorkSection; const UibInstScript: TuibInstScript; const testSyntax: boolean);
-  var
-    i: integer = 0;
-    SyntaxCheck: boolean;
-    Remaining: string = '';
-    errorInfo: string = '';
+procedure linkActionsMain(const Sektion: TWorkSection;
+  const UibInstScript: TuibInstScript; const testSyntax: boolean);
+var
+  i: integer = 0;
+  SyntaxCheck: boolean;
+  Remaining: string = '';
+  errorInfo: string = '';
 
-    csidl: integer = 0;
-    csidl_set: boolean;
-    folder_opened: boolean;
+  csidl: integer = 0;
+  csidl_set: boolean;
+  folder_opened: boolean;
 
-    basefolder: string = '';
-    subfoldername: string = '';
-    deletefoldername: string = '';
-    s: string = '';
+  basefolder: string = '';
+  subfoldername: string = '';
+  deletefoldername: string = '';
+  s: string = '';
 
-    in_link_features: boolean = False;
-    regular_end: boolean = False;
-    link_name: string = '';
-    link_target: string = '';
-    link_paramstr: string = '';
-    link_working_dir: string = '';
-    link_icon_file: string = '';
-    link_icon_index: integer = 0;
-    link_categories: string = '';
-    link_shortcut: word = 0;
-    link_showwindow: integer = 0;
+  in_link_features: boolean = False;
+  regular_end: boolean = False;
+  link_name: string = '';
+  link_target: string = '';
+  link_paramstr: string = '';
+  link_working_dir: string = '';
+  link_icon_file: string = '';
+  link_icon_index: integer = 0;
+  link_categories: string = '';
+  link_shortcut: word = 0;
+  link_showwindow: integer = 0;
 
-    Expressionstr: string = '';
-    {$IFDEF WINDOWS}
+  Expressionstr: string = '';
+  {$IFDEF WINDOWS}
   ShellLinks: TuibShellLinks;
-    {$ENDIF WINDOWS}
-    {$IFDEF UNIX}
+  {$ENDIF WINDOWS}
+  {$IFDEF UNIX}
   ShellLinks: TuibLinuxDesktopFiles;
-    {$ENDIF UNIX}
+  {$ENDIF UNIX}
 begin
   i := 1;
   if Sektion.Count = 0 then
     exit;
 
-    {$IFDEF WINDOWS}
+  {$IFDEF WINDOWS}
   ShellLinks := TuibShellLinks.Create;
-    {$ENDIF WINDOWS}
-    {$IFDEF UNIX}
+  {$ENDIF WINDOWS}
+  {$IFDEF UNIX}
   ShellLinks := TuibLinuxDesktopFiles.Create;
-    {$ENDIF UNIX}
+  {$ENDIF UNIX}
 
   csidl := 0;
   csidl_set := False;
@@ -9466,38 +9438,38 @@ begin
       else if LowerCase(Expressionstr) = 'delete_subfolder' then
       begin
         {$IFDEF WIN32}
-          if not getString(Remaining, deletefoldername, Remaining, errorinfo, False)
-          then
-          begin
-            deletefoldername := Remaining;
-            Remaining := '';
-          end;
+        if not getString(Remaining, deletefoldername, Remaining, errorinfo, False)
+        then
+        begin
+          deletefoldername := Remaining;
+          Remaining := '';
+        end;
 
-          if length(Remaining) > 0 then
-          begin
-            UibInstScript.reportError(Sektion, i, Sektion.Strings[i - 1],
-              'end of line expected');
-            syntaxCheck := False;
-          end;
+        if length(Remaining) > 0 then
+        begin
+          UibInstScript.reportError(Sektion, i, Sektion.Strings[i - 1],
+            'end of line expected');
+          syntaxCheck := False;
+        end;
 
-          if not testSyntax then
+        if not testSyntax then
+        begin
+          if csidl_set then
           begin
-            if csidl_set then
-            begin
-              //;
-              ShellLinks.DeleteShellFolder(csidl, deletefoldername);
-              //csidl_set := false;
-            end
-            else
-            begin
-              LogDatei.log('No base folder set, therefore no deletion of subfolder',
-                LLWarning);
-            end;
+            //;
+            ShellLinks.DeleteShellFolder(csidl, deletefoldername);
+            //csidl_set := false;
+          end
+          else
+          begin
+            LogDatei.log('No base folder set, therefore no deletion of subfolder',
+              LLWarning);
           end;
+        end;
         {$ELSE}
-          UibInstScript.reportError(Sektion, i, 'delete_subfolder',
-            'is only defined for win32.');
-          syntaxcheck := False;
+        UibInstScript.reportError(Sektion, i, 'delete_subfolder',
+          'is only defined for win32.');
+        syntaxcheck := False;
         {$ENDIF WIN32}
       end
 
@@ -9540,23 +9512,24 @@ begin
       begin
         syntaxcheck := True;
 
-          if length(Remaining) > 0 then
-          begin
-            UibInstScript.reportError(Sektion, i, Sektion.Strings[i - 1], 'end of line expected');
-            syntaxCheck := False;
-          end;
-          Inc(i);
-          // reset variables here for every link in one LinkFolder section
-          in_link_features := True;
-          regular_end := False;
-          link_name := '';
-          link_target := '';
-          link_paramstr := '';
-          link_working_dir := '';
-          link_icon_file := '';
-          link_icon_index := 0;
-          link_shortcut := 0;
-          link_showwindow := 0;
+        if length(Remaining) > 0 then
+        begin
+          UibInstScript.reportError(Sektion, i, Sektion.Strings[i - 1],
+            'end of line expected');
+          syntaxCheck := False;
+        end;
+        Inc(i);
+        // reset variables here for every link in one LinkFolder section
+        in_link_features := True;
+        regular_end := False;
+        link_name := '';
+        link_target := '';
+        link_paramstr := '';
+        link_working_dir := '';
+        link_icon_file := '';
+        link_icon_index := 0;
+        link_shortcut := 0;
+        link_showwindow := 0;
 
         while (i <= Sektion.Count) and in_link_features do
         begin
@@ -9585,22 +9558,22 @@ begin
               if not getString(Remaining, s, Remaining, errorinfo, False)
               then
                 s := Remaining;
-                {$IFDEF UNIX}
+              {$IFDEF UNIX}
               logdatei.log('Option icon_index is ignored at Linux', LLWarning);
-                {$ENDIF UNIX}
-                {$IFDEF WIN32}
+              {$ENDIF UNIX}
+              {$IFDEF WIN32}
               if s = '' then
                 link_icon_index := 0
               else
-                try
-                  link_icon_index := StrToInt(s);
-                  Remaining := s;
-                except
-                  UibInstScript.reportError(Sektion, i, Sektion.Strings[i - 1],
-                    '"' + s + '" could not converted to an integer.');
-                end;
+              try
+                link_icon_index := StrToInt(s);
+                Remaining := s;
+              except
+                UibInstScript.reportError(Sektion, i, Sektion.Strings[i - 1],
+                  '"' + s + '" could not converted to an integer.');
+              end;
               LogDatei.log_prog('link_icon_index: ' + s, LLDebug);
-                {$ENDIF WIN32}
+              {$ENDIF WIN32}
             end
 
             else if LowerCase(Expressionstr) = 'shortcut' then
@@ -9608,22 +9581,22 @@ begin
               if not getString(Remaining, s, Remaining, errorinfo, False)
               then
                 s := Remaining;
-                {$IFDEF UNIX}
+              {$IFDEF UNIX}
               logdatei.log('Option shurtcut is ignored at Linux', LLWarning);
-                {$ENDIF UNIX}
-                {$IFDEF WIN32}
+              {$ENDIF UNIX}
+              {$IFDEF WIN32}
               if s = '' then
                 link_shortcut := 0
               else
-                try
-                  link_shortcut := ShortCutStringToWinApiWord(s);
-                  Remaining := s;
-                except
-                  UibInstScript.reportError(Sektion, i, Sektion.Strings[i - 1],
-                    '"' + s + '" could not converted to a shortcut key.');
-                end;
+              try
+                link_shortcut := ShortCutStringToWinApiWord(s);
+                Remaining := s;
+              except
+                UibInstScript.reportError(Sektion, i, Sektion.Strings[i - 1],
+                  '"' + s + '" could not converted to a shortcut key.');
+              end;
               LogDatei.log_prog('link_shortcut: ' + s, LLDebug);
-                {$ENDIF WIN32}
+              {$ENDIF WIN32}
             end
 
             else if LowerCase(Expressionstr) = 'window_state' then
@@ -9663,9 +9636,9 @@ begin
               if not getString(Remaining, s, Remaining, errorinfo, False)
               then
                 link_categories := Remaining;
-                {$IFDEF WIN32}
+              {$IFDEF WIN32}
               logdatei.log('Option link_categories is ignored at WIN32', LLWarning);
-                {$ENDIF WIN32}
+              {$ENDIF WIN32}
             end
 
             else if LowerCase(Expressionstr) = 'end_link' then
@@ -9742,7 +9715,7 @@ begin
 
 
   // doLinkFolder main
-    {$IFDEF WIN32}
+  {$IFDEF WIN32}
   //Install := TuibFileInstall.create;
   if runLoginScripts then
   begin
@@ -9762,12 +9735,12 @@ begin
   begin
     linkActionsMain(Sektion, self, testSyntax);
   end;
-    {$ENDIF WIN32}
-    {$IFDEF UNIX}
+  {$ENDIF WIN32}
+  {$IFDEF UNIX}
   begin
     linkActionsMain(Sektion, self, testSyntax);
   end;
-    {$ENDIF LINUX}
+  {$ENDIF LINUX}
 
   finishSection(Sektion, OldNumberOfErrors, OldNumberOfWarnings,
     DiffNumberOfErrors, DiffNumberOfWarnings);
@@ -9775,14 +9748,12 @@ begin
   if ExitOnError and (DiffNumberOfErrors > 0) then
     Result := tsrExitProcess;
 
-
 end;
 
 
 function TuibInstScript.doDDEwithProgman(const Sektion: TWorkSection;
   DDEParameter: string; SaveddeWithProgman: boolean): TSectionResult;
   // not implemented
-
 begin
   // not implemented
 end;
@@ -9803,7 +9774,6 @@ var
   InfoSyntaxError: string = '';
   sectionName: string = '';
   showoutput: boolean;
-
 begin
   if length(ArbeitsSektion.Name) <> 0 then
   begin
@@ -9818,9 +9788,9 @@ begin
   end;
 
   runAs := traInvoker;
- {$IFDEF WIN32}
+  {$IFDEF WIN32}
   opsiSetupAdmin_runElevated := False;
- {$ENDIF WIN32}
+  {$ENDIF WIN32}
   WaitSecs := 0;
   flag_force64 := False;
   GetWord(Remaining, expr, Remaining, WordDelimiterSet0);
@@ -9985,7 +9955,7 @@ begin
       Remaining := '';
     end;
 
-   {$IFNDEF WIN32}
+    {$IFNDEF WIN32}
     if onlyWindows then
     begin
       LogDatei.log(expr + ' is only supported on Win32', LLerror);
@@ -9995,7 +9965,7 @@ begin
       break;
       *)
     end;
-   {$ENDIF WIN32}
+    {$ENDIF WIN32}
 
     GetWord(Remaining, expr, Remaining, WordDelimiterSet0);
   end;
@@ -10014,7 +9984,6 @@ function TuibInstScript.execWinBatch(const Sektion: TWorkSection;
   WinBatchParameter: string; WaitConditions: TSetWaitConditions;
   ident: string; WaitSecs: word; runAs: TRunAs; flag_force64: boolean;
   showoutput: boolean; var output: TXStringList): TSectionResult;
-
 var
   i: integer = 0;
   commandline: string = '';
@@ -10029,7 +9998,6 @@ var
   Wow64FsRedirectionDisabled, boolresult: boolean;
   outputStart: integer = 0;
   showOutputFlag: TShowOutputFlag;
-
 begin
   try
     Result := tsrPositive;
@@ -10060,7 +10028,7 @@ begin
     if AutoActivityDisplay then
       FBatchOberflaeche.SetElementVisible(True, eActivityBar);//showAcitvityBar(True);
     // do not force on top while running external programs
-    FBatchOberflaeche.SetForceStayOnTop(false);
+    FBatchOberflaeche.SetForceStayOnTop(False);
 
     if not WaitForReturn then
       showoutput := False;
@@ -10265,7 +10233,7 @@ from defines.inc
     FBatchOberflaeche.SetElementVisible(False, eActivityBar);//showAcitvityBar(False);
 
     // force on top after running external programs
-    FBatchOberflaeche.SetForceStayOnTop(true);
+    FBatchOberflaeche.SetForceStayOnTop(True);
 
     if showoutput then
     begin
@@ -10311,7 +10279,7 @@ begin
     if AutoActivityDisplay then
       FBatchOberflaeche.SetElementVisible(True, eActivityBar); //showAcitvityBar(True);
     // do not force on top while running external programs
-    FBatchOberflaeche.SetForceStayOnTop(false);
+    FBatchOberflaeche.SetForceStayOnTop(False);
     {$ENDIF GUI}
 
     if (lowercase(archparam) = '64bit') and Is64BitSystem then
@@ -10323,7 +10291,7 @@ begin
     if (lowercase(archparam) = '32bit') then
       shortarch := '32';
 
-    LogDatei.log('PowershellCall: ' + command + ' (mode: ' + archparam +')',
+    LogDatei.log('PowershellCall: ' + command + ' (mode: ' + archparam + ')',
       LLNotice);
 
 
@@ -10350,7 +10318,7 @@ begin
     begin
       LogDatei.log(output.strings[i], LLDebug + logleveloffset);
     end;
-    //
+
     LogDatei.log('', LLDebug + logleveloffset);
     Result.Text := output.Text;
     output.Free;
@@ -10360,7 +10328,7 @@ begin
     {$IFDEF GUI}
     FBatchOberflaeche.SetElementVisible(False, eActivityBar);//showAcitvityBar(False);
     // force on top after running external programs
-    FBatchOberflaeche.SetForceStayOnTop(true);
+    FBatchOberflaeche.SetForceStayOnTop(True);
     {$ENDIF GUI}
   end;
 end;
@@ -10484,7 +10452,7 @@ begin
     end
     else
     begin
-     {$IFDEF WINDOWS}
+      {$IFDEF WINDOWS}
      (*
       if force64 and FileExists(GetWinDirectory + '\cmd64.exe') then
         FileName := '"' + GetWinDirectory + '\cmd64.exe"'
@@ -10494,22 +10462,22 @@ begin
       *)
       if force64 then
       begin
-       {$IFDEF WIN32}
+        {$IFDEF WIN32}
         if DSiDisableWow64FsRedirection(oldDisableWow64FsRedirectionStatus) then
           LogDatei.log('DisableWow64FsRedirection succeeded', LLinfo + logleveloffset)
         else
           LogDatei.log('Error: DisableWow64FsRedirection failed', LLError);
-       {$ENDIF WIN32}
+        {$ENDIF WIN32}
       end;
       FileName := '"' + GetWinSystemDirectory + '\cmd.exe"';
       Parameters := ' /C "' + command + '" ';
-     {$ENDIF WINDOWS}
+      {$ENDIF WINDOWS}
     end;
     {$IFDEF GUI}
     if AutoActivityDisplay then
       FBatchOberflaeche.SetElementVisible(True, eActivityBar);//showAcitvityBar(True);
     // do not force on top while running external programs
-    FBatchOberflaeche.SetForceStayOnTop(false);
+    FBatchOberflaeche.SetForceStayOnTop(False);
     {$ENDIF GUI}
 
     commandline := FileName + ' ' + trim(Parameters);
@@ -10546,7 +10514,7 @@ begin
       begin
         LogDatei.log(output.strings[i], LLDebug + logleveloffset);
       end;
-      //
+
       LogDatei.log('', LLDebug + logleveloffset);
       Result.Text := output.Text;
     end;
@@ -10554,19 +10522,19 @@ begin
     {$IFDEF WINDOWS}
     if force64 then
     begin
-       {$IFDEF WIN32}
+      {$IFDEF WIN32}
       dummybool := DSiRevertWow64FsRedirection(
         oldDisableWow64FsRedirectionStatus);
       LogDatei.log('RevertWow64FsRedirection succeeded',
         LLinfo + logleveloffset);
-              {$ENDIF WIN32}
+      {$ENDIF WIN32}
     end;
     {$ENDIF WINDOWS}
   finally
     {$IFDEF GUI}
     FBatchOberflaeche.SetElementVisible(False, eActivityBar);//showAcitvityBar(False);
     // force on top after running external programs
-    FBatchOberflaeche.SetForceStayOnTop(true);
+    FBatchOberflaeche.SetForceStayOnTop(True);
     {$ENDIF GUI}
   end;
 end;
@@ -10576,7 +10544,6 @@ function TuibInstScript.execDOSBatch(const Sektion: TWorkSection;
   BatchParameter: string; ShowCmd: integer; catchOut: boolean;
   logleveloffset: integer; WaitConditions: TSetWaitConditions;
   var output: TXStringList): TSectionResult;
-
 var
   SaveStayOnTop: boolean;
   commandline: string = '';
@@ -10610,7 +10577,6 @@ var
   ident: string = '';
   use_sp, runsuccess: boolean;
   encodingString: string = '';
-
 begin
   try
     {$IFDEF GUI}
@@ -10647,8 +10613,8 @@ begin
 
     if pos('winst ', lowercase(BatchParameter)) > 0 then
     begin
-      winstparam := trim(copy(BatchParameter, pos('winst ',
-        lowercase(BatchParameter)) + 5, length(BatchParameter)));
+      winstparam := trim(copy(BatchParameter,
+        pos('winst ', lowercase(BatchParameter)) + 5, length(BatchParameter)));
       BatchParameter := trim(copy(BatchParameter, 0,
         pos('winst ', lowercase(BatchParameter)) - 1));
     end;
@@ -10793,9 +10759,9 @@ begin
     end
     else
     begin
-    {$IFDEF UNIX}
+      {$IFDEF UNIX}
       fpchmod(tempfilename, &700);
-    {$ENDIF UNIX}
+      {$ENDIF UNIX}
       LogDatei.log('Content of saved file: ' + tempfilename, LLDebug2);
       LogDatei.log('-----------------------', LLDebug2);
       for i := 0 to Sektion.Count - 1 do
@@ -10818,7 +10784,7 @@ begin
 
       if GetUibOsType(errorinfo) = tovLinux then
       begin
-       {$IFDEF GUI}
+        {$IFDEF GUI}
         if ShowCmd = SW_HIDE then
         begin
           FileName := '/bin/bash';
@@ -10835,14 +10801,14 @@ begin
             tempfilename + ' ' + BatchParameter + '"';
             *)
         end;
-       {$ELSE GUI}
+        {$ELSE GUI}
         FileName := '/bin/bash';
         Parameters := Parameters + ' ' + tempfilename + ' ' + BatchParameter;
-       {$ENDIF GUI}
+        {$ENDIF GUI}
       end
       else if (GetUibOsType(errorinfo) = tovMacOS) then
       begin
-       {$IFDEF GUI}
+        {$IFDEF GUI}
         if ShowCmd = SW_HIDE then
         begin
           FileName := '/bin/bash';
@@ -10858,22 +10824,22 @@ begin
             tempfilename + ' ' + BatchParameter + '"';
           *)
         end;
-       {$ELSE GUI}
+        {$ELSE GUI}
         FileName := '/bin/bash';
         Parameters := Parameters + ' ' + tempfilename + ' ' + BatchParameter;
-       {$ENDIF GUI}
+        {$ENDIF GUI}
       end
       else if GetUibOsType(errorinfo) = tovWinNT then
       begin
         {$IFDEF WINDOWS}
         if force64 then
         begin
-       {$IFDEF WIN32}
+          {$IFDEF WIN32}
           if DSiDisableWow64FsRedirection(oldDisableWow64FsRedirectionStatus) then
             LogDatei.log('DisableWow64FsRedirection succeeded', LLinfo + logleveloffset)
           else
             LogDatei.log('Error: DisableWow64FsRedirection failed', LLError);
-       {$ENDIF WIN32}
+          {$ENDIF WIN32}
         end;
         FileName := '"' + GetWinSystemDirectory + '\cmd.exe"';
         // Quote tempfile only if contains spaces, only if not quoted parameters may be quoted
@@ -10881,7 +10847,7 @@ begin
           Parameters := ' /C ' + tempfilename + ' ' + BatchParameter
         else
           Parameters := ' /C "' + tempfilename + '" ' + BatchParameter;
-       {$ENDIF WINDOWS}
+        {$ENDIF WINDOWS}
       end;
 
       commandline := FileName + ' ' + trim(Parameters);
@@ -10994,12 +10960,12 @@ begin
     {$IFDEF WINDOWS}
     if force64 then
     begin
-       {$IFDEF WIN32}
+      {$IFDEF WIN32}
       dummybool := DSiRevertWow64FsRedirection(
         oldDisableWow64FsRedirectionStatus);
       LogDatei.log('RevertWow64FsRedirection succeeded',
         LLinfo + logleveloffset);
-       {$ENDIF WIN32}
+      {$ENDIF WIN32}
     end;
     {$ENDIF WINDOWS}
   end;
@@ -11009,7 +10975,6 @@ end;
 function TuibInstScript.execPython(const Sektion: TWorkSection;
   PythonParameter: string; catchOut: boolean; logleveloffset: integer;
   WaitConditions: TSetWaitConditions; var output: TXStringList): TSectionResult;
-
 var
   ///commandline, filename, parameters,
   report: string = '';
@@ -11026,7 +10991,6 @@ var
 
   function pythonCall(const parameters: string; var outlines: TXStringList;
     showcmd: integer): boolean;
-
   begin
     Result := True;
     LogDatei.log('python ' + parameters, LLInfo + logleveloffset);
@@ -11155,7 +11119,6 @@ end;
 function TuibInstScript.produceExecLine(const s: string;
   var programfilename, programparas, passparas, winstoption: string;
   var InfoSyntaxError: string): boolean;
-
 var
   parts: TXStringList;
   remaining: string = '';
@@ -11166,7 +11129,6 @@ var
   continue: boolean;
   tmpRunAs: TRunAs;
   expr: string = '';
-
 begin
 
   Result := False;
@@ -11274,7 +11236,6 @@ end;
 function TuibInstScript.executeWith(const Sektion: TWorkSection;
   ExecParameter: string; catchOut: boolean; logleveloffset: integer;
   var output: TXStringList): TSectionResult;
-
 var
   commandline: string = '';
   programfilename: string = '';
@@ -11310,10 +11271,9 @@ var
   powershellend: string = '';
   DisableExecutionPolicyCommand: string;
   tmplist: TStringList;
-  AllSignedHack: boolean = false;
+  AllSignedHack: boolean = False;
   catcommand: string = 'cat ';
-  success: boolean = false;
-
+  success: boolean = False;
 begin
   try
     runAs := traInvoker;
@@ -11425,10 +11385,10 @@ begin
       end
       else if lowercase(trim(expr)) = LowerCase(ParameterRunElevated) then
       begin
-          {$IFDEF WIN32}
+        {$IFDEF WIN32}
         opsiSetupAdmin_runElevated := True;
         LogDatei.log('Found Parameter: /runelevated .', LLDebug);
-          {$ENDIF WIN32}
+        {$ENDIF WIN32}
         runAs := traInvoker;
       end;
     end;
@@ -11445,20 +11405,22 @@ begin
     //    (https://stackoverflow.com/questions/4391553/how-to-return-an-exit-code-from-a-powershell-script-only-when-run-non-interactiv)
     // powershell call looks like:
     //"powershell.exe" -NoProfile -Command "function Disable-ExecutionPolicy {($ctx = $executioncontext.gettype().getfield('_context','nonpublic,instance').getvalue( $executioncontext)).gettype().getfield('_authorizationManager','nonpublic,instance').setvalue($ctx, (new-object System.Management.Automation.AuthorizationManager 'Microsoft.PowerShell'))}; Disable-ExecutionPolicy; (c:\opsi.org\tmp\_opsiscript_42M8PZo5vd.ps1 | Out-String).TrimEnd(); exit $LASTEXITCODE;
-    if (pos('powershell.exe', LowerCase(programfilename)) > 0)
-      or (LowerCase(programfilename) = 'powershell')
-      or (pos('pwsh.exe', LowerCase(programfilename)) > 0)
-      or (LowerCase(programfilename) = 'pwsh') then
+    if (pos('powershell.exe', LowerCase(programfilename)) > 0) or
+      (LowerCase(programfilename) = 'powershell') or
+      (pos('pwsh.exe', LowerCase(programfilename)) > 0) or
+      (LowerCase(programfilename) = 'pwsh') then
     begin
       //Disable ExecutionPolicy by Swapping out the AuthorizationManager
-      DisableExecutionPolicyCommand := '"function Disable-ExecutionPolicy {'
-      + '($ctx = $executioncontext.gettype().getfield'
-      + '(''_context'',''nonpublic,instance'').getvalue( $executioncontext)).gettype().getfield'
-      + '(''_authorizationManager'',''nonpublic,instance'').setvalue'
-      + '($ctx, (new-object System.Management.Automation.AuthorizationManager ''Microsoft.PowerShell''))}; '
-      + 'Disable-ExecutionPolicy; ';
+      DisableExecutionPolicyCommand :=
+        '"function Disable-ExecutionPolicy {' +
+        '($ctx = $executioncontext.gettype().getfield' +
+        '(''_context'',''nonpublic,instance'').getvalue( $executioncontext)).gettype().getfield'
+        +
+        '(''_authorizationManager'',''nonpublic,instance'').setvalue' +
+        '($ctx, (new-object System.Management.Automation.AuthorizationManager ''Microsoft.PowerShell''))}; '
+        + 'Disable-ExecutionPolicy; ';
       //special construction for powershell
-      powershellstart := ' -Command ' + DisableExecutionPolicyCommand +'(';
+      powershellstart := ' -Command ' + DisableExecutionPolicyCommand + '(';
       powershellend := ' | Out-String).TrimEnd(); exit $LASTEXITCODE;';
       useext := '.ps1';
       if pos(' -file', LowerCase(programparas)) > 0 then
@@ -11520,8 +11482,8 @@ begin
         end;
       end;
 
-      LogDatei.log('Execute program: ' + programfilename + ' parameters: '  + programparas
-        + ' script arguments: ' + passparas, LLDebug2);
+      LogDatei.log('Execute program: ' + programfilename + ' parameters: ' +
+        programparas + ' script arguments: ' + passparas, LLDebug2);
       // if parameters end with '=' we concat tempfile without space
       if copy(programparas, length(programparas), 1) = '=' then
         commandline :=
@@ -11562,7 +11524,7 @@ begin
       if AutoActivityDisplay then
         FBatchOberflaeche.SetElementVisible(True, eActivityBar); //showActivityBar(True);
       // do not force on top while running external programs
-      FBatchOberflaeche.SetForceStayOnTop(false);
+      FBatchOberflaeche.SetForceStayOnTop(False);
       {$ENDIF GUI}
       if threaded then
       begin
@@ -11615,7 +11577,7 @@ begin
       begin
         // fix: avoid output with one empty element at powershell
         if (output.Count = 1) and (output[0] = '') and (useext = '.ps1') then
-         output.Delete(0);
+          output.Delete(0);
 
         if output.Count > 0 then
         begin
@@ -11628,11 +11590,11 @@ begin
             LogDatei.log(output.strings[i], LLDebug + logleveloffset);
           end;
 
-           LogDatei.log('', LLDebug + logleveloffset);
+          LogDatei.log('', LLDebug + logleveloffset);
         end
         else
-          if (use_sp and catchout) or not use_sp then
-            LogDatei.log('Shell command produce no or empty output', LLDebug2);
+        if (use_sp and catchout) or not use_sp then
+          LogDatei.log('Shell command produce no or empty output', LLDebug2);
       end;
 
       {$IFDEF WIN32}
@@ -11658,7 +11620,7 @@ begin
     {$IFDEF GUI}
     FBatchOberflaeche.SetElementVisible(False, eActivityBar);//showAcitvityBar(False);
     // force on top after running external programs
-    FBatchOberflaeche.SetForceStayOnTop(true);
+    FBatchOberflaeche.SetForceStayOnTop(True);
     {$ENDIF GUI}
   end;
 end;
@@ -11738,7 +11700,6 @@ function TuibInstScript.produceStringList
   (const section: TuibIniScript; const s0: string; var Remaining: string;
   var list: TXStringList; var InfoSyntaxError: string; var NestLevel: integer;
   const inDefFuncIndex: integer): boolean;
-
 var
   VarIndex: integer = 0;
   i: integer = 0;
@@ -11892,20 +11853,21 @@ begin
           begin
             syntaxCheck := True;
             if not testSyntax then
-              try
-                //LogDatei.log ('Executing0 ' + s1, LLInfo);
-                FreeAndNil(list); //free list before assign new TXStringlist object to variable
-                list := TXStringList(execShellCall(s1, 'sysnative', 1, True));
-              except
-                on e: Exception do
-                begin
+            try
+              //LogDatei.log ('Executing0 ' + s1, LLInfo);
+              FreeAndNil(list);
+              //free list before assign new TXStringlist object to variable
+              list := TXStringList(execShellCall(s1, 'sysnative', 1, True));
+            except
+              on e: Exception do
+              begin
 
-                  LogDatei.log('Error executing :' + s1 + ' : ' + e.message,
-                    LLError);
-                  FNumberOfErrors := FNumberOfErrors + 1;
+                LogDatei.log('Error executing :' + s1 + ' : ' + e.message,
+                  LLError);
+                FNumberOfErrors := FNumberOfErrors + 1;
 
-                end
-              end;
+              end
+            end;
           end;
     end
 
@@ -11917,7 +11879,8 @@ begin
         if not testSyntax then
         begin
           try
-            FreeAndNil(list); //free list before assign new TXStringlist object to variable
+            FreeAndNil(list);
+            //free list before assign new TXStringlist object to variable
             list := TXStringList(execPowershellCall(s1, s2, 1, True, False, s4));
           except
             on e: Exception do
@@ -11927,10 +11890,10 @@ begin
             end
           end;
         end;
-       {$ELSE WINDOWS}
+      {$ELSE WINDOWS}
       LogDatei.log('powershellcall is only implemented for Windows',
         LLError);
-       {$ENDIF WINDOWS}
+      {$ENDIF WINDOWS}
     end
 
 
@@ -12024,7 +11987,7 @@ begin
                 s1 := ExpandFileName(s1);
                 if FileExists(s1) then
                   list.loadFromUnicodeFile(s1, tmpbool, tmpstr)
-                  //TStringList(list).Assign(loadUnicodeTextFile(s1, tmpbool, tmpstr))
+                //TStringList(list).Assign(loadUnicodeTextFile(s1, tmpbool, tmpstr))
                 else
                 begin
                   LogDatei.log(
@@ -12245,8 +12208,8 @@ begin
 
                   if not (localKindOfStatement in
                     [tsDOSBatchFile, tsDOSInAnIcon, tsShellBatchFile,
-                    tsShellInAnIcon, tsShellScript, tsExecutePython, tsExecuteWith,
-                    tsExecuteWith_escapingStrings, tsWinBatch]) then
+                    tsShellInAnIcon, tsShellScript, tsExecutePython,
+                    tsExecuteWith, tsExecuteWith_escapingStrings, tsWinBatch]) then
                   begin
                     InfoSyntaxError := 'not implemented for this kind of section';
                   end
@@ -12436,8 +12399,8 @@ begin
             begin
               list.Clear;
               templist := parseUrl(s1);
-              list.text := templist.Text;
-              freeandnil(templist);
+              list.Text := templist.Text;
+              FreeAndNil(templist);
             end;
           end;
     end
@@ -12718,19 +12681,19 @@ begin
             begin
               list.Clear;
               for i := 0 to list1.Count - 1 do
-                try
-                  if AnsiContainsText(list1[i], s1) then
-                    list.add(list1[i]);
-                except
-                  on e: Exception do
-                  begin
+              try
+                if AnsiContainsText(list1[i], s1) then
+                  list.add(list1[i]);
+              except
+                on e: Exception do
+                begin
 
-                    LogDatei.log('Error on producing sublist: ' + e.message,
-                      LLerror);
-                    FNumberOfErrors := FNumberOfErrors + 1;
+                  LogDatei.log('Error on producing sublist: ' + e.message,
+                    LLerror);
+                  FNumberOfErrors := FNumberOfErrors + 1;
 
-                  end
-                end;
+                end
+              end;
             end;
           end;
         end;
@@ -12784,18 +12747,18 @@ begin
             begin
               list.Clear;
               for i := 0 to list1.Count - 1 do
-                try
-                  if not (LowerCase(list1[i]) = LowerCase(s1)) then
-                    list.add(list1[i]);
-                except
-                  on e: Exception do
-                  begin
+              try
+                if not (LowerCase(list1[i]) = LowerCase(s1)) then
+                  list.add(list1[i]);
+              except
+                on e: Exception do
+                begin
 
-                    LogDatei.log('Error on producing sublist: ' + e.message, LLerror);
-                    FNumberOfErrors := FNumberOfErrors + 1;
+                  LogDatei.log('Error on producing sublist: ' + e.message, LLerror);
+                  FNumberOfErrors := FNumberOfErrors + 1;
 
-                  end
-                end;
+                end
+              end;
             end;
           end;
           FreeAndNil(list1);
@@ -12845,10 +12808,10 @@ begin
                   while k < List.Count do
                   begin
                     if AnsiContainsText(List[k], List1[i]) then
-                      List.delete(k)
-                     //after deleting element k, k indexes the next element
+                      List.Delete(k)
+                    //after deleting element k, k indexes the next element
                     else
-                      inc(k); //to index the next element if nothing is deleted
+                      Inc(k); //to index the next element if nothing is deleted
                   end;
                 end;
               except
@@ -12884,7 +12847,7 @@ begin
             begin
               list.Clear;
               templist := getSubListByContainingRegex(s1, list1);
-              list.Text:=templist.Text;
+              list.Text := templist.Text;
               FreeAndNil(templist);
             end;
           end;
@@ -12904,7 +12867,7 @@ begin
               if not testSyntax then
               begin
                 templist := getSubListByContainingRegex(list2, list3);
-                list.Text:=templist.Text;
+                list.Text := templist.Text;
                 FreeAndNil(templist);
               end;
             end;
@@ -12930,7 +12893,7 @@ begin
             if not testSyntax then
             begin
               templist := getRegexMatchList(s1, list1);
-              list.Text:=templist.Text;
+              list.Text := templist.Text;
               FreeAndNil(templist);
             end;
           end;
@@ -12950,7 +12913,7 @@ begin
               if not testSyntax then
               begin
                 templist := getRegexMatchList(list2, list3);
-                list.Text:=templist.Text;
+                list.Text := templist.Text;
                 FreeAndNil(templist);
               end;
             end;
@@ -12975,7 +12938,7 @@ begin
           begin
             syntaxcheck := True;
             templist := removeFromListByContainingRegex(s1, list1);
-            list.Text:=templist.Text;
+            list.Text := templist.Text;
             FreeAndNil(templist);
           end;
           FreeAndNil(list1);
@@ -12992,7 +12955,7 @@ begin
             begin
               syntaxcheck := True;
               templist := removeFromListByContainingRegex(list2, list3);
-              list.Text:=templist.Text;
+              list.Text := templist.Text;
               FreeAndNil(templist);
             end;
             FreeAndNil(list3);
@@ -13231,7 +13194,7 @@ begin
                     if not testSyntax then
                     begin
                       templist := stringReplaceRegexInList(list1, s1, s2);
-                      list.Text:=templist.Text;
+                      list.Text := templist.Text;
                       FreeAndNil(templist);
                     end;
                   end;
@@ -13257,7 +13220,7 @@ begin
                   if Skip(',', r, r, InfoSyntaxError) then
                     if EvaluateString(r, r, s4, InfoSyntaxError) then
                     begin
-                         {$IFDEF WIN32}
+                      {$IFDEF WIN32}
                       if (lowercase(s4) = '64bit') or
                         (lowercase(s4) = 'sysnative') then
                       begin
@@ -13270,7 +13233,7 @@ begin
                           ' Valid values are "64bit" or "SysNative". Redirection to SysWOW64 is still enabled.',
                           LLInfo);
                       end;
-                         {$ENDIF WIN32}
+                      {$ENDIF WIN32}
                     end;
                   if Skip(')', r, r, InfoSyntaxError) then
                   begin
@@ -13281,7 +13244,7 @@ begin
                         try
                           FindAllFiles(list, s1, s2, StrToBool(s3));
                         finally
-                           {$IFDEF WIN32}
+                          {$IFDEF WIN32}
                           if (lowercase(s4) = '64bit') or
                             (lowercase(s4) = 'sysnative') then
                           begin
@@ -13289,7 +13252,7 @@ begin
                               oldDisableWow64FsRedirectionStatus);
                             LogDatei.Log('Revert redirection to SysWOW64', LLInfo);
                           end;
-                           {$ENDIF WIN32}
+                          {$ENDIF WIN32}
                         end;
                       except
                         on e: Exception do
@@ -13720,18 +13683,18 @@ begin
               adjustBounds(a1, a2, list1);
 
               for i := a1 to a2 do
-                try
-                  list.add(list1[i]);
-                except
-                  on e: Exception do
-                  begin
+              try
+                list.add(list1[i]);
+              except
+                on e: Exception do
+                begin
 
-                    LogDatei.log('Error on producing sublist: ' + e.message,
-                      LLWarning);
-                    FNumberOfWarnings := FNumberOfWarnings + 1;
+                  LogDatei.log('Error on producing sublist: ' + e.message,
+                    LLWarning);
+                  FNumberOfWarnings := FNumberOfWarnings + 1;
 
-                  end
-                end;
+                end
+              end;
             end;
           end;
           FreeAndNil(list1);
@@ -14025,7 +13988,7 @@ begin
               s1 := ExpandFileName(s1);
               try
                 templist := LoadTOMLFile(s1);
-                list.Text:=templist.Text;
+                list.Text := templist.Text;
                 FreeAndNil(templist);
               except
                 on e: Exception do
@@ -14051,7 +14014,7 @@ begin
             begin
               try
                 templist := GetTOMLAsStringList(s1);
-                list.Text:=templist.Text;
+                list.Text := templist.Text;
                 FreeAndNil(templist);
               except
                 on e: Exception do
@@ -14077,7 +14040,7 @@ begin
             begin
               try
                 templist := GetTOMLKeys(s1);
-                list.Text:=templist.Text;
+                list.Text := templist.Text;
                 FreeAndNil(templist);
               except
                 on e: Exception do
@@ -14103,7 +14066,7 @@ begin
             begin
               try
                 templist := GetTOMLTableNames(s1);
-                list.Text:=templist.Text;
+                list.Text := templist.Text;
                 FreeAndNil(templist);
               except
                 on e: Exception do
@@ -14131,7 +14094,7 @@ begin
                 begin
                   try
                     templist := GetTOMLTable(s1, s2);
-                    list.Text:=templist.Text;
+                    list.Text := templist.Text;
                     FreeAndNil(templist);
                   except
                     on e: Exception do
@@ -14160,10 +14123,10 @@ begin
             if not testSyntax then
             begin
               list.Clear;
-                {$IFDEF GUI}
+              {$IFDEF GUI}
               checkMapGUI(TStringList(list1), 2);
               list.AddStrings(list1);
-                {$ELSE GUI}
+              {$ELSE GUI}
               for i := 0 to list1.Count - 1 do
               begin
                 s1 := list1.Strings[i];
@@ -14173,7 +14136,7 @@ begin
                   Logdatei.log('Error editMap (noGUI) for: ' + s1, LLError);
                 list.Add(s2 + '=' + s3);
               end;
-                {$ENDIF GUI}
+              {$ENDIF GUI}
             end;
           end;
         list1.Free;
@@ -14218,7 +14181,7 @@ begin
       end;
     end
 
-   {$IFDEF WIN32}
+    {$IFDEF WIN32}
     else if LowerCase(s) = LowerCase('getIpMacMap')
     //does not work (do 15.6.2012)
     then
@@ -14228,12 +14191,12 @@ begin
         if not testSyntax then
         begin
           templist := getIpMacHash;
-          list.Text:=templist.Text;
+          list.Text := templist.Text;
           FreeAndNil(templist);
-        end
+        end;
       end;
     end
-   {$ENDIF WIN32}
+    {$ENDIF WIN32}
 
     else if LowerCase(s) = LowerCase('getLocaleInfo') then
     begin
@@ -14263,7 +14226,7 @@ begin
         syntaxcheck := True;
         if not testSyntax then
         begin
-        {$IFDEF WINDOWS}
+          {$IFDEF WINDOWS}
           list.add('language_id_2chars=' +
             copy(GetSystemDefaultLocale(LOCALE_SABBREVLANGNAME), 1, 2));
           list.add('language_id=' + GetSystemDefaultLocale(LOCALE_SABBREVLANGNAME));
@@ -14304,7 +14267,7 @@ begin
             getlangcodeByHexvalueStr('0x' + tmpstr), '-', '_'));
           list.add('system_default_lang_region=' +
             getlangcodeByHexvalueStr('0x' + tmpstr));
-        {$ENDIF WINDOWS}
+          {$ENDIF WINDOWS}
         end;
       end;
     end
@@ -14313,7 +14276,7 @@ begin
     else if LowerCase(s) = LowerCase('getMSVersionMap') then
     begin
       syntaxcheck := True;
-        {$IFDEF WINDOWS}
+      {$IFDEF WINDOWS}
       if not testSyntax then
       begin
         list.add('major_version=' + GetSystemOSVersionInfoEx('major_version'));
@@ -14363,27 +14326,27 @@ begin
           list.add('prodInfoText=' + getProductInfoStrByNum(tmpInt));
         end;
       end;
-       {$ELSE WINDOWS}
+      {$ELSE WINDOWS}
       LogDatei.log('getMSVersionMap is only implemented for Windows',
         LLError);
-       {$ENDIF WINDOWS}
+      {$ENDIF WINDOWS}
     end
 
 
     else if LowerCase(s) = LowerCase('getLinuxVersionMap') then
     begin
       syntaxcheck := True;
-        {$IFDEF LINUX}
+      {$IFDEF LINUX}
       if not testSyntax then
       begin
         templist := getLinuxVersionMap;
-        list.Text:= templist.Text;
+        list.Text := templist.Text;
         FreeAndNil(templist);
       end;
-        {$ELSE LINUX}
+      {$ELSE LINUX}
       LogDatei.log('getLinuxVersionMap is only implemented for Linux',
         LLError);
-        {$ENDIF LINUX}
+      {$ENDIF LINUX}
     end
 
 
@@ -14391,17 +14354,17 @@ begin
     else if LowerCase(s) = LowerCase('getMacosVersionMap') then
     begin
       syntaxcheck := True;
-        {$IFDEF DARWIN}
+      {$IFDEF DARWIN}
       if not testSyntax then
       begin
         templist := getMacosVersionMap;
-        list.Text:= templist.Text;
+        list.Text := templist.Text;
         FreeAndNil(templist);
       end;
-        {$ELSE DARWIN}
+      {$ELSE DARWIN}
       LogDatei.log('getMacosVersionMap is only implemented for macOS',
         LLError);
-        {$ENDIF DARWIN}
+      {$ENDIF DARWIN}
     end
 
 
@@ -14435,7 +14398,7 @@ begin
               end
               else
               begin
-             {$IFDEF WINDOWS}
+                {$IFDEF WINDOWS}
                 versionInfo := TVersionInfo.Create(s1);
 
                 for i := 0 to versionInfo.TranslationCount - 1 do
@@ -14499,11 +14462,11 @@ begin
 
 
                 versionInfo.Free;
-             {$ENDIF WINDOWS}
-             {$IFDEF UNIX}
+                {$ENDIF WINDOWS}
+                {$IFDEF UNIX}
              (*
              *)
-             {$ENDIF UNIX}
+                {$ENDIF UNIX}
               end;
             end;
           end;
@@ -14532,7 +14495,7 @@ begin
                 Wow64FsRedirectionDisabled := False;
                 LogDatei.log('Error: DisableWow64FsRedirection failed', LLError);
               end;
-             {$ENDIF WIN32}
+              {$ENDIF WIN32}
           (*
               if DSiDisableWow64FsRedirection(oldDisableWow64FsRedirectionStatus) then
               begin
@@ -14571,7 +14534,7 @@ begin
 
                 versionInfo.Free;
               end;
-                {$IFDEF WIN32}
+              {$IFDEF WIN32}
               if Wow64FsRedirectionDisabled then
               begin
                 boolresult :=
@@ -14579,10 +14542,11 @@ begin
                 Wow64FsRedirectionDisabled := False;
                 LogDatei.log('RevertWow64FsRedirection succeeded', LLinfo);
               end;
-                {$ENDIF}
+              {$ENDIF}
           (*
                 dummybool := DSiRevertWow64FsRedirection(oldDisableWow64FsRedirectionStatus);
                 LogDatei.log('RevertWow64FsRedirection succeeded', LLinfo);
+                *)
               (*
               end
               else
@@ -14592,10 +14556,10 @@ begin
               *)
 
             end;
-           {$ELSE WINDOWS}
+            {$ELSE WINDOWS}
             LogDatei.log('getFileInfoMap64 is only implemented for Windows',
               LLError);
-           {$ENDIF WINDOWS}
+            {$ENDIF WINDOWS}
           end;
     end
 
@@ -14614,7 +14578,7 @@ begin
               begin
                 LogDatei.log(
                   '  Starting getFileInfoMap (SysNative 64 Bit mode)...', LLInfo);
-                  {$IFDEF WIN32}
+                {$IFDEF WIN32}
                 Wow64FsRedirectionDisabled := False;
                 if DSiDisableWow64FsRedirection(
                   oldDisableWow64FsRedirectionStatus) then
@@ -14627,7 +14591,7 @@ begin
                   Wow64FsRedirectionDisabled := False;
                   LogDatei.log('Error: DisableWow64FsRedirection failed', LLError);
                 end;
-                 {$ENDIF WIN32}
+                {$ENDIF WIN32}
                  (*
                 if DSiDisableWow64FsRedirection(oldDisableWow64FsRedirectionStatus) then
                 begin
@@ -14666,7 +14630,7 @@ begin
 
                   versionInfo.Free;
                 end;
-                  {$IFDEF WIN32}
+                {$IFDEF WIN32}
                 if Wow64FsRedirectionDisabled then
                 begin
                   boolresult :=
@@ -14674,7 +14638,7 @@ begin
                   Wow64FsRedirectionDisabled := False;
                   LogDatei.log('RevertWow64FsRedirection succeeded', LLinfo);
                 end;
-                  {$ENDIF}
+                {$ENDIF}
                   (*
                   dummybool := DSiRevertWow64FsRedirection(oldDisableWow64FsRedirectionStatus);
                   LogDatei.log('RevertWow64FsRedirection succeeded', LLinfo);
@@ -14721,11 +14685,11 @@ begin
                 end;
               end;
             end;
-           {$ELSE WINDOWS}
+            {$ELSE WINDOWS}
             LogDatei.log(
               'getFileInfoMapSysnative is only implemented for Windows',
               LLError);
-           {$ENDIF WINDOWS}
+            {$ENDIF WINDOWS}
           end;
     end
 
@@ -14760,11 +14724,11 @@ begin
                     {$IFDEF WINDOWS}
                     if not testSyntax then
                       RunGetRegistryListOrMapFunction(s, s1, s2, list);
-                   {$ELSE WINDOWS}
+                    {$ELSE WINDOWS}
                     InfoSyntaxError := 'Only implemented for Winows';
                     LogDatei.log('Error: ' + s +
                       ' only implemented for Winows', LLError);
-                   {$ENDIF WINDOWS}
+                    {$ENDIF WINDOWS}
                   end
                   else
                   begin
@@ -14819,7 +14783,7 @@ begin
                 InfoSyntaxError := 'Only implemented for Winows';
                 LogDatei.log('Error: getSlowInfoMap only implemented for Winows',
                   LLError);
-               {$ENDIF WINDOWS}
+                {$ENDIF WINDOWS}
               end;
     end
 
@@ -14851,7 +14815,7 @@ begin
                     InfoSyntaxError := 'Only implemented for Windows';
                     LogDatei.log('getSwauditInfoList is only implemented for Windows',
                       LLError);
-                   {$ENDIF WINDOWS}
+                    {$ENDIF WINDOWS}
                   end;
     end
 
@@ -14969,7 +14933,6 @@ function TuibInstScript.EvaluateString
   (const s0: string; var Remaining: string; var StringResult: string;
   var InfoSyntaxError: string; var NestLevel: integer;
   const inDefFuncIndex: integer): boolean;
-
 var
   VarIndex: integer = 0;
   a1: integer = 0;
@@ -15003,10 +14966,10 @@ var
   i: integer = 0;
   ///m, n, rest : Integer;
   itemlist: TXStringList;
- {$IFDEF WINDOWS}
+  {$IFDEF WINDOWS}
   Regist: TuibRegistry;
   RegType: TuibRegDataType;
- {$ENDIF WINDOWS}
+  {$ENDIF WINDOWS}
   majorver: TuibNTVersion;
   minorver: DWORD = 0;
   ///programfilesdir, diffx86 : String;
@@ -15041,7 +15004,6 @@ var
   tmpstr, tmpstr1, tmpstr2, tmpstr3: string;
   tmpbool, tmpbool1: boolean;
   Strings: TStrings;
-
 begin
   try
     LogDatei.log_prog('EvaluateString: Parsing: ' + s0 + ' ', LLDebug);
@@ -15101,7 +15063,8 @@ begin
         begin
           Logdatei.log('Line: ' + {$INCLUDE %LINE%} + ', Exception(' +
             e.ClassName + ' system message: ' + E.Message +
-            ') in Evaluatestring (defined local function, getting FuncIndex, funcname: ' +
+            ') in Evaluatestring (defined local function, getting FuncIndex, funcname: '
+            +
             funcname + ', FuncIndex: ' + IntToStr(FuncIndex) +
             '), s0: ' + s0 + ', - giving up', LLCritical);
         end;
@@ -15234,7 +15197,7 @@ begin
 
     else if LowerCase(s) = LowerCase('GetNTVersion') then
     begin
-   {$IFDEF WINDOWS}
+      {$IFDEF WINDOWS}
       syntaxCheck := True;
       if not testSyntax then
       begin
@@ -15286,9 +15249,9 @@ begin
       if not testSyntax then
       begin
         StringResult := 'no_linux';
-      {$IFDEF UNIX}
+        {$IFDEF UNIX}
         StringResult := getLinuxDistroType;
-      {$ENDIF LINUX}
+        {$ENDIF LINUX}
       end;
     end
 
@@ -15357,7 +15320,7 @@ begin
           StringResult := 'Not an OS of type Windows NT'
         else
         begin
-        {$IFDEF WINDOWS}
+          {$IFDEF WINDOWS}
           OldNumberOfErrors := LogDatei.NumberOfErrors;
 
           majorVer := GetuibNTversion(ErrorInfo);
@@ -15378,7 +15341,7 @@ begin
 
           DiffNumberOfErrors := LogDatei.NumberOfErrors - OldNumberOfErrors;
           FNumberOfErrors := NumberOfErrors + DiffNumberOfErrors;
-        {$ENDIF WINDOWS}
+          {$ENDIF WINDOWS}
         end;
       end;
     end
@@ -15395,9 +15358,9 @@ begin
           StringResult := 'Not an OS of type macOS'
         else
         begin
-        {$IFDEF DARWIN}
+          {$IFDEF DARWIN}
           StringResult := GetMacosVersionInfo;
-        {$ENDIF DARWIN}
+          {$ENDIF DARWIN}
         end;
       end;
     end
@@ -15576,10 +15539,10 @@ begin
             syntaxCheck := True;
             if not testSyntax then
             begin
-           {$IFDEF WIN64}
+              {$IFDEF WIN64}
               StringResult := '';
               Logdatei.log('Error: Not implemented for winst64', LLerror);
-           {$ELSE}
+              {$ELSE}
               if isip(s1) then
                 StringResult := getMyIpByTarget(s1)
               else
@@ -15588,7 +15551,7 @@ begin
                 Logdatei.log('Error: ' + s1 +
                   ' is not a valid IPv4 Address', LLerror);
               end;
-           {$ENDIF}
+              {$ENDIF}
             end;
           end;
     end
@@ -15611,7 +15574,7 @@ begin
                   StringResult := s2
                 else
                 begin
-           {$IFDEF LINUX}
+                  {$IFDEF LINUX}
                   //StringResult :=  getCommandResult('resolveip -s '+s1);
                   StringResult := getCommandResult('getent hosts ' + s1);
                   stringsplitByWhiteSpace(StringResult, slist);
@@ -15625,14 +15588,14 @@ begin
                     StringResult := '';
                   end;
 
-           {$ENDIF LINUX}
-           {$IFDEF DARWIN}
+                  {$ENDIF LINUX}
+                  {$IFDEF DARWIN}
                   StringResult := getCommandResult('dig +short -x  ' + s1);
-           {$ENDIF LINUX}
-           {$IFDEF WINDOWS}
+                  {$ENDIF LINUX}
+                  {$IFDEF WINDOWS}
                   StringResult := '';
                   Logdatei.log('Error: ' + s3, LLerror);
-           {$ENDIF WINDOWS}
+                  {$ENDIF WINDOWS}
                 end;
               end;
             end;
@@ -16554,13 +16517,13 @@ begin
                   ' is no valid file', LLError);
               end
               else
-                try
-                  StringResult :=
-                    Copy(lowerCase(md5fromFile(ExpandFileName(s1))), 0, 32);
-                except
-                  LogDatei.log('Error: Exception at md5sumFromFile: ' +
-                    ExpandFileName(s1), LLError)
-                end;
+              try
+                StringResult :=
+                  Copy(lowerCase(md5fromFile(ExpandFileName(s1))), 0, 32);
+              except
+                LogDatei.log('Error: Exception at md5sumFromFile: ' +
+                  ExpandFileName(s1), LLError)
+              end;
             end;
           end;
     end
@@ -16580,11 +16543,11 @@ begin
                   LogDatei.log('Error: HashFromFile: ' + s1 +
                     ' is no valid file', LLError)
                 else
-                  try
-                    StringResult := HashFromFile(s1, s2);
-                  except
-                    LogDatei.log('Error: Exception at HashFromFile: ' + s1, LLError)
-                  end;
+                try
+                  StringResult := HashFromFile(s1, s2);
+                except
+                  LogDatei.log('Error: Exception at HashFromFile: ' + s1, LLError)
+                end;
               end;
     end
 
@@ -16620,7 +16583,7 @@ begin
     begin
       parsePowershellCall(s1, s2, s3, s4, r, syntaxCheck, InfoSyntaxError, tmpbool);
       if syntaxCheck then
-      {$IFDEF WINDOWS}
+        {$IFDEF WINDOWS}
         if not testSyntax then
         begin
           try
@@ -16643,10 +16606,10 @@ begin
             end;
           end;
         end;
-        {$ELSE WINDOWS}
+      {$ELSE WINDOWS}
       LogDatei.log('powershellcall is only implemented for Windows',
         LLError);
-        {$ENDIF WINDOWS}
+      {$ENDIF WINDOWS}
     end
 
 
@@ -16859,7 +16822,7 @@ begin
 
     else if LowerCase(s) = LowerCase('GetShortWinPathName') then
     begin
-  {$IFDEF WINDOWS}
+      {$IFDEF WINDOWS}
       if Skip('(', r, r, InfoSyntaxError) then
         if EvaluateString(r, r, s1, InfoSyntaxError) then
           if Skip(')', r, r, InfoSyntaxError) then
@@ -16868,10 +16831,10 @@ begin
             if not testSyntax then
               StringResult := GetShortWinPathName(s1);
           end;
-  {$ELSE WINDOWS}
+      {$ELSE WINDOWS}
       StringResult := '';
       LogDatei.log('Error: GetShortWinPathName only impemented for Windows.', LLerror);
-  {$ENDIF WINDOWS}
+      {$ENDIF WINDOWS}
     end
 
     else if LowerCase(s) = LowerCase('Convert2JsonStr') then
@@ -17493,11 +17456,14 @@ begin
       if Skip('(', r, r, InfoSyntaxError) then
         if EvaluateString(r, r, s, InfoSyntaxError) then // s = title
           if Skip(',', r, r, InfoSyntaxError) then
-            if produceStringList(script, r, r, list1, InfoSyntaxError) then // list1 = message list
+            if produceStringList(script, r, r, list1, InfoSyntaxError) then
+              // list1 = message list
               if Skip(',', r, r, InfoSyntaxError) then
-                if produceStringList(script, r, r, itemlist, InfoSyntaxError) then // itemlist = button list
+                if produceStringList(script, r, r, itemlist, InfoSyntaxError) then
+                  // itemlist = button list
                   if Skip(',', r, r, InfoSyntaxError) then
-                    if EvaluateString(r, r, s1, InfoSyntaxError) then // s1 = timeout message
+                    if EvaluateString(r, r, s1, InfoSyntaxError) then
+                      // s1 = timeout message
                       if Skip(',', r, r, InfoSyntaxError) then
                         if EvaluateString(r, r, s2, InfoSyntaxError) then // s2 = timeout
                           if Skip(')', r, r, InfoSyntaxError) then
@@ -18313,7 +18279,7 @@ begin
       end;
       if syntaxCheck then
       begin
-         {$IFDEF WINDOWS}
+        {$IFDEF WINDOWS}
         if not testSyntax then
         begin
           GetWord(s1, key0, key, ['\']);
@@ -18577,14 +18543,14 @@ begin
           testresult := '!!! no opsidata !!!';
         end
         else
-          try
-            local_opsidata := opsidata;
+        try
+          local_opsidata := opsidata;
 
-            //LogDatei.log('Calling opsi service at ' + local_opsidata.serviceUrl, LLinfo);
-          except
-            errorOccured := True;
-            testresult := '!!! not in service mode !!!';
-          end;
+          //LogDatei.log('Calling opsi service at ' + local_opsidata.serviceUrl, LLinfo);
+        except
+          errorOccured := True;
+          testresult := '!!! not in service mode !!!';
+        end;
 
 
         if errorOccured then
@@ -18613,14 +18579,14 @@ begin
           testresult := '!!! no opsidata !!!';
         end
         else
-          try
-            local_opsidata := opsidata;
+        try
+          local_opsidata := opsidata;
 
-            //LogDatei.log('Calling opsi service at ' + local_opsidata.serviceUrl, LLinfo);
-          except
-            errorOccured := True;
-            testresult := '!!! not in service mode !!!';
-          end;
+          //LogDatei.log('Calling opsi service at ' + local_opsidata.serviceUrl, LLinfo);
+        except
+          errorOccured := True;
+          testresult := '!!! not in service mode !!!';
+        end;
 
         if errorOccured then
           stringresult := testresult
@@ -18688,15 +18654,15 @@ begin
             testresult := '!!! no opsidata !!!';
           end
           else
-            try
-              local_opsidata := opsidata;
+          try
+            local_opsidata := opsidata;
 
-              LogDatei.log_prog('Calling opsi service at ' +
-                local_opsidata.serviceUrl, LLDebug);
-            except
-              errorOccured := True;
-              testresult := '!!! not in service mode !!!';
-            end;
+            LogDatei.log_prog('Calling opsi service at ' +
+              local_opsidata.serviceUrl, LLDebug);
+          except
+            errorOccured := True;
+            testresult := '!!! not in service mode !!!';
+          end;
 
           if not errorOccured then
           begin
@@ -18773,15 +18739,15 @@ begin
             testresult := '!!! no opsidata !!!';
           end
           else
-            try
-              local_opsidata := opsidata;
+          try
+            local_opsidata := opsidata;
 
-              LogDatei.log_prog('Calling opsi service at ' +
-                local_opsidata.serviceUrl, LLDebug);
-            except
-              errorOccured := True;
-              testresult := '!!! not in service mode !!!';
-            end;
+            LogDatei.log_prog('Calling opsi service at ' +
+              local_opsidata.serviceUrl, LLDebug);
+          except
+            errorOccured := True;
+            testresult := '!!! not in service mode !!!';
+          end;
 
           if not errorOccured then
           begin
@@ -18844,7 +18810,6 @@ procedure TuibInstScript.GetWordOrStringExpressionstr(const s: string;
 { nur fuer AktionenSektion-Syntax 0 }
 var
   s0: string = '';
-
 begin
   Resultstring := '';
   s0 := s;
@@ -18859,7 +18824,6 @@ procedure TuibInstScript.GetWordOrStringExpressionstr(const s: string;
 var
   s0: string = '';
   errorinfo: string = '';
-
 begin
   Resultstring := '';
   s0 := s;
@@ -18871,12 +18835,10 @@ end;
 function TuibInstScript.SkipWordOrStringExpressionstr(const partialS, S: string;
   var Remaining: string; var Error: string): boolean;
   { like skip but handles also string expressions }
-
 var
   orgstring: string = '';
   resultString: string = '';
   errorinfo: string = '';
-
 begin
   Result := False;
   orgstring := S;
@@ -18901,7 +18863,6 @@ end;
 
 function TuibInstScript.doXMLAddNamespace(filename: string;
   const elementname: string; const namespace: string): boolean;
-
 var
   list: TStringList;
   s1, s2, s3, s4: string;
@@ -19047,14 +19008,14 @@ var
   funcname: string;
   funcindex: integer;
 
-  {$IFDEF WINDOWS}
-  // function for FileExists32
+{$IFDEF WINDOWS}
+// function for FileExists32
   function handleFileExists32(s1: string): boolean;
   begin
     //s2 := TrimAndExpandFilename(s1);
     // call the osfunc.expandfilname to handle quotes
     s2 := Trim(ExpandFilename(s1));
-    LogDatei.log('  Starting query if file '+s2+' exists ...', LLInfo);
+    LogDatei.log('  Starting query if file ' + s2 + ' exists ...', LLInfo);
     OldWinapiErrorMode := SetErrorMode(SEM_FAILCRITICALERRORS);
     try
       try
@@ -19074,14 +19035,14 @@ var
     end;
   end;
 
-   {$IFDEF WIN32}
+  {$IFDEF WIN32}
   // function for FileExists64
   function handleFileExists64(s1: string): boolean;
   begin
     //s2 := TrimAndExpandFilename(s1);
     // call the osfunc.expandfilname to handle quotes
     s2 := Trim(ExpandFilename(s1));
-    LogDatei.log('  Starting query if file '+s2+' exists (64 Bit mode)...', LLInfo);
+    LogDatei.log('  Starting query if file ' + s2 + ' exists (64 Bit mode)...', LLInfo);
     try
       if DSiDisableWow64FsRedirection(oldDisableWow64FsRedirectionStatus) then
       begin
@@ -19119,9 +19080,8 @@ var
     end;
   end;
 
- {$ENDIF WIN32}
- {$ENDIF WINDOWS}
-
+  {$ENDIF WIN32}
+  {$ENDIF WINDOWS}
 begin
   syntaxCheck := False;
   InfoSyntaxError := '';
@@ -19242,11 +19202,11 @@ begin
           begin
             {$IFDEF WINDOWS}
             BooleanResult := handleFileExists32(s1);
-           {$ELSE WINDOWS}
+            {$ELSE WINDOWS}
             //s2 := TrimAndExpandFilename(s1);
             // call the osfunc.expandfilname to handle quotes
             s2 := Trim(ExpandFilename(s1));
-            LogDatei.log('Starting query if file '+s2+' exists ...', LLInfo);
+            LogDatei.log('Starting query if file ' + s2 + ' exists ...', LLInfo);
             BooleanResult := FileExists(s2) or DirectoryExists(s2);
             if (not BooleanResult) and (not (trim(s2) = '')) then
             begin
@@ -19256,7 +19216,7 @@ begin
               if (0 = FLastPrivateExitCode) then
                 BooleanResult := True;
             end;
-           {$ENDIF WINDOWS}
+            {$ENDIF WINDOWS}
             if not BooleanResult then
             begin
               RunTimeInfo := 'Not found: "' + s1 + '": ' + RunTimeInfo;
@@ -19277,7 +19237,7 @@ begin
         if Skip(',', tmpstr, tmpstr1, tmpstr3) then
           EvaluateString(tmpstr1, tmpstr2, s2, tmpstr3);
 
-            {$IFDEF WIN32}
+    {$IFDEF WIN32}
     if s2 = '' then
     begin
       // with 1 parameter
@@ -19327,7 +19287,7 @@ begin
         end;
       end;
     end;
-            {$ELSE WIN32}
+    {$ELSE WIN32}
     if s2 <> '' then
     begin
       Logdatei.log('Error: Second parameter is ignored in non Win32 bit opsi-script ',
@@ -19357,7 +19317,7 @@ begin
         end;
       end;
     end;
-            {$ENDIF WIN32}
+    {$ENDIF WIN32}
   end
 
   else if Skip('DirectoryExists', Input, r, sx) then
@@ -19410,8 +19370,8 @@ begin
       if not testSyntax then
       begin
         tmpstr := TrimAndExpandFilename(s1);
-        LogDatei.log('Starting query if directory '+tmpstr+' exists ...', LLInfo);
-      {$IFDEF WIN32}
+        LogDatei.log('Starting query if directory ' + tmpstr + ' exists ...', LLInfo);
+        {$IFDEF WIN32}
         try
           tmpbool1 := True;
           if Is64BitSystem and tmpbool then
@@ -19459,10 +19419,10 @@ begin
             LogDatei.log('Error: ' + ex.message, LLError);
           end;
         end;
-      {$ENDIF WINDOWS}
-      {$IFDEF UNIX}
+        {$ENDIF WINDOWS}
+        {$IFDEF UNIX}
         BooleanResult := DirectoryExists(tmpstr);
-      {$ENDIF UNIX}
+        {$ENDIF UNIX}
       end;
       //syntaxCheck := True;
     end;
@@ -19487,7 +19447,6 @@ begin
                   {$IFDEF WINDOWS}
                   if not testSyntax then
                   begin
-
 
                     LogDatei.log(' Adding NameSpace (if not existing) "' +
                       s3 + '" for element "' + s2 + '" in file "' +
@@ -19615,7 +19574,6 @@ begin
                   end;
                 end;
 
-
               end;
             end;
   end
@@ -19650,7 +19608,6 @@ begin
                   end;
                 end;
 
-
               end;
             end;
   end
@@ -19684,7 +19641,6 @@ begin
                     LogDatei.log('Error: ' + ex.message, LLError);
                   end;
                 end;
-
 
               end;
             end;
@@ -19756,7 +19712,7 @@ begin
             if Skip(')', r, r, InfoSyntaxError) then
             begin
               syntaxCheck := True;
-     {$IFDEF UNIX}
+              {$IFDEF UNIX}
               BooleanResult := False;
               if not testSyntax then
               begin
@@ -19774,12 +19730,12 @@ begin
                   end;
                 end;
               end;
-     {$ELSE LINUX}
+              {$ELSE LINUX}
               LogDatei.log(
                 'Error waitForPackageLock: not implemented for Windows; result=true: ',
                 LLError);
               BooleanResult := True;
-     {$ENDIF LINUX}
+              {$ENDIF LINUX}
             end;
   end
 
@@ -20730,21 +20686,21 @@ begin
 
 
                 if j = 0 then
-                  try
-                    requiredbytes := strtoint64(s2);
-                  except
-                    RunTimeInfo := '"' + s2 + '" is not a valid number"';
-                    noRuntimError := False;
-                  end
+                try
+                  requiredbytes := strtoint64(s2);
+                except
+                  RunTimeInfo := '"' + s2 + '" is not a valid number"';
+                  noRuntimError := False;
+                end
                 else
-                  try
-                    sx := cutRightBlanks(copy(s2, 1, j - 1));
-                    requiredbytes := strtoint64(sx);
-                    requiredbytes := requiredbytes * einheit;
-                  except
-                    RunTimeInfo := '"' + s2 + '" is not a valid number"';
-                    noRuntimError := False;
-                  end;
+                try
+                  sx := cutRightBlanks(copy(s2, 1, j - 1));
+                  requiredbytes := strtoint64(sx);
+                  requiredbytes := requiredbytes * einheit;
+                except
+                  RunTimeInfo := '"' + s2 + '" is not a valid number"';
+                  noRuntimError := False;
+                end;
 
                 {$IFDEF WINDOWS}
                 if syntaxCheck and noRuntimError then
@@ -20775,12 +20731,13 @@ begin
                   else if (UpperCase(s1) = '%SYSTEMDRIVE%') then
                   begin
                     //  %SYSTEMDRIVE% is windows only - use Fallback
-                    LogDatei.log(s1+' is only aviable at Windows - fallback to root dir: "/"', LLwarning);
+                    LogDatei.log(
+                      s1 + ' is only aviable at Windows - fallback to root dir: "/"', LLwarning);
                     // set s1 to actual root dir for use and further messages
                     s1 := '/';
                     drivenumber := adddisk(s1);
                   end
-                  else if DirectoryExists(s1)  then
+                  else if DirectoryExists(s1) then
                     drivenumber := adddisk(s1)
                   else
                   begin
@@ -20803,7 +20760,8 @@ begin
                 begin
                   BooleanResult := (freebytes >= requiredBytes);
                   RunTimeInfo :=
-                    'Free on Disk / Directory "' + s1 + '" : ' + formatInt(freebytes) + ' bytes';
+                    'Free on Disk / Directory "' + s1 + '" : ' +
+                    formatInt(freebytes) + ' bytes';
                   if BooleanResult then
                     RunTimeInfo := RunTimeInfo + '  This is more '
                   else
@@ -20818,7 +20776,6 @@ begin
                   LogDatei.log(RunTimeInfo, LLInfo)
                 else
                   LogDatei.log(RunTimeInfo, LLError);
-
 
               end;
             end;
@@ -21238,14 +21195,12 @@ var
 
 
   function netErrorMessage(errorcode: integer): string;
-
   var
     pErrorBuff, pNameBuff: PChar;
     nErrorBuffSize: DWord = 0;
     nNamebuffSize: DWord = 0;
     Error: string = '';
     Name: string = '';
-
   begin
 
     case errorcode of
@@ -21643,10 +21598,11 @@ begin
   end;
 end;
 
-function TuibInstScript.GetPowershellExecutionPolicy(Scope:string='EffectiveExecutionPolicy'): string;
-//Possible (Microsoft) Scopes: MachinePolicy, UserPolicy, Process, CurrentUser, LocalMachine
-//see https:/go.microsoft.com/fwlink/?LinkID=135170
-//If Scope is 'EffectiveExecutionPolicy' no Scope is set and the effective execution policy is given back
+function TuibInstScript.GetPowershellExecutionPolicy(
+  Scope: string = 'EffectiveExecutionPolicy'): string;
+  //Possible (Microsoft) Scopes: MachinePolicy, UserPolicy, Process, CurrentUser, LocalMachine
+  //see https:/go.microsoft.com/fwlink/?LinkID=135170
+  //If Scope is 'EffectiveExecutionPolicy' no Scope is set and the effective execution policy is given back
 var
   ExecutionPolicy: string;
   Output: TXStringList;
@@ -21658,34 +21614,35 @@ begin
   if LowerCase(Scope) = LowerCase('EffectiveExecutionPolicy') then
     Command := 'powershell.exe "Get-ExecutionPolicy"'
   else
-    Command := 'powershell.exe "Get-ExecutionPolicy -Scope ' + Scope +'"';
+    Command := 'powershell.exe "Get-ExecutionPolicy -Scope ' + Scope + '"';
   try
-    if RunCommandAndCaptureOut(Command , True, Output, Report, SW_HIDE, FLastExitCodeOfExe) then
+    if RunCommandAndCaptureOut(Command, True, Output, Report, SW_HIDE,
+      FLastExitCodeOfExe) then
     begin
       ExecutionPolicy := Trim(Output.Text);
-      LogDatei.log('Get execution policy for scope "'+Scope+'": ' +
+      LogDatei.log('Get execution policy for scope "' + Scope + '": ' +
         ExecutionPolicy, LLDebug);
     end
     else
     begin
-      LogDatei.log('Could not get execution policy for scope "'+Scope+'": ' +
+      LogDatei.log('Could not get execution policy for scope "' + Scope + '": ' +
         ExecutionPolicy, LLWarning);
     end;
   finally
     if Assigned(Output) then FreeAndNil(Output);
-    Result:= ExecutionPolicy;
+    Result := ExecutionPolicy;
   end;
 end;
 
 
 function TuibInstScript.IsPowershellExecutionPolicyRestricted: boolean;
-//checks if there are any restrictions(AllSigned, Restricted) running powershell scripts
-//see https:/go.microsoft.com/fwlink/?LinkID=135170
+  //checks if there are any restrictions(AllSigned, Restricted) running powershell scripts
+  //see https:/go.microsoft.com/fwlink/?LinkID=135170
 var
   AllSignedHack: boolean;
   ExecutionPolicy: string;
 begin
-  AllSignedHack := true;
+  AllSignedHack := True;
   try
     ExecutionPolicy := GetPowershellExecutionPolicy('MachinePolicy');
     if (LowerCase(ExecutionPolicy) = LowerCase('Undefined')) then
@@ -21696,14 +21653,14 @@ begin
     begin
       allSignedHack := True;
       //useStdIn := True;
-      LogDatei.log('Powershell with ' + ExecutionPolicy + ' detected - switching '
-        +'to Get-Content Mode',
+      LogDatei.log('Powershell with ' + ExecutionPolicy +
+        ' detected - switching ' + 'to Get-Content Mode',
         LLinfo);
     end
     else
-      AllSignedHack := false;
+      AllSignedHack := False;
   finally
-    Result:=AllSignedHack;
+    Result := AllSignedHack;
   end;
 end;
 
@@ -21715,14 +21672,14 @@ var
 begin
   powershellpara := ' -Command ';
   if trim(passparas) <> '' then
-     LogDatei.log('Powershell with AllSigned/Restricted: ignored passparas: ' +
-       passparas, LLinfo);
+    LogDatei.log('Powershell with AllSigned/Restricted: ignored passparas: ' +
+      passparas, LLinfo);
   //commandline := 'cmd.exe /C ' + catcommand + tempfilename +
   //  ' | ' + '"' + programfilename + '" ' + programparas + ' ' + powershellpara;
-  commandline := '"' + programfilename + '" ' + programparas +
-    ' ' + powershellpara + '"Get-Content -Path ' + tempfilename +
+  commandline := '"' + programfilename + '" ' + programparas + ' ' +
+    powershellpara + '"Get-Content -Path ' + tempfilename +
     ' | Out-String | Invoke-Expression" ';
-  Result:=commandline;
+  Result := commandline;
 end;
 
 procedure TuibInstScript.SetVariableWithErrors(const Sektion: TWorkSection;
@@ -21775,15 +21732,16 @@ begin
       LogDatei.log(
         'Syntax Error: Double variable definition. Please correct this error as soon as possible '
         + 'since it will be turned into a fatal syntax error in one of the next opsi-script versions! Section: '
-        + Sektion.Name + ' (Command in line ' + IntToStr(Sektion.StartLineNo +
-        linecounter) + '): ' + VariableName + ' -> ' + 'name is already in use', LLError);
+        + Sektion.Name + ' (Command in line ' +
+        IntToStr(Sektion.StartLineNo + linecounter) + '): ' +
+        VariableName + ' -> ' + 'name is already in use', LLError);
       Inc(FNumberOfErrors);
     end;
   end;
 end;
 
-function TuibInstScript.SkipCommentAtLineEnd(Remaining: string; Sektion: TWorkSection;
-  linecounter: integer): integer;
+function TuibInstScript.SkipCommentAtLineEnd(Remaining: string;
+  Sektion: TWorkSection; linecounter: integer): integer;
 begin
   // allow only spaces or a comment at line end but nothing else
   Remaining := Trim(Remaining);
@@ -21949,8 +21907,7 @@ var
     begin
 
       if skip(Parameter_AllNTUserDats, Remaining, Remaining, ErrorInfo) or
-         skip(Parameter_AllUserProfiles, Remaining, Remaining, ErrorInfo)
-      then
+        skip(Parameter_AllUserProfiles, Remaining, Remaining, ErrorInfo) then
         flag_all_ntuser := True
 
       else if skip(Parameter_AllUsrClassDats, Remaining, Remaining, ErrorInfo) then
@@ -22127,7 +22084,6 @@ var
 
 {$ENDIF WINDOWS}
 *)
-
 begin
   logdatei.log_prog('Starting doAktionen: ', LLDebug2);
   Script.FLastSection := Script.FActiveSection;
@@ -22140,7 +22096,7 @@ begin
   conditions[ActLevel] := True;
 
   StartIndentLevel := LogDatei.LogSIndentLevel;
-  //
+
 
   //FBatchOberflaeche.setPicture (3, '', '');
 
@@ -22343,7 +22299,7 @@ begin
             doLogEntries(PStatNames^ [tsSwitchCaseClose], LLinfo);
             if ValidCase then
 
-            InSwitch := True;
+              InSwitch := True;
             InCase := False;
             ValidCase := False;
           end;
@@ -23058,21 +23014,21 @@ begin
                         Remaining, Expressionstr, InfoSyntaxError) then
                         syntaxCheck := False
                       else
-                        try
-                          loopstop := StrToInt(Expressionstr);
-                        except
+                      try
+                        loopstop := StrToInt(Expressionstr);
+                      except
                           (*
                           syntaxCheck := False;
                           InfoSyntaxError :=
                             'for - to loop: stopvalue: ' + Expressionstr +
                             'is no valid integer';
                             *)
-                          loopstop := 0;
-                          LogDatei.log(
-                            'for - to loop: stopvalue: ' + Expressionstr +
-                            'is no valid integer - setting to zero',
-                            LLerror);
-                        end;
+                        loopstop := 0;
+                        LogDatei.log(
+                          'for - to loop: stopvalue: ' + Expressionstr +
+                          'is no valid integer - setting to zero',
+                          LLerror);
+                      end;
                     end;
                   end;
                   if syntaxCheck then
@@ -23288,7 +23244,7 @@ begin
                         fullincfilename := testincfilename;
                       end;
                     end;
-                        {$IFDEF WINDOWS}
+                    {$IFDEF WINDOWS}
                     if (not found) then
                     begin
                       // search in %opsiScriptHelperPath%\lib
@@ -23303,7 +23259,7 @@ begin
                         fullincfilename := testincfilename;
                       end;
                     end;
-                        {$ENDIF WINDOWS}
+                    {$ENDIF WINDOWS}
                     if (not found) then
                     begin
                       // search in %ScriptDrive%\lib  aka %ScriptPath%/../lib
@@ -23320,13 +23276,13 @@ begin
                     end;
                     if (not found) then
                     begin
-                          {$IFDEF WINDOWS}
+                      {$IFDEF WINDOWS}
                       // search in %OpsiscriptDir%\lib
                       testincfilename :=
                         ExtractFileDir(reencode(ParamStr(0),
                         'system')) + PathDelim + 'lib' + PathDelim + incfilename;
-                          {$ENDIF WINDOWS}
-                          {$IFDEF LINUX}
+                      {$ENDIF WINDOWS}
+                      {$IFDEF LINUX}
                       // search in %OpsiscriptDir%\lib
                       testincfilename :=
                         ExtractFileDir(reencode(ParamStr(0),
@@ -23345,8 +23301,8 @@ begin
                           '/usr/share/opsi-script' +
                           PathDelim + 'lib' + PathDelim + incfilename;
                       end;
-                          {$ENDIF LINUX}
-                          {$IFDEF DARWIN}
+                      {$ENDIF LINUX}
+                      {$IFDEF DARWIN}
                       // search in %OpsiscriptDir%../Resources/lib
                       testincfilename :=
                         ExtractFileDir(reencode(ParamStr(0),
@@ -23366,7 +23322,7 @@ begin
                           '/usr/local/share/opsi-script' +
                           PathDelim + 'lib' + PathDelim + incfilename;
                       end;
-                            {$ENDIF DARWIN}
+                      {$ENDIF DARWIN}
                     end;
                     if (not found) then
                     begin
@@ -23647,7 +23603,7 @@ begin
                         fullincfilename := testincfilename;
                       end;
                     end;
-                        {$IFDEF WINDOWS}
+                    {$IFDEF WINDOWS}
                     if (not found) then
                     begin
                       // search in %opsiScriptHelperPath%\lib
@@ -23662,7 +23618,7 @@ begin
                         fullincfilename := testincfilename;
                       end;
                     end;
-                        {$ENDIF WINDOWS}
+                    {$ENDIF WINDOWS}
                     if (not found) then
                     begin
                       // search in %ScriptDrive%\lib  aka %ScriptPath%/../lib
@@ -23677,7 +23633,7 @@ begin
                         fullincfilename := testincfilename;
                       end;
                     end;
-                        {$IFDEF WINDOWS}
+                    {$IFDEF WINDOWS}
                     if (not found) then
                     begin
                       // search in %WinstDir%\lib
@@ -23692,7 +23648,7 @@ begin
                         fullincfilename := testincfilename;
                       end;
                     end;
-                        {$ENDIF WINDOWS}
+                    {$ENDIF WINDOWS}
                     if found then
                     begin
                       LogDatei.log('Found File: ' + fullincfilename, LLDebug2);
@@ -23869,7 +23825,7 @@ begin
                         fullincfilename := testincfilename;
                       end;
                     end;
-                        {$IFDEF WINDOWS}
+                    {$IFDEF WINDOWS}
                     if (not found) then
                     begin
                       // search in %opsiScriptHelperPath%\lib
@@ -23883,7 +23839,7 @@ begin
                         fullincfilename := testincfilename;
                       end;
                     end;
-                        {$ENDIF WINDOWS}
+                    {$ENDIF WINDOWS}
                     if (not found) then
                     begin
                       // search in %ScriptDrive%\lib  aka %ScriptPath%/../lib
@@ -23898,7 +23854,7 @@ begin
                         fullincfilename := testincfilename;
                       end;
                     end;
-                        {$IFDEF WINDOWS}
+                    {$IFDEF WINDOWS}
                     if (not found) then
                     begin
                       // search in %WinstDir%\lib
@@ -23913,7 +23869,7 @@ begin
                         fullincfilename := testincfilename;
                       end;
                     end;
-                        {$ENDIF WINDOWS}
+                    {$ENDIF WINDOWS}
                     if found then
                     begin
                       LogDatei.log('Found File: ' + fullincfilename, LLDebug2);
@@ -24134,7 +24090,8 @@ begin
                   posSlash := pos('/', Remaining);
                   if posSlash > 0 then
                   begin
-                    LogDatei.log('Using "/" to give the position of a bitmap is Windows only and depricated',LLwarning);
+                    LogDatei.log(
+                      'Using "/" to give the position of a bitmap is Windows only and depricated', LLwarning);
                     if (length(Remaining) >= posSlash + 1) and
                       (Remaining[posSlash + 1] in ['1'..'9']) then
                     begin
@@ -24162,18 +24119,18 @@ begin
                     end;
                   end
                   else;
-                       {$IFDEF GUI}
+                  {$IFDEF GUI}
                   imageNo := centralImageNo;
-                       {$ENDIF GUI}
+                  {$ENDIF GUI}
                 end
                 else
                 begin
                   // we are on unix
                   // remove not allowed old parameter that starts with slash followed by one numeric
                   Remaining := stringReplaceRegex(Remaining, '^/\d\h', '');
-                       {$IFDEF GUI}
+                  {$IFDEF GUI}
                   imageNo := centralImageNo;
-                      {$ENDIF GUI}
+                  {$ENDIF GUI}
                 end;
 
                 if syntaxCheck then
@@ -24213,9 +24170,9 @@ begin
                   begin
                     if FName <> '' then
                       FName := ExpandFileName(FName);
-                         {$IFDEF GUI}
+                    {$IFDEF GUI}
                     FBatchOberflaeche.setPicture(FName, Labeltext);
-                         {$ENDIF GUI}
+                    {$ENDIF GUI}
                   end;
                 end
                 else
@@ -24287,25 +24244,27 @@ begin
                   // StrToInt() failed. Could be a string Expressionstr
                   if not EvaluateString(Remaining, Remaining, Parameter,
                     InfoSyntaxError) then
-                      // EvaluateString() faíled
-                      ActionResult := reportError(Sektion, linecounter,
-                        Sektion.strings[linecounter - 1], InfoSyntaxError)
+                    // EvaluateString() faíled
+                    ActionResult :=
+                      reportError(Sektion, linecounter, Sektion.strings[linecounter -
+                      1], InfoSyntaxError)
                   else
                     // EvaluateString() gave us a Parameter
-                    try
-                      sleepSecs := StrToInt(Parameter);
-                      syntaxCheck := True;
-                    except
-                      // StrToInt(Parameter) failed. Report Runtime Error.
-                      if not testsyntax then
-                      begin
-                        LogDatei.log('Runtime Error in Section: ['
-                           + Sektion.Name + '] (Command in line ' +
-                           IntToStr(Sektion.StartLineNo + linecounter) +
-                           '): ' + Expressionstr + ' -> ' + Parameter
-                           + ' -- expected an integer (number of secs) ', LLError);
-                      end
-                    end;
+                  try
+                    sleepSecs := StrToInt(Parameter);
+                    syntaxCheck := True;
+                  except
+                    // StrToInt(Parameter) failed. Report Runtime Error.
+                    if not testsyntax then
+                    begin
+                      LogDatei.log('Runtime Error in Section: ['
+                        + Sektion.Name + '] (Command in line ' +
+                        IntToStr(Sektion.StartLineNo + linecounter) +
+                        '): ' + Expressionstr + ' -> ' +
+                        Parameter + ' -- expected an integer (number of secs) ',
+                        LLError);
+                    end
+                  end;
                 end;
                 if syntaxCheck and (not testsyntax) then
                 begin
@@ -24396,7 +24355,8 @@ begin
                     LogDatei.log('set ActionProgress to: ' + Parameter, LLInfo);
                   end
                   else
-                    LogDatei.log('Could not set ActionProgress to: ' + Parameter + ', probably no service connection available', LLWarning);
+                    LogDatei.log('Could not set ActionProgress to: ' +
+                      Parameter + ', probably no service connection available', LLWarning);
                 end;
               end;
 
@@ -24467,10 +24427,10 @@ begin
                   begin
                     if Parameter <> '' then
                       FName := ExpandFileName(Parameter);
-                        {$IFDEF GUI}
+                    {$IFDEF GUI}
                     FBatchOberflaeche.loadSkin(Parameter);
                     processMess;
-                        {$ENDIF GUI}
+                    {$ENDIF GUI}
                   end;
                 end
                 else
@@ -24487,7 +24447,7 @@ begin
                 then
                 begin
                   syntaxCheck := True;
-                     {$IFNDEF WIN64}
+                  {$IFNDEF WIN64}
                   if not testSyntax then
                     if KillTask(Fname, Info) then
                     begin
@@ -24498,9 +24458,9 @@ begin
                       LogDatei.log('"' + Fname + '" could not be killed, ' +
                         info, LLWarning);
                     end;
-                     {$ELSE WIN64}
+                  {$ELSE WIN64}
                   LogDatei.Log('Not implemnted on win64', LLWarning);
-                     {$ENDIF WIN64}
+                  {$ENDIF WIN64}
                 end
                 else
                   ActionResult :=
@@ -24517,19 +24477,19 @@ begin
                     begin
                       syntaxCheck := True;
                       if not testSyntax then
-                        try
-                          //LogDatei.log ('Executing0 ' + s1, LLInfo);
-                          dummylist := execShellCall(s1, 'sysnative', 0, True);
-                        except
-                          on e: Exception do
-                          begin
+                      try
+                        //LogDatei.log ('Executing0 ' + s1, LLInfo);
+                        dummylist := execShellCall(s1, 'sysnative', 0, True);
+                      except
+                        on e: Exception do
+                        begin
 
-                            LogDatei.log('Error executing :' + s1 + ' : ' + e.message,
-                              LLError);
-                            FNumberOfErrors := FNumberOfErrors + 1;
+                          LogDatei.log('Error executing :' + s1 + ' : ' + e.message,
+                            LLError);
+                          FNumberOfErrors := FNumberOfErrors + 1;
 
-                          end;
                         end;
+                      end;
                     end;
               end;
 
@@ -24678,7 +24638,7 @@ begin
                     if localSection <> nil then
                       localSection.Free;
 
-                   end;
+                  end;
                 if tmplist <> nil then
                   FreeAndNil(tmplist);
               end;
@@ -25001,7 +24961,7 @@ begin
                     if not testSyntax then
                     begin
                       FExtremeErrorLevel := LevelFatal;
-                      LogDatei.log('Error level set to fatal: '+ Parameter, LLCritical);
+                      LogDatei.log('Error level set to fatal: ' + Parameter, LLCritical);
                       ActionResult := tsrFatalError;
                       LogDatei.ActionProgress := Parameter;
                       scriptstopped := True;
@@ -25181,34 +25141,34 @@ begin
                 if skip('=', remaining, remaining, InfoSyntaxError) then
                 begin
                   if not testSyntax then
+                  try
+                    LogLevel := StrToInt(Remaining) + 4;
+                    LogDatei.log(
+                      'Warning: deprecated: <LogLevel=> please use <setLogLevel=> ',
+                      LLwarning);
+                    LogDatei.log('LogLevel was ' + IntToStr(LogDatei.LogLevel),
+                      LLessential);
+                    LogDatei.LogLevel := Loglevel;
+                    LogDatei.log('LogLevel set to ' + IntToStr(LogLevel), LLessential);
+                  except
                     try
-                      LogLevel := StrToInt(Remaining) + 4;
+                      EvaluateString(remaining, remaining, Parameter, infosyntaxerror);
+                      LogLevel := StrToInt(Parameter) + 4;
                       LogDatei.log(
                         'Warning: deprecated: <LogLevel=> please use <setLogLevel=> ',
                         LLwarning);
                       LogDatei.log('LogLevel was ' + IntToStr(LogDatei.LogLevel),
                         LLessential);
                       LogDatei.LogLevel := Loglevel;
-                      LogDatei.log('LogLevel set to ' + IntToStr(LogLevel), LLessential);
+                      LogDatei.log('LogLevel set to ' + IntToStr(LogLevel),
+                        LLessential);
                     except
-                      try
-                        EvaluateString(remaining, remaining, Parameter, infosyntaxerror);
-                        LogLevel := StrToInt(Parameter) + 4;
-                        LogDatei.log(
-                          'Warning: deprecated: <LogLevel=> please use <setLogLevel=> ',
-                          LLwarning);
-                        LogDatei.log('LogLevel was ' + IntToStr(LogDatei.LogLevel),
-                          LLessential);
-                        LogDatei.LogLevel := Loglevel;
-                        LogDatei.log('LogLevel set to ' + IntToStr(LogLevel),
-                          LLessential);
-                      except
-                        LogDatei.log(
-                          'Integer conversion error, LogLevel could not be set, it is ' +
-                          IntToStr(LogLevel), Logdatei.loglevel);
-                        LogLevel := LLinfo;
-                      end;
+                      LogDatei.log(
+                        'Integer conversion error, LogLevel could not be set, it is ' +
+                        IntToStr(LogLevel), Logdatei.loglevel);
+                      LogLevel := LLinfo;
                     end;
+                  end;
                 end
                 else
                   ActionResult :=
@@ -25220,27 +25180,27 @@ begin
                 if skip('=', remaining, remaining, InfoSyntaxError) then
                 begin
                   if not testSyntax then
+                  try
+                    LogLevel := StrToInt(Remaining);
+                    LogDatei.log('LogLevel was ' +
+                      IntToStr(LogDatei.LogLevel), LLinfo);
+                    LogDatei.LogLevel := Loglevel;
+                    LogDatei.log('LogLevel set to ' + IntToStr(LogLevel), LLinfo);
+                  except
                     try
-                      LogLevel := StrToInt(Remaining);
+                      EvaluateString(remaining, remaining, Parameter, infosyntaxerror);
+                      LogLevel := StrToInt(Parameter);
                       LogDatei.log('LogLevel was ' +
                         IntToStr(LogDatei.LogLevel), LLinfo);
                       LogDatei.LogLevel := Loglevel;
                       LogDatei.log('LogLevel set to ' + IntToStr(LogLevel), LLinfo);
                     except
-                      try
-                        EvaluateString(remaining, remaining, Parameter, infosyntaxerror);
-                        LogLevel := StrToInt(Parameter);
-                        LogDatei.log('LogLevel was ' +
-                          IntToStr(LogDatei.LogLevel), LLinfo);
-                        LogDatei.LogLevel := Loglevel;
-                        LogDatei.log('LogLevel set to ' + IntToStr(LogLevel), LLinfo);
-                      except
-                        LogDatei.log(
-                          'Integer conversion error, LogLevel could not be set, it is ' +
-                          IntToStr(LogLevel), Logdatei.loglevel);
-                        LogLevel := LLinfo;
-                      end;
+                      LogDatei.log(
+                        'Integer conversion error, LogLevel could not be set, it is ' +
+                        IntToStr(LogLevel), Logdatei.loglevel);
+                      LogLevel := LLinfo;
                     end;
+                  end;
                 end
                 else
                   ActionResult :=
@@ -25288,33 +25248,33 @@ begin
                 if skip('=', remaining, remaining, InfoSyntaxError) then
                 begin
                   if not testSyntax then
-                    try
-                      OutputLevel := StrToInt(Remaining);
-                      //LogDatei.log ('OutputLevel was ' + inttoStr(LogDatei.LogLevel), LLessential);
+                  try
+                    OutputLevel := StrToInt(Remaining);
+                    //LogDatei.log ('OutputLevel was ' + inttoStr(LogDatei.LogLevel), LLessential);
                     {$IFDEF GUI}
-                      FBatchOberflaeche.SetTracingLevel(OutputLevel);
+                    FBatchOberflaeche.SetTracingLevel(OutputLevel);
                     {$ENDIF GUI}
-                      LogDatei.log('OutputLevel set to ' + IntToStr(OutputLevel),
-                        LLessential);
+                    LogDatei.log('OutputLevel set to ' + IntToStr(OutputLevel),
+                      LLessential);
+                  except
+                    try
+                      EvaluateString(remaining, remaining, Parameter, infosyntaxerror);
+                      OutputLevel := StrToInt(Parameter);
+                      //LogDatei.log ('OutputLevel was ' + inttoStr(LogDatei.LogLevel), LLessential);
+                      {$IFDEF GUI}
+                      FBatchOberflaeche.SetTracingLevel(OutputLevel);
+                      {$ENDIF GUI}
+                      LogDatei.log('OutputLevel set to ' +
+                        IntToStr(OutputLevel), LLessential);
                     except
-                      try
-                        EvaluateString(remaining, remaining, Parameter, infosyntaxerror);
-                        OutputLevel := StrToInt(Parameter);
-                        //LogDatei.log ('OutputLevel was ' + inttoStr(LogDatei.LogLevel), LLessential);
+                      LogDatei.log(
+                        'Integer conversion error, OutputLevel could not be set, it is '
+                        + IntToStr(LogLevel), Logdatei.loglevel);
                       {$IFDEF GUI}
-                        FBatchOberflaeche.SetTracingLevel(OutputLevel);
+                      FBatchOberflaeche.SetTracingLevel(3);
                       {$ENDIF GUI}
-                        LogDatei.log('OutputLevel set to ' +
-                          IntToStr(OutputLevel), LLessential);
-                      except
-                        LogDatei.log(
-                          'Integer conversion error, OutputLevel could not be set, it is '
-                          + IntToStr(LogLevel), Logdatei.loglevel);
-                      {$IFDEF GUI}
-                        FBatchOberflaeche.SetTracingLevel(3);
-                      {$ENDIF GUI}
-                      end;
                     end;
+                  end;
                 end
                 else
                   ActionResult :=
@@ -25326,7 +25286,7 @@ begin
                 begin
                   if not testSyntax then
                   begin
-                     {$IFDEF GUI}
+                    {$IFDEF GUI}
                     if (UpperCase(Remaining) = 'ON') or
                       (UpperCase(Remaining) = 'TRUE') then
                       FBatchOberflaeche.SetForceStayOnTop(True)
@@ -25338,7 +25298,7 @@ begin
                         reportError(Sektion, linecounter,
                         Sektion.strings[linecounter - 1], Remaining +
                         ' is no valid value');
-                     {$ENDIF GUI}
+                    {$ENDIF GUI}
                   end;
                 end
                 else
@@ -25347,7 +25307,7 @@ begin
                     InfoSyntaxError);
 
               tsIconizeWinst:
-                 {$IFDEF GUI}
+                {$IFDEF GUI}
               begin
                 if not testSyntax then
                 begin
@@ -25356,12 +25316,12 @@ begin
                   FBatchOberflaeche.SetBatchWindowMode(BatchWindowMode);
                 end;
               end
-                 {$ENDIF GUI}
+                {$ENDIF GUI}
                 ;
 
 
               tsNormalizeWinst:
-                 {$IFDEF GUI}
+                {$IFDEF GUI}
               begin
                 if not testSyntax then
                 begin
@@ -25370,11 +25330,11 @@ begin
                   FBatchOberflaeche.SetBatchWindowMode(BatchWindowMode);
                 end;
               end
-                 {$ENDIF GUI}
+                {$ENDIF GUI}
                 ;
 
               tsRestoreWinst:
-                 {$IFDEF GUI}
+                {$IFDEF GUI}
               begin
                 if not testSyntax then
                 begin
@@ -25382,11 +25342,11 @@ begin
                   FBatchOberflaeche.SetBatchWindowMode(BatchWindowMode);
                 end;
               end
-                 {$ENDIF GUI}
+                {$ENDIF GUI}
                 ;
 
               tsMaximizeWinst:
-                  {$IFDEF GUI}
+                {$IFDEF GUI}
               begin
                 if not testSyntax then
                 begin
@@ -25395,19 +25355,19 @@ begin
                   FBatchOberflaeche.SetBatchWindowMode(BatchWindowMode);
                 end;
               end
-                  {$ENDIF GUI}
+                {$ENDIF GUI}
                 ;
 
               tsEncoding:
                 ;
 
               tsUpdateEnvironment:
-              {$IFDEF WIN32}
+                {$IFDEF WIN32}
               begin
                 if not testSyntax then
                   dummybool := updateEnvironment;
               end
-                 {$ENDIF WIN32}
+                {$ENDIF WIN32}
                 ;
 
               tsLoadProductProperties:
@@ -25666,7 +25626,7 @@ begin
 
               tsXMLPatch:
               begin
-                  {$IFDEF WINDOWS}
+                {$IFDEF WINDOWS}
                 logdatei.log('Execution of: ' + ArbeitsSektion.Name +
                   ' ' + Remaining, LLNotice);
                 EvaluateString(Remaining, Remaining, Parameter, InfoSyntaxError);
@@ -25680,11 +25640,11 @@ begin
                   ActionResult :=
                     reportError(Sektion, linecounter, Sektion.strings[linecounter - 1],
                     ' end of line expected');
-                  {$ELSE WINDOWS}
+                {$ELSE WINDOWS}
                 logdatei.log(
                   'XMLPatch sections are not implemented for Linux right now',
                   LLWarning);
-                  {$ENDIF WINDOWS}
+                {$ENDIF WINDOWS}
               end;
 
               tsXML2:
@@ -25898,9 +25858,10 @@ begin
                   ActionResult :=
                     reportError(Sektion, linecounter, Expressionstr, InfoSyntaxError);
               end;
-               {$ENDIF WIN32}
+              {$ENDIF WIN32}
 
-              tsShellInAnIcon, tsShellBatchFile, tsDosInAnIcon, tsDosBatchFile, tsShellScript:
+              tsShellInAnIcon, tsShellBatchFile, tsDosInAnIcon,
+              tsDosBatchFile, tsShellScript:
               begin
                 logdatei.log('Execution of: ' + ArbeitsSektion.Name +
                   ' ' + Remaining, LLNotice);
@@ -25974,7 +25935,7 @@ begin
                   ActionResult :=
                     reportError(Sektion, linecounter, Expressionstr, InfoSyntaxError);
               end;
-               {$ENDIF WIN32}
+              {$ENDIF WIN32}
 
               tsDefineVar:
               begin
@@ -26434,7 +26395,6 @@ end;
 procedure CreateAndProcessScript(const Scriptdatei: string;
   NestingLevel: integer; SaveddeWithProgman: boolean;
   var extremeErrorLevel: TErrorLevel);
-
 var
   StartlineOfSection: integer = 0;
   Aktionsliste: TWorkSection;
@@ -26464,7 +26424,6 @@ var
   Regist: TuibRegistry;
   {$ENDIF WINDOWS}
   isPlainAscii: boolean;
-
 begin
   try
     // reset Local_opsidata after product
@@ -26511,13 +26470,13 @@ begin
     if osconf.configTestSyntax then
       LogDatei.log('Running in TestSyntax mode !!', LLwarning);
 
-  {$IFDEF DARWIN}
+    {$IFDEF DARWIN}
     if not checkForMacosDependencies(tmpstr) then
     begin
       logdatei.log('Could not get the Dependencies for macos ', LLError);
       logdatei.log(tmpstr, LLError);
     end;
-  {$ENDIF DARWIN}
+    {$ENDIF DARWIN}
 
     // init vars
     inDefFuncLevel := 0;
@@ -26533,21 +26492,21 @@ begin
     // Backup existing depotdrive, depotdir
     depotdrive_bak := depotdrive;
     depotdir_bak := depotdir;
-  {$IFDEF UNIX}
+    {$IFDEF UNIX}
     if computername = '' then computername := getHostnameLin;
     logdatei.log('computername: ' + computername, LLDebug);
-  {$ENDIF LINUX}
-  {$IFDEF GUI}
+    {$ENDIF LINUX}
+    {$IFDEF GUI}
     CentralForm.Label1.Caption := '';
     FBatchOberflaeche.SetMessageText('', mInfo);//setInfoLabel('');
 
     CentralForm.Label2.Caption := '';
     FBatchOberflaeche.SetMessageText('', mDetail);
     //setDetailLabel(CentralForm.Label2.Caption);
-  {$ENDIF GUI}
-  {$IFDEF UNIX}
+    {$ENDIF GUI}
+    {$IFDEF UNIX}
     lispecfolder.retrieveFolders4Linux;
-  {$ENDIF LINUX}
+    {$ENDIF LINUX}
     if Scriptdatei <> '' then
     begin
       //s := 'Drives found: ' + GetDrives;
@@ -26560,17 +26519,18 @@ begin
         begin
           LogDatei.log('Script  ' + Scriptdatei + '  not found ' +
             ErrorInfo + ' - retrying', LLWarning);
-        {$IFDEF LINUX}
+          {$IFDEF LINUX}
           if ProgramMode = pmBuildPC_service then
           begin
             logdatei.log('check opsi depot mount', LLDebug);
             if not isMounted(depotdir) then
             begin
               logdatei.log('Try remount ...', LLWarning);
-              mount_depotshare(depotDir, DepotUser, opsiservicePassword, osconf.computername);
+              mount_depotshare(depotDir, DepotUser, opsiservicePassword,
+                osconf.computername);
             end;
           end;
-        {$ENDIF LINUX}
+          {$ENDIF LINUX}
           Sleep(1000);
           if not CheckFileExists(Scriptdatei, ErrorInfo) then
           begin
@@ -26670,7 +26630,8 @@ begin
           for i := 0 to script.Count - 1 do
           begin
             str := Script.Strings[i];
-            script.FLinesOriginList.Append(script.FFilename + ' line: ' + IntToStr(i + 1));
+            script.FLinesOriginList.Append(script.FFilename + ' line: ' +
+              IntToStr(i + 1));
             script.FLibList.Append('false');
             //writeln('i='+inttostr(i)+' = '+Script.FLinesOriginList.Strings[i-1]);
           end;
@@ -26692,7 +26653,7 @@ begin
     end
     else
     begin
-    {$IFDEF GUI}
+      {$IFDEF GUI}
       // Run Viewlist as script
       Script.Assign(CentralForm.Memo1.Lines);
       for i := 1 to script.Count do
@@ -26702,7 +26663,7 @@ begin
         //writeln('i='+inttostr(i)+' = '+Script.FLinesOriginList.Strings[i-1]);
         //writeln('i='+inttostr(i));
       end;
-    {$ENDIF GUI}
+      {$ENDIF GUI}
     end;
 
 
@@ -26794,12 +26755,13 @@ begin
     LogDatei.log(GetMACAddress2 + '  -  PC hardware address', LLessential);
     LogDatei.log(ipName + '  -  IP name ', LLessential);
     LogDatei.log(ipAddress + '  -  IP address', LLessential);
-  {$IFDEF WINDOWS}
+    {$IFDEF WINDOWS}
     LogDatei.log(GetSystemDefaultLocale(LOCALE_SABBREVLANGNAME) +
       '  -  System default locale ',
       LLessential);
-    tmpstr := 'MS Windows ' + GetMSVersionName + ' (' + GetSystemOSVersionInfoEx('major_version') +
-      '.' + GetSystemOSVersionInfoEx('minor_version')+')';
+    tmpstr := 'MS Windows ' + GetMSVersionName + ' (' +
+      GetSystemOSVersionInfoEx('major_version') + '.' +
+      GetSystemOSVersionInfoEx('minor_version') + ')';
     if Is64BitSystem then
       tmpstr := tmpstr + ' 64 Bit'
     else
@@ -26815,24 +26777,25 @@ begin
     end;
     tmpstr := tmpstr + ', Edition: ' + getProductInfoStrByNum(OSGetProductInfoNum);
     LogDatei.log(tmpstr, LLessential);
-  {$ENDIF WINDOWS}
-  {$IFDEF LINUX}
+    {$ENDIF WINDOWS}
+    {$IFDEF LINUX}
     tmpstr := getLinuxDistroName + ' ' + getLinuxDistroDescription;
     if Is64BitSystem then
       tmpstr := tmpstr + ' 64 Bit'
     else
       tmpstr := tmpstr + ' 32 Bit';
     LogDatei.log(tmpstr, LLessential);
-  {$ENDIF LINUX}
-  {$IFDEF DARWIN}
+    {$ENDIF LINUX}
+    {$IFDEF DARWIN}
     tmpstr := 'macOS: ' + GetMacosVersionInfo;
     LogDatei.log(tmpstr, LLessential);
-  {$ENDIF DARWIN}
+    {$ENDIF DARWIN}
 
     if opsidata <> nil then
     begin
-      LogDatei.log('opsi service version : ' + opsidata.getOpsiServiceVersion
-                    + ' ('+opsidata.getOpsiVersion+')', LLessential);
+      LogDatei.log('opsi service version : ' +
+        opsidata.getOpsiServiceVersion + ' (' + opsidata.getOpsiVersion + ')',
+        LLessential);
       //Logdatei.log('Setup script name: '+opsidata.getProductScriptPath(tacSetup), LLessential);
     end;
 
@@ -26850,7 +26813,7 @@ begin
         If value is missing AppyTextConstants will get an index error. }
 
       {  System directories:  }
-    {$IFDEF WINDOWS}
+      {$IFDEF WINDOWS}
       FConstList.add('%Systemroot%');
       // on Win Terminalservers GetWinDirectory is redirected to %HOMEDRIVE%\Windows
       ValueToTake := extractfiledrive(GetWinSystemDirectory) +
@@ -26869,7 +26832,7 @@ begin
       // on Win Terminalservers GetWinDirectory is redirected to %HOMEDRIVE%\Windows
       ValueToTake := extractfiledrive(GetWinSystemDirectory);
       FConstValuesList.add(ValueToTake);
-    {$ENDIF WINDOWS}
+      {$ENDIF WINDOWS}
       FConstList.add('%ProfileDir%');
       ValueToTake := getProfilesPath;
       FConstValuesList.add(ValueToTake);
@@ -26880,7 +26843,7 @@ begin
 
 
       saveIndent := Logdatei.LogSIndentLevel;
-    {$IFDEF WINDOWS}
+      {$IFDEF WINDOWS}
       ValueToTake := getSpecialFolder(CSIDL_PROGRAM_FILES);
       LogDatei.LogSIndentLevel := saveIndent;
 
@@ -26919,7 +26882,7 @@ begin
 
       FConstList.add('%UsercontextSID%');
       FConstValuesList.add(usercontextSID);
-    {$ENDIF WINDOWS}
+      {$ENDIF WINDOWS}
 
       {  Common (AllUsers) directories: }
       FConstList.add('%CommonAppDataDir%');
@@ -27033,42 +26996,42 @@ begin
       FConstValuesList.add(LogDatei.FileName);
 
       FConstList.add('%opsiTmpDir%');
-    {$IFDEF WINDOWS}
+      {$IFDEF WINDOWS}
       FConstValuesList.add('c:\opsi.org\tmp');
-    {$ENDIF WINDOWS}
-    {$IFDEF UNIX}
+      {$ENDIF WINDOWS}
+      {$IFDEF UNIX}
       FConstValuesList.add('/tmp');
-    {$ENDIF UNIX}
+      {$ENDIF UNIX}
 
       FConstList.add('%opsiUserTmpDir%');
-    {$IFDEF WINDOWS}
+      {$IFDEF WINDOWS}
       FConstValuesList.add('c:\opsi.org\usertmp');
-    {$ENDIF WINDOWS}
-    {$IFDEF UNIX}
+      {$ENDIF WINDOWS}
+      {$IFDEF UNIX}
       FConstValuesList.add('/tmp');
-    {$ENDIF UNIX}
+      {$ENDIF UNIX}
 
       FConstList.add('%opsiLogDir%');
       FConstValuesList.add(copy(oslog.defaultStandardMainLogPath, 1,
         Length(oslog.defaultStandardMainLogPath) - 1));
 
       FConstList.add('%opsiapplog%');
-    {$IFDEF WINDOWS}
+      {$IFDEF WINDOWS}
       FConstValuesList.add('c:\opsi.org\applog');
-    {$ENDIF WINDOWS}
-    {$IFDEF UNIX}
+      {$ENDIF WINDOWS}
+      {$IFDEF UNIX}
       FConstValuesList.add('~/opsi.org/applog');
-    {$ENDIF UNIX}
+      {$ENDIF UNIX}
 
       FConstList.add('%opsidata%');
-    {$IFDEF WINDOWS}
+      {$IFDEF WINDOWS}
       FConstValuesList.add('c:\opsi.org\data');
-    {$ENDIF WINDOWS}
-    {$IFDEF UNIX}
+      {$ENDIF WINDOWS}
+      {$IFDEF UNIX}
       FConstValuesList.add('/var/lib/opsi-client-agent');
-    {$ENDIF UNIX}
+      {$ENDIF UNIX}
 
-    {$IFDEF WINDOWS}
+      {$IFDEF WINDOWS}
       FConstList.add('%opsiScriptHelperPath%');
       ValueToTake := getSpecialFolder(CSIDL_PROGRAM_FILES) +
         '\opsi.org\opsiScriptHelper';
@@ -27086,9 +27049,9 @@ begin
       FConstList.add('%HOST%');
       ValueToTake := ValueOfEnvVar('HOST');
       FConstValuesList.add(ValueToTake);
-    {$ENDIF WINDOWS}
+      {$ENDIF WINDOWS}
 
-    {$IFDEF UNIX}
+      {$IFDEF UNIX}
       FConstList.add('%PCNAME%');
       ValueToTake := GetHostName;
       if valueToTake = valueEnvVarNotFound then
@@ -27098,7 +27061,7 @@ begin
       FConstList.add('%HOST%');
       ValueToTake := getCommandResult('hostname');
       FConstValuesList.add(ValueToTake);
-    {$ENDIF LINUX}
+      {$ENDIF LINUX}
 
       FConstList.add('%IPAddress%');
       FConstValuesList.add(ipAddress);
@@ -27111,10 +27074,10 @@ begin
       GetNetUser('', ValueToTake, ErrorInfo);
       FConstValuesList.add(ValueToTake);
 
-    {$IFDEF WINDOWS}
+      {$IFDEF WINDOWS}
       FConstList.add('%TempUser%');
       FConstValuesList.add(TempUserRegKey);
-    {$ENDIF WINDOWS}
+      {$ENDIF WINDOWS}
 
       { opsi service values }
 
@@ -27162,29 +27125,29 @@ begin
       if opsidata = nil then
         FConstValuesList.add('')
       else
-        try
-          FConstValuesList.add(opsidata.getActualProductVersion);
-        except
-          FConstValuesList.add('')
-        end;
+      try
+        FConstValuesList.add(opsidata.getActualProductVersion);
+      except
+        FConstValuesList.add('')
+      end;
 
       FConstList.add('%installingProduct%');
       if opsidata = nil then
         FConstValuesList.add('')
       else
-        try
-          FConstValuesList.add(Topsi4data(opsidata).getActualProductId);
-        except
-          FConstValuesList.add('')
-        end;
+      try
+        FConstValuesList.add(Topsi4data(opsidata).getActualProductId);
+      except
+        FConstValuesList.add('')
+      end;
     end;
     LogDatei.log_prog('End: Definition of global system variables', LLinfo);
 
 
     Aktionsliste := TWorkSection.Create(NestingLevel, nil);
-  {$IFDEF GUI}
+    {$IFDEF GUI}
     Application.ProcessMessages;
-  {$ENDIF GUI}
+    {$ENDIF GUI}
     { initial section  }
     AktionsListe.Name := NameInitSektion;
     Script.GetSectionLines(NameInitSektion, TXStringList(Aktionsliste),
@@ -27198,8 +27161,8 @@ begin
       if Aktionsliste.Count > 0 then
       begin
         LogDatei.log(
-            'The [Initial] section is deprecated! Please use the [Actions] section for all configurations and actions.',
-            LLWarning);
+          'The [Initial] section is deprecated! Please use the [Actions] section for all configurations and actions.',
+          LLWarning);
         Script.FNumberOfWarnings := Script.FNumberOfWarnings + 1;
         weiter := Script.doAktionen(Aktionsliste, Aktionsliste);
       end
@@ -27255,15 +27218,16 @@ begin
         else
         begin
           LogDatei.log(
-            'We did not find an actions section in your script, or your actions section is empty.' +
-            ' Therefore nothing is executed!' +
+            'We did not find an actions section in your script, or your actions section is empty.'
+            + ' Therefore nothing is executed!' +
             ' Please check that the section head ''[' + NameAktionenSektion +
             ']'' exists and is written correctly.' +
             ' Please also check that the actions section is not empty.' +
-            ' If this is a meta package, please write in the setup script a non-empty actions section' +
-            ' (e.g. with a command like ''comment "Meta package: %installingProdName%"'').' +
-            ' Writing meta packages with no or an empty actions section is discouraged.' +
-            ' We will turn this warning into an error in one of the next opsi-script versions.',
+            ' If this is a meta package, please write in the setup script a non-empty actions section'
+            +
+            ' (e.g. with a command like ''comment "Meta package: %installingProdName%"'').'
+            + ' Writing meta packages with no or an empty actions section is discouraged.'
+            + ' We will turn this warning into an error in one of the next opsi-script versions.',
             LLWarning);
           Script.FNumberOfWarnings := Script.NumberOfWarnings + 1;
         end;
@@ -27273,12 +27237,12 @@ begin
         Aktionsliste := nil;
       except
         on e: Exception do
-     {$IFDEF GUI}
+          {$IFDEF GUI}
           MyMessageDlg.wiMessage('CreateAndProcessScript : free Aktionsliste: ' +
             e.Message, [mrOk]);
-     {$ELSE GUI}
+        {$ELSE GUI}
         writeln('CreateAndProcessScript : free Aktionsliste: ' + e.Message);
-     {$ENDIF GUI}
+        {$ENDIF GUI}
       end;
     except
       on e: Exception do
@@ -27291,10 +27255,10 @@ begin
 
     freeDefinedFunctions;
 
-  {$IFDEF GUI}
+    {$IFDEF GUI}
     CentralForm.Memo1.SelectAll;
     CentralForm.Memo1.SelStart := CentralForm.Memo1.SelLength;
-  {$ENDIF GUI}
+    {$ENDIF GUI}
 
     // write final messages to log
 
@@ -27364,18 +27328,18 @@ begin
       //if Script.NumberOfErrors = 1
       //then ps := 'is '
       //else ps := 'are ';
-     {$IFDEF GUI}
+      {$IFDEF GUI}
       MyMessageDlg.WiMessage('On installing ' + ps + #10 +
         IntToStr(Script.NumberOfErrors) + '  ' + 'error(s) occurred ' +
         #10 + 'Please inform your administrator',
         [mrOk]);
-     {$ENDIF GUI}
+      {$ENDIF GUI}
     end;
-  {$IFDEF WIN32}
+    {$IFDEF WIN32}
     if opsiSetupAdmin_created then
       if DeleteTemporaryLocalAdmin then
         LogDatei.log('Temporary Local Admin deleted', LLDebug2);
-  {$ENDIF WIN32}
+    {$ENDIF WIN32}
     if Logdatei.LogLevel < LLconfidential then
     begin
       deleteTempBatFiles('');
@@ -27392,22 +27356,22 @@ begin
     SetCurrentDir(opsiWinstStartdir);
     scriptsuspendstate := script.Suspended;
 
-  {$IFDEF WIN32}
+    {$IFDEF WIN32}
     // Unblock Input
     winBlockInput(False);
-  {$ENDIF WIN32}
+    {$ENDIF WIN32}
 
     try
       Script.Free;
       Script := nil;
     except
       on e: Exception do
-   {$IFDEF GUI}
+        {$IFDEF GUI}
         MyMessageDlg.wiMessage('CreateAndProcessScript : free Aktionsliste: ' +
           e.Message, [mrOk]);
-   {$ELSE GUI}
+      {$ELSE GUI}
       writeln('CreateAndProcessScript : free Aktionsliste: ' + e.Message);
-   {$ENDIF GUI}
+      {$ENDIF GUI}
     end;
     LogDatei.log('End of CreateAndProcessScript', LLDebug2);
     //LogDatei.Close;
