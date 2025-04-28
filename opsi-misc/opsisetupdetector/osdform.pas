@@ -65,6 +65,7 @@ type
   { TResultform1 }
 
   TResultform1 = class(TForm)
+    BitBtn1: TBitBtn;
     BitBtnChooseInstDir4: TBitBtn;
     BitBtnChooseInstDir5: TBitBtn;
     BitBtnBgChooseInstDir: TBitBtn;
@@ -88,6 +89,7 @@ type
     BitBtnChooseInstDir1: TBitBtn;
     BtAnalyzeOnly: TBitBtn;
     BtATwonalyzeAndCreate: TBitBtn;
+    BtBgSaveFile: TBitBtn;
     BtCreateEmptyTemplateLin: TBitBtn;
     BtCreateEmptyTemplateMac: TBitBtn;
     BtCreateEmptyTemplateMulti: TBitBtn;
@@ -338,6 +340,7 @@ type
     Panel26: TPanel;
     Panel27: TPanel;
     PanelChannel: TPanel;
+    SaveDialogBgMetaData: TSaveDialog;
     SpeedButtonHelpMain: TSpeedButton;
     SpeedButtonHelpAnalyze: TSpeedButton;
     SpeedButtonHelpSetup1: TSpeedButton;
@@ -531,6 +534,7 @@ type
     procedure BtAnalyzeNextStepClick(Sender: TObject);
     procedure BtATwonalyzeAndCreateClick(Sender: TObject);
     procedure BtBgNextStepClick(Sender: TObject);
+    procedure BtBgSaveFileClick(Sender: TObject);
     procedure BtCreateBackgroundInfoClick(Sender: TObject);
     procedure BtCreateEmptyTemplateMultiClick(Sender: TObject);
     procedure BtCreateEmptyTemplateWinClick(Sender: TObject);
@@ -974,8 +978,7 @@ begin
       // initialize drop down
       TIComboBoxChannel.Items.Text := templateChannelList.Text;
       // background install meta data
-      TIEditBgProductId1.Link.SetObjectAndProperty(aktProduct.productdata,
-        'productId');
+      TIEditBgProductId1.Link.SetObjectAndProperty(productdata,'productId');
       TIEditBgInstallDir1.Link.SetObjectAndProperty(aktMeta.InstallerMeta[0],
         'install_dir');
       TIMemoBgCheckdirs1.Link.SetObjectAndProperty(aktMeta.InstallerMeta[0],
@@ -1203,8 +1206,9 @@ begin
     TreeView1.Items[5].Enabled := False;  // winget
     TreeView1.Items[6].Enabled := True;  // product1
     TreeView1.Items[7].Enabled := True;  // product2
-    TreeView1.Items[8].Enabled := True;  // product3
-    TreeView1.Items[9].Enabled := True;  // create
+    TreeView1.Items[8].Enabled := True;  // background
+    TreeView1.Items[9].Enabled := True;  // icons
+    TreeView1.Items[10].Enabled := True;  // create
 
     // the buttons
     BtSetup1NextStep.Enabled := True;
@@ -1285,14 +1289,16 @@ begin
       TreeView1.Items[5].Enabled:= false;  // winget
       TreeView1.Items[6].Enabled:= true;  // product1
       TreeView1.Items[7].Enabled:= true;  // product2
-      TreeView1.Items[8].Enabled:= true;  // product3
-      TreeView1.Items[9].Enabled:= true;  // create
+      TreeView1.Items[8].Enabled := True;  // background
+      TreeView1.Items[9].Enabled := True;  // icons
+      TreeView1.Items[10].Enabled := True;  // create
       *)
       //Treeview items in difference to default from resetgui
       TreeView1.Items[6].Enabled := False;  // product1
       TreeView1.Items[7].Enabled := False;  // product2
-      TreeView1.Items[8].Enabled := False;  // product3
-      TreeView1.Items[9].Enabled := False;  // create
+      TreeView1.Items[8].Enabled := False;  // background
+      TreeView1.Items[9].Enabled := False;  // icons
+      TreeView1.Items[10].Enabled := False;  // create
     end;
     singleAnalyzeCreate, analyzeCreateWithUser:
     begin
@@ -1332,6 +1338,17 @@ begin
       TreeView1.Items[1].Enabled := False;  // analyze
       TreeView1.Items[2].Enabled := False;  // setup1
     end;
+    createBackgroundInfo:
+    begin
+      //Treeview items  in difference to default from resetgui
+      TreeView1.Items[1].Enabled := False;  // analyze
+      TreeView1.Items[2].Enabled := False;  // setup1
+      TreeView1.Items[6].Enabled := False;  // product1
+      TreeView1.Items[7].Enabled := False;  // product2
+      TreeView1.Items[9].Enabled := False;  // icons
+      TreeView1.Items[10].Enabled := False;  // create
+    end;
+
   end;
 
   case osdsettings.runmode of
@@ -2216,6 +2233,14 @@ begin
   end;
 end;
 
+procedure TResultform1.BtBgSaveFileClick(Sender: TObject);
+begin
+  if SaveDialogBgMetaData.Execute then
+  begin
+    aktMeta.write_product_metadata_to_file(SaveDialogBgMetaData.FileName);
+  end;
+end;
+
 procedure TResultform1.BtCreateBackgroundInfoClick(Sender: TObject);
 var
   localTOSset: TTargetOSset;
@@ -2271,6 +2296,7 @@ begin
     aktProdToAktMeta;
     LogDatei.log('Finished import Project file from: ' + OpenDialog1.FileName, LLnotice);
   end;
+  osdsettings.runmode := createBackgroundInfo;
   PageControl1.ActivePage := resultForm1.TabSheetBackground;
   Application.ProcessMessages;
 end;
@@ -3402,7 +3428,7 @@ begin
       PageControl1.ActivePage := resultForm1.TabSheetCreate;
       Application.ProcessMessages;
     end;
-    createMeta, gmUnknown:
+    createMeta, createBackgroundInfo, gmUnknown:
     begin
       // we should never be here
       logdatei.log(
@@ -3452,7 +3478,7 @@ begin
         PageControl1.ActivePage := resultForm1.TabSheetProduct2;
         Application.ProcessMessages;
       end;
-      gmUnknown:
+      createBackgroundInfo,gmUnknown:
       begin
         // we should never be here
         logdatei.log('Error: in BtProductNextStepClick RunMode: ' +
@@ -3466,7 +3492,7 @@ end;
 procedure TResultform1.BtProduct2NextStepClick(Sender: TObject);
 begin
   case osdsettings.runmode of
-    analyzeOnly, gmUnknown:
+    analyzeOnly, createBackgroundInfo, gmUnknown:
     begin
       // we should never be here
       logdatei.log('Error: in BtProductNextStepClick RunMode: ' +
@@ -3573,7 +3599,7 @@ begin
         if not installerselected then
           BtSetup2NextStepClick(Sender);
       end;
-      createTemplate, createTemplateWithUser, createMeta, gmUnknown:
+      createTemplate, createTemplateWithUser, createMeta, createBackgroundInfo, gmUnknown:
       begin
         // we should never be here
         logdatei.log(
@@ -3606,6 +3632,7 @@ begin
       analyzeOnly, singleAnalyzeCreate, analyzeCreateWithUser,
       createTemplate,
       createTemplateWithUser,
+      createBackgroundInfo,
       createMeta, gmUnknown:
       begin
         // we should never be here
@@ -3703,7 +3730,9 @@ begin
       twoAnalyzeCreate_2,
       createTemplate,
       createTemplateWithUser,
-      createMeta, gmUnknown:
+      createMeta,
+      createBackgroundInfo,
+      gmUnknown:
       begin
         // we should never be here
         logdatei.log('Error: in BtSetup2NextStepClick RunMode:' +
@@ -4428,6 +4457,16 @@ end;
 procedure TResultform1.TabSheetBackgroundShow(Sender: TObject);
 begin
   aktProdToAktMeta;
+  if osdsettings.runmode = createBackgroundInfo then
+  begin
+    BtBgSaveFile.Enabled:= true;
+    BtBgNextStep.Enabled:= false;
+  end
+  else
+  begin
+    BtBgSaveFile.Enabled:= false;
+    BtBgNextStep.Enabled:= true;
+  end;
   Application.ProcessMessages;
 end;
 
