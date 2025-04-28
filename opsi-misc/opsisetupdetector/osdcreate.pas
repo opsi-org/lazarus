@@ -1143,7 +1143,8 @@ begin
       aktProduct.writeProjectFileToPath(prodpath);
 
       // write CLIENT_DATA\opsi-meta-data.toml
-      if myconfiguration.writeMetaDataFile then
+      //if myconfiguration.writeMetaDataFile then
+      if osWin in aktProduct.productdata.targetOSset then
       begin
         LogDatei.log('Collect meta data', LLnotice);
         osdmeta.aktProdToAktMeta;

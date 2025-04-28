@@ -65,9 +65,8 @@ type
   { TResultform1 }
 
   TResultform1 = class(TForm)
-    BitBtn1: TBitBtn;
+    BitBtnBgChooseInstDir1: TBitBtn;
     BitBtnChooseInstDir4: TBitBtn;
-    BitBtnChooseInstDir5: TBitBtn;
     BitBtnBgChooseInstDir: TBitBtn;
     BitBtnChooseTargetProg4: TBitBtn;
     BitBtnChooseUninstFile4: TBitBtn;
@@ -152,8 +151,8 @@ type
     FlowPanel30: TFlowPanel;
     FlowPanel31: TFlowPanel;
     FlowPanel32: TFlowPanel;
-    FlowPanel33: TFlowPanel;
     FlowPanel34: TFlowPanel;
+    FlowPanel35: TFlowPanel;
     FlowPanel4: TFlowPanel;
     FlowPanel6: TFlowPanel;
     FlowPanel8: TFlowPanel;
@@ -225,9 +224,6 @@ type
     Label118: TLabel;
     Label119: TLabel;
     Label120: TLabel;
-    Label121: TLabel;
-    Label122: TLabel;
-    Label123: TLabel;
     Label125: TLabel;
     Label126: TLabel;
     Label127: TLabel;
@@ -319,8 +315,8 @@ type
     PairSplitterbackground: TPairSplitter;
     PairSplitterSide1: TPairSplitterSide;
     PairSplitterSide2: TPairSplitterSide;
-    PairSplitterSide3: TPairSplitterSide;
-    PairSplitterSide4: TPairSplitterSide;
+    PairSplitterSideBgInstaller1: TPairSplitterSide;
+    PairSplitterSideBgInstaller2: TPairSplitterSide;
     Panel10: TPanel;
     Panel11: TPanel;
     Panel12: TPanel;
@@ -337,10 +333,11 @@ type
     Panel23: TPanel;
     Panel24: TPanel;
     Panel25: TPanel;
-    Panel26: TPanel;
-    Panel27: TPanel;
+    PanelBgMetaInst1: TPanel;
+    PanelBgMetaInst2: TPanel;
     PanelChannel: TPanel;
     SaveDialogBgMetaData: TSaveDialog;
+    SpeedButtonHelpBackground: TSpeedButton;
     SpeedButtonHelpMain: TSpeedButton;
     SpeedButtonHelpAnalyze: TSpeedButton;
     SpeedButtonHelpSetup1: TSpeedButton;
@@ -402,7 +399,10 @@ type
     Panel2: TPanel;
     Panel3: TPanel;
     TabSheetAnalyze: TTabSheet;
-    TICheckBoxBgInstall: TTICheckBox;
+    TICheckBoxBgInstActive2: TTICheckBox;
+    TICheckBoxBgInstall1: TTICheckBox;
+    TICheckBoxBgInstall2: TTICheckBox;
+    TICheckBoxBgInstActive1: TTICheckBox;
     TICheckBoxCustomdir: TTICheckBox;
     TICheckBoxCustomizeProfile: TTICheckBox;
     TICheckBoxS4Mst: TTICheckBox;
@@ -418,13 +418,15 @@ type
     TICheckBoxS2Mst: TTICheckBox;
     TICheckBoxS3Mst: TTICheckBox;
     TIComboBoxBgOS1: TTIComboBox;
+    TIComboBoxBgOS2: TTIComboBox;
     TIComboBoxBgOsArch1: TTIComboBox;
+    TIComboBoxBgOsArch2: TTIComboBox;
     TIComboBoxChannel: TTIComboBox;
+    TIEditBgInstallDir2: TTIEdit;
     TIEditBgProductId1: TTIEdit;
     TIEditInstallDir2: TTIEdit;
     TIEditInstallDir3: TTIEdit;
     TIEditInstallDir4: TTIEdit;
-    TIEditInstallDir5: TTIEdit;
     TIEditBgInstallDir1: TTIEdit;
     TIEditMsiId2: TTIEdit;
     TIEditMsiId3: TTIEdit;
@@ -441,7 +443,6 @@ type
     TIEditMstFile3: TTIEdit;
     TIEditMstFile4: TTIEdit;
     TIEditRequiredSizeMB4: TTIEdit;
-    TIEditRequiredSizeMB5: TTIEdit;
     TIEditSetup1TargetProgram: TTIEdit;
     TIEditSetup4Command: TTIEdit;
     TIEditSetup3TargetProgram: TTIEdit;
@@ -451,7 +452,6 @@ type
     TIEditSetup4UnProgram: TTIEdit;
     TIEditSetupfile4: TTIEdit;
     TIEditSetupFileSizeMB4: TTIEdit;
-    TIEditSetupFileSizeMB5: TTIEdit;
     TIEditSoftVersion1: TTIEdit;
     TIEditMsiId1: TTIEdit;
     TIEditSoftVersion2: TTIEdit;
@@ -490,7 +490,9 @@ type
     TILabelInstaller4: TTILabel;
     TIMemoBgCheckdirs1: TTIMemo;
     TIMemoAdvice: TTIMemo;
+    TIMemoBgCheckdirs2: TTIMemo;
     TIMemoBgProcesses1: TTIMemo;
+    TIMemoBgProcesses2: TTIMemo;
     TIMemoDesc: TTIMemo;
     TimerFirstconfig: TTimer;
     TIRadioGroupCreateMode: TTIRadioGroup;
@@ -607,6 +609,7 @@ type
 
     procedure SBtnExitClick(Sender: TObject);
     procedure SpeedButtonHelpAnalyzeClick(Sender: TObject);
+    procedure SpeedButtonHelpBackgroundClick(Sender: TObject);
     procedure SpeedButtonHelpCreateClick(Sender: TObject);
     procedure SpeedButtonHelpIconClick(Sender: TObject);
     procedure SpeedButtonHelpMainClick(Sender: TObject);
@@ -630,6 +633,8 @@ type
     procedure TabSheetWingetContextPopup(Sender: TObject; MousePos: TPoint;
       var Handled: boolean);
     procedure TaskPanelWinClick(Sender: TObject);
+    procedure TICheckBoxBgInstActive1Change(Sender: TObject);
+    procedure TICheckBoxBgInstActive2Change(Sender: TObject);
     procedure TICheckBoxlicenseRequiredChange(Sender: TObject);
     procedure TICheckBoxS1MstChange(Sender: TObject);
     procedure TICheckBoxS1SilentChange(Sender: TObject);
@@ -811,6 +816,11 @@ resourcestring
     'Please install the opsi-logviewer product. opsi-logviewer is not installed in ';
   rsRebuildFinished = 'Rebuild opsi package finished.';
   rsRebuildFailedBuild = 'Rebuild opsi package: build / install package failed';
+  rscreateBackgroundInfoMsgHead =
+    'opsi-setup-detector: Read Info about exitsting opsi-product';
+  rscreateBackgroundInfoMsgOsdProjectFile =
+    'Select an existing opsi-setup-detector project file (if possible)';
+  rscreateBackgroundInfoMsgControlFile = 'Select an existing opsi control file';
 
 
   // Hints
@@ -978,29 +988,35 @@ begin
       // initialize drop down
       TIComboBoxChannel.Items.Text := templateChannelList.Text;
       // background install meta data
-      TIEditBgProductId1.Link.SetObjectAndProperty(productdata,'productId');
+      TIEditBgProductId1.Link.SetObjectAndProperty(productdata, 'productId');
+      TICheckBoxBgInstActive1.Link.SetObjectAndProperty(
+        aktMeta.InstallerMeta[0], 'active');
       TIEditBgInstallDir1.Link.SetObjectAndProperty(aktMeta.InstallerMeta[0],
         'install_dir');
       TIMemoBgCheckdirs1.Link.SetObjectAndProperty(aktMeta.InstallerMeta[0],
         'check_processes_from_dirs');
       TIMemoBgProcesses1.Link.SetObjectAndProperty(aktMeta.InstallerMeta[0],
         'processes');
-      TICheckBoxBgInstall.Link.SetObjectAndProperty(aktMeta.InstallerMeta[0],
+      TICheckBoxBgInstall1.Link.SetObjectAndProperty(aktMeta.InstallerMeta[0],
         'install_in_background');
       TIComboBoxBgOS1.Link.SetObjectAndProperty(aktMeta.InstallerMeta[0].requirement,
         'os');
-      (*
-       TIComboBoxBgOS1.Items.Clear;
-      for i := 0 to GetEnumNameCount(TypeInfo(TMeta_os)) -1 do
-        TIComboBoxBgOS1.Items.Add(GetEnumName(TypeInfo(TMeta_os),i));
-        *)
       TIComboBoxBgOsArch1.Link.SetObjectAndProperty(aktMeta.InstallerMeta[0].requirement,
         'os_arch');
-      (*
-      TIComboBoxBgOsArch1.Items.Clear;
-      for i := 0 to GetEnumNameCount(TypeInfo(TMeta_os_arch)) -1 do
-        TIComboBoxBgOsArch1.Items.Add(GetEnumName(TypeInfo(TMeta_os_arch),i));
-      *)
+      TICheckBoxBgInstActive2.Link.SetObjectAndProperty(
+        aktMeta.InstallerMeta[1], 'active');
+      TIEditBgInstallDir2.Link.SetObjectAndProperty(aktMeta.InstallerMeta[1],
+        'install_dir');
+      TIMemoBgCheckdirs2.Link.SetObjectAndProperty(aktMeta.InstallerMeta[1],
+        'check_processes_from_dirs');
+      TIMemoBgProcesses2.Link.SetObjectAndProperty(aktMeta.InstallerMeta[1],
+        'processes');
+      TICheckBoxBgInstall2.Link.SetObjectAndProperty(aktMeta.InstallerMeta[1],
+        'install_in_background');
+      TIComboBoxBgOS2.Link.SetObjectAndProperty(aktMeta.InstallerMeta[1].requirement,
+        'os');
+      TIComboBoxBgOsArch2.Link.SetObjectAndProperty(aktMeta.InstallerMeta[1].requirement,
+        'os_arch');
 
       // reinit osd settings (changed language ?)
       osdsettings.BuildMode.Clear;
@@ -2250,32 +2266,8 @@ begin
   setRunMode;
   initaktproduct;
 
-  OpenDialog1.FilterIndex := 9;   // control file
-  if DirectoryExists(myconfiguration.LastProjectFileDir) then
-    OpenDialog1.InitialDir := myconfiguration.LastProjectFileDir
-  else if DirectoryExists(myconfiguration.workbench_Path) then
-    OpenDialog1.InitialDir := myconfiguration.workbench_Path;
-  if OpenDialog1.Execute then
-  begin
-    myconfiguration.LastProjectFileDir := ExtractFileDir(OpenDialog1.FileName);
-    LogDatei.log('Start import control file to existing data from: ' +
-      OpenDialog1.FileName, LLnotice);
-    // do not init product data structure here
-    // we just want to add the data to the existing data structure
-    //initaktproduct;
-    resultform1.updateGUI;
-    // we want to import everything : filter = false
-    aktProduct.readControlFile(OpenDialog1.FileName, False);
-    TIGridDep.ListObject := osdbasedata.aktproduct.dependencies;
-    TIGridDep.ReloadTIList;
-    TIGridDep.Update;
-    TIGridProp.ListObject := osdbasedata.aktproduct.properties;
-    TIGridProp.ReloadTIList;
-    TIGridProp.Update;
-    LogDatei.log('Finished import control file to existing data from: ' +
-      OpenDialog1.FileName, LLnotice);
-    aktProdToAktMeta;
-  end;
+  MessageDlg(rscreateBackgroundInfoMsgHead, rscreateBackgroundInfoMsgOsdProjectFile,
+    mtInformation, [mbOK], '');
 
   OpenDialog1.FilterIndex := 8;   // project file
   if DirectoryExists(myconfiguration.LastProjectFileDir) then
@@ -2295,7 +2287,40 @@ begin
     TIGridProp.Update;
     aktProdToAktMeta;
     LogDatei.log('Finished import Project file from: ' + OpenDialog1.FileName, LLnotice);
+  end
+  else
+  begin
+    MessageDlg(rscreateBackgroundInfoMsgHead, rscreateBackgroundInfoMsgControlFile,
+      mtInformation, [mbOK], '');
+
+    OpenDialog1.FilterIndex := 9;   // control file
+    if DirectoryExists(myconfiguration.LastProjectFileDir) then
+      OpenDialog1.InitialDir := myconfiguration.LastProjectFileDir
+    else if DirectoryExists(myconfiguration.workbench_Path) then
+      OpenDialog1.InitialDir := myconfiguration.workbench_Path;
+    if OpenDialog1.Execute then
+    begin
+      myconfiguration.LastProjectFileDir := ExtractFileDir(OpenDialog1.FileName);
+      LogDatei.log('Start import control file to existing data from: ' +
+        OpenDialog1.FileName, LLnotice);
+      // do not init product data structure here
+      // we just want to add the data to the existing data structure
+      //initaktproduct;
+      resultform1.updateGUI;
+      // we want to import everything : filter = false
+      aktProduct.readControlFile(OpenDialog1.FileName, False);
+      TIGridDep.ListObject := osdbasedata.aktproduct.dependencies;
+      TIGridDep.ReloadTIList;
+      TIGridDep.Update;
+      TIGridProp.ListObject := osdbasedata.aktproduct.properties;
+      TIGridProp.ReloadTIList;
+      TIGridProp.Update;
+      LogDatei.log('Finished import control file to existing data from: ' +
+        OpenDialog1.FileName, LLnotice);
+      aktProdToAktMeta;
+    end;
   end;
+
   osdsettings.runmode := createBackgroundInfo;
   PageControl1.ActivePage := resultForm1.TabSheetBackground;
   Application.ProcessMessages;
@@ -2567,17 +2592,11 @@ end;
 
 procedure TResultform1.BitBtnBgChooseInstDirClick(Sender: TObject);
 var
-  installdir : string;
+  installdir: string;
 begin
-  aktProduct.SetupFiles[0].active:=true;
-  aktProduct.SetupFiles[0].targetOS:=osWin;
+  aktProduct.SetupFiles[0].active := True;
+  aktProduct.SetupFiles[0].targetOS := osWin;
   chooseInstallDir(aktProduct.SetupFiles[0]);
-  installdir := aktProduct.SetupFiles[0].installDirectory;
-  // guess architecture from installdir
-  if installdir.StartsWith('%ProgramFiles64Dir%') then
-    aktProduct.SetupFiles[0].architecture := a64
-  else if installdir.StartsWith('%ProgramFiles32Dir%') then
-    aktProduct.SetupFiles[0].architecture := a32;
   aktProdToAktMeta;
 end;
 
@@ -2783,13 +2802,12 @@ var
   y: integer;
   myprop: TPProperty;
   tmpstrlist: TStringList;
-begin
-  if TIGridProp.SelectedRangeCount > 0 then
+
+  procedure initDialog(y: integer);
+  var
+  i, k: integer;
   begin
-    y := TIGridProp.SelectedRange[0].Top - 1;
-    if y > -1 then
-    begin
-      myprop := TPProperty(aktProduct.properties.Items[y]);
+    myprop := TPProperty(aktProduct.properties.Items[y]);
 
       FNewPropDlg.ListBoxPropPosVal.Clear;
       FNewPropDlg.ListBoxPropDefVal.Clear;
@@ -2828,13 +2846,34 @@ begin
         FNewPropDlg.ListBoxPropDefVal.Items.SetStrings(myprop.GetValueLines);
         for i := 0 to myprop.GetDefaultLines.Count - 1 do
         begin
+          //FNewPropDlg.ListBoxPropDefVal.Selected[i] := True;
           k := FNewPropDlg.ListBoxPropDefVal.Items.IndexOf(
             myprop.GetDefaultLines.Strings[i]);
           if k > -1 then
+          begin
             FNewPropDlg.ListBoxPropDefVal.Selected[k] := True;
+            LogDatei.log('default is: '+ FNewPropDlg.ListBoxPropDefVal.Items[k],LLnotice);
+            FNewPropDlg.ListBoxPropDefVal.Refresh;
+            procmess;
+          end
         end;
+        procmess;
       end;
+  end;
 
+begin
+  if TIGridProp.SelectedRangeCount > 0 then
+  begin
+    y := TIGridProp.SelectedRange[0].Top - 1;
+    if y > -1 then
+    begin
+      // There is the following problem:
+      // if you have multi value with multiple defaults
+      // in this case, on the first time show, not all default values are selected
+      // the following stupid code fixes this:  (Fehler #4878)
+      initDialog(y);
+      // and again to fix this bug ....
+      initDialog(y);
 
       if FNewPropDlg.ShowModal = mrOk then
       begin
@@ -3016,6 +3055,11 @@ begin
       installdir := ReplaceText(installdir, 'c:\program files', '%ProgramFiles64Dir%')
     else
       installdir := ReplaceText(installdir, 'c:\program files', '%ProgramFiles32Dir%');
+    // guess architecture from installdir
+    if installdir.StartsWith('%ProgramFiles64Dir%') then
+      mysetup.architecture := a64
+    else if installdir.StartsWith('%ProgramFiles32Dir%') then
+      mysetup.architecture := a32;
     {$ENDIF WINDOWS}
     mysetup.installDirectory := installdir;
   end;
@@ -3243,19 +3287,23 @@ begin
   osdsettings.runmode := createMeta;
   setRunMode;
   MemoAnalyze.Clear;
-  PageControl1.ActivePage := resultForm1.TabSheetProduct;
-  Application.ProcessMessages;
+  TIEditProdVersion3.Clear;
   initaktproduct;
   // no properties at meta product
   //makeProperties;
+  Application.ProcessMessages;
   resultform1.updateGUI;
   aktProduct.productdata.targetOSset := [osMulti];
   aktProduct.productdata.productId := 'opsi-meta-template';
   aktProduct.productdata.productName := 'opsi template for a Meta Product';
   aktProduct.productdata.productversion := '1.0.0';
+  TIEditProdVersion3.Caption:= aktProduct.productdata.productversion;
   aktProduct.productdata.packageversion := 1;
   aktProduct.productdata.description :=
     'A opsi product that contains dependencies but installs nothing';
+  resultform1.updateGUI;
+  PageControl1.ActivePage := resultForm1.TabSheetProduct;
+  Application.ProcessMessages;
 end;
 
 procedure TResultform1.BtCreateEmptyTemplateLinClick(Sender: TObject);
@@ -3478,7 +3526,7 @@ begin
         PageControl1.ActivePage := resultForm1.TabSheetProduct2;
         Application.ProcessMessages;
       end;
-      createBackgroundInfo,gmUnknown:
+      createBackgroundInfo, gmUnknown:
       begin
         // we should never be here
         logdatei.log('Error: in BtProductNextStepClick RunMode: ' +
@@ -3599,7 +3647,8 @@ begin
         if not installerselected then
           BtSetup2NextStepClick(Sender);
       end;
-      createTemplate, createTemplateWithUser, createMeta, createBackgroundInfo, gmUnknown:
+      createTemplate, createTemplateWithUser, createMeta,
+      createBackgroundInfo, gmUnknown:
       begin
         // we should never be here
         logdatei.log(
@@ -4312,6 +4361,19 @@ begin
   OpenURL(myUrl);
 end;
 
+procedure TResultform1.SpeedButtonHelpBackgroundClick(Sender: TObject);
+var
+  myUrl: string;
+begin
+  if LowerCase(osdsettings.mylang) = 'de' then
+    myUrl := opsidocs_base_url +
+      'opsi-docs-de/4.3/opsi-modules/setup-detector.html#opsi-setup-detector-background-info'
+  else
+    myUrl := opsidocs_base_url +
+      'opsi-docs-en/4.3/opsi-modules/setup-detector.html#opsi-setup-detector-background-info';
+  OpenURL(myUrl);
+end;
+
 procedure TResultform1.SpeedButtonHelpCreateClick(Sender: TObject);
 var
   myUrl: string;
@@ -4323,7 +4385,6 @@ begin
     myUrl := opsidocs_base_url +
       'opsi-docs-en/4.3/opsi-modules/setup-detector.html#opsi-setup-detector-product-create';
   OpenURL(myUrl);
-  //ShowMessage(rsNotImplemented);
 end;
 
 procedure TResultform1.SpeedButtonHelpIconClick(Sender: TObject);
@@ -4457,17 +4518,34 @@ end;
 procedure TResultform1.TabSheetBackgroundShow(Sender: TObject);
 begin
   aktProdToAktMeta;
+  // fix first edit field with cursor does not show the value:
+  TIEditBgProductId1.Caption:= aktProduct.productdata.productId;
+  Application.ProcessMessages;
   if osdsettings.runmode = createBackgroundInfo then
   begin
-    BtBgSaveFile.Enabled:= true;
-    BtBgNextStep.Enabled:= false;
+    BtBgSaveFile.Enabled := True;
+    BtBgNextStep.Enabled := False;
   end
   else
   begin
-    BtBgSaveFile.Enabled:= false;
-    BtBgNextStep.Enabled:= true;
+    BtBgSaveFile.Enabled := False;
+    BtBgNextStep.Enabled := True;
   end;
+  // only for windows
+  if aktProduct.SetupFiles[0].active and
+    (aktProduct.SetupFiles[0].targetOS = osWin) then
+    PanelBgMetaInst1.Enabled := True
+  else
+    PanelBgMetaInst1.Enabled := False;
+  // Installer2 only if active and windows
+  if aktProduct.SetupFiles[1].active and
+    (aktProduct.SetupFiles[1].targetOS = osWin) then
+    PanelBgMetaInst2.Enabled := True
+  else
+    PanelBgMetaInst2.Enabled := False;
   Application.ProcessMessages;
+  LogDatei.log('productId in Background is: ' +
+    aktProduct.productdata.productId, LLnotice);
 end;
 
 procedure checkWorkbench;
@@ -4541,6 +4619,20 @@ end;
 procedure TResultform1.TaskPanelWinClick(Sender: TObject);
 begin
 
+end;
+
+procedure TResultform1.TICheckBoxBgInstActive1Change(Sender: TObject);
+begin
+  if aktMeta.InstallerMeta[0].active then
+  PanelBgMetaInst1.Enabled := True
+  else PanelBgMetaInst1.Enabled := False;
+end;
+
+procedure TResultform1.TICheckBoxBgInstActive2Change(Sender: TObject);
+begin
+  if aktMeta.InstallerMeta[1].active then
+  PanelBgMetaInst2.Enabled := True
+  else PanelBgMetaInst2.Enabled := False;
 end;
 
 procedure TResultform1.TICheckBoxlicenseRequiredChange(Sender: TObject);

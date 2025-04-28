@@ -107,6 +107,8 @@ type
     property doNotCheckInstallDirBinaries: boolean
       read FdoNotCheckInstallDirBinaries write FdoNotCheckInstallDirBinaries;
       *)
+    property active: boolean
+      read Factive write Factive;
     property install_in_background: boolean
       read Finstall_in_background write Finstall_in_background;
     property path: string read Fpath write Fpath;
@@ -364,6 +366,8 @@ begin
           // do not write install_in_background with default = true to meta data
           if aktMeta.InstallerMeta[i].install_in_background then
             jsonAsObjectDeleteByKey(JSONString, 'install_in_background');
+          // do not write active  to meta data
+            jsonAsObjectDeleteByKey(JSONString, 'active');
           if Assigned(logdatei) then
             logdatei.log('JSONString: ' + JSONString, LLDebug);
           myStringlist.Add(JSONString);
@@ -483,8 +487,9 @@ begin
       aktMeta.InstallerMeta[i].path :=
         aktProduct.SetupFiles[i].installerSourceDir + '\' +
         aktProduct.SetupFiles[i].setupFileName;
-
-      aktMeta.InstallerMeta[i].addtoCheckDirs(aktProduct.SetupFiles[i].installDirectory);
+      // check only for process at windows
+      if aktProduct.SetupFiles[i].targetOS = oswin then
+        aktMeta.InstallerMeta[i].addtoCheckDirs(aktProduct.SetupFiles[i].installDirectory);
       aktMeta.InstallerMeta[i].FMetaInstallerRequirement.os :=
         aktprodTargetosToMetaOs(aktProduct.SetupFiles[i].targetOS);
       aktMeta.InstallerMeta[i].FMetaInstallerRequirement.os_arch :=

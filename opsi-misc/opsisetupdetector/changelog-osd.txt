@@ -150,9 +150,15 @@ todo:
 - osdmeta: use initialization / finalization
 - osdanalyzewin: get_MsixAppx_info: comments on arch: neutral
 - osdform: BtSetup1NextStepClick: correct os (win) for second win setup
+- osdform: BitBtnEditPropClick fixes  #4878
+- osdform: #4890
+- osdform: (#4889) first rtti edit field need caption set
+           in TabSheetBackgroundShow and in BtnMeta
+
 
 ### Add:
 - New Windows task 'Create Background info file'
+- New tabsheet Background_info
 
 (Detlef Oertel <d.oertel@uib.de>)
 
