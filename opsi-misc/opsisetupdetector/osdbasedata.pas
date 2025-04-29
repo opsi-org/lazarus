@@ -554,6 +554,7 @@ default: ["xenial_bionic"]
     FLastProjectFileDir: string;  // last dir from wich we opend a project file
     FLastSetupFileDir: string;  // last dir from wich we opend a setup file
     FLastIconFileDir: string;  // last dir from wich we opend a icon file
+    FLastControlFileDir: string;  // last dir from wich we opend a icon file
     Fcontrol_in_toml_format: boolean; // since opsi 4.3 control files in toml format
     Fdependencies_for_all_actionrequests: boolean;
     // since opsi 4.3 dependecies are allowed for all action requests
@@ -604,6 +605,7 @@ default: ["xenial_bionic"]
       write FLastProjectFileDir;
     property LastSetupFileDir: string read FLastSetupFileDir write FLastSetupFileDir;
     property LastIconFileDir: string read FLastIconFileDir write FLastIconFileDir;
+    property LastControlFileDir: string read FLastControlFileDir write FLastControlFileDir;
     property control_in_toml_format: boolean
       read Fcontrol_in_toml_format write Fcontrol_in_toml_format;
     property dependencies_for_all_actionrequests: boolean

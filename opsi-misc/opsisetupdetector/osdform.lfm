@@ -979,7 +979,7 @@ object resultForm1: TresultForm1
             object BtSingleAnalyzeAndCreateLin: TBitBtn
               Left = 5
               Height = 58
-              Hint = 'Analyze a single existing Setupfile '#13#10'and create a multiplatform opsi Product'
+              Hint = 'Analyze a single existing Setupfile '
               Top = 40
               Width = 495
               Align = alTop
@@ -1456,6 +1456,8 @@ object resultForm1: TresultForm1
               }
               OnClick = BtSingleAnalyzeAndCreateLinClick
               ParentFont = False
+              ParentShowHint = False
+              ShowHint = True
               TabOrder = 1
             end
             object BtCreateEmptyTemplateLin: TBitBtn
@@ -1764,6 +1766,8 @@ object resultForm1: TresultForm1
               }
               OnClick = BtCreateEmptyTemplateLinClick
               ParentFont = False
+              ParentShowHint = False
+              ShowHint = True
               TabOrder = 2
             end
           end
@@ -2429,6 +2433,8 @@ object resultForm1: TresultForm1
               }
               OnClick = BtSingleAnalyzeAndCreateWinClick
               ParentFont = False
+              ParentShowHint = False
+              ShowHint = True
               TabOrder = 1
             end
             object BtATwonalyzeAndCreate: TBitBtn
@@ -3162,6 +3168,8 @@ object resultForm1: TresultForm1
               }
               OnClick = BtATwonalyzeAndCreateClick
               ParentFont = False
+              ParentShowHint = False
+              ShowHint = True
               TabOrder = 2
             end
             object BtCreateEmptyTemplateWin: TBitBtn
@@ -3469,6 +3477,8 @@ object resultForm1: TresultForm1
               }
               OnClick = BtCreateEmptyTemplateWinClick
               ParentFont = False
+              ParentShowHint = False
+              ShowHint = True
               TabOrder = 3
             end
             object BtAnalyzeOnly: TBitBtn
@@ -4086,6 +4096,8 @@ object resultForm1: TresultForm1
               }
               OnClick = BtSingleAnalyzeAndCreateWithUserClick
               ParentFont = False
+              ParentShowHint = False
+              ShowHint = True
               TabOrder = 5
             end
             object BtCreateEmptyTemplateWithUserWin: TBitBtn
@@ -4393,6 +4405,8 @@ object resultForm1: TresultForm1
               }
               OnClick = BtCreateEmptyTemplateWithUserWinClick
               ParentFont = False
+              ParentShowHint = False
+              ShowHint = True
               TabOrder = 6
             end
             object BtCreateWingetPackage: TBitBtn
@@ -4700,6 +4714,8 @@ object resultForm1: TresultForm1
               }
               OnClick = BtCreateWingetPackageClick
               ParentFont = False
+              ParentShowHint = False
+              ShowHint = True
               TabOrder = 7
             end
             object BtCreateBackgroundInfo: TBitBtn
@@ -4847,6 +4863,8 @@ object resultForm1: TresultForm1
               }
               OnClick = BtCreateBackgroundInfoClick
               ParentFont = False
+              ParentShowHint = False
+              ShowHint = True
               TabOrder = 8
             end
           end
@@ -5474,6 +5492,8 @@ object resultForm1: TresultForm1
               }
               OnClick = BtSingleAnalyzeAndCreateMacClick
               ParentFont = False
+              ParentShowHint = False
+              ShowHint = True
               TabOrder = 1
             end
             object BtCreateEmptyTemplateMac: TBitBtn
@@ -5781,6 +5801,8 @@ object resultForm1: TresultForm1
               }
               OnClick = BtCreateEmptyTemplateMacClick
               ParentFont = False
+              ParentShowHint = False
+              ShowHint = True
               TabOrder = 2
             end
           end
@@ -6520,6 +6542,8 @@ object resultForm1: TresultForm1
               }
               OnClick = BtSingleAnalyzeAndCreateMultiClick
               ParentFont = False
+              ParentShowHint = False
+              ShowHint = True
               TabOrder = 1
             end
             object BtCreateEmptyTemplateMulti: TBitBtn
@@ -6827,6 +6851,8 @@ object resultForm1: TresultForm1
               }
               OnClick = BtCreateEmptyTemplateMultiClick
               ParentFont = False
+              ParentShowHint = False
+              ShowHint = True
               TabOrder = 2
             end
           end
@@ -13409,10 +13435,10 @@ object resultForm1: TresultForm1
                 TIOptions = [tgoStartIndexAtOne, tgoShowOnlyProperties]
                 ColWidths = (
                   64
-                  129
-                  129
-                  129
-                  128
+                  125
+                  125
+                  124
+                  124
                 )
               end
               object PanelDepBtns: TPanel
@@ -13835,10 +13861,10 @@ object resultForm1: TresultForm1
                 TIOptions = [tgoStartIndexAtOne, tgoShowOnlyProperties]
                 ColWidths = (
                   64
-                  242
-                  242
-                  242
-                  242
+                  238
+                  238
+                  238
+                  237
                 )
               end
             end
@@ -13947,7 +13973,7 @@ object resultForm1: TresultForm1
                 ParentColor = False
                 ParentFont = False
               end
-              object Label126: TLabel
+              object LabelBgListDir: TLabel
                 Left = 8
                 Height = 61
                 Top = 52
@@ -13956,13 +13982,13 @@ object resultForm1: TresultForm1
                 AutoSize = False
                 BorderSpacing.Left = 30
                 BorderSpacing.Around = 4
-                Caption = 'List of Directories'#13#10'to Check'
+                Caption = 'List of directories to be checked'
                 Font.Height = -16
                 ParentColor = False
                 ParentFont = False
                 WordWrap = True
               end
-              object Label127: TLabel
+              object LabelBgListProc: TLabel
                 Left = 8
                 Height = 61
                 Top = 152
@@ -13971,7 +13997,7 @@ object resultForm1: TresultForm1
                 AutoSize = False
                 BorderSpacing.Left = 30
                 BorderSpacing.Around = 4
-                Caption = 'List of Processe '#13#10'to Check'
+                Caption = 'List of processes to be checked'
                 Font.Height = -16
                 ParentColor = False
                 ParentFont = False
@@ -13990,7 +14016,7 @@ object resultForm1: TresultForm1
                 ParentColor = False
                 ParentFont = False
               end
-              object Label129: TLabel
+              object LabelBgOs: TLabel
                 Left = 8
                 Height = 21
                 Top = 295
@@ -14003,7 +14029,7 @@ object resultForm1: TresultForm1
                 ParentColor = False
                 ParentFont = False
               end
-              object Label130: TLabel
+              object LabelBgOsArch: TLabel
                 Left = 8
                 Height = 21
                 Top = 328

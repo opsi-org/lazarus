@@ -225,11 +225,11 @@ type
     Label119: TLabel;
     Label120: TLabel;
     Label125: TLabel;
-    Label126: TLabel;
-    Label127: TLabel;
+    LabelBgListDir: TLabel;
+    LabelBgListProc: TLabel;
     Label128: TLabel;
-    Label129: TLabel;
-    Label130: TLabel;
+    LabelBgOs: TLabel;
+    LabelBgOsArch: TLabel;
     Label131: TLabel;
     Label2: TLabel;
     Label3: TLabel;
@@ -817,10 +817,18 @@ resourcestring
   rsRebuildFinished = 'Rebuild opsi package finished.';
   rsRebuildFailedBuild = 'Rebuild opsi package: build / install package failed';
   rscreateBackgroundInfoMsgHead =
-    'opsi-setup-detector: Read Info about exitsting opsi-product';
+    'opsi-setup-detector: Attempts to read information about an existing opsi product';
   rscreateBackgroundInfoMsgOsdProjectFile =
-    'Select an existing opsi-setup-detector project file (if possible)';
-  rscreateBackgroundInfoMsgControlFile = 'Select an existing opsi control file';
+    'Select an existing opsi-setup-detector project file' +LineEnding + '(if possible)';
+  rscreateBackgroundInfoMsgControlFile =
+    'Select an existing opsi control file' +LineEnding + '(if possible)';
+
+  // Captions
+  rsLabelBgListDirCaption = 'List of directories to be checked';
+  rsLabelBgListProcCaption = 'List of processes to be checked';
+  rsLabelBgOsCaption = 'Operating System (OS)';
+  rsLabelBgOsArchCaption = 'OS Architecture';
+
 
 
   // Hints
@@ -851,6 +859,19 @@ resourcestring
   rsUninstallProgHint =
     'The unqoted path to the detected uninstall program.' + LineEnding +
     'You may also choose the file via the selection button on the right (if the product is installed).';
+  rsBgCheckDirListHint =
+    'Directories that contain programs that should not run during installation.' + LineEnding +
+    'This is usually the installation directory.' + LineEnding +
+    'If empty, nothing is checked. One entry per line.';
+  rsBgCheckProcessListHint =
+    'Other Programs that should not run during installation.' + LineEnding +
+    'Specification with or without path possible.' + LineEnding +
+    'One entry per line.';
+  rsBgInstall_in_backgroundHint = 'Can the product be installed when the user is logged in?';
+  rsBgRequiredOsHint = 'Required operating system';
+  rsBgRequiredOsArchHint = 'Required architecture of the operating system';
+  rsBgSaveFileHint = 'Save the file in the CLIENT_DATA directory of the opsi product';
+
 
   // Tabs
   rsTabStart = 'Start';
@@ -1035,6 +1056,12 @@ begin
       TIRadioGroupBuildMode.Items.Text := osdsettings.BuildMode.Text;
       TIRadioGroupBuildMode.Link.SetObjectAndProperty(osdsettings, 'BuildModeValue');
 
+      LabelBgListDir.Caption := rsLabelBgListDirCaption;
+      LabelBgListProc.Caption := rsLabelBgListProcCaption;
+      LabelBgOs.Caption := rsLabelBgOsCaption;
+      LabelBgOsArch.Caption :=  rsLabelBgOsArchCaption;
+
+
       // the hints ...
       TIComboBoxChannel.Hint := rsTemlateChannelHint;
       TICheckBoxHandleLiceneKey.Hint := rsUsePropLicenseOrPool;
@@ -1055,6 +1082,21 @@ begin
       TICheckBoxS1Silent.Hint := rsPreferSilent;
       TICheckBoxS2Silent.Hint := rsPreferSilent;
       TICheckBoxS3Silent.Hint := rsPreferSilent;
+      TIMemoBgCheckdirs1.Hint := rsBgCheckDirListHint;
+      TIMemoBgProcesses1.Hint := rsBgCheckProcessListHint;
+      TICheckBoxBgInstall1.Hint := rsBgInstall_in_backgroundHint;
+      TIComboBoxBgOS1.Hint := rsBgRequiredOsHint;
+      TIComboBoxBgOsArch1.Hint := rsBgRequiredOsArchHint;
+      TIMemoBgCheckdirs2.Hint := rsBgCheckDirListHint;
+      TIMemoBgProcesses2.Hint := rsBgCheckProcessListHint;
+      TICheckBoxBgInstall2.Hint := rsBgInstall_in_backgroundHint;
+      TIComboBoxBgOS2.Hint := rsBgRequiredOsHint;
+      TIComboBoxBgOsArch2.Hint := rsBgRequiredOsArchHint;
+      LabelBgListDir.Hint := rsBgCheckDirListHint;
+      LabelBgListProc.Hint := rsBgCheckProcessListHint;
+      LabelBgOs.Hint := rsBgRequiredOsHint;
+      LabelBgOsArch.Hint := rsBgRequiredOsArchHint;
+      BtBgSaveFile.Hint := rsBgSaveFileHint;
 
 
       TIEditInstallDir1.ShowHint := True;
@@ -1069,6 +1111,14 @@ begin
       TICheckBoxS1Silent.ShowHint := True;
       TICheckBoxS2Silent.ShowHint := True;
       TICheckBoxS3Silent.ShowHint := True;
+      LabelBgListDir.ShowHint := True;
+      LabelBgListProc.ShowHint := True;
+      TICheckBoxBgInstall1.ShowHint := True;
+      TICheckBoxBgInstall2.ShowHint := True;
+      LabelBgOs.ShowHint := True;
+      LabelBgOsArch.ShowHint := True;
+      BtBgSaveFile.ShowHint := True;
+
 
     end;
     TIEditworkbenchpath.Link.SetObjectAndProperty(myconfiguration, 'workbench_path');
@@ -2250,7 +2300,27 @@ begin
 end;
 
 procedure TResultform1.BtBgSaveFileClick(Sender: TObject);
+var
+  myProdId : string;
+  myStorePath : string;
 begin
+  // try to guess the correct workbench path
+  myProdId := aktProduct.productdata.productId;
+  if myProdId <> '' then
+  begin
+    if AnsiContainsStr(myconfiguration.LastProjectFileDir,myProdId) then
+     myStorePath := myconfiguration.LastProjectFileDir + '\CLIENT_DATA'
+     else if AnsiContainsStr(myconfiguration.LastControlFileDir ,myProdId) then
+     begin
+       myStorePath := AnsiReplaceStr(myconfiguration.LastProjectFileDir,'\OPSI','');
+       myStorePath := myStorePath + '\CLIENT_DATA';
+     end
+    else
+      myStorePath := myconfiguration.workbench_Path+'\'+myProdId+ '\CLIENT_DATA'
+  end
+  else
+    myStorePath := myconfiguration.workbench_Path;
+  SaveDialogBgMetaData.InitialDir := myStorePath;
   if SaveDialogBgMetaData.Execute then
   begin
     aktMeta.write_product_metadata_to_file(SaveDialogBgMetaData.FileName);
@@ -2300,7 +2370,7 @@ begin
       OpenDialog1.InitialDir := myconfiguration.workbench_Path;
     if OpenDialog1.Execute then
     begin
-      myconfiguration.LastProjectFileDir := ExtractFileDir(OpenDialog1.FileName);
+      myconfiguration.LastControlFileDir := ExtractFileDir(OpenDialog1.FileName);
       LogDatei.log('Start import control file to existing data from: ' +
         OpenDialog1.FileName, LLnotice);
       // do not init product data structure here
