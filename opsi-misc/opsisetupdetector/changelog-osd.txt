@@ -147,10 +147,10 @@ todo:
 ## [4.3.6.1-1] - 2025-04-29
 
 ### Fix
-- modified resource Strings for backgound info form
+- modified resource Strings for background info form
 
 ### Add:
-- Hints in backgound info form
+- Hints in background info form
 - try to guess the correct path to save meta-data file
 
 (Detlef Oertel <d.oertel@uib.de>)
