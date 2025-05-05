@@ -639,6 +639,7 @@ type
     procedure TICheckBoxS1MstChange(Sender: TObject);
     procedure TICheckBoxS1SilentChange(Sender: TObject);
     procedure TICheckBoxS2MstChange(Sender: TObject);
+    procedure TIComboBoxBgOS1Change(Sender: TObject);
     procedure TIComboBoxChannelChange(Sender: TObject);
     procedure TIComboBoxChannelEditingDone(Sender: TObject);
     procedure WingetInputEditingDone(Sender: TObject);
@@ -1232,10 +1233,14 @@ begin
     TreeView1.Items[9].Text := rsTabProductIcon;
     TreeView1.Items[10].Text := rsTabCreate;
 
+    if myconfiguration.ShowBackgroundInfoBtn then
+      BtCreateBackgroundInfo.Visible:= true
+    else BtCreateBackgroundInfo.Visible:= false;
 
     EditLogInfo.Caption := 'More info in Log file: ' + LogDatei.FileName;
     Application.ProcessMessages;
   end;
+
   reload_installer_info_messages;
   LogDatei.log('Finished initGUI ... ', LLInfo);
 end;
@@ -1719,9 +1724,9 @@ begin
   begin
     logdatei.log('After configdialog: packagebuilder exists', LLDebug2);
     //RadioButtonBuildPackage.Enabled := True;
-    // is not pössible via rtti
+    // is not possible via rtti
     //RadioButtonPackageBuilder.Enabled := True;
-    // is not pössible via rtti
+    // is not possible via rtti
     //CheckGroupBuildMode.Enabled := True;
 
     // enable build
@@ -1733,7 +1738,7 @@ begin
     //RadioButtonBuildPackage.Enabled := False;
     // is not possible via rtti
     //RadioButtonPackageBuilder.Enabled := False;
-    // is not pössible via rtti
+    // is not possible via rtti
     //CheckGroupBuildMode.Enabled := False;
 
     // disable build if also no service data
@@ -4390,25 +4395,6 @@ begin
 end;
 
 
-
-(*
-procedure TResultform1.RadioButtonBuildModeChange(Sender: TObject);
-var
-  RadioButtonName: string;
-begin
-  RadioButtonName := (Sender as TRadioButton).Name;
-  if RadioButtonName = 'RadioButtonCreateOnly' then
-  begin
-  end
-  else if RadioButtonName = 'RadioButtonPackageBuilder' then
-  begin
-  end
-  else if RadioButtonName = 'RadioButtonBuildPackage' then
-  begin
-  end;
-end;
-*)
-
 procedure TResultform1.SBtnExitClick(Sender: TObject);
 begin
   LogDatei.log('Choosed exit Button - Terminate Program', LLnotice);
@@ -4587,7 +4573,9 @@ end;
 
 procedure TResultform1.TabSheetBackgroundShow(Sender: TObject);
 begin
-  aktProdToAktMeta;
+  // do only overwrite the aktMetadata if it seems to be empty
+  if not aktMeta.InstallerMeta[0].active then
+    aktProdToAktMeta;
   // fix first edit field with cursor does not show the value:
   TIEditBgProductId1.Caption:= aktProduct.productdata.productId;
   Application.ProcessMessages;
@@ -4790,6 +4778,11 @@ begin
   begin
     FlowPanelMst1.Enabled := False;
   end;
+end;
+
+procedure TResultform1.TIComboBoxBgOS1Change(Sender: TObject);
+begin
+
 end;
 
 procedure TResultform1.TIComboBoxChannelChange(Sender: TObject);

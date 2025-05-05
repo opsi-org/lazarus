@@ -1146,8 +1146,8 @@ begin
       //if myconfiguration.writeMetaDataFile then
       if osWin in aktProduct.productdata.targetOSset then
       begin
-        LogDatei.log('Collect meta data', LLnotice);
-        osdmeta.aktProdToAktMeta;
+        //LogDatei.log('Collect meta data', LLnotice);
+        //osdmeta.aktProdToAktMeta;
         LogDatei.log('Write meta data file to path: ' + clientpath, LLnotice);
         osdmeta.aktMeta.write_product_metadata_ToPath(clientpath);
       end;

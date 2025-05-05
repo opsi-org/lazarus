@@ -14151,6 +14151,7 @@ object resultForm1: TresultForm1
                 BorderSpacing.Around = 10
                 HistoryCaseSensitive = False
                 MaxHistoryCount = 0
+                OnChange = TIComboBoxBgOS1Change
                 TabOrder = 1
               end
               object TIComboBoxBgOsArch1: TTIComboBox

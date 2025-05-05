@@ -92,6 +92,7 @@ begin
     rsDependencies_for_all_actionrequests);
   myconfigurationhints.Add('preferMsiUninstall=' + rsPreferMsiUninstall);
   //myconfigurationhints.Add('writeMetaDataFile=' + rsWriteMetaDataFile);
+  myconfigurationhints.Add('ShowBackgroundInfoBtn=' + rsShowBackgroundInfoBtn);
 
   SetDefaultLang(osdsettings.mylang, osdsettings.mylocaledir);
   Repaint;

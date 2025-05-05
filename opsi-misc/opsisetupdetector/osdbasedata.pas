@@ -560,6 +560,7 @@ default: ["xenial_bionic"]
     // since opsi 4.3 dependecies are allowed for all action requests
     FpreferMsiUninstall: boolean; // true=prefer uninstall via msi if possible
     //FwriteMetaDataFile: boolean;  // true=write opsi-meta-data.toml file
+    FShowBackgroundInfoBtn: boolean;  // true=show the background Info Button at start tab
     procedure SetLibraryLines(const AValue: TStrings);
     procedure SetPreInstallLines(const AValue: TStrings);
     procedure SetPostInstallLines(const AValue: TStrings);
@@ -605,7 +606,8 @@ default: ["xenial_bionic"]
       write FLastProjectFileDir;
     property LastSetupFileDir: string read FLastSetupFileDir write FLastSetupFileDir;
     property LastIconFileDir: string read FLastIconFileDir write FLastIconFileDir;
-    property LastControlFileDir: string read FLastControlFileDir write FLastControlFileDir;
+    property LastControlFileDir: string read FLastControlFileDir
+      write FLastControlFileDir;
     property control_in_toml_format: boolean
       read Fcontrol_in_toml_format write Fcontrol_in_toml_format;
     property dependencies_for_all_actionrequests: boolean
@@ -614,6 +616,8 @@ default: ["xenial_bionic"]
       write FpreferMsiUninstall;
     //property writeMetaDataFile: boolean read FwriteMetaDataFile
     //  write FwriteMetaDataFile;
+    property ShowBackgroundInfoBtn: boolean read FShowBackgroundInfoBtn
+      write FShowBackgroundInfoBtn;
 
 
 
@@ -751,6 +755,8 @@ resourcestring
     'like installshieldMSI, advanced_installer, wix toolset';
   rsWriteMetaDataFile =
     'If true=write opsi-meta-data.toml file';
+  rsShowBackgroundInfoBtn =
+    'If true= Show "Background Info" Button on start tab';
   //************************************************
   //info_message_html.Text
   //************************************************
@@ -1484,6 +1490,7 @@ begin
   //initaktproduct;
 end;
 
+
 procedure TopsiProduct.writeProjectFileToPath(path: string);
 begin
   path := IncludeTrailingPathDelimiter(path);
@@ -1536,7 +1543,9 @@ begin
       deactivateImportMode;
       JSONString := Streamer.ObjectToJSONString(aktProduct.dependencies);
       writeln(pfile, JSONString);
-      JSONString := Streamer.ObjectToJSONString(aktMeta);
+      JSONString := aktmeta.convert_aktmeta_to_jsonstring(True);
+      if Assigned(logdatei) then
+        logdatei.log('write meta to project file: ' + JSONString, LLDebug);
       writeln(pfile, JSONString);
       CloseFile(pfile);
 
@@ -1558,12 +1567,11 @@ end;
 procedure TopsiProduct.readProjectFile(filename: string);
 var
   DeStreamer: TJSONDeStreamer;
-  //Streamer: TJSONStreamer;
   JSONString, JSONObjString: string;
   myfilename: string;
   pfile: TextFile;
   aktproperty: TPProperty;
-  // even if the compiler tell this it is not used - it is used !!
+  // aktproperty: even if the compiler tell this it is not used - it is used !!
   i: integer;
 begin
   try
@@ -1635,7 +1643,7 @@ begin
           if Assigned(logdatei) then
             logdatei.log('Meta data line: ' + JSONString, LLDebug);
           if JSONString <> '' then
-            DeStreamer.JSONToObject(JSONString, aktMeta);
+            aktmeta.convert_jsonstring_to_aktmeta(JSONString);
         end;
         // Cleanup
       finally
@@ -1763,6 +1771,7 @@ begin
   {$ENDIF WINDOWS}
   FpreferMsiUninstall := True;
   //FwriteMetaDataFile := False;
+  FShowBackgroundInfoBtn := False;
   //readconfig;
 end;
 
@@ -2256,6 +2265,7 @@ begin
   osdsettings.DetectionSummary.Clear;
   osdsettings.DetectCount := 0;
   //aktProduct.targetOS:= osWin;
+  aktmeta.initMeta;
 end;
 
 procedure freebasedata;
