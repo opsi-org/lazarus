@@ -1,7 +1,7 @@
 object FNewDepDlg: TFNewDepDlg
-  Left = 766
+  Left = 785
   Height = 461
-  Top = 400
+  Top = 489
   Width = 563
   Caption = 'opsi-setup-detector: Dependency Editor'
   ClientHeight = 461

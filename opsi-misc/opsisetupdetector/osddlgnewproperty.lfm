@@ -1,7 +1,7 @@
 object FNewPropDlg: TFNewPropDlg
-  Left = 623
+  Left = 638
   Height = 635
-  Top = 210
+  Top = 257
   Width = 428
   Caption = 'opsi-setup-detector - Properties'
   ClientHeight = 635

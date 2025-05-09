@@ -58,7 +58,7 @@ type
   private
     FrunMode: TRunMode;
     Fshowgui: boolean;
-    Fstartupfinished: boolean;
+    Fstartupfinished: boolean;   // #### ????
     Fmylocaledir: string;
     Fmylang: string;
     Fmyexitcode: integer;
