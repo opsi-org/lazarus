@@ -761,8 +761,9 @@ resourcestring
     'If true= Show "Background Info" Button on start tab';
     *)
   rsEnableBackgroundMetaData =
-    'If true= Show "Product configuration 3" Button on start tab' +
-    LineEnding + 'write opsi-meta-data.toml file';
+    'If true= Show "Background Info File" Button on start tab.' +
+    LineEnding + 'Make "Product configuration 3" Tab visible and enabled.' +
+    LineEnding + 'Write opsi-meta-data.toml file on Product creation';
   //************************************************
   //info_message_html.Text
   //************************************************
