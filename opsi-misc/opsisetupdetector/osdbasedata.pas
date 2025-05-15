@@ -560,7 +560,8 @@ default: ["xenial_bionic"]
     // since opsi 4.3 dependecies are allowed for all action requests
     FpreferMsiUninstall: boolean; // true=prefer uninstall via msi if possible
     //FwriteMetaDataFile: boolean;  // true=write opsi-meta-data.toml file
-    FShowBackgroundInfoBtn: boolean;  // true=show the background Info Button at start tab
+    //FShowBackgroundInfoBtn: boolean;  // true=show the background Info Button at start tab
+    FEnableBackgroundMetaData: boolean;  // false=hide all background related features
     procedure SetLibraryLines(const AValue: TStrings);
     procedure SetPreInstallLines(const AValue: TStrings);
     procedure SetPostInstallLines(const AValue: TStrings);
@@ -616,8 +617,8 @@ default: ["xenial_bionic"]
       write FpreferMsiUninstall;
     //property writeMetaDataFile: boolean read FwriteMetaDataFile
     //  write FwriteMetaDataFile;
-    property ShowBackgroundInfoBtn: boolean read FShowBackgroundInfoBtn
-      write FShowBackgroundInfoBtn;
+    property EnableBackgroundMetaData: boolean
+      read FEnableBackgroundMetaData write FEnableBackgroundMetaData;
 
 
 
@@ -753,10 +754,15 @@ resourcestring
     'If true=prefer uninstall via msi if possible.' + LineEnding +
     'Affects Installers that are wrappers around msi,' + LineEnding +
     'like installshieldMSI, advanced_installer, wix toolset';
+  (*
   rsWriteMetaDataFile =
     'If true=write opsi-meta-data.toml file';
   rsShowBackgroundInfoBtn =
     'If true= Show "Background Info" Button on start tab';
+    *)
+  rsEnableBackgroundMetaData =
+    'If true= Show "Product configuration 3" Button on start tab' +
+    LineEnding + 'write opsi-meta-data.toml file';
   //************************************************
   //info_message_html.Text
   //************************************************
@@ -1423,7 +1429,7 @@ begin
     myprop.Property_Type := bool;
     myprop.multivalue := False;
     myprop.editable := False;
-    myprop.boolDefault := True;
+    myprop.boolDefault := False;
   end;
 
 
@@ -1760,7 +1766,7 @@ begin
   FUsePropDesktopicon := False;
   FTemplateChannel := default;
   FpreferSilent := False; // Unattended
-  Fcontrol_in_toml_format := False; // opsi 4.2
+  Fcontrol_in_toml_format := True; // opsi 4.3
   Fdependencies_for_all_actionrequests := False; // opsi 4.2
   {$IFDEF UNIX}
   FLasticonFileDir := '/usr/share/opsi-setup-detector/icons';
@@ -1771,7 +1777,8 @@ begin
   {$ENDIF WINDOWS}
   FpreferMsiUninstall := True;
   //FwriteMetaDataFile := False;
-  FShowBackgroundInfoBtn := False;
+  //FShowBackgroundInfoBtn := False;
+  FEnableBackgroundMetaData := False;
   //readconfig;
 end;
 
@@ -2217,12 +2224,20 @@ begin
     {$IFDEF WINDOWS}
     defaultIconFullFileName :=
       ExtractFileDir(Application.Params[0]) + PathDelim + 'template-files' +
-      PathDelim + 'default' + PathDelim + 'images' + PathDelim + 'template.png';
+      PathDelim + channelDir + PathDelim + 'images' + PathDelim + 'template.png';
+    if not FileExistsUTF8(defaultIconFullFileName) then
+      defaultIconFullFileName :=
+        ExtractFileDir(Application.Params[0]) + PathDelim + 'template-files' +
+        PathDelim + 'default' + PathDelim + 'images' + PathDelim + 'template.png';
     {$ENDIF WINDOWS}
     {$IFDEF LINUX}
     defaultIconFullFileName :=
       '/usr/share/opsi-setup-detector' + PathDelim + 'template-files' +
-      PathDelim + 'default' + PathDelim + 'images' + PathDelim + 'template.png';
+      PathDelim + channelDir + PathDelim + 'images' + PathDelim + 'template.png';
+    if not fileexists(defaultIconFullFileName) then
+      defaultIconFullFileName :=
+        '/usr/share/opsi-setup-detector' + PathDelim + 'template-files' +
+        PathDelim + 'default' + PathDelim + 'images' + PathDelim + 'template.png';
     // in develop environment
     if not fileexists(defaultIconFullFileName) then
       defaultIconFullFileName :=
@@ -2237,8 +2252,12 @@ begin
     if not DirectoryExists(defaultIconFullFileName) then
       defaultIconFullFileName :=
         ExtractFileDir(Application.ExeName) + PathDelim +
-        '../Resources/template-files' + PathDelim + 'default' + PathDelim +
-        'images' + PathDelim + 'template.png';
+        '../Resources/template-files' + PathDelim + channelDir +
+        PathDelim + 'images' + PathDelim + 'template.png';
+    if not DirectoryExists(defaultIconFullFileName) then
+      defaultIconFullFileName :=
+        ExtractFileDir(Application.ExeName) + PathDelim + 'template-files' +
+        PathDelim + 'default' + PathDelim + 'images' + PathDelim + 'template.png';
     {$ENDIF DARWIN}
     osdbasedata.aktProduct.productdata.productImageFullFileName :=
       defaultIconFullFileName;

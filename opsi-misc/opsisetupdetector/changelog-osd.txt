@@ -144,6 +144,28 @@ todo:
 
 # Changelog opsi-setup-detector
 
+## [4.3.6.2-1] - 2025-05-15
+
+### Fix
+- hide background / meta-data features on new config:
+  EnableBackgroundMetaData (default = false)
+  removes configs: writeMetaDataFile, ShowBackgroundInfoBtn
+
+  ### Change
+  configuration: control_in_toml_format now default = True;
+  checkbox: uninstall_before_install: property default is now false
+
+### Add:
+- on custom channel: copy all files from custom/additional_files
+- try to get the default icon from:
+  template-files\<channel>\images\template.png
+
+### templates:
+- syntax error in get_licensekey_byPoolOrKey
+
+(Detlef Oertel <d.oertel@uib.de>)
+
+
 ## [4.3.6.1-1] - 2025-04-29
 
 ### Fix

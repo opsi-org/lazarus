@@ -820,9 +820,9 @@ resourcestring
   rscreateBackgroundInfoMsgHead =
     'opsi-setup-detector: Attempts to read information about an existing opsi product';
   rscreateBackgroundInfoMsgOsdProjectFile =
-    'Select an existing opsi-setup-detector project file' +LineEnding + '(if possible)';
+    'Select an existing opsi-setup-detector project file' + LineEnding + '(if possible)';
   rscreateBackgroundInfoMsgControlFile =
-    'Select an existing opsi control file' +LineEnding + '(if possible)';
+    'Select an existing opsi control file' + LineEnding + '(if possible)';
 
   // Captions
   rsLabelBgListDirCaption = 'List of directories to be checked';
@@ -861,14 +861,15 @@ resourcestring
     'The unqoted path to the detected uninstall program.' + LineEnding +
     'You may also choose the file via the selection button on the right (if the product is installed).';
   rsBgCheckDirListHint =
-    'Directories that contain programs that should not run during installation.' + LineEnding +
-    'This is usually the installation directory.' + LineEnding +
-    'If empty, nothing is checked. One entry per line.';
+    'Directories that contain programs that should not run during installation.' +
+    LineEnding + 'This is usually the installation directory.' +
+    LineEnding + 'If empty, nothing is checked. One entry per line.';
   rsBgCheckProcessListHint =
-    'Other Programs that should not run during installation.' + LineEnding +
-    'Specification with or without path possible.' + LineEnding +
-    'One entry per line.';
-  rsBgInstall_in_backgroundHint = 'Can the product be installed when the user is logged in?';
+    'Other Programs that should not run during installation.' +
+    LineEnding + 'Specification with or without path possible.' +
+    LineEnding + 'One entry per line.';
+  rsBgInstall_in_backgroundHint =
+    'Can the product be installed when the user is logged in?';
   rsBgRequiredOsHint = 'Required operating system';
   rsBgRequiredOsArchHint = 'Required architecture of the operating system';
   rsBgSaveFileHint = 'Save the file in the CLIENT_DATA directory of the opsi product';
@@ -883,7 +884,7 @@ resourcestring
   rsTabWinget = 'winget';
   rsTabProduct1 = 'Product Configuration 1';
   rsTabProduct2 = 'Product Configuration 2';
-  rsTabBackGround = 'Product Background Info';
+  rsTabBackGround = 'Product Configuration 3';
   rsTabProductIcon = 'Product Icon';
   rsTabCreate = 'Create';
 
@@ -1060,7 +1061,7 @@ begin
       LabelBgListDir.Caption := rsLabelBgListDirCaption;
       LabelBgListProc.Caption := rsLabelBgListProcCaption;
       LabelBgOs.Caption := rsLabelBgOsCaption;
-      LabelBgOsArch.Caption :=  rsLabelBgOsArchCaption;
+      LabelBgOsArch.Caption := rsLabelBgOsArchCaption;
 
 
       // the hints ...
@@ -1119,7 +1120,6 @@ begin
       LabelBgOs.ShowHint := True;
       LabelBgOsArch.ShowHint := True;
       BtBgSaveFile.ShowHint := True;
-
 
     end;
     TIEditworkbenchpath.Link.SetObjectAndProperty(myconfiguration, 'workbench_path');
@@ -1233,9 +1233,16 @@ begin
     TreeView1.Items[9].Text := rsTabProductIcon;
     TreeView1.Items[10].Text := rsTabCreate;
 
-    if myconfiguration.ShowBackgroundInfoBtn then
-      BtCreateBackgroundInfo.Visible:= true
-    else BtCreateBackgroundInfo.Visible:= false;
+    if myconfiguration.EnableBackgroundMetaData then
+    begin
+      BtCreateBackgroundInfo.Visible := True;
+      TreeView1.Items[8].Visible := True;
+    end
+    else
+    begin
+      BtCreateBackgroundInfo.Visible := False;
+      TreeView1.Items[8].Visible := False;
+    end;
 
     EditLogInfo.Caption := 'More info in Log file: ' + LogDatei.FileName;
     Application.ProcessMessages;
@@ -2306,22 +2313,22 @@ end;
 
 procedure TResultform1.BtBgSaveFileClick(Sender: TObject);
 var
-  myProdId : string;
-  myStorePath : string;
+  myProdId: string;
+  myStorePath: string;
 begin
   // try to guess the correct workbench path
   myProdId := aktProduct.productdata.productId;
   if myProdId <> '' then
   begin
-    if AnsiContainsStr(myconfiguration.LastProjectFileDir,myProdId) then
-     myStorePath := myconfiguration.LastProjectFileDir + '\CLIENT_DATA'
-     else if AnsiContainsStr(myconfiguration.LastControlFileDir ,myProdId) then
-     begin
-       myStorePath := AnsiReplaceStr(myconfiguration.LastProjectFileDir,'\OPSI','');
-       myStorePath := myStorePath + '\CLIENT_DATA';
-     end
+    if AnsiContainsStr(myconfiguration.LastProjectFileDir, myProdId) then
+      myStorePath := myconfiguration.LastProjectFileDir + '\CLIENT_DATA'
+    else if AnsiContainsStr(myconfiguration.LastControlFileDir, myProdId) then
+    begin
+      myStorePath := AnsiReplaceStr(myconfiguration.LastProjectFileDir, '\OPSI', '');
+      myStorePath := myStorePath + '\CLIENT_DATA';
+    end
     else
-      myStorePath := myconfiguration.workbench_Path+'\'+myProdId+ '\CLIENT_DATA'
+      myStorePath := myconfiguration.workbench_Path + '\' + myProdId + '\CLIENT_DATA';
   end
   else
     myStorePath := myconfiguration.workbench_Path;
@@ -2880,60 +2887,61 @@ var
 
   procedure initDialog(y: integer);
   var
-  i, k: integer;
+    i, k: integer;
   begin
     myprop := TPProperty(aktProduct.properties.Items[y]);
 
-      FNewPropDlg.ListBoxPropPosVal.Clear;
-      FNewPropDlg.ListBoxPropDefVal.Clear;
-      FNewPropDlg.EditPropName.Text := myprop.Property_Name;
-      FNewPropDlg.MemoDesc.Text := myprop.description;
-      FNewPropDlg.CheckBoxPropMultiVal.Checked := myprop.multivalue;
-      FNewPropDlg.CheckBoxPropEdit.Checked := myprop.editable;
-      FNewPropDlg.CheckBoxPropMultiValChange(Sender);
+    FNewPropDlg.ListBoxPropPosVal.Clear;
+    FNewPropDlg.ListBoxPropDefVal.Clear;
+    FNewPropDlg.EditPropName.Text := myprop.Property_Name;
+    FNewPropDlg.MemoDesc.Text := myprop.description;
+    FNewPropDlg.CheckBoxPropMultiVal.Checked := myprop.multivalue;
+    FNewPropDlg.CheckBoxPropEdit.Checked := myprop.editable;
+    FNewPropDlg.CheckBoxPropMultiValChange(Sender);
+    procmess;
+    if myprop.Property_Type = bool then
+    begin
+      FNewPropDlg.RadioButtonPropString.Checked := False;
+      FNewPropDlg.RadioButtonPropBool.Checked := True;
+      FNewPropDlg.RadioButtonPropStringChange(Sender);
       procmess;
-      if myprop.Property_Type = bool then
+      if myprop.boolDefault = True then
       begin
-        FNewPropDlg.RadioButtonPropString.Checked := False;
-        FNewPropDlg.RadioButtonPropBool.Checked := True;
-        FNewPropDlg.RadioButtonPropStringChange(Sender);
-        procmess;
-        if myprop.boolDefault = True then
-        begin
-          FNewPropDlg.ListBoxPropDefVal.Selected[1] := False;
-          FNewPropDlg.ListBoxPropDefVal.Selected[0] := True;
-        end
-        else
-        begin
-          FNewPropDlg.ListBoxPropDefVal.Selected[0] := False;
-          FNewPropDlg.ListBoxPropDefVal.Selected[1] := True;
-        end;
-        procmess;
+        FNewPropDlg.ListBoxPropDefVal.Selected[1] := False;
+        FNewPropDlg.ListBoxPropDefVal.Selected[0] := True;
       end
-      else  // unicode
+      else
       begin
-        FNewPropDlg.RadioButtonPropString.Checked := True;
-        FNewPropDlg.RadioButtonPropBool.Checked := False;
-        FNewPropDlg.RadioButtonPropStringChange(Sender);
-        procmess;
-        FNewPropDlg.ListBoxPropPosVal.Items.SetStrings(myprop.GetValueLines);
-        // add possible value here - default is the selcted one
-        FNewPropDlg.ListBoxPropDefVal.Items.SetStrings(myprop.GetValueLines);
-        for i := 0 to myprop.GetDefaultLines.Count - 1 do
-        begin
-          //FNewPropDlg.ListBoxPropDefVal.Selected[i] := True;
-          k := FNewPropDlg.ListBoxPropDefVal.Items.IndexOf(
-            myprop.GetDefaultLines.Strings[i]);
-          if k > -1 then
-          begin
-            FNewPropDlg.ListBoxPropDefVal.Selected[k] := True;
-            LogDatei.log('default is: '+ FNewPropDlg.ListBoxPropDefVal.Items[k],LLnotice);
-            FNewPropDlg.ListBoxPropDefVal.Refresh;
-            procmess;
-          end
-        end;
-        procmess;
+        FNewPropDlg.ListBoxPropDefVal.Selected[0] := False;
+        FNewPropDlg.ListBoxPropDefVal.Selected[1] := True;
       end;
+      procmess;
+    end
+    else  // unicode
+    begin
+      FNewPropDlg.RadioButtonPropString.Checked := True;
+      FNewPropDlg.RadioButtonPropBool.Checked := False;
+      FNewPropDlg.RadioButtonPropStringChange(Sender);
+      procmess;
+      FNewPropDlg.ListBoxPropPosVal.Items.SetStrings(myprop.GetValueLines);
+      // add possible value here - default is the selcted one
+      FNewPropDlg.ListBoxPropDefVal.Items.SetStrings(myprop.GetValueLines);
+      for i := 0 to myprop.GetDefaultLines.Count - 1 do
+      begin
+        //FNewPropDlg.ListBoxPropDefVal.Selected[i] := True;
+        k := FNewPropDlg.ListBoxPropDefVal.Items.IndexOf(
+          myprop.GetDefaultLines.Strings[i]);
+        if k > -1 then
+        begin
+          FNewPropDlg.ListBoxPropDefVal.Selected[k] := True;
+          LogDatei.log('default is: ' +
+            FNewPropDlg.ListBoxPropDefVal.Items[k], LLnotice);
+          FNewPropDlg.ListBoxPropDefVal.Refresh;
+          procmess;
+        end;
+      end;
+      procmess;
+    end;
   end;
 
 begin
@@ -3372,7 +3380,7 @@ begin
   aktProduct.productdata.productId := 'opsi-meta-template';
   aktProduct.productdata.productName := 'opsi template for a Meta Product';
   aktProduct.productdata.productversion := '1.0.0';
-  TIEditProdVersion3.Caption:= aktProduct.productdata.productversion;
+  TIEditProdVersion3.Caption := aktProduct.productdata.productversion;
   aktProduct.productdata.packageversion := 1;
   aktProduct.productdata.description :=
     'A opsi product that contains dependencies but installs nothing';
@@ -3633,7 +3641,10 @@ begin
     threeAnalyzeCreate_3,
     createWingetProd:
     begin
-      PageControl1.ActivePage := resultForm1.TabSheetBackground;
+      if myconfiguration.EnableBackgroundMetaData then
+        PageControl1.ActivePage := resultForm1.TabSheetBackground
+      else
+        PageControl1.ActivePage := resultForm1.TabSheetIcons;
       Application.ProcessMessages;
     end;
     // no icons for meta product
@@ -4577,7 +4588,7 @@ begin
   if not aktMeta.InstallerMeta[0].active then
     aktProdToAktMeta;
   // fix first edit field with cursor does not show the value:
-  TIEditBgProductId1.Caption:= aktProduct.productdata.productId;
+  TIEditBgProductId1.Caption := aktProduct.productdata.productId;
   Application.ProcessMessages;
   if osdsettings.runmode = createBackgroundInfo then
   begin
@@ -4682,15 +4693,17 @@ end;
 procedure TResultform1.TICheckBoxBgInstActive1Change(Sender: TObject);
 begin
   if aktMeta.InstallerMeta[0].active then
-  PanelBgMetaInst1.Enabled := True
-  else PanelBgMetaInst1.Enabled := False;
+    PanelBgMetaInst1.Enabled := True
+  else
+    PanelBgMetaInst1.Enabled := False;
 end;
 
 procedure TResultform1.TICheckBoxBgInstActive2Change(Sender: TObject);
 begin
   if aktMeta.InstallerMeta[1].active then
-  PanelBgMetaInst2.Enabled := True
-  else PanelBgMetaInst2.Enabled := False;
+    PanelBgMetaInst2.Enabled := True
+  else
+    PanelBgMetaInst2.Enabled := False;
 end;
 
 procedure TResultform1.TICheckBoxlicenseRequiredChange(Sender: TObject);
