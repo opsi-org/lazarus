@@ -65,6 +65,8 @@ type
   { TResultform1 }
 
   TResultform1 = class(TForm)
+    BitBtnAddToList1: TBitBtn;
+    BitBtnAddToList2: TBitBtn;
     BitBtnBgChooseInstDir1: TBitBtn;
     BitBtnChooseInstDir4: TBitBtn;
     BitBtnBgChooseInstDir: TBitBtn;
@@ -509,8 +511,10 @@ type
     mysetup1: TSetupFile;
     TreeView1: TTreeView;
 
+    procedure BitBtnAddToList1Click(Sender: TObject);
     procedure BitBtnAddDepClick(Sender: TObject);
     procedure BitBtnAddPropClick(Sender: TObject);
+    procedure BitBtnAddToList2Click(Sender: TObject);
     procedure BitBtnBgChooseInstDirClick(Sender: TObject);
     procedure BitBtnChooseInstDir1Click(Sender: TObject);
     procedure BitBtnChooseInstDir2Click(Sender: TObject);
@@ -2605,6 +2609,11 @@ begin
   end;
 end;
 
+procedure TResultform1.BitBtnAddToList1Click(Sender: TObject);
+begin
+  TIMemoBgCheckdirs1.Append(TIEditBgInstallDir1.Text);
+end;
+
 procedure TResultform1.BitBtnAddPropClick(Sender: TObject);
 // add property
 var
@@ -2670,6 +2679,11 @@ begin
   begin
     // cancel add
   end;
+end;
+
+procedure TResultform1.BitBtnAddToList2Click(Sender: TObject);
+begin
+    TIMemoBgCheckdirs2.Append(TIEditBgInstallDir2.Text);
 end;
 
 procedure TResultform1.BitBtnBgChooseInstDirClick(Sender: TObject);

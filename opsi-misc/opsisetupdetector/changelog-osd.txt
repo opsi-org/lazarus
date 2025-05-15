@@ -159,6 +159,7 @@ todo:
 - on custom channel: copy all files from custom/additional_files
 - try to get the default icon from:
   template-files\<channel>\images\template.png
+- tabBackgoundinfo: buttonto copy installDir to checkdir list
 
 ### templates:
 - syntax error in get_licensekey_byPoolOrKey
