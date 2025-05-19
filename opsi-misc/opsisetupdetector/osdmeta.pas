@@ -432,6 +432,9 @@ begin
         aktprodArchitectureToMetaOsArch(aktProduct.SetupFiles[i].architecture);
       aktMeta.InstallerMeta[i].FMetaInstallerRequirement.requiredSpaceMB :=
         aktProduct.SetupFiles[i].requiredSpace;
+      // do not install in background for 'with user' - to many reboots
+      if osdsettings.runmode in [analyzeCreateWithUser, createTemplateWithUser] then
+        aktMeta.InstallerMeta[i].install_in_background:= false;
     end;
   end;
   FreeAndNil(strlist);

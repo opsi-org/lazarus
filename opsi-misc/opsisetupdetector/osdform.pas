@@ -68,8 +68,8 @@ type
     BitBtnAddToList1: TBitBtn;
     BitBtnAddToList2: TBitBtn;
     BitBtnBgChooseInstDir1: TBitBtn;
+    BitBtnBgChooseInstDir2: TBitBtn;
     BitBtnChooseInstDir4: TBitBtn;
-    BitBtnBgChooseInstDir: TBitBtn;
     BitBtnChooseTargetProg4: TBitBtn;
     BitBtnChooseUninstFile4: TBitBtn;
     BitBtnImportControl: TBitBtn;
@@ -153,8 +153,6 @@ type
     FlowPanel30: TFlowPanel;
     FlowPanel31: TFlowPanel;
     FlowPanel32: TFlowPanel;
-    FlowPanel34: TFlowPanel;
-    FlowPanel35: TFlowPanel;
     FlowPanel4: TFlowPanel;
     FlowPanel6: TFlowPanel;
     FlowPanel8: TFlowPanel;
@@ -335,6 +333,8 @@ type
     Panel23: TPanel;
     Panel24: TPanel;
     Panel25: TPanel;
+    Panel27: TPanel;
+    Panel28: TPanel;
     PanelBgMetaInst1: TPanel;
     PanelBgMetaInst2: TPanel;
     PanelChannel: TPanel;
@@ -424,12 +424,12 @@ type
     TIComboBoxBgOsArch1: TTIComboBox;
     TIComboBoxBgOsArch2: TTIComboBox;
     TIComboBoxChannel: TTIComboBox;
+    TIEditBgInstallDir1: TTIEdit;
     TIEditBgInstallDir2: TTIEdit;
     TIEditBgProductId1: TTIEdit;
     TIEditInstallDir2: TTIEdit;
     TIEditInstallDir3: TTIEdit;
     TIEditInstallDir4: TTIEdit;
-    TIEditBgInstallDir1: TTIEdit;
     TIEditMsiId2: TTIEdit;
     TIEditMsiId3: TTIEdit;
     TIEditMsiId4: TTIEdit;
@@ -515,7 +515,8 @@ type
     procedure BitBtnAddDepClick(Sender: TObject);
     procedure BitBtnAddPropClick(Sender: TObject);
     procedure BitBtnAddToList2Click(Sender: TObject);
-    procedure BitBtnBgChooseInstDirClick(Sender: TObject);
+    procedure BitBtnBgChooseInstDir1Click(Sender: TObject);
+    procedure BitBtnBgChooseInstDirClickBg1(Sender: TObject);
     procedure BitBtnChooseInstDir1Click(Sender: TObject);
     procedure BitBtnChooseInstDir2Click(Sender: TObject);
     procedure BitBtnChooseInstDir3Click(Sender: TObject);
@@ -628,6 +629,8 @@ type
     procedure TabSheetBackgroundShow(Sender: TObject);
     procedure TabSheetCreateShow(Sender: TObject);
     procedure TabSheetIconsShow(Sender: TObject);
+    procedure TabSheetProduct2ContextPopup(Sender: TObject; MousePos: TPoint;
+      var Handled: Boolean);
     procedure TabSheetSetup1Enter(Sender: TObject);
     procedure TabSheetSetup2Enter(Sender: TObject);
     procedure TabSheetSetup3Enter(Sender: TObject);
@@ -2611,7 +2614,8 @@ end;
 
 procedure TResultform1.BitBtnAddToList1Click(Sender: TObject);
 begin
-  TIMemoBgCheckdirs1.Append(TIEditBgInstallDir1.Text);
+  //TIMemoBgCheckdirs1.Append(TIEditBgInstallDir1.Text);
+  aktMeta.InstallerMeta[0].check_processes_from_dirs.Add(TIEditBgInstallDir1.Text);
 end;
 
 procedure TResultform1.BitBtnAddPropClick(Sender: TObject);
@@ -2683,12 +2687,19 @@ end;
 
 procedure TResultform1.BitBtnAddToList2Click(Sender: TObject);
 begin
-    TIMemoBgCheckdirs2.Append(TIEditBgInstallDir2.Text);
+    //TIMemoBgCheckdirs2.Append(TIEditBgInstallDir2.Text);
+    aktMeta.InstallerMeta[1].check_processes_from_dirs.Add(TIEditBgInstallDir2.Text);
 end;
 
-procedure TResultform1.BitBtnBgChooseInstDirClick(Sender: TObject);
-var
-  installdir: string;
+procedure TResultform1.BitBtnBgChooseInstDir1Click(Sender: TObject);
+begin
+  aktProduct.SetupFiles[1].active := True;
+  aktProduct.SetupFiles[1].targetOS := osWin;
+  chooseInstallDir(aktProduct.SetupFiles[1]);
+  aktProdToAktMeta;
+end;
+
+procedure TResultform1.BitBtnBgChooseInstDirClickBg1(Sender: TObject);
 begin
   aktProduct.SetupFiles[0].active := True;
   aktProduct.SetupFiles[0].targetOS := osWin;
@@ -4626,6 +4637,7 @@ begin
     PanelBgMetaInst2.Enabled := True
   else
     PanelBgMetaInst2.Enabled := False;
+  TabSheetShow(Sender);
   Application.ProcessMessages;
   LogDatei.log('productId in Background is: ' +
     aktProduct.productdata.productId, LLnotice);
@@ -4652,6 +4664,12 @@ begin
 end;
 
 procedure TResultform1.TabSheetIconsShow(Sender: TObject);
+begin
+
+end;
+
+procedure TResultform1.TabSheetProduct2ContextPopup(Sender: TObject;
+  MousePos: TPoint; var Handled: Boolean);
 begin
 
 end;
@@ -4691,6 +4709,7 @@ var
 begin
   pageIndex := PageControl1.ActivePageIndex;
   TreeView1.Select(TreeView1.Items[pageIndex]);
+  Application.ProcessMessages;
 end;
 
 procedure TResultform1.TabSheetWingetContextPopup(Sender: TObject;
