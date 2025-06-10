@@ -1,7 +1,7 @@
 object resultForm1: TresultForm1
-  Left = 112
+  Left = 588
   Height = 674
-  Top = 393
+  Top = 241
   Width = 1278
   Caption = 'opsi Setup Detector'
   ClientHeight = 674
@@ -14,7 +14,7 @@ object resultForm1: TresultForm1
   OnMouseLeave = FormMouseLeave
   OnShow = FormShow
   Position = poScreenCenter
-  LCLVersion = '3.6.0.0'
+  LCLVersion = '3.8.0.0'
   object Panel1: TPanel
     Left = 0
     Height = 40
@@ -166,12 +166,12 @@ object resultForm1: TresultForm1
       Height = 611
       Top = 0
       Width = 1046
-      ActivePage = TabSheetStart
+      ActivePage = TabSheetProduct2
       Align = alClient
       Images = ImageList1
       ParentFont = False
       ShowTabs = False
-      TabIndex = 0
+      TabIndex = 7
       TabOrder = 0
       OnChange = PageControl1Change
       object TabSheetStart: TTabSheet
@@ -979,7 +979,7 @@ object resultForm1: TresultForm1
             object BtSingleAnalyzeAndCreateLin: TBitBtn
               Left = 5
               Height = 58
-              Hint = 'Analyze a single existing Setupfile '#13#10'and create a multiplatform opsi Product'
+              Hint = 'Analyze a single existing Setupfile '
               Top = 40
               Width = 495
               Align = alTop
@@ -1456,6 +1456,8 @@ object resultForm1: TresultForm1
               }
               OnClick = BtSingleAnalyzeAndCreateLinClick
               ParentFont = False
+              ParentShowHint = False
+              ShowHint = True
               TabOrder = 1
             end
             object BtCreateEmptyTemplateLin: TBitBtn
@@ -1764,17 +1766,19 @@ object resultForm1: TresultForm1
               }
               OnClick = BtCreateEmptyTemplateLinClick
               ParentFont = False
+              ParentShowHint = False
+              ShowHint = True
               TabOrder = 2
             end
           end
           object TaskPanelWin: TPanel
             Left = 5
-            Height = 399
+            Height = 447
             Top = 112
             Width = 505
             Anchors = []
             BorderSpacing.Left = 5
-            ClientHeight = 399
+            ClientHeight = 447
             ClientWidth = 505
             TabOrder = 2
             OnClick = TaskPanelWinClick
@@ -2429,6 +2433,8 @@ object resultForm1: TresultForm1
               }
               OnClick = BtSingleAnalyzeAndCreateWinClick
               ParentFont = False
+              ParentShowHint = False
+              ShowHint = True
               TabOrder = 1
             end
             object BtATwonalyzeAndCreate: TBitBtn
@@ -3162,6 +3168,8 @@ object resultForm1: TresultForm1
               }
               OnClick = BtATwonalyzeAndCreateClick
               ParentFont = False
+              ParentShowHint = False
+              ShowHint = True
               TabOrder = 2
             end
             object BtCreateEmptyTemplateWin: TBitBtn
@@ -3469,13 +3477,15 @@ object resultForm1: TresultForm1
               }
               OnClick = BtCreateEmptyTemplateWinClick
               ParentFont = False
+              ParentShowHint = False
+              ShowHint = True
               TabOrder = 3
             end
             object BtAnalyzeOnly: TBitBtn
               Left = 5
               Height = 17
               Hint = 'Analyze a single existing Setupfile '
-              Top = 382
+              Top = 439
               Width = 495
               Align = alTop
               Anchors = []
@@ -4086,6 +4096,8 @@ object resultForm1: TresultForm1
               }
               OnClick = BtSingleAnalyzeAndCreateWithUserClick
               ParentFont = False
+              ParentShowHint = False
+              ShowHint = True
               TabOrder = 5
             end
             object BtCreateEmptyTemplateWithUserWin: TBitBtn
@@ -4393,6 +4405,8 @@ object resultForm1: TresultForm1
               }
               OnClick = BtCreateEmptyTemplateWithUserWinClick
               ParentFont = False
+              ParentShowHint = False
+              ShowHint = True
               TabOrder = 6
             end
             object BtCreateWingetPackage: TBitBtn
@@ -4700,7 +4714,158 @@ object resultForm1: TresultForm1
               }
               OnClick = BtCreateWingetPackageClick
               ParentFont = False
+              ParentShowHint = False
+              ShowHint = True
               TabOrder = 7
+            end
+            object BtCreateBackgroundInfo: TBitBtn
+              Left = 5
+              Height = 53
+              Hint = 'Create Background info file'
+              Top = 382
+              Width = 495
+              Align = alTop
+              Anchors = []
+              BorderSpacing.Around = 4
+              Caption = 'Create Background info file'
+              Font.Height = -17
+              Glyph.Data = {
+                36100000424D3610000000000000360000002800000020000000200000000100
+                2000000000000010000064000000640000000000000000000000FFFFFF00FFFF
+                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+                FF00FFFFFF00FFFFFF0000000033000000330000003300000033000000330000
+                0033000000330000003300000033000000330000003300000033000000330000
+                0033000000330000003300000033000000330000003300000033000000330000
+                00330000003300000033FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+                FF00FFFFFF00FFFFFF007B756EFF7B756EFF7B756EFF7B756EFF7B756EFF7B75
+                6EFF7B756EFF7B756EFF7B756EFF7B756EFF7B756EFF7B756EFF7B756EFF7B75
+                6EFF7B756EFF7B756EFF7B756EFF7B756EFF7B756EFF7B756EFF7B756EFF7B75
+                6EFF7B756EFF7B756EFFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+                FF00FFFFFF00FFFFFF007C766FFFFBF9F8FFFBF9F8FFFBF9F8FFFBF9F8FFFBF9
+                F8FFFBF9F8FFFBF9F8FFFBF9F8FFFBF9F8FFFBF9F8FFFBF9F8FFFBF9F8FFFBF9
+                F8FFFBF9F8FFFBF9F8FFFBF9F8FFFBF9F8FFFBF9F8FFFBF9F8FFFBF9F8FFFBF9
+                F8FFFBF9F8FF7C766FFFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+                FF00FFFFFF00FFFFFF007D7770FFFBF9F8FFFBF9F8FFFBF9F8FFFBF9F8FFFBF9
+                F8FFFBF9F8FFFBF9F8FFFBF9F8FFFBF9F8FFFBF9F8FFFBF9F8FFFBF9F8FFFBF9
+                F8FFFBF9F8FFFBF9F8FFFBF9F8FFFBF9F8FFFBF9F8FFFBF9F8FFFBF9F8FFFBF9
+                F8FFFBF9F8FF7D7770FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+                FF00FFFFFF00FFFFFF007F7972FFFBF9F8FFFBF9F8FF8180A8FF00005BFF0000
+                5BFF00005BFF00005BFF00005BFF00005BFF00005BFF00005BFF00005BFF4E4D
+                86FFFBF9F8FFFBF9F8FFFBF9F8FFFBF9F8FFFBF9F8FFFBF9F8FFFBF9F8FFFBF9
+                F8FFFBF9F8FF7F7972FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+                FF00FFFFFF00FFFFFF00807A73FFFBF9F8FFFBF9F8FF000061FF1781FFFF1781
+                FFFF1781FFFF1781FFFF1781FFFF1781FFFF1781FFFF5DA7FFFF000061FF8180
+                ABFFFBF9F8FFFBF9F8FFFBF9F8FFFBF9F8FFFBF9F8FFFBF9F8FFFBF9F8FFFBF9
+                F8FFFBF9F8FF807A73FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+                FF00FFFFFF00FFFFFF00827C74FFFAF9F7FFFAF9F7FF000068FF046EF6FF046E
+                F6FF046EF6FF046EF6FF046EF6FF046EF6FF509AF9FF000065FF8080AEFFFAF9
+                F7FFFAF9F7FFFAF9F7FFFAF9F7FFFAF9F7FFFAF9F7FFFAF9F7FFFAF9F7FFFAF9
+                F7FFFAF9F7FF827C74FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+                FF00FFFFFF00FFFFFF00837E76FFFAF8F6FFFAF8F6FF000071FF006AF2FF006A
+                F2FF006AF2FF006AF2FF006AF2FF4D97F6FF000071FF00196AFF00306AFF0030
+                6AFF00306AFF00306AFF00306AFF00306AFF01316BFF315785FFFAF8F6FFFAF8
+                F6FFFAF8F6FF837E76FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+                FF00FFFFFF00FFFFFF00857F78FFF9F7F5FFF9F7F5FF00007AFF006AF2FF006A
+                F2FF006AF2FF006AF2FF4D97F6FF00007AFF001B71FF78E8FFFF3DDEFFFF3DDE
+                FFFF3DDEFFFF3DDEFFFF3DDEFFFF3DDEFFFF3DDEFFFF003471FFF9F7F5FFF9F7
+                F5FFF9F7F5FF857F78FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+                FF00FFFFFF00FFFFFF00878179FFF9F6F4FFF9F6F4FF000084FF036CF2FF036C
+                F2FF036CF2FF4F98F6FF000084FF807EB9FF7995B5FF003A79FF6ADBFFFF2ACB
+                FFFF2ACBFFFF2ACBFFFF2ACBFFFF2ACBFFFF2ACBFFFF003A79FFF9F6F4FFF9F6
+                F4FFF9F6F4FF878179FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+                FF00FFFFFF00FFFFFF0089837BFFF8F5F2FFF8F5F2FF00008CFF1476F3FF1476
+                F3FF5B9FF7FF00008CFF271A49FF4B3213FF4B3213FF24394DFF004083FF68D8
+                FFFF26C7FFFF26C7FFFF26C7FFFF26C7FFFF26C7FFFF004083FFF8F5F2FFF8F5
+                F2FFF8F5F2FF89837BFFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+                FF00FFFFFF00FFFFFF008B857DFFF7F4F1FFF7F4F1FF000095FF2F85F4FF6EAA
+                F7FF000095FF281B4EFFBB9C6DFFBB9C6DFFBB9C6DFFBB9C6DFF263D52FF0046
+                8CFF68D8FFFF26C7FFFF26C7FFFF26C7FFFF26C7FFFF00468CFFF7F4F1FFF7F4
+                F1FFF7F4F1FF8B857DFFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+                FF00FFFFFF00FFFFFF008D867EFFF6F3EFFFF6F3EFFF00009CFF80B5F9FF0000
+                9CFF7E7DC2FF513715FFA8895AFFA8895AFFA8895AFFA8895AFF513715FF789E
+                C2FF004D97FF6AD9FFFF29C8FFFF29C8FFFF29C8FFFF004D97FFF6F3EFFFF6F3
+                EFFFF6F3EFFF8D867EFFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+                FF00FFFFFF00FFFFFF008E8880FFF5F2EEFFF5F2EEFF0000A2FF0000A2FF7E7C
+                C4FFF5F2EEFF543917FFA18253FFA18253FFA18253FFA18253FF543917FFF5F2
+                EEFF77A0C6FF0053A0FF73DBFFFF37CBFFFF37CBFFFF0053A0FFF5F2EEFFF5F2
+                EEFFF5F2EEFF8E8880FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+                FF00FFFFFF00FFFFFF00908A82FFF4F1ECFFF4F1ECFF4C4BB5FF9392CCFFF4F1
+                ECFFF4F1ECFF583C19FFA18253FFA18253FFA18253FFA18253FF583C19FFF4F1
+                ECFFF4F1ECFF77A3CAFF005AAAFF83DFFFFF4ED1FFFF005AAAFFF4F1ECFFF4F1
+                ECFFF4F1ECFF908A82FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+                FF00FFFFFF00FFFFFF00938D84FFF3EFEAFFF3EFEAFFF3EFEAFFF3EFEAFFF3EF
+                EAFFF3EFEAFF5C3F1AFFA18253FFA18253FFA18253FFA18253FF5C3F1AFFF3EF
+                EAFFF3EFEAFFF3EFEAFF76A5CDFF005FB2FF93E3FFFF005FB2FFF3EFEAFFF3EF
+                EAFFF3EFEAFF938D84FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+                FF00FFFFFF00FFFFFF00958E86FFF2EEE9FFF2EEE9FFF2EEE9FFF2EEE9FFF2EE
+                E9FFF2EEE9FF60421CFFA48658FFA48658FFA48658FFA48658FF60421CFFF2EE
+                E9FFF2EEE9FFF2EEE9FFF2EEE9FF76A7D0FF0165B9FF0165B9FFF2EEE9FFF2EE
+                E9FFF2EEE9FF958E86FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+                FF00FFFFFF00FFFFFF00979088FFF1EDE7FFF1EDE7FFF1EDE7FFF1EDE7FFF1ED
+                E7FFF1EDE7FF63441DFFAA8E64FFAA8E64FFAA8E64FFAA8E64FF63441DFFF1ED
+                E7FFF1EDE7FFF1EDE7FFF1EDE7FFF1EDE7FF75A8D2FF2F81C6FFF1EDE7FFF1ED
+                E7FFF1EDE7FF979088FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+                FF00FFFFFF00FFFFFF0098928AFFF0EBE5FFF0EBE5FFF0EBE5FFF0EBE5FFF0EB
+                E5FFF0EBE5FF66461FFFB39B75FFB39B75FFB39B75FFB39B75FF66461FFFF0EB
+                E5FFEDE8E2FFE8E3DDFFE4DFD9FFE4DFD9FFE4DFD9FFE4DFD9FFE4DFD9FFE4DF
+                D9FFE4DFD9FF938D85FF00000003FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+                FF00FFFFFF00FFFFFF009A948BFFEFEAE3FFEFEAE3FFEFEAE3FFEFEAE3FFEFEA
+                E3FFEFEAE3FF694820FFD0C1A9FFD0C1A9FFD0C1A9FFD0C1A9FF694820FFEFEA
+                E3FFE9E6E0FFD6D3CEFFCECBC5FFCECBC5FFCECBC5FFCECBC5FFCECBC5FFCECB
+                C5FFD1CDC8FF8D877FFF00000006FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+                FF00FFFFFF00FFFFFF009C968DFFEEE8E1FFEEE8E1FFEEE8E1FFEEE8E1FFEEE8
+                E1FFEEE8E1FF917758FF6B4A21FF6B4A21FF6B4A21FF6B4A21FF917758FFEEE8
+                E1FFA59E93FF9C968DFF9C968DFF9C968DFF9C968DFF9C968DFF9C968DFF9C96
+                8DFF9C968DFF9C968DFF00000003FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+                FF00FFFFFF00FFFFFF009E978FFFEDE7DFFFEDE7DFFFEDE7DFFFEDE7DFFFEDE7
+                DFFFEDE7DFFFEDE7DFFFEDE7DFFFEDE7DFFFEDE7DFFFEDE7DFFFEDE7DFFFEDE7
+                DFFFA79E96FFEBE5DCFFEBE5DCFFEBE5DCFFEBE5DCFFEBE5DCFFEBE5DCFFEBE5
+                DCFFEBE5DCFF9C958DFFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+                FF00FFFFFF00FFFFFF00A09990FFECE6DDFFECE6DDFFECE6DDFFECE6DDFFECE6
+                DDFFECE6DDFFECE6DDFFECE6DDFFECE6DDFFECE6DDFFECE6DDFFECE6DDFFECE6
+                DDFFA9A098FFEDE7E0FFEDE7E0FFEDE7E0FFEDE7E0FFEDE7E0FFEDE7E0FFEDE7
+                E0FFB4ABA1FF9A8D7F4DFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+                FF00FFFFFF00FFFFFF00A29B92FFEBE5DCFFEBE5DCFFEBE5DCFFEBE5DCFFEBE5
+                DCFFEBE5DCFFEBE5DCFFEBE5DCFFEBE5DCFFEBE5DCFFEBE5DCFFEBE5DCFFEBE5
+                DCFFABA39BFFEFEAE4FFEFEAE4FFEFEAE4FFEFEAE4FFEFEAE4FFEFEAE4FFB6AE
+                A5FF9C8E814D00000000FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+                FF00FFFFFF00FFFFFF00A39D94FFEBE4DBFFEBE4DBFFEBE4DBFFEBE4DBFFEBE4
+                DBFFEBE4DBFFEBE4DBFFEBE4DBFFEBE4DBFFEBE4DBFFEBE4DBFFEBE4DBFFEBE4
+                DBFFACA69EFFF2EEE8FFF2EEE8FFF2EEE8FFF2EEE8FFF2EEE8FFB8B1A8FF9E90
+                824D0000000000000000FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+                FF00FFFFFF00FFFFFF00A49E95FFEAE3DAFFEAE3DAFFEAE3DAFFEAE3DAFFEAE3
+                DAFFEAE3DAFFEAE3DAFFEAE3DAFFEAE3DAFFEAE3DAFFEAE3DAFFEAE3DAFFEAE3
+                DAFFAEA89FFFF5F1EDFFF5F1EDFFF5F1EDFFF5F1EDFFBAB3ABFF9F91834D0000
+                00000000000000000000FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+                FF00FFFFFF00FFFFFF00A69F96FFEAE3DAFFEAE3DAFFEAE3DAFFEAE3DAFFEAE3
+                DAFFEAE3DAFFEAE3DAFFEAE3DAFFEAE3DAFFEAE3DAFFEAE3DAFFEAE3DAFFEAE3
+                DAFFB7B2ABFFF8F6F4FFF8F6F4FFF8F6F4FFBCB6AFFFA092854D000000000000
+                00000000000000000000FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+                FF00FFFFFF00FFFFFF00A7A097FFEFE9E2FFEFE9E2FFEFE9E2FFEFE9E2FFEFE9
+                E2FFEFE9E2FFEFE9E2FFEFE9E2FFEFE9E2FFEFE9E2FFEFE9E2FFEFE9E2FFEFE9
+                E2FFBEB9B2FFFCFBF9FFFCFBF9FFBEB9B2FFA193854D00000000000000000000
+                00000000000000000000FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+                FF00FFFFFF00FFFFFF00A8A198FFFBF9F8FFFBF9F8FFFBF9F8FFFBF9F8FFFBF9
+                F8FFFBF9F8FFFBF9F8FFFBF9F8FFFBF9F8FFFBF9F8FFFBF9F8FFFBF9F8FFFBF9
+                F8FFC8C4BEFFFEFEFDFFC2BDB6FFA294864D0000000000000000000000000000
+                00000000000000000000FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+                FF00FFFFFF00FFFFFF00A9A299FFA9A299FFA9A299FFA9A299FFA9A299FFA9A2
+                99FFA9A299FFA9A299FFA9A299FFA9A299FFA9A299FFA9A299FFA9A299FFA9A2
+                99FFB4ADA5FFA9A299FFA395874D000000000000000000000000000000000000
+                00000000000000000000FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00
+              }
+              OnClick = BtCreateBackgroundInfoClick
+              ParentFont = False
+              ParentShowHint = False
+              ShowHint = True
+              TabOrder = 8
             end
           end
           object TaskPanelMac: TPanel
@@ -5327,6 +5492,8 @@ object resultForm1: TresultForm1
               }
               OnClick = BtSingleAnalyzeAndCreateMacClick
               ParentFont = False
+              ParentShowHint = False
+              ShowHint = True
               TabOrder = 1
             end
             object BtCreateEmptyTemplateMac: TBitBtn
@@ -5634,16 +5801,18 @@ object resultForm1: TresultForm1
               }
               OnClick = BtCreateEmptyTemplateMacClick
               ParentFont = False
+              ParentShowHint = False
+              ShowHint = True
               TabOrder = 2
             end
           end
           object TaskPanelMulti: TPanel
             Left = 510
-            Height = 175
+            Height = 223
             Top = 336
             Width = 505
             Anchors = []
-            ClientHeight = 175
+            ClientHeight = 223
             ClientWidth = 505
             TabOrder = 4
             object FlowPanelLinuxTitle2: TFlowPanel
@@ -6373,6 +6542,8 @@ object resultForm1: TresultForm1
               }
               OnClick = BtSingleAnalyzeAndCreateMultiClick
               ParentFont = False
+              ParentShowHint = False
+              ShowHint = True
               TabOrder = 1
             end
             object BtCreateEmptyTemplateMulti: TBitBtn
@@ -6680,6 +6851,8 @@ object resultForm1: TresultForm1
               }
               OnClick = BtCreateEmptyTemplateMultiClick
               ParentFont = False
+              ParentShowHint = False
+              ShowHint = True
               TabOrder = 2
             end
           end
@@ -11789,6 +11962,11 @@ object resultForm1: TresultForm1
               Control = BtWingetNextStep
               WrapAfter = waAuto
               Index = 0
+            end          
+            item
+              Control = Panel23
+              WrapAfter = waAuto
+              Index = 1
             end>
           FlowLayout = tlTop
           FlowStyle = fsBottomTopRightLeft
@@ -11942,6 +12120,15 @@ object resultForm1: TresultForm1
             OnClick = BtWingetNextStepClick
             ParentFont = False
             TabOrder = 0
+          end
+          object Panel23: TPanel
+            Left = 867
+            Height = 50
+            Top = 72
+            Width = 170
+            Anchors = []
+            Caption = 'Panel23'
+            TabOrder = 1
           end
         end
       end
@@ -12847,6 +13034,7 @@ object resultForm1: TresultForm1
         Caption = 'Product Configuration 2'
         ClientHeight = 603
         ClientWidth = 1038
+        OnContextPopup = TabSheetProduct2ContextPopup
         OnShow = TabSheetShow
         ParentFont = False
         object FlowPanel21: TFlowPanel
@@ -13681,6 +13869,1081 @@ object resultForm1: TresultForm1
                 )
               end
             end
+          end
+        end
+      end
+      object TabSheetBackground: TTabSheet
+        Caption = 'Background Info'
+        ClientHeight = 603
+        ClientWidth = 1038
+        OnShow = TabSheetBackgroundShow
+        ParentFont = False
+        object PairSplitterbackground: TPairSplitter
+          Left = 0
+          Height = 416
+          Top = 0
+          Width = 1038
+          Align = alTop
+          Constraints.MinWidth = 100
+          Position = 600
+          object PairSplitterSideBgInstaller1: TPairSplitterSide
+            Cursor = crArrow
+            Left = 0
+            Height = 416
+            Top = 0
+            Width = 600
+            ClientWidth = 600
+            ClientHeight = 416
+            object Panel21: TPanel
+              Left = 0
+              Height = 50
+              Top = 0
+              Width = 600
+              Align = alTop
+              ClientHeight = 50
+              ClientWidth = 600
+              TabOrder = 0
+              object Label9: TLabel
+                Left = 0
+                Height = 28
+                Top = 12
+                Width = 84
+                Caption = 'Installer 1'
+                Constraints.MinHeight = 20
+                Font.Height = -20
+                ParentFont = False
+              end
+              object Label131: TLabel
+                Left = 245
+                Height = 21
+                Top = 16
+                Width = 67
+                Anchors = []
+                BorderSpacing.Left = 30
+                BorderSpacing.Around = 4
+                Caption = 'ProductId'
+                Font.Height = -16
+                ParentColor = False
+                ParentFont = False
+              end
+              object TIEditBgProductId1: TTIEdit
+                Left = 349
+                Height = 27
+                Top = 13
+                Width = 216
+                Anchors = []
+                BorderSpacing.Around = 10
+                BorderSpacing.InnerBorder = 2
+                Constraints.MinWidth = 150
+                OnChange = genRttiEditChange
+                ParentFont = False
+                TabOrder = 1
+              end
+              object TICheckBoxBgInstActive1: TTICheckBox
+                Left = 96
+                Height = 19
+                Top = 21
+                Width = 49
+                AutoSize = True
+                BorderSpacing.Bottom = 10
+                BorderSpacing.Around = 10
+                Caption = 'active'
+                OnChange = TICheckBoxBgInstActive1Change
+                PropertyNameAsCaption = False
+                TabOrder = 0
+              end
+            end
+            object Panel25: TPanel
+              Left = 0
+              Height = 366
+              Top = 50
+              Width = 170
+              Align = alLeft
+              ClientHeight = 366
+              ClientWidth = 170
+              TabOrder = 1
+              object Label125: TLabel
+                Left = 8
+                Height = 21
+                Top = 11
+                Width = 62
+                Anchors = []
+                BorderSpacing.Left = 30
+                BorderSpacing.Around = 4
+                Caption = 'InstallDir'
+                Font.Height = -16
+                ParentColor = False
+                ParentFont = False
+              end
+              object LabelBgListDir: TLabel
+                Left = 8
+                Height = 61
+                Top = 52
+                Width = 121
+                Anchors = []
+                AutoSize = False
+                BorderSpacing.Left = 30
+                BorderSpacing.Around = 4
+                Caption = 'List of directories to be checked'
+                Font.Height = -16
+                ParentColor = False
+                ParentFont = False
+                WordWrap = True
+              end
+              object LabelBgListProc: TLabel
+                Left = 8
+                Height = 61
+                Top = 152
+                Width = 121
+                Anchors = []
+                AutoSize = False
+                BorderSpacing.Left = 30
+                BorderSpacing.Around = 4
+                Caption = 'List of processes to be checked'
+                Font.Height = -16
+                ParentColor = False
+                ParentFont = False
+                WordWrap = True
+              end
+              object Label128: TLabel
+                Left = 8
+                Height = 21
+                Top = 264
+                Width = 97
+                Anchors = []
+                BorderSpacing.Left = 30
+                BorderSpacing.Around = 4
+                Caption = 'Requirements'
+                Font.Height = -16
+                ParentColor = False
+                ParentFont = False
+              end
+              object LabelBgOs: TLabel
+                Left = 8
+                Height = 21
+                Top = 295
+                Width = 160
+                Anchors = []
+                BorderSpacing.Left = 30
+                BorderSpacing.Around = 4
+                Caption = 'Operating System (OS)'
+                Font.Height = -16
+                ParentColor = False
+                ParentFont = False
+              end
+              object LabelBgOsArch: TLabel
+                Left = 8
+                Height = 21
+                Top = 328
+                Width = 109
+                Anchors = []
+                BorderSpacing.Left = 30
+                BorderSpacing.Around = 4
+                Caption = 'OS Architecture'
+                Font.Height = -16
+                ParentColor = False
+                ParentFont = False
+              end
+            end
+            object PanelBgMetaInst1: TPanel
+              Left = 170
+              Height = 366
+              Top = 50
+              Width = 430
+              Align = alClient
+              Caption = 'PanelBgMetaInst1'
+              ClientHeight = 366
+              ClientWidth = 430
+              TabOrder = 2
+              object TIComboBoxBgOS1: TTIComboBox
+                Left = 11
+                Height = 23
+                Top = 304
+                Width = 408
+                Align = alTop
+                BorderSpacing.Around = 10
+                HistoryCaseSensitive = False
+                MaxHistoryCount = 0
+                OnChange = TIComboBoxBgOS1Change
+                TabOrder = 0
+              end
+              object TIComboBoxBgOsArch1: TTIComboBox
+                Left = 11
+                Height = 23
+                Top = 337
+                Width = 408
+                Align = alTop
+                BorderSpacing.Around = 10
+                HistoryCaseSensitive = False
+                MaxHistoryCount = 0
+                TabOrder = 1
+              end
+              object TIMemoBgCheckdirs1: TTIMemo
+                Left = 11
+                Height = 90
+                Top = 61
+                Width = 408
+                Align = alTop
+                BorderSpacing.Around = 10
+                Lines.Strings = (
+                  ''
+                )
+              end
+              object TIMemoBgProcesses1: TTIMemo
+                Left = 11
+                Height = 90
+                Top = 161
+                Width = 408
+                Align = alTop
+                BorderSpacing.Around = 10
+                Lines.Strings = (
+                  ''
+                )
+              end
+              object TICheckBoxBgInstall1: TTICheckBox
+                Left = 11
+                Height = 23
+                Top = 261
+                Width = 408
+                Align = alTop
+                BorderSpacing.Bottom = 10
+                BorderSpacing.Around = 10
+                Caption = '   install_in_background'
+                PropertyNameAsCaption = False
+                TabOrder = 4
+              end
+              object Panel27: TPanel
+                Left = 1
+                Height = 50
+                Top = 1
+                Width = 428
+                Align = alTop
+                ClientHeight = 50
+                ClientWidth = 428
+                TabOrder = 5
+                object BitBtnAddToList1: TBitBtn
+                  Left = 328
+                  Height = 28
+                  Top = 11
+                  Width = 29
+                  Align = alRight
+                  Anchors = [akRight]
+                  BorderSpacing.Around = 10
+                  Glyph.Data = {
+                    36090000424D3609000000000000360000002800000018000000180000000100
+                    2000000000000009000064000000640000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000006E00000091000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    000000000070000000FF000000FF0000008F0000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0072000000FF000000FF000000FF000000FF0000008D00000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000740000
+                    00FF000000FF000000FF000000FF000000FF000000FF0000008B000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000076000000FF0000
+                    00FF000000FF000000FF000000FF000000FF000000FF000000FF000000890000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    00000000000000000000000000000000000000000079000000FF000000FF0000
+                    00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+                    0086000000000000000000000000000000000000000000000000000000000000
+                    00000000000000000000000000000000007B000000FF000000FF000000FF0000
+                    00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+                    00FF000000840000000000000000000000000000000000000000000000000000
+                    000000000000000000000000007D000000FF000000FF000000FF000000FF0000
+                    00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+                    00FF000000FF0000008200000000000000000000000000000000000000000000
+                    0000000000000000007F000000FF000000FF000000FF000000FF000000FF0000
+                    00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+                    00FF000000FF000000FF00000081000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    00FF000000FF000000FF000000FF000000FF000000FF00000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    00FF000000FF000000FF000000FF000000FF000000FF00000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    00FF000000FF000000FF000000FF000000FF000000FF00000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    00FF000000FF000000FF000000FF000000FF000000FF00000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    00FF000000FF000000FF000000FF000000FF000000FF00000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    00FF000000FF000000FF000000FF000000FF000000FF00000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    00FF000000FF000000FF000000FF000000FF000000FF00000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    00FF000000FF000000FF000000FF000000FF000000FF00000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    00FF000000FF000000FF000000FF000000FF000000FF00000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    00FF000000FF000000FF000000FF000000FF000000FF00000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    00FF000000FF000000FF000000FF000000FF000000FF00000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    00FF000000FF000000FF000000FF000000FF000000FF00000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    00FF000000FF000000FF000000FF000000FF000000FF00000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    00FF000000FF000000FF000000FF000000FF000000FF00000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    00FF000000FF000000FF000000FF000000FF000000FF00000000000000000000
+                    0000000000000000000000000000000000000000000000000000
+                  }
+                  OnClick = BitBtnAddToList1Click
+                  ParentBidiMode = False
+                  TabOrder = 0
+                end
+                object BitBtnBgChooseInstDir1: TBitBtn
+                  Left = 367
+                  Height = 28
+                  Top = 11
+                  Width = 50
+                  Align = alRight
+                  Anchors = []
+                  AutoSize = True
+                  BorderSpacing.Around = 10
+                  BorderSpacing.InnerBorder = 2
+                  Glyph.Data = {
+                    36040000424D3604000000000000360000002800000010000000100000000100
+                    2000000000000004000064000000640000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    00000000000000000000000000000000000000000000000000004C92DEE95698
+                    DEFF5B9BDEFF5B9BDEFF5B9BDEFF5A9BDEFF5A9BDEFF5A9BDEFF5A9BDEFF5A9A
+                    DEFF599ADDFF5999DDFF4E93DEF54C92DE0E00000000000000005195DEFF96BE
+                    E1FFADCEE4FFABCEE5FFA9CDE5FFA7CCE6FFA7CCE6FFA6CBE5FFA5CAE4FFA3C8
+                    E1FFA0C5DDFF9DC1D9FF78AAD9FF4C92DE6A0000000000000000599ADFFF7BB1
+                    E5FFB6D8EFFFB4D8F0FFB2D7F1FFB0D7F1FFAFD6F1FFAFD6F1FFADD5EFFFABD2
+                    ECFFA7CCE6FFA2C7DFFF95BCDAFF598DC4FF7C807EFF7C807EFF5E9FE2FF62A1
+                    E3FFBDE1F8FFBCE1F9FFBAE0FBFFB9E0FBFFB8E0FBFFB7DFFAFFB6DEF8FFB3DA
+                    F5FFAFD4EFFFA8CDE6FFA2C6DDFF5E9CDDFFE5E7E9FF7B807EFF5FA0E3FF6CA9
+                    E7FFB5DDFAFFC2E7FFFFC1E6FFFFC0E6FFFFC0E6FFFFBFE5FFFFBDE4FEFFBAE0
+                    FBFFB5DAF4FFAED3EBFFA8CAE1FF73A8DCFFBED2E7FF7C807EFF60A0E3FF93C4
+                    F1FF8FC2F0FFC6E8FFFFC6E8FFFFC5E8FFFFC4E8FFFFC4E7FFFFC1E6FFFFBEE3
+                    FCFFBADEF6FFB3D6EEFFACCDE3FF90B9DBFF8EB7E3FF7C807FFF60A0E4FFBEE2
+                    FCFF61A0E3FF60A0E4FF60A0E4FF60A0E4FF60A0E4FF60A0E4FF60A0E3FF5FA0
+                    E3FF5F9FE2FF5E9DE1FF5C9CDFFF5698DEFF74A9E2FF7C817FFF60A0E4FFC8E9
+                    FFFFCAE9FFFFC9EAFFFFC7E9FFFFC6E9FFFF8A8E8DFFF7F7F7FFF7F7F7FFF7F7
+                    F7FFF5F5F5FFF3F3F3FFF1F1F1FFEFEFEFFFEDEDEDFF7D8180FF5397E0F8BCE1
+                    FCFFC7E9FFFFC6E8FFFFC4E7FFFFB9E0FCFF8B908EFFF9F9F9FFF9F9F9FFF8F8
+                    F8FFF7F7F7FFF4F4F4FFF2F2F2FFF0F0F0FFEDEDEDFF7E8280FF4C92DE6A5397
+                    E0F860A0E4FF60A0E3FF60A0E3FF5397E0F88C908FFFFAFAFAFFFAFAFAFFFAFA
+                    FAFFF8F8F8FFF6F6F6FFF3F3F3FFF0F0F0FFEEEEEEFF7F8381FF000000000000
+                    0000000000000000000000000000000000008D918FFFFBFBFBFFFBFBFBFFFAFA
+                    FAFFF9F9F9FFF6F6F6FFF4F4F4FFF1F1F1FFEEEEEEFF808482FF000000000000
+                    0000000000000000000000000000000000008D9190FFFBFBFBFFFBFBFBFFFAFA
+                    FAFFF9F9F9FFF6F6F6FFF3F3F3FFF1F1F1FFEEEEEEFF818584FF000000000000
+                    0000000000000000000000000000000000008D9290FFFBFBFBFFFBFBFBFFFAFA
+                    FAFFF9F9F9FFF6F6F6FFF4F4F4FFF0F0F0FFEDEDEDFF828685FF000000000000
+                    0000000000000000000000000000000000008D9290FFFAFAFAFFFAFAFAFFF9F9
+                    F9FFF8F8F8FFF6F6F6FFF3F3F3FFF0F0F0FFEDEDEDFF838786FF000000000000
+                    0000000000000000000000000000000000008D9190FF8D918FFF8D918FFF8C90
+                    8FFF8B8F8DFF898E8CFF888C8AFF878B89FF858988FF848887FF
+                  }
+                  OnClick = BitBtnBgChooseInstDirClickBg1
+                  ParentFont = False
+                  TabOrder = 1
+                end
+                object TIEditBgInstallDir1: TTIEdit
+                  Left = 11
+                  Height = 28
+                  Top = 11
+                  Width = 307
+                  Align = alClient
+                  BorderSpacing.Around = 10
+                  BorderSpacing.InnerBorder = 2
+                  Constraints.MinWidth = 150
+                  OnChange = genRttiEditChange
+                  ParentFont = False
+                  TabOrder = 2
+                end
+              end
+            end
+          end
+          object PairSplitterSideBgInstaller2: TPairSplitterSide
+            Cursor = crArrow
+            Left = 605
+            Height = 416
+            Top = 0
+            Width = 433
+            ClientWidth = 433
+            ClientHeight = 416
+            object Panel22: TPanel
+              Left = 0
+              Height = 50
+              Top = 0
+              Width = 433
+              Align = alTop
+              ClientHeight = 50
+              ClientWidth = 433
+              TabOrder = 0
+              object Label10: TLabel
+                Left = 48
+                Height = 28
+                Top = 12
+                Width = 84
+                Caption = 'Installer 2'
+                Constraints.MinHeight = 20
+                Font.Height = -20
+                ParentFont = False
+              end
+              object TICheckBoxBgInstActive2: TTICheckBox
+                Left = 152
+                Height = 19
+                Top = 21
+                Width = 49
+                AutoSize = True
+                BorderSpacing.Bottom = 10
+                BorderSpacing.Around = 10
+                Caption = 'active'
+                OnChange = TICheckBoxBgInstActive2Change
+                PropertyNameAsCaption = False
+                TabOrder = 0
+              end
+              object SpeedButtonHelpBackground: TSpeedButton
+                Left = 344
+                Height = 30
+                Hint = 'Show Help'
+                Top = 16
+                Width = 23
+                BorderSpacing.Left = 100
+                BorderSpacing.Top = 10
+                Flat = True
+                Glyph.Data = {
+                  76060000424D7606000000000000360000002800000014000000140000000100
+                  2000000000004006000064000000640000000000000000000000000000000000
+                  00000000000000000000000000000000000500000054000000A4000000D70000
+                  00F3000000F3000000D7000000A4000000530000000500000000000000000000
+                  0000000000000000000000000000000000000000000000000000000000510000
+                  00DB000000FF000000FF000000F7000000DE000000DF000000F8000000FF0000
+                  00FF000000DA0000004E00000000000000000000000000000000000000000000
+                  0000000000020000008A000000FF000000FD000000A300000040000000030000
+                  0000000000000000000400000041000000A4000000FD000000FE000000880000
+                  0002000000000000000000000000000000000000008A000000FF000000E30000
+                  0036000000000000000000000000000000000000000000000000000000000000
+                  000000000037000000E3000000FF000000880000000000000000000000000000
+                  0051000000FF000000E20000001A000000000000000000000000000000000000
+                  003F00000040000000000000000000000000000000000000001B000000E30000
+                  00FE0000004E0000000000000006000000DC000000FD00000035000000000000
+                  0000000000000000000000000000000000D7000000D900000000000000000000
+                  0000000000000000000000000037000000FD000000DA00000005000000550000
+                  00FF000000A20000000000000000000000000000000000000000000000000000
+                  002B0000002C0000000000000000000000000000000000000000000000000000
+                  00A4000000FF00000054000000A5000000FF0000003F00000000000000000000
+                  0000000000000000000000000000000000000000000000000000000000000000
+                  000000000000000000000000000000000042000000FF000000A2000000D90000
+                  00F6000000030000000000000000000000000000000000000000000000000000
+                  009B000000A50000002700000000000000000000000000000000000000000000
+                  0004000000F8000000D8000000F3000000DE0000000000000000000000000000
+                  0000000000000000000000000000000000C9000000FF000000F9000000570000
+                  000000000000000000000000000000000000000000DF000000F1000000F30000
+                  00DD000000000000000000000000000000000000000000000000000000000000
+                  000300000063000000F4000000FD000000300000000000000000000000000000
+                  0000000000DE000000F3000000D9000000F60000000300000000000000000000
+                  0000000000020000001900000000000000000000000000000060000000FF0000
+                  008000000000000000000000000000000004000000F8000000D8000000A70000
+                  00FF0000003D00000000000000000000000000000074000000FE000000400000
+                  0000000000000000006D000000FF000000700000000000000000000000000000
+                  0040000000FF000000A400000056000000FF000000A100000000000000000000
+                  00000000003D000000FF000000E4000000710000007E000000F2000000F80000
+                  0024000000000000000000000000000000A3000000FF00000054000000060000
+                  00DD000000FC000000330000000000000000000000000000007C000000FE0000
+                  00FF000000FF000000F60000005B000000000000000000000000000000360000
+                  00FD000000DB000000050000000000000053000000FF000000E10000001A0000
+                  0000000000000000000000000026000000630000005E00000018000000000000
+                  0000000000000000001A000000E3000000FF0000005100000000000000000000
+                  00000000008C000000FF000000E1000000330000000000000000000000000000
+                  00000000000000000000000000000000000000000036000000E3000000FF0000
+                  008B00000000000000000000000000000000000000020000008B000000FF0000
+                  00FD000000A00000003E000000030000000000000000000000030000003F0000
+                  00A2000000FD000000FF0000008B000000020000000000000000000000000000
+                  0000000000000000000000000053000000DD000000FF000000FF000000F60000
+                  00DE000000DE000000F6000000FF000000FF000000DC00000052000000000000
+                  0000000000000000000000000000000000000000000000000000000000000000
+                  000600000056000000A6000000D8000000F4000000F4000000D8000000A60000
+                  0055000000060000000000000000000000000000000000000000
+                }
+                OnClick = SpeedButtonHelpBackgroundClick
+                ShowHint = True
+                ParentShowHint = False
+              end
+            end
+            object PanelBgMetaInst2: TPanel
+              Left = 0
+              Height = 366
+              Top = 50
+              Width = 433
+              Align = alClient
+              Caption = 'PanelBgMetaInst2'
+              ClientHeight = 366
+              ClientWidth = 433
+              TabOrder = 1
+              object TIComboBoxBgOS2: TTIComboBox
+                Left = 11
+                Height = 23
+                Top = 304
+                Width = 411
+                Align = alTop
+                BorderSpacing.Around = 10
+                HistoryCaseSensitive = False
+                MaxHistoryCount = 0
+                TabOrder = 0
+              end
+              object TIComboBoxBgOsArch2: TTIComboBox
+                Left = 11
+                Height = 23
+                Top = 337
+                Width = 411
+                Align = alTop
+                BorderSpacing.Around = 10
+                HistoryCaseSensitive = False
+                MaxHistoryCount = 0
+                TabOrder = 1
+              end
+              object TIMemoBgCheckdirs2: TTIMemo
+                Left = 11
+                Height = 90
+                Top = 61
+                Width = 411
+                Align = alTop
+                BorderSpacing.Around = 10
+                Lines.Strings = (
+                  ''
+                )
+              end
+              object TIMemoBgProcesses2: TTIMemo
+                Left = 11
+                Height = 90
+                Top = 161
+                Width = 411
+                Align = alTop
+                BorderSpacing.Around = 10
+                Lines.Strings = (
+                  ''
+                )
+              end
+              object TICheckBoxBgInstall2: TTICheckBox
+                Left = 11
+                Height = 23
+                Top = 261
+                Width = 411
+                Align = alTop
+                BorderSpacing.Bottom = 10
+                BorderSpacing.Around = 10
+                Caption = '   install_in_background'
+                PropertyNameAsCaption = False
+                TabOrder = 4
+              end
+              object Panel28: TPanel
+                Left = 1
+                Height = 50
+                Top = 1
+                Width = 431
+                Align = alTop
+                ClientHeight = 50
+                ClientWidth = 431
+                TabOrder = 5
+                object BitBtnAddToList2: TBitBtn
+                  Left = 331
+                  Height = 28
+                  Top = 11
+                  Width = 29
+                  Align = alRight
+                  Anchors = [akRight]
+                  BorderSpacing.Around = 10
+                  Glyph.Data = {
+                    36090000424D3609000000000000360000002800000018000000180000000100
+                    2000000000000009000064000000640000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000006E00000091000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    000000000070000000FF000000FF0000008F0000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0072000000FF000000FF000000FF000000FF0000008D00000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000740000
+                    00FF000000FF000000FF000000FF000000FF000000FF0000008B000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000076000000FF0000
+                    00FF000000FF000000FF000000FF000000FF000000FF000000FF000000890000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    00000000000000000000000000000000000000000079000000FF000000FF0000
+                    00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+                    0086000000000000000000000000000000000000000000000000000000000000
+                    00000000000000000000000000000000007B000000FF000000FF000000FF0000
+                    00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+                    00FF000000840000000000000000000000000000000000000000000000000000
+                    000000000000000000000000007D000000FF000000FF000000FF000000FF0000
+                    00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+                    00FF000000FF0000008200000000000000000000000000000000000000000000
+                    0000000000000000007F000000FF000000FF000000FF000000FF000000FF0000
+                    00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+                    00FF000000FF000000FF00000081000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    00FF000000FF000000FF000000FF000000FF000000FF00000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    00FF000000FF000000FF000000FF000000FF000000FF00000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    00FF000000FF000000FF000000FF000000FF000000FF00000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    00FF000000FF000000FF000000FF000000FF000000FF00000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    00FF000000FF000000FF000000FF000000FF000000FF00000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    00FF000000FF000000FF000000FF000000FF000000FF00000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    00FF000000FF000000FF000000FF000000FF000000FF00000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    00FF000000FF000000FF000000FF000000FF000000FF00000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    00FF000000FF000000FF000000FF000000FF000000FF00000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    00FF000000FF000000FF000000FF000000FF000000FF00000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    00FF000000FF000000FF000000FF000000FF000000FF00000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    00FF000000FF000000FF000000FF000000FF000000FF00000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    00FF000000FF000000FF000000FF000000FF000000FF00000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    00FF000000FF000000FF000000FF000000FF000000FF00000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    00FF000000FF000000FF000000FF000000FF000000FF00000000000000000000
+                    0000000000000000000000000000000000000000000000000000
+                  }
+                  OnClick = BitBtnAddToList2Click
+                  ParentBidiMode = False
+                  TabOrder = 0
+                end
+                object BitBtnBgChooseInstDir2: TBitBtn
+                  Left = 370
+                  Height = 28
+                  Top = 11
+                  Width = 50
+                  Align = alRight
+                  Anchors = []
+                  AutoSize = True
+                  BorderSpacing.Around = 10
+                  BorderSpacing.InnerBorder = 2
+                  Glyph.Data = {
+                    36040000424D3604000000000000360000002800000010000000100000000100
+                    2000000000000004000064000000640000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    00000000000000000000000000000000000000000000000000004C92DEE95698
+                    DEFF5B9BDEFF5B9BDEFF5B9BDEFF5A9BDEFF5A9BDEFF5A9BDEFF5A9BDEFF5A9A
+                    DEFF599ADDFF5999DDFF4E93DEF54C92DE0E00000000000000005195DEFF96BE
+                    E1FFADCEE4FFABCEE5FFA9CDE5FFA7CCE6FFA7CCE6FFA6CBE5FFA5CAE4FFA3C8
+                    E1FFA0C5DDFF9DC1D9FF78AAD9FF4C92DE6A0000000000000000599ADFFF7BB1
+                    E5FFB6D8EFFFB4D8F0FFB2D7F1FFB0D7F1FFAFD6F1FFAFD6F1FFADD5EFFFABD2
+                    ECFFA7CCE6FFA2C7DFFF95BCDAFF598DC4FF7C807EFF7C807EFF5E9FE2FF62A1
+                    E3FFBDE1F8FFBCE1F9FFBAE0FBFFB9E0FBFFB8E0FBFFB7DFFAFFB6DEF8FFB3DA
+                    F5FFAFD4EFFFA8CDE6FFA2C6DDFF5E9CDDFFE5E7E9FF7B807EFF5FA0E3FF6CA9
+                    E7FFB5DDFAFFC2E7FFFFC1E6FFFFC0E6FFFFC0E6FFFFBFE5FFFFBDE4FEFFBAE0
+                    FBFFB5DAF4FFAED3EBFFA8CAE1FF73A8DCFFBED2E7FF7C807EFF60A0E3FF93C4
+                    F1FF8FC2F0FFC6E8FFFFC6E8FFFFC5E8FFFFC4E8FFFFC4E7FFFFC1E6FFFFBEE3
+                    FCFFBADEF6FFB3D6EEFFACCDE3FF90B9DBFF8EB7E3FF7C807FFF60A0E4FFBEE2
+                    FCFF61A0E3FF60A0E4FF60A0E4FF60A0E4FF60A0E4FF60A0E4FF60A0E3FF5FA0
+                    E3FF5F9FE2FF5E9DE1FF5C9CDFFF5698DEFF74A9E2FF7C817FFF60A0E4FFC8E9
+                    FFFFCAE9FFFFC9EAFFFFC7E9FFFFC6E9FFFF8A8E8DFFF7F7F7FFF7F7F7FFF7F7
+                    F7FFF5F5F5FFF3F3F3FFF1F1F1FFEFEFEFFFEDEDEDFF7D8180FF5397E0F8BCE1
+                    FCFFC7E9FFFFC6E8FFFFC4E7FFFFB9E0FCFF8B908EFFF9F9F9FFF9F9F9FFF8F8
+                    F8FFF7F7F7FFF4F4F4FFF2F2F2FFF0F0F0FFEDEDEDFF7E8280FF4C92DE6A5397
+                    E0F860A0E4FF60A0E3FF60A0E3FF5397E0F88C908FFFFAFAFAFFFAFAFAFFFAFA
+                    FAFFF8F8F8FFF6F6F6FFF3F3F3FFF0F0F0FFEEEEEEFF7F8381FF000000000000
+                    0000000000000000000000000000000000008D918FFFFBFBFBFFFBFBFBFFFAFA
+                    FAFFF9F9F9FFF6F6F6FFF4F4F4FFF1F1F1FFEEEEEEFF808482FF000000000000
+                    0000000000000000000000000000000000008D9190FFFBFBFBFFFBFBFBFFFAFA
+                    FAFFF9F9F9FFF6F6F6FFF3F3F3FFF1F1F1FFEEEEEEFF818584FF000000000000
+                    0000000000000000000000000000000000008D9290FFFBFBFBFFFBFBFBFFFAFA
+                    FAFFF9F9F9FFF6F6F6FFF4F4F4FFF0F0F0FFEDEDEDFF828685FF000000000000
+                    0000000000000000000000000000000000008D9290FFFAFAFAFFFAFAFAFFF9F9
+                    F9FFF8F8F8FFF6F6F6FFF3F3F3FFF0F0F0FFEDEDEDFF838786FF000000000000
+                    0000000000000000000000000000000000008D9190FF8D918FFF8D918FFF8C90
+                    8FFF8B8F8DFF898E8CFF888C8AFF878B89FF858988FF848887FF
+                  }
+                  OnClick = BitBtnBgChooseInstDir1Click
+                  ParentFont = False
+                  TabOrder = 1
+                end
+                object TIEditBgInstallDir2: TTIEdit
+                  Left = 11
+                  Height = 28
+                  Top = 11
+                  Width = 310
+                  Align = alClient
+                  BorderSpacing.Around = 10
+                  BorderSpacing.InnerBorder = 2
+                  Constraints.MinWidth = 150
+                  OnChange = genRttiEditChange
+                  ParentFont = False
+                  TabOrder = 2
+                end
+              end
+            end
+          end
+        end
+        object FlowPanel32: TFlowPanel
+          Left = 0
+          Height = 187
+          Top = 416
+          Width = 1038
+          Align = alClient
+          ControlList = <          
+            item
+              Control = BtBgNextStep
+              WrapAfter = waAuto
+              Index = 0
+            end          
+            item
+              Control = Panel24
+              WrapAfter = waAuto
+              Index = 1
+            end          
+            item
+              Control = BtBgSaveFile
+              WrapAfter = waAuto
+              Index = 2
+            end>
+          FlowLayout = tlTop
+          FlowStyle = fsBottomTopRightLeft
+          ParentFont = False
+          TabOrder = 1
+          object BtBgNextStep: TBitBtn
+            Left = 879
+            Height = 54
+            Hint = 'Go to the next Step'
+            Top = 123
+            Width = 149
+            Anchors = []
+            AutoSize = True
+            BorderSpacing.Around = 9
+            BorderSpacing.InnerBorder = 6
+            Caption = 'Next Step'
+            Font.Height = -17
+            Glyph.Data = {
+              36100000424D3610000000000000360000002800000020000000200000000100
+              2000000000000010000064000000640000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              000000000000000000000000007E000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              00000000000000000000000000FF0000007B0000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              00000000000000000000000000FF000000FF0000007800000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              00000000000000000000000000FF000000FF000000FF00000076000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              00000000000000000000000000FF000000FF000000FF000000FF000000730000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              00000000000000000000000000FF000000FF000000FF000000FF000000FF0000
+              0070000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              00000000000000000000000000FF000000FF000000FF000000FF000000FF0000
+              00FF0000006E0000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              00000000000000000000000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF0000006B00000000000000000000000000000000000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF00000069000000000000000000000000000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF000000FE000000670000000000000000000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF000000FF000000FE0000006400000000000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FE00000062000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF0000009A000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF000000FF000000FF0000009A00000001000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF000000FF000000970000000100000000000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF00000095000000010000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              00000000000000000000000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF0000009200000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              00000000000000000000000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000900000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              00000000000000000000000000FF000000FF000000FF000000FF000000FF0000
+              008E000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              00000000000000000000000000FF000000FF000000FF000000FF0000008B0000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              00000000000000000000000000FF000000FF000000FF00000088000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              00000000000000000000000000FF000000FF0000008600000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              00000000000000000000000000FF000000830000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000081000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000
+            }
+            Layout = blGlyphRight
+            OnClick = BtBgNextStepClick
+            ParentFont = False
+            TabOrder = 0
+          end
+          object BtBgSaveFile: TBitBtn
+            Left = 722
+            Height = 54
+            Hint = 'Save the meta data file'
+            Top = 123
+            Width = 136
+            Anchors = []
+            AutoSize = True
+            BorderSpacing.Around = 9
+            BorderSpacing.InnerBorder = 6
+            Caption = 'Save file'
+            Font.Height = -17
+            Glyph.Data = {
+              36100000424D3610000000000000360000002800000020000000200000000100
+              2000000000000010000064000000640000000000000000000000FFFFFF00FFFF
+              FF00000000020000000B000000170000001C0000001B1E1E1E19424242134A4A
+              4A114A4A4A114A4A4A11595959114A4A4A114E4E4E105454540F4242420F4E4E
+              4E10595959115A5A5A114A4A4A112020200F0B0B0B150000001A0000001C0000
+              001C0000001C0000001C0000001B0000001400000006FFFFFF00FFFFFF000000
+              00010000000C00000037070709890E0E10A30E0E10A139393AA4646465C66A6A
+              6BCD6F6F71D3737374D9777778E079797AE579797AE97A7A7AEA79797AE97979
+              79E5767677DF747475D96F6F70D45E5E5FCA28282AA70F0F11A00E0E10A10E0E
+              10A10E0E10A00E0E10A00F0F109D0F0F0F640000001600000001FFFFFF000000
+              0002000000190F0F0F7829282CF52B2A2EFF2B2A2EFF333336FF959595FFA5A5
+              A5FFA3A3A3FFA0A0A0FF9C9C9CFF999999FF949494FF8F8F8FFF8D8D8DFF8D8D
+              8DFF8C8C8CFF8C8C8CFF8E8E8EFF8A8A8AFF242326FF262529FF262529FF2524
+              28FF2B2A2EFF2B2A2EFF2B2A2EFF2D2C30F90000001D00000002FFFFFF000000
+              0001232328332E2C30EB2E2D31FF2E2D31FF2E2D31FF39383CFFA1A1A1FFABAB
+              ABFFAEAEAEFFAEAEAEFFABABABFFA8A8A8FF9C9C9CFF9B9B9BFF979797FF9595
+              95FF929292FF8F8F8FFF8D8D8DFF8A8A8AFF27262AFF2A292DFF29282CFF2726
+              2AFF2E2D31FF2E2D31FF2E2D31FF302F33FF0000000A00000001FFFFFF00FFFF
+              FF00312F34E7313034FF313034FF313034FF313034FF3B3A3EFFA6A5A6FFB4B4
+              B4FF232223FF181719FF161516FF262526FFA7A7A7FFA4A4A4FFA0A0A0FF9D9D
+              9DFF9B9B9BFF989898FF969696FF909090FF2D2C2FFF2F2E31FF2E2D30FF2C2B
+              2EFF313034FF353438FF49484CFF333236FF00000001FFFFFF00FFFFFF00FFFF
+              FF00343337FF343337FF343337FF343337FF343337FF3E3D41FFAFAFAFFFBDBD
+              BDFF2C2C2FFF2B2B2EFF2B2B2EFF242425FFB1B1B1FFADADADFFA8A8A8FFA6A6
+              A6FFA3A3A3FF9F9F9FFF9B9B9BFF9A9A9AFF313134FF343437FF333336FF3130
+              32FF343337FF47464AFF39383CFF474649FFFFFFFF00FFFFFF00FFFFFF00FFFF
+              FF0038373AFF38373AFF38373AFF38373AFF38373AFF3F3E41FFB2B2B2FFC5C5
+              C5FF313033FF313033FF313033FF252526FFB8B8B8FFB5B5B5FFB4B4B4FFB1B1
+              B1FFADADADFFABABABFFA7A7A7FFA3A3A3FF383739FF3B3A3DFF39383BFF3534
+              36FF38373AFF444446FF484749FF3A393CFFFFFFFF00FFFFFF00FFFFFF00FFFF
+              FF003B3A3EFF3B3A3EFF3B3A3EFF3B3A3EFF3B3A3EFF3F3E42FFB4B4B4FFC5C5
+              C5FF343336FF343336FF343336FF2A292BFFC1C1C1FFBCBCBCFFBABABAFFB5B5
+              B5FFB2B2B2FFB0B0B0FFAFAFAFFFACACACFF3D3C3FFF3E3D40FF3D3C3FFF3736
+              3AFF3B3A3EFF444347FF504F52FF3E3D41FFFFFFFF00FFFFFF00FFFFFF00FFFF
+              FF003F3E41FF3F3E41FF3F3E41FF3F3E41FF3F3E41FF474648FFB6B6B6FFC5C5
+              C5FF373639FF373639FF373639FF272628FFC3C3C3FFC5C5C5FFC2C2C2FFC0C0
+              C0FFBDBDBDFFBABABAFFB7B7B7FFB6B6B6FF3E3D3FFF414043FF403F41FF3A39
+              3BFF3F3E41FF3F3E41FF3F3E41FF424144FFFFFFFF00FFFFFF00FFFFFF00FFFF
+              FF00424144FF424144FF424144FF424144FF424144FF49484BFFB7B7B7FFC5C5
+              C5FF4B4A4CFF484748FF484748FF3D3D3EFFC5C5C5FFC6C6C6FFC7C7C7FFC6C6
+              C6FFC5C5C5FFC4C4C4FFC1C1C1FFBFBFBFFF3E3E3FFF424143FF403F42FF3A3A
+              3CFF424144FF424144FF424144FF454447FFFFFFFF00FFFFFF00FFFFFF00FFFF
+              FF00454447FF454447FF454447FF454447FF454447FF4C4C4EFFB9B9B9FFC5C5
+              C5FFC5C5C5FFC6C6C6FFC5C5C5FFC5C5C5FFC5C5C5FFC4C4C4FFC5C5C5FFC6C6
+              C6FFC7C7C7FFC7C7C7FFC6C6C6FFC8C8C8FF3D3D3FFF404042FF403F41FF3938
+              3AFF454447FF454447FF454447FF49484BFFFFFFFF00FFFFFF00FFFFFF00FFFF
+              FF0049484BFF49484BFF49484BFF49484BFF49484BFF49484BFFAFAFB0FFD1D1
+              D1FFD0D0D0FFD0D0D0FFD0D0D0FFD0D0D0FFD0D0D0FFD0D0D0FFD0D0D0FFCFCF
+              CFFFCFCFCFFFCFCFCFFFCFCFCFFFBDBDBDFF353537FF373739FF363537FF3433
+              34FF49484BFF49484BFF49484BFF4D4C4FFFFFFFFF00FFFFFF00FFFFFF00FFFF
+              FF004B4A4DFF4B4A4DFF4B4A4DFF4B4A4DFF4B4A4DFF4B4A4DFF4B4A4DFF4B4A
+              4DFF4B4A4DFF4B4A4DFF4B4A4DFF4B4A4DFF4B4A4DFF4B4A4DFF4B4A4DFF4B4A
+              4DFF4B4A4DFF4B4A4DFF4B4A4DFF4B4A4DFF4B4A4DFF4B4A4DFF4B4A4DFF4B4A
+              4DFF4B4A4DFF4B4A4DFF4B4A4DFF4F4E51FFFFFFFF00FFFFFF00FFFFFF00FFFF
+              FF004D4C4EFF4D4C4EFF4D4C4EFF4D4C4EFF4D4C4EFF4D4C4EFF4D4C4EFF4D4C
+              4EFF4D4C4EFF4D4C4EFF4D4C4EFF4D4C4EFF4D4C4EFF4D4C4EFF4D4C4EFF4D4C
+              4EFF4D4C4EFF4D4C4EFF4D4C4EFF4D4C4EFF4D4C4EFF4D4C4EFF4D4C4EFF4D4C
+              4EFF4D4C4EFF4D4C4EFF4D4C4EFF515052FFFFFFFF00FFFFFF00FFFFFF00FFFF
+              FF004E4D50FF4E4D50FF4E4D50FF4E4D50FF4E4D50FF4E4D50FF4E4D50FF4E4D
+              50FF4E4D50FF4E4D50FF4E4D50FF4E4D50FF4E4D50FF4E4D50FF4E4D50FF4E4D
+              50FF4E4D50FF4E4D50FF4E4D50FF4E4D50FF4E4D50FF4E4D50FF4E4D50FF4E4D
+              50FF4E4D50FF4E4D50FF4E4D50FF525154FFFFFFFF00FFFFFF00FFFFFF00FFFF
+              FF00504F52FF504F52FF504F52FF504F52FF504F52FF504F52FF504F52FF504F
+              52FF515053FF515053FF525154FF525154FF535255FF535255FF535255FF5352
+              55FF535255FF535255FF525154FF515053FF515053FF515053FF504F52FF504F
+              52FF504F52FF504F52FF504F52FF555457FFFFFFFF00FFFFFF00FFFFFF00FFFF
+              FF00525153FF525153FF525153FF525153FF777471FF9F9892FF958E89FF958E
+              89FF958E89FF958E89FF958E89FF958E89FF958E89FF958E88FF958E88FF958E
+              88FF958E88FF958D88FF958D87FF948D87FF948D87FF948C86FF9E968FFF7672
+              70FF525153FF525153FF525153FF575658FFFFFFFF00FFFFFF00FFFFFF00FFFF
+              FF00545355FF545355FF545355FF545355FFB7B0AAFFE9DFD2FFE9DFD3FFE9DF
+              D3FFE9DFD3FFE9DFD3FFE9DFD3FFE9DFD3FFE9DED3FFE9DED3FFE9DED2FFE9DE
+              D2FFE8DDD2FFE8DDD1FFE8DDD0FFE8DCD0FFE7DBCFFFE7DBCEFFE6DACEFFB5AF
+              A8FF545355FF545355FF545355FF59585AFFFFFFFF00FFFFFF00FFFFFF00FFFF
+              FF00555457FF555457FF555457FF555457FFB8B4ADFFEBE2D7FFECE2D8FFEDE3
+              D8FFEDE3D8FFEDE3D8FFEDE3D8FFECE2D8FFECE2D7FFECE2D7FFECE2D7FFECE1
+              D6FFECE1D6FFEBE1D5FFEBE0D5FFEBE0D4FFEADFD3FFEADED3FFE8DED2FFB6B0
+              ABFF555457FF555457FF555457FF5A595CFFFFFFFF00FFFFFF00FFFFFF00FFFF
+              FF00575658FF575658FF575658FF575658FFBAB6B0FFEDE5DBFFE4D5C8FFE4D5
+              C8FFE4D5C8FFE4D5C8FFE4D5C8FFE4D5C8FFE4D5C8FFE4D5C8FFE4D5C7FFE4D5
+              C7FFE4D5C7FFE3D4C7FFE3D4C6FFE3D4C6FFE3D3C5FFE3D3C5FFEAE1D6FFB8B2
+              ADFF575658FF575658FF575658FF5C5B5DFFFFFFFF00FFFFFF00FFFFFF00FFFF
+              FF0059585AFF59585AFF59585AFF59585AFFBBB7B2FFF0E9E0FFF3EDE7FFF3ED
+              E7FFF3EDE7FFF3EDE7FFF3EDE7FFF3EDE7FFF3EDE6FFF2ECE6FFF2ECE6FFF2EC
+              E5FFF2EBE4FFF1EBE4FFF1EAE3FFF1EAE2FFF0E9E1FFF0E8E0FFECE4DBFFBBB6
+              B0FF59585AFF59585AFF59585AFF5F5E60FFFFFFFF00FFFFFF00FFFFFF00FFFF
+              FF005B5A5CFF5B5A5CFF5B5A5CFF5B5A5CFFBEB9B6FFF2EBE5FFF6F2EDFFF6F2
+              EDFFF6F2EDFFF6F2EDFFF6F2EDFFF6F2EDFFF6F1EDFFF6F1ECFFF5F1ECFFF5F0
+              EBFFF5F0EBFFF4EFEAFFF4EFE9FFF4EEE8FFF3EDE7FFF3EDE6FFEFE7DFFFBCB8
+              B3FF5B5A5CFF5B5A5CFF5B5A5CFF616062FFFFFFFF00FFFFFF00FFFFFF00FFFF
+              FF005C5B5DFF5C5B5DFF5C5B5DFF5C5B5DFFC0BDB9FFF4EFE9FFF8F5F1FFF8F6
+              F2FFF8F6F2FFF8F6F2FFF8F5F2FFF8F5F1FFF8F5F1FFF8F5F1FFF7F4F0FFF7F4
+              F0FFF7F3EFFFF6F3EEFFF6F2EDFFF6F2ECFFF5F1EBFFF4F0EAFFF1EAE3FFBDB9
+              B6FF5C5B5DFF5C5B5DFF5C5B5DFF626163FFFFFFFF00FFFFFF00FFFFFF00FFFF
+              FF005E5D5FFF5E5D5FFF5E5D5FFF5E5D5FFFC0BFBBFFF6F2EEFFEADED4FFEADE
+              D4FFEADED4FFEADED4FFEADED4FFEADED4FFEADED3FFEADED3FFEADED3FFE9DE
+              D3FFE9DDD2FFE9DDD2FFE9DDD1FFE8DCD1FFE8DCD0FFE8DBD0FFF3EDE8FFC0BC
+              B9FF5E5D5FFF5E5D5FFF5E5D5FFF646365FFFFFFFF00FFFFFF00FFFFFF00FFFF
+              FF00605F61FF605F61FF605F61FF605F61FFC2C0BDFFF7F4F0FFFEFEFDFFFEFE
+              FDFFFEFDFDFFFEFDFDFFFEFEFDFFFEFEFDFFFEFEFEFFFEFEFEFFFEFEFEFFFEFE
+              FEFFFEFEFDFFFDFDFCFFFDFCFBFFFCFBFAFFFCFAF9FFFBF9F8FFF4F0EBFFC0BE
+              BCFF605F61FF605F61FF605F61FF666567FFFFFFFF00FFFFFF00FFFFFF00FFFF
+              FF00626163FF626163FF626163FF626163FFC3C0BCFFF7F2EDFFFDFAF9FFFDFA
+              F9FFFDFAF9FFFDFAF9FFFDFAF9FFFDFAF9FFFDFBF9FFFDFBFAFFFDFBFAFFFDFC
+              FBFFFDFCFBFFFEFDFCFFFEFDFDFFFEFEFEFFFEFEFEFFFEFDFDFFF7F3EFFFC1C0
+              BDFF626163FF626163FF626163FF69686AFFFFFFFF00FFFFFF00FFFFFF00FFFF
+              FF00636264FF555456FF5D5C5EFF636264FFC2BFBBFFF6F0EAFFFAF6F3FFFAF6
+              F3FFFAF6F2FFFAF6F2FFFAF6F3FFFAF6F3FFFBF7F3FFFBF7F4FFFBF7F4FFFBF8
+              F5FFFBF8F5FFFCF9F6FFFCF9F7FFFCFAF8FFFCFBF9FFFDFCFAFFF7F4F1FFC3C0
+              BFFF636264FF636264FF636264FF6A696BFFFFFFFF00FFFFFF00FFFFFF00FFFF
+              FF00656466FF454546FF565557FF656466FFC2BFBBFFF5EDE7FFE9DBCEFFE9DB
+              CEFFE9DBCEFFE9DBCEFFE9DBCEFFE9DBCFFFE9DBCFFFE9DBCFFFE9DBCFFFE9DC
+              D0FFE9DCD0FFE9DCD0FFEADDD0FFEADDD1FFEADDD2FFEADED2FFF7F2EEFFC3C0
+              BFFF656466FF656466FF656466FF6C6B6DFFFFFFFF00FFFFFF00FFFFFF00FFFF
+              FF00676668FF3A3A3BFF525152FF676668FFC3BFB9FFF4EBE5FFF9F1ECFFF9F1
+              ECFFF9F1ECFFF9F1ECFFF9F1ECFFF9F1ECFFF9F1EDFFF9F2EDFFF9F2EEFFFAF3
+              EFFFFAF4F0FFFAF4F1FFFBF5F2FFFBF6F3FFFBF7F4FFFCF8F6FFF6F1ECFFC4C0
+              BEFF676668FF676668FF676668FF6E6D6FFFFFFFFF00FFFFFF00FFFFFF00FFFF
+              FF00727072BB6F6F70FF6F6F70FF6F6F70FFADAAA6FFD5CEC8FFD8D1CDFFD7D0
+              CDFFD7D0CDFFD7D0CDFFD7D0CDFFD8D1CEFFD9D2CEFFDAD4D0FFDBD4D1FFDCD5
+              D2FFDDD6D3FFDDD7D4FFDED8D4FFDED9D5FFDEDAD7FFDFDBD8FFDBD6D4FFADAB
+              A8FF6F6F70FF6F6F70FF6F6F70FF818081BBFFFFFF00FFFFFF00FFFFFF00FFFF
+              FF01FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+              FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+              FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+              FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+              FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+              FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+              FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+              FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00
+            }
+            Layout = blGlyphRight
+            OnClick = BtBgSaveFileClick
+            ParentFont = False
+            TabOrder = 1
+          end
+          object Panel24: TPanel
+            Left = 867
+            Height = 50
+            Top = 64
+            Width = 170
+            Anchors = []
+            TabOrder = 2
           end
         end
       end
@@ -15221,7 +16484,7 @@ object resultForm1: TresultForm1
       OnClick = TreeView1Click
       Options = [tvoAutoExpand, tvoAutoItemHeight, tvoKeepCollapsedNodes, tvoReadOnly, tvoRowSelect, tvoShowButtons, tvoShowLines, tvoShowRoot, tvoToolTips]
       Items.Data = {
-        F9FFFFFF02000A000000000000000000000000000000FFFFFFFF000000000000
+        F9FFFFFF02000B000000000000000000000000000000FFFFFFFF000000000000
         000000050000005374617274010000000100000001000000FFFFFFFF00000000
         000000000007000000416E616C797A65020000000200000002000000FFFFFFFF
         00000000000000000008000000312E2053657475700200000002000000020000
@@ -15232,8 +16495,10 @@ object resultForm1: TresultForm1
         726F6475637420436F6E66696775726174696F6E203103000000030000000300
         0000FFFFFFFF0000000000000000001700000050726F6475637420436F6E6669
         6775726174696F6E2032030000000300000003000000FFFFFFFF000000000000
-        0000000C00000050726F647563742049636F6E040000000400000004000000FF
-        FFFFFF00000000000000000006000000437265617465
+        0000001700000050726F64756374206261636B67726F756E6420696E666F0300
+        00000300000003000000FFFFFFFF0000000000000000000C00000050726F6475
+        63742049636F6E040000000400000004000000FFFFFFFF000000000000000000
+        06000000437265617465
       }
     end
   end
@@ -15480,5 +16745,11 @@ object resultForm1: TresultForm1
   object SaveDialogProj: TSaveDialog
     Filter = 'OSD Project file|*.osd'
     Left = 256
+  end
+  object SaveDialogBgMetaData: TSaveDialog
+    DefaultExt = '.toml'
+    FileName = 'opsi-meta-data.toml'
+    Left = 843
+    Top = 532
   end
 end

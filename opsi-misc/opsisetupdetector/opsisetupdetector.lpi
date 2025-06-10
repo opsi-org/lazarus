@@ -30,8 +30,8 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="3"/>
-      <RevisionNr Value="5"/>
-      <BuildNr Value="1"/>
+      <RevisionNr Value="6"/>
+      <BuildNr Value="2"/>
       <StringTable CompanyName="uib gmbh (uib.de / opsi.org)" FileDescription="opsi setup detector" InternalName="opsi setup detector" LegalCopyright="AGPLv3" LegalTrademarks="opsi, opsi.org, open system integration" OriginalFilename="opsisetupdetector" ProductName="opsi" ProductVersion="opsi 4.3"/>
     </VersionInfo>
     <BuildModes Count="6">

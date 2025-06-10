@@ -1,7 +1,7 @@
 object FNewDepDlg: TFNewDepDlg
-  Left = 766
+  Left = 785
   Height = 461
-  Top = 400
+  Top = 489
   Width = 563
   Caption = 'opsi-setup-detector: Dependency Editor'
   ClientHeight = 461
@@ -9,7 +9,7 @@ object FNewDepDlg: TFNewDepDlg
   OnActivate = FormActivate
   OnShow = FormShow
   Position = poScreenCenter
-  LCLVersion = '2.2.6.0'
+  LCLVersion = '3.8.0.0'
   object Panel1: TPanel
     Left = 0
     Height = 50
@@ -28,7 +28,6 @@ object FNewDepDlg: TFNewDepDlg
       Align = alLeft
       BorderSpacing.Left = 7
       BorderSpacing.Around = 5
-      Default = True
       DefaultCaption = True
       Kind = bkOK
       ModalResult = 1
@@ -205,17 +204,17 @@ object FNewDepDlg: TFNewDepDlg
         Left = 22
         Height = 19
         Top = 8
-        Width = 55
+        Width = 53
         Caption = 'Action'
-        OnChange = RadioButtonActionChange
         ParentFont = False
         TabOrder = 0
+        OnChange = RadioButtonActionChange
       end
       object RadioButtonState: TRadioButton
         Left = 145
         Height = 19
         Top = 8
-        Width = 46
+        Width = 44
         Caption = 'State'
         Checked = True
         ParentFont = False
@@ -378,10 +377,10 @@ object FNewDepDlg: TFNewDepDlg
         BorderSpacing.Right = 7
         BorderSpacing.Around = 5
         ItemHeight = 15
-        OnChange = ComboBoxActStateChange
         ParentFont = False
         TabOrder = 0
         Text = 'ComboBoxActState'
+        OnChange = ComboBoxActStateChange
       end
       object Label3: TLabel
         Left = 113

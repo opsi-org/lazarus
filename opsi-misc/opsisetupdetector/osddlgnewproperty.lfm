@@ -1,7 +1,7 @@
 object FNewPropDlg: TFNewPropDlg
-  Left = 478
+  Left = 638
   Height = 635
-  Top = 210
+  Top = 257
   Width = 428
   Caption = 'opsi-setup-detector - Properties'
   ClientHeight = 635
@@ -10,7 +10,7 @@ object FNewPropDlg: TFNewPropDlg
   OnCreate = FormCreate
   OnShow = FormShow
   Position = poScreenCenter
-  LCLVersion = '2.2.6.0'
+  LCLVersion = '3.8.0.0'
   object Panel1: TPanel
     Left = 0
     Height = 50
@@ -29,7 +29,6 @@ object FNewPropDlg: TFNewPropDlg
       Align = alLeft
       BorderSpacing.Left = 7
       BorderSpacing.Around = 5
-      Default = True
       DefaultCaption = True
       Kind = bkOK
       ModalResult = 1
@@ -162,23 +161,23 @@ object FNewPropDlg: TFNewPropDlg
       Left = 22
       Height = 19
       Top = 8
-      Width = 42
+      Width = 40
       Caption = 'Text'
-      OnChange = RadioButtonPropStringChange
       ParentFont = False
       TabOrder = 0
+      OnChange = RadioButtonPropStringChange
     end
     object RadioButtonPropBool: TRadioButton
       Left = 145
       Height = 19
       Top = 8
-      Width = 63
+      Width = 61
       Caption = 'Boolean'
       Checked = True
-      OnChange = RadioButtonPropBoolChange
       ParentFont = False
       TabOrder = 1
       TabStop = True
+      OnChange = RadioButtonPropBoolChange
     end
   end
   object Panel4: TPanel
@@ -210,10 +209,10 @@ object FNewPropDlg: TFNewPropDlg
       Width = 238
       Anchors = []
       BorderSpacing.Around = 11
-      OnChange = EditPropNameChange
-      OnEditingDone = EditPropNameEditingDone
       ParentFont = False
       TabOrder = 0
+      OnChange = EditPropNameChange
+      OnEditingDone = EditPropNameEditingDone
     end
   end
   object CheckGroupPropBool: TCheckGroup
@@ -245,9 +244,9 @@ object FNewPropDlg: TFNewPropDlg
       Width = 190
       BorderSpacing.Left = 20
       Caption = 'Multivalue'
-      OnChange = CheckBoxPropMultiValChange
       ParentFont = False
       TabOrder = 0
+      OnChange = CheckBoxPropMultiValChange
     end
     object CheckBoxPropEdit: TCheckBox
       Left = 239
