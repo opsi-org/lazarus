@@ -143,6 +143,62 @@ todo:
    *
 
 # Changelog opsi-setup-detector
+
+## [4.3.6.2-1] - 2025-05-15
+
+### Fix
+- hide background / meta-data features on new config:
+  EnableBackgroundMetaData (default = false)
+  removes configs: writeMetaDataFile, ShowBackgroundInfoBtn
+
+  ### Change
+  configuration: control_in_toml_format now default = True;
+  checkbox: uninstall_before_install: property default is now false
+
+### Add:
+- on custom channel: copy all files from custom/additional_files
+- try to get the default icon from:
+  template-files\<channel>\images\template.png
+- tabBackgoundinfo: buttonto copy installDir to checkdir list
+
+### templates:
+- syntax error in get_licensekey_byPoolOrKey
+
+
+(Detlef Oertel <d.oertel@uib.de>)
+
+
+## [4.3.6.1-1] - 2025-04-29
+
+### Fix
+- modified resource Strings for background info form
+
+### Add:
+- Hints in background info form
+- try to guess the correct path to save meta-data file
+
+(Detlef Oertel <d.oertel@uib.de>)
+
+
+## [4.3.6.0-1] - 2025-04-25
+
+### Fix
+- osdmeta: use initialization / finalization
+- osdanalyzewin: get_MsixAppx_info: comments on arch: neutral
+- osdform: BtSetup1NextStepClick: correct os (win) for second win setup
+- osdform: BitBtnEditPropClick fixes  #4878
+- osdform: #4890
+- osdform: (#4889) first rtti edit field need caption set
+           in TabSheetBackgroundShow and in BtnMeta
+
+
+### Add:
+- New Windows task 'Create Background info file'
+- New tabsheet Background_info
+
+(Detlef Oertel <d.oertel@uib.de>)
+
+
 ## [4.3.5.1-1] - 2025-04-16
 
 ### Fix

@@ -25,7 +25,8 @@ uses
   oscrypt,
   osparserhelper,
   oswebservice,
-  osdhelper;
+  osdhelper,
+  osdmeta;
 
 type
 
@@ -44,6 +45,7 @@ type
     // analyze one installer and create opsi package with loggedin user
     createTemplateWithUser, // create template for opsi package with loggedin user
     createWingetProd, // create winget based product
+    createBackgroundInfo, // create background info file
     gmUnknown);
 
   TTemplateChannels = (training, default, structured, custom);
@@ -56,7 +58,7 @@ type
   private
     FrunMode: TRunMode;
     Fshowgui: boolean;
-    Fstartupfinished: boolean;
+    Fstartupfinished: boolean;   // #### ????
     Fmylocaledir: string;
     Fmylang: string;
     Fmyexitcode: integer;
@@ -552,11 +554,14 @@ default: ["xenial_bionic"]
     FLastProjectFileDir: string;  // last dir from wich we opend a project file
     FLastSetupFileDir: string;  // last dir from wich we opend a setup file
     FLastIconFileDir: string;  // last dir from wich we opend a icon file
+    FLastControlFileDir: string;  // last dir from wich we opend a icon file
     Fcontrol_in_toml_format: boolean; // since opsi 4.3 control files in toml format
     Fdependencies_for_all_actionrequests: boolean;
     // since opsi 4.3 dependecies are allowed for all action requests
     FpreferMsiUninstall: boolean; // true=prefer uninstall via msi if possible
-    FwriteMetaDataFile: boolean;  // true=write opsi-meta-data.toml file
+    //FwriteMetaDataFile: boolean;  // true=write opsi-meta-data.toml file
+    //FShowBackgroundInfoBtn: boolean;  // true=show the background Info Button at start tab
+    FEnableBackgroundMetaData: boolean;  // false=hide all background related features
     procedure SetLibraryLines(const AValue: TStrings);
     procedure SetPreInstallLines(const AValue: TStrings);
     procedure SetPostInstallLines(const AValue: TStrings);
@@ -602,14 +607,18 @@ default: ["xenial_bionic"]
       write FLastProjectFileDir;
     property LastSetupFileDir: string read FLastSetupFileDir write FLastSetupFileDir;
     property LastIconFileDir: string read FLastIconFileDir write FLastIconFileDir;
+    property LastControlFileDir: string read FLastControlFileDir
+      write FLastControlFileDir;
     property control_in_toml_format: boolean
       read Fcontrol_in_toml_format write Fcontrol_in_toml_format;
     property dependencies_for_all_actionrequests: boolean
       read Fdependencies_for_all_actionrequests write Fdependencies_for_all_actionrequests;
     property preferMsiUninstall: boolean read FpreferMsiUninstall
       write FpreferMsiUninstall;
-    property writeMetaDataFile: boolean read FwriteMetaDataFile
-      write FwriteMetaDataFile;
+    //property writeMetaDataFile: boolean read FwriteMetaDataFile
+    //  write FwriteMetaDataFile;
+    property EnableBackgroundMetaData: boolean
+      read FEnableBackgroundMetaData write FEnableBackgroundMetaData;
 
 
 
@@ -745,8 +754,16 @@ resourcestring
     'If true=prefer uninstall via msi if possible.' + LineEnding +
     'Affects Installers that are wrappers around msi,' + LineEnding +
     'like installshieldMSI, advanced_installer, wix toolset';
+  (*
   rsWriteMetaDataFile =
     'If true=write opsi-meta-data.toml file';
+  rsShowBackgroundInfoBtn =
+    'If true= Show "Background Info" Button on start tab';
+    *)
+  rsEnableBackgroundMetaData =
+    'If true= Show "Background Info File" Button on start tab.' +
+    LineEnding + 'Make "Product configuration 3" Tab visible and enabled.' +
+    LineEnding + 'Write opsi-meta-data.toml file on Product creation';
   //************************************************
   //info_message_html.Text
   //************************************************
@@ -1413,7 +1430,7 @@ begin
     myprop.Property_Type := bool;
     myprop.multivalue := False;
     myprop.editable := False;
-    myprop.boolDefault := True;
+    myprop.boolDefault := False;
   end;
 
 
@@ -1480,6 +1497,7 @@ begin
   //initaktproduct;
 end;
 
+
 procedure TopsiProduct.writeProjectFileToPath(path: string);
 begin
   path := IncludeTrailingPathDelimiter(path);
@@ -1532,6 +1550,10 @@ begin
       deactivateImportMode;
       JSONString := Streamer.ObjectToJSONString(aktProduct.dependencies);
       writeln(pfile, JSONString);
+      JSONString := aktmeta.convert_aktmeta_to_jsonstring(True);
+      if Assigned(logdatei) then
+        logdatei.log('write meta to project file: ' + JSONString, LLDebug);
+      writeln(pfile, JSONString);
       CloseFile(pfile);
 
     finally
@@ -1552,11 +1574,11 @@ end;
 procedure TopsiProduct.readProjectFile(filename: string);
 var
   DeStreamer: TJSONDeStreamer;
-  //Streamer: TJSONStreamer;
   JSONString, JSONObjString: string;
   myfilename: string;
   pfile: TextFile;
   aktproperty: TPProperty;
+  // aktproperty: even if the compiler tell this it is not used - it is used !!
   i: integer;
 begin
   try
@@ -1606,10 +1628,9 @@ begin
               begin
                 aktproperty := TPProperty.Create;
                 jsonAsArrayGetElementByIndex(JSONString, i, JSONObjString);
-                // if Assigned(logdatei) then
-                // logdatei.log('JSONObjString: ' + JSONObjString, LLDebug);
+                // this adds a new property object to akt product:
                 aktproperty := aktProduct.properties.Add;
-                //DeStreamer.JSONToObject(JSONObjString, aktproperty);
+                // here is the new property object used
                 DeStreamer.JSONToObject(JSONObjString, aktProduct.properties.Items[i]);
                 if Assigned(logdatei) then
                   logdatei.log('Property_Name: ' +
@@ -1619,7 +1640,18 @@ begin
           end;
         deactivateImportMode;
         readln(pfile, JSONString);
+        if Assigned(logdatei) then
+          logdatei.log('dependencies line: ' + JSONString, LLDebug);
         DeStreamer.JSONToObject(JSONString, aktProduct.dependencies);
+        // read meta data if existing
+        if not EOF(pfile) then
+        begin
+          readln(pfile, JSONString);
+          if Assigned(logdatei) then
+            logdatei.log('Meta data line: ' + JSONString, LLDebug);
+          if JSONString <> '' then
+            aktmeta.convert_jsonstring_to_aktmeta(JSONString);
+        end;
         // Cleanup
       finally
         FreeAndNil(DeStreamer);
@@ -1735,7 +1767,7 @@ begin
   FUsePropDesktopicon := False;
   FTemplateChannel := default;
   FpreferSilent := False; // Unattended
-  Fcontrol_in_toml_format := False; // opsi 4.2
+  Fcontrol_in_toml_format := True; // opsi 4.3
   Fdependencies_for_all_actionrequests := False; // opsi 4.2
   {$IFDEF UNIX}
   FLasticonFileDir := '/usr/share/opsi-setup-detector/icons';
@@ -1745,7 +1777,9 @@ begin
     ExtractFileDir(Application.Params[0]) + PathDelim + 'icons';
   {$ENDIF WINDOWS}
   FpreferMsiUninstall := True;
-  FwriteMetaDataFile := False;
+  //FwriteMetaDataFile := False;
+  //FShowBackgroundInfoBtn := False;
+  FEnableBackgroundMetaData := False;
   //readconfig;
 end;
 
@@ -2191,12 +2225,20 @@ begin
     {$IFDEF WINDOWS}
     defaultIconFullFileName :=
       ExtractFileDir(Application.Params[0]) + PathDelim + 'template-files' +
-      PathDelim + 'default' + PathDelim + 'images' + PathDelim + 'template.png';
+      PathDelim + channelDir + PathDelim + 'images' + PathDelim + 'template.png';
+    if not FileExistsUTF8(defaultIconFullFileName) then
+      defaultIconFullFileName :=
+        ExtractFileDir(Application.Params[0]) + PathDelim + 'template-files' +
+        PathDelim + 'default' + PathDelim + 'images' + PathDelim + 'template.png';
     {$ENDIF WINDOWS}
     {$IFDEF LINUX}
     defaultIconFullFileName :=
       '/usr/share/opsi-setup-detector' + PathDelim + 'template-files' +
-      PathDelim + 'default' + PathDelim + 'images' + PathDelim + 'template.png';
+      PathDelim + channelDir + PathDelim + 'images' + PathDelim + 'template.png';
+    if not fileexists(defaultIconFullFileName) then
+      defaultIconFullFileName :=
+        '/usr/share/opsi-setup-detector' + PathDelim + 'template-files' +
+        PathDelim + 'default' + PathDelim + 'images' + PathDelim + 'template.png';
     // in develop environment
     if not fileexists(defaultIconFullFileName) then
       defaultIconFullFileName :=
@@ -2211,8 +2253,12 @@ begin
     if not DirectoryExists(defaultIconFullFileName) then
       defaultIconFullFileName :=
         ExtractFileDir(Application.ExeName) + PathDelim +
-        '../Resources/template-files' + PathDelim + 'default' + PathDelim +
-        'images' + PathDelim + 'template.png';
+        '../Resources/template-files' + PathDelim + channelDir +
+        PathDelim + 'images' + PathDelim + 'template.png';
+    if not DirectoryExists(defaultIconFullFileName) then
+      defaultIconFullFileName :=
+        ExtractFileDir(Application.ExeName) + PathDelim + 'template-files' +
+        PathDelim + 'default' + PathDelim + 'images' + PathDelim + 'template.png';
     {$ENDIF DARWIN}
     osdbasedata.aktProduct.productdata.productImageFullFileName :=
       defaultIconFullFileName;
@@ -2239,6 +2285,7 @@ begin
   osdsettings.DetectionSummary.Clear;
   osdsettings.DetectCount := 0;
   //aktProduct.targetOS:= osWin;
+  aktmeta.initMeta;
 end;
 
 procedure freebasedata;

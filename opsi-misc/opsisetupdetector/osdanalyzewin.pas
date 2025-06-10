@@ -338,7 +338,7 @@ var
   sSearch: string;
   iPos: integer;
   installdir: string;
-  resultList : TStringList;
+  resultList: TStringList;
 begin
   write_log_and_memo('Analyzing MSI: ' + myfilename);
   {$IFDEF WINDOWS}
@@ -710,29 +710,30 @@ begin
         (0 = pos('x86', lowercase(ArchitecturesInstallIn64BitMode))) then
       begin
         DefaultDirName := translateInnoConstants(DefaultDirName, '64');
-        mysetup.architecture:= a64;
+        mysetup.architecture := a64;
       end
       else
       begin
         DefaultDirName := translateInnoConstants(DefaultDirName, '32');
-        mysetup.architecture:= a32;
+        mysetup.architecture := a32;
       end;
       // guess architecture from installdir
-  if DefaultDirName.StartsWith('%ProgramFiles64Dir%') then
-    mysetup.architecture := a64
-  else if DefaultDirName.StartsWith('%ProgramFiles32Dir%') then
-    mysetup.architecture := a32;
+      if DefaultDirName.StartsWith('%ProgramFiles64Dir%') then
+        mysetup.architecture := a64
+      else if DefaultDirName.StartsWith('%ProgramFiles32Dir%') then
+        mysetup.architecture := a32;
       mysetup.installDirectory := DefaultDirName;
       if UninstallFilesDir <> '' then
       begin
         UninstallFilesDir := StringReplace(UninstallFilesDir, '{app}',
           DefaultDirName, [rfIgnoreCase]);
         mysetup.uninstallDirectory := UninstallFilesDir;
-        uninstfile := ExtractFileName(ReplaceText(mysetup.uninstallProg, '$installdir$',
-          mysetup.installDirectory));
+        uninstfile := ExtractFileName(ReplaceText(mysetup.uninstallProg,
+          '$installdir$', mysetup.installDirectory));
         // use $installdir$ if possible
         mysetup.uninstallDirectory :=
-          ReplaceText(mysetup.uninstallDirectory, mysetup.installDirectory, '$installdir$');
+          ReplaceText(mysetup.uninstallDirectory, mysetup.installDirectory,
+          '$installdir$');
         mysetup.uninstallProg := mysetup.uninstallDirectory + '\' + uninstfile;
         resultForm1.updateUninstaller(mysetup);
       end
@@ -744,7 +745,8 @@ begin
       begin
         LogDatei.log('installDirectory: ' + installDirectory, LLDebug);
         LogDatei.log('SoftwareVersion: ' + SoftwareVersion, LLDebug);
-        LogDatei.log('Architecture: ' + GetEnumName(typeInfo(TArchitecture), Ord(architecture)), LLDebug);
+        LogDatei.log('Architecture: ' + GetEnumName(typeInfo(TArchitecture),
+          Ord(architecture)), LLDebug);
       end;
       with aktProduct.productdata do
       begin
@@ -1098,7 +1100,7 @@ procedure get_QtInstaller_info(myfilename: string; var mysetup: TSetupFile);
 begin
   write_log_and_memo('Analyzing QtInstaller:');
   mysetup.installDirectory := '%Programfiles64Dir%\"+$ProductId$+"';
-  mysetup.architecture:= a64;
+  mysetup.architecture := a64;
   write_log_and_memo('get_QtInstaller_info finished');
 end;
 
@@ -1107,8 +1109,8 @@ var
   packagepath, cmdStr, versionStr, fullNameStr, displayNameStr: string;
   destDir, proptmpstr, architectureStr: string;
   xmlLines, nodeLines: TStringList;
-  manifesFileName : string;
-  i : integer;
+  manifesFileName: string;
+  i: integer;
 begin
   write_log_and_memo('Analyzing MsixAppx Package:');
   // Analyze
@@ -1128,8 +1130,9 @@ begin
     LogDatei.log('Unzipped ' + myfilename + ' to ' + destDir, LLnotice);
     manifesFileName := destDir + DirectorySeparator + 'AppxManifest.xml';
     if not fileexists(manifesFileName) then
-    // perhaps  a bundle ?
-      manifesFileName := destDir + DirectorySeparator + 'AppxMetadata\AppxBundleManifest.xml';
+      // perhaps  a bundle ?
+      manifesFileName := destDir + DirectorySeparator +
+        'AppxMetadata\AppxBundleManifest.xml';
     if fileexists(manifesFileName) then
     begin
       xmlLines := getXMLDocumentElementfromFile(manifesFileName);
@@ -1152,15 +1155,19 @@ begin
         end
         else
           LogDatei.log('Could not get FullName from AppxManifest.xml.', LLwarning);
-        if getXml2AttributeValueByKey(nodeLines, 'ProcessorArchitecture', architectureStr) then
+        if getXml2AttributeValueByKey(nodeLines, 'ProcessorArchitecture',
+          architectureStr) then
         begin
-          if architectureStr = 'X86' then mysetup.architecture:= a32
-          else if architectureStr = 'X64' then mysetup.architecture:= a64
-          else if architectureStr = 'Neutral' then mysetup.architecture:= aUnknown
-          else mysetup.architecture:= aUnknown;
+          if architectureStr = 'X86' then mysetup.architecture := a32
+          else if architectureStr = 'X64' then mysetup.architecture := a64
+          // we have no equivalent to 'neutral' right now but perhaps we should have ....(do 25.4.2025)
+          else if architectureStr = 'Neutral' then mysetup.architecture := aUnknown
+          else
+            mysetup.architecture := aUnknown;
           LogDatei.log('Got Architecture: ' + architectureStr +
             ' from node Identity in AppxManifest.xml', LLnotice);
-          LogDatei.log('Architecture: ' + GetEnumName(typeInfo(TArchitecture), Ord(mysetup.architecture)), LLDebug);
+          LogDatei.log('Architecture: ' + GetEnumName(typeInfo(TArchitecture),
+            Ord(mysetup.architecture)), LLDebug);
         end
         else
           LogDatei.log('Could not get Architecture from AppxManifest.xml.', LLwarning);
@@ -1199,8 +1206,8 @@ begin
 
   // uninstall check
   mysetup.uninstallCheck.Clear;
-  cmdStr := 'Get-AppxPackage -AllUsers -Name ' +
-    fullNameStr + ' | select -expandProperty PackageFullName';
+  cmdStr := 'Get-AppxPackage -AllUsers -Name ' + fullNameStr +
+    ' | select -expandProperty PackageFullName';
   mysetup.uninstallCheck.Add('set $UninstallList$ = powershellCall("' + cmdStr + '")');
   mysetup.uninstallCheck.Add('; remove empty entries');
   mysetup.uninstallCheck.Add(
@@ -1220,14 +1227,17 @@ begin
     [rfIgnoreCase]);
   mysetup.uninstallCommandLine := cmdStr;
 
-  mysetup.optionalUninstallLines.Add('set $cmdStr$ = "Get-AppxProvisionedPackage -Online | Where-Object {$_.PackageName -eq "');
+  mysetup.optionalUninstallLines.Add(
+    'set $cmdStr$ = "Get-AppxProvisionedPackage -Online | Where-Object {$_.PackageName -eq "');
   mysetup.optionalUninstallLines.Add('set $cmdStr$ = $cmdStr$ +''"''');
   mysetup.optionalUninstallLines.Add('set $cmdStr$ = $cmdStr$ + $MsixAppxPackageName$');
   mysetup.optionalUninstallLines.Add('set $cmdStr$ = $cmdStr$ +''"''');
-  mysetup.optionalUninstallLines.Add('set $cmdStr$ = $cmdStr$ + "} | Remove-AppxProvisionedPackage -Online"');
+  mysetup.optionalUninstallLines.Add(
+    'set $cmdStr$ = $cmdStr$ + "} | Remove-AppxProvisionedPackage -Online"');
   mysetup.optionalUninstallLines.Add('Set $Exitcode$ = powershellcall($cmdStr$)');
 
-  mysetup.optionalUninstallLines.Add('if "true" = isGenericExitcodeFatal($exitcode$, "true", $ErrorString$ )');
+  mysetup.optionalUninstallLines.Add(
+    'if "true" = isGenericExitcodeFatal($exitcode$, "true", $ErrorString$ )');
   mysetup.optionalUninstallLines.Add('	LogError $ErrorString$');
   mysetup.optionalUninstallLines.Add('	;isfatalerror $ErrorString$');
   mysetup.optionalUninstallLines.Add('else');
@@ -1235,74 +1245,81 @@ begin
   mysetup.optionalUninstallLines.Add('endif');
 
   // add uninstall_before_install with default = false
-  aktProduct.productdata.uninstallBeforeInstall:= true;
+  aktProduct.productdata.uninstallBeforeInstall := True;
   makeProperties;
-   for i := 0 to aktProduct.properties.Count - 1 do
-    begin
-      proptmpstr := LowerCase(aktProduct.properties.Items[i].Property_Name);
-      if (proptmpstr = LowerCase('uninstall_before_install')) then
-        aktProduct.properties.Items[i].BoolDefault:= false;
-    end;
+  for i := 0 to aktProduct.properties.Count - 1 do
+  begin
+    proptmpstr := LowerCase(aktProduct.properties.Items[i].Property_Name);
+    if (proptmpstr = LowerCase('uninstall_before_install')) then
+      aktProduct.properties.Items[i].BoolDefault := False;
+  end;
 
   write_log_and_memo('get_MsixAppx_info finished');
 end;
 
 procedure get_winget_info(var mysetup: TSetupFile);
 var
-  str1, str2,cmdStr: string;
+  str1, str2, cmdStr: string;
   pos1, pos2, i: integer;
 begin
-  LogDatei.log('Preparing winget-Setup:',LLnotice);
-    mysetup.uninstallProg := '';
-    mysetup.uninstall_waitforprocess := '';
-    mysetup.uninstallCheck.Clear;
-    mysetup.uninstallCheck.Add('set $wingetCommandParam$ = " list --id '+mysetup.wingetId+' --exact --accept-source-agreements"');
-    mysetup.uninstallCheck.Add('set $UninstallList$ = shellCall($wingetBin$ + $wingetCommandParam$)');
-    mysetup.uninstallCheck.Add('if not("" = getIndexFromListByContaining($UninstallList$, "'+mysetup.wingetId+'"))');
-    mysetup.uninstallCheck.Add('	set $progFound$ = "true"');
-    mysetup.uninstallCheck.Add('endif');
-    mysetup.uninstallCheck.Add('; alternate check:');
-    mysetup.uninstallCheck.Add('if directoryexists($installdir$)');
-    mysetup.uninstallCheck.Add('	set $progFound$ = "true"');
-    mysetup.uninstallCheck.Add('endif');
+  LogDatei.log('Preparing winget-Setup:', LLnotice);
+  mysetup.uninstallProg := '';
+  mysetup.uninstall_waitforprocess := '';
+  mysetup.uninstallCheck.Clear;
+  mysetup.uninstallCheck.Add('set $wingetCommandParam$ = " list --id ' +
+    mysetup.wingetId + ' --exact --accept-source-agreements"');
+  mysetup.uninstallCheck.Add(
+    'set $UninstallList$ = shellCall($wingetBin$ + $wingetCommandParam$)');
+  mysetup.uninstallCheck.Add(
+    'if not("" = getIndexFromListByContaining($UninstallList$, "' + mysetup.wingetId + '"))');
+  mysetup.uninstallCheck.Add('	set $progFound$ = "true"');
+  mysetup.uninstallCheck.Add('endif');
+  mysetup.uninstallCheck.Add('; alternate check:');
+  mysetup.uninstallCheck.Add('if directoryexists($installdir$)');
+  mysetup.uninstallCheck.Add('	set $progFound$ = "true"');
+  mysetup.uninstallCheck.Add('endif');
 
-    // install command
-     if mysetup.preferSilent then
-       cmdStr := installerArray[integer(mysetup.installerId)].silentsetup
-     else
-       cmdStr := installerArray[integer(mysetup.installerId)].unattendedsetup;
+  // install command
+  if mysetup.preferSilent then
+    cmdStr := installerArray[integer(mysetup.installerId)].silentsetup
+  else
+    cmdStr := installerArray[integer(mysetup.installerId)].unattendedsetup;
 
-     cmdStr := StringReplace(cmdStr, '<#wingetId#>', mysetup.wingetId, [rfIgnoreCase]);
-     cmdStr := StringReplace(cmdStr, '<#wingetSource#>', mysetup.wingetSource, [rfIgnoreCase]);
-     mysetup.installCommandLine := cmdStr;
-     mysetup.installCommandStringEx := cmdStr;
-     LogDatei.log('winget installCommandLine: '+cmdStr,LLinfo);
+  cmdStr := StringReplace(cmdStr, '<#wingetId#>', mysetup.wingetId, [rfIgnoreCase]);
+  cmdStr := StringReplace(cmdStr, '<#wingetSource#>', mysetup.wingetSource,
+    [rfIgnoreCase]);
+  mysetup.installCommandLine := cmdStr;
+  mysetup.installCommandStringEx := cmdStr;
+  LogDatei.log('winget installCommandLine: ' + cmdStr, LLinfo);
 
-    // uninstall command
-     if mysetup.preferSilent then
-       cmdStr := installerArray[integer(mysetup.installerId)].silentuninstall
-     else
-       cmdStr := installerArray[integer(mysetup.installerId)].unattendeduninstall;
+  // uninstall command
+  if mysetup.preferSilent then
+    cmdStr := installerArray[integer(mysetup.installerId)].silentuninstall
+  else
+    cmdStr := installerArray[integer(mysetup.installerId)].unattendeduninstall;
 
-     cmdStr := StringReplace(cmdStr, '<#wingetId#>', mysetup.wingetId, [rfIgnoreCase]);
-     cmdStr := StringReplace(cmdStr, '<#wingetSource#>', mysetup.wingetSource, [rfIgnoreCase]);
-     mysetup.uninstallCommandLine := cmdStr;
-     mysetup.uninstallCommandStringEx := cmdStr;
-     LogDatei.log('winget uninstallCommandLine: '+cmdStr,LLinfo);
+  cmdStr := StringReplace(cmdStr, '<#wingetId#>', mysetup.wingetId, [rfIgnoreCase]);
+  cmdStr := StringReplace(cmdStr, '<#wingetSource#>', mysetup.wingetSource,
+    [rfIgnoreCase]);
+  mysetup.uninstallCommandLine := cmdStr;
+  mysetup.uninstallCommandStringEx := cmdStr;
+  LogDatei.log('winget uninstallCommandLine: ' + cmdStr, LLinfo);
 
-    // akt product
-    if (aktProduct.productdata.productId = '') or
-      (aktProduct.productdata.productId = copy(mysetup.wingetId,0,mysetup.wingetId.Length -1)) then
-      aktProduct.productdata.productId:=mysetup.wingetId;
-    if (aktProduct.productdata.productName = '') or
-      (aktProduct.productdata.productName = copy(mysetup.wingetId,0,mysetup.wingetId.Length -1)) then
-      aktProduct.productdata.productName :=mysetup.wingetId;
-    mysetup.isExitcodeFatalFunction :=
+  // akt product
+  if (aktProduct.productdata.productId = '') or
+    (aktProduct.productdata.productId =
+    copy(mysetup.wingetId, 0, mysetup.wingetId.Length - 1)) then
+    aktProduct.productdata.productId := mysetup.wingetId;
+  if (aktProduct.productdata.productName = '') or
+    (aktProduct.productdata.productName =
+    copy(mysetup.wingetId, 0, mysetup.wingetId.Length - 1)) then
+    aktProduct.productdata.productName := mysetup.wingetId;
+  mysetup.isExitcodeFatalFunction :=
     installerArray[integer(mysetup.installerId)].uib_exitcode_function;
 
 
 
-  LogDatei.log('get_winget_info finished',LLnotice);
+  LogDatei.log('get_winget_info finished', LLnotice);
 end;
 
 

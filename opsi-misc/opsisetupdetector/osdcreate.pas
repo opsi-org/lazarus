@@ -540,8 +540,8 @@ begin
       patchlist.add('#@installCommandLine' + IntToStr(i + 1) + '*#=' +
         aktProduct.SetupFiles[i].installCommandLine);
 
-      patchlist.add('#@installCommandStringEx' + IntToStr(i + 1) + '*#=' +
-        aktProduct.SetupFiles[i].installCommandStringEx);
+      patchlist.add('#@installCommandStringEx' + IntToStr(i + 1) +
+        '*#=' + aktProduct.SetupFiles[i].installCommandStringEx);
 
       str := aktProduct.SetupFiles[i].install_waitforprocess;
       if str <> '' then
@@ -719,7 +719,8 @@ begin
           infilelist.Add('declarations.opsiinc');
           infilelist.Add('sections.opsiinc');
           //osd-winget-exitcode.opsiscript
-          infilename := genericTemplatePath + Pathdelim + 'osd-winget-exitcode.opsiscript';
+          infilename := genericTemplatePath + Pathdelim +
+            'osd-winget-exitcode.opsiscript';
           outfilename := clientpath + PathDelim + 'osd-winget-exitcode.opsiscript';
           copyfile(infilename, outfilename, [cffOverwriteFile,
             cffCreateDestDirectory, cffPreserveTime], True);
@@ -901,6 +902,29 @@ begin
         end;
         // free channelLibraryFilelist
         FreeAndNil(channelLibraryFilelist);
+
+        // add all files from additional_files sub dir
+        // create list of files in channel sub dir
+        channelLibraryFilelist :=
+          FindAllFiles(templatePath + PathDelim + templateChannelDir +
+          Pathdelim + 'additional_files', '*.*', True);
+        // copy recursive all files to client path
+        for i := 0 to channelLibraryFilelist.Count - 1 do
+        begin
+          infilename := channelLibraryFilelist.Strings[i];
+          outfilename := ExtractFileName(infilename);
+          // substract the base dir from the complete path
+          // in order to get the sub dirs in outfilename
+          outfilename := CreateRelativePath(channelLibraryFilelist.Strings[i]
+            , templatePath + PathDelim + templateChannelDir + Pathdelim +
+            'additional_files');
+          // construct the new outfilename full path
+          outfilename := clientpath + PathDelim + outfilename;
+          patchScript(infilename, outfilename);
+        end;
+        // free channelLibraryFilelist
+        FreeAndNil(channelLibraryFilelist);
+
 
         case osdsettings.runmode of
           singleAnalyzeCreate:
@@ -1143,13 +1167,14 @@ begin
       aktProduct.writeProjectFileToPath(prodpath);
 
       // write CLIENT_DATA\opsi-meta-data.toml
-      if myconfiguration.writeMetaDataFile then
-      begin
-        LogDatei.log('Collect meta data', LLnotice);
-        osdmeta.aktProdToAktMeta;
-        LogDatei.log('Write meta data file to path: ' + clientpath, LLnotice);
-        osdmeta.aktMeta.write_product_metadata_ToPath(clientpath);
-      end;
+      if myconfiguration.EnableBackgroundMetaData then
+        if osWin in aktProduct.productdata.targetOSset then
+        begin
+          //LogDatei.log('Collect meta data', LLnotice);
+          //osdmeta.aktProdToAktMeta;
+          LogDatei.log('Write meta data file to path: ' + clientpath, LLnotice);
+          osdmeta.aktMeta.write_product_metadata_ToPath(clientpath);
+        end;
 
       Result := True;
     except
@@ -1306,14 +1331,14 @@ begin
       textlist.Add('[Product]');
       textlist.Add('type = "' + aktProduct.productdata.producttype + '"');
       textlist.Add('id = "' + aktProduct.productdata.productId + '"');
-      textlist.Add('name = "' +
-        escapeStringForToml(aktProduct.productdata.productName) + '"');
+      textlist.Add('name = "' + escapeStringForToml(
+        aktProduct.productdata.productName) + '"');
       textlist.Add('description = """' + escapeStringForToml(
         aktProduct.productdata.description) + '"""');
       textlist.Add('advice = """' + escapeStringForToml(
         aktProduct.productdata.advice) + '"""');
-      textlist.Add('version = "' +
-        escapeStringForToml(aktProduct.productdata.productversion) + '"');
+      textlist.Add('version = "' + escapeStringForToml(
+        aktProduct.productdata.productversion) + '"');
       textlist.Add('priority = ' + IntToStr(aktProduct.productdata.priority));
       textlist.Add('licenseRequired = false');
       textlist.Add('productClasses = []');
@@ -1418,7 +1443,8 @@ begin
     textlist.Add('## [' + tmpstr + '] - ' + FormatDateTime('yyyy-mm-dd', now));
     textlist.Add('');
     textlist.Add('### Added');
-    textlist.Add('- created / updated to: ' + aktProduct.productdata.productId + ' ' + tmpstr);
+    textlist.Add('- created / updated to: ' + aktProduct.productdata.productId +
+      ' ' + tmpstr);
     textlist.Add('  using opsi-setup-detector - Version: ' + myVersion);
     textlist.Add('');
     textlist.Add('(' + myconfiguration.fullName + ' <' +

@@ -7,10 +7,10 @@ interface
 uses
   Classes, SysUtils,
   fpjsonrtti,
+  fpjson,
   oslog,
   opsiDynamicLibJYT,
   osjson,
-  osdbasedata,
   osd_jyt_convert;
 
 type
@@ -36,21 +36,9 @@ type
 
   TMetaProduct = class(TPersistent)
   private
-    (*
-    FdoNotInstallInBackground: boolean;
-    // True= do not install in background situation
-    FdoNotCheckInstallDirBinaries: boolean;
-    //True= do not use install directories to check for critical processes
-    *)
     FProductIconFilePath: string;
     // Path to the icon file inside the opsi product base dir
   published
-    (*
-    property doNotInstallInBackground: boolean
-      read FdoNotInstallInBackground write FdoNotInstallInBackground;
-    property doNotCheckInstallDirBinaries: boolean
-      read FdoNotCheckInstallDirBinaries write FdoNotCheckInstallDirBinaries;
-      *)
     property productIconFilePath: string read FProductIconFilePath
       write FProductIconFilePath;
   public
@@ -76,15 +64,8 @@ type
 
   TMetaInstaller = class(TPersistent)
   private
-  type
-    //TprocessArray = TArray<string>;
   private
     Factive: boolean;   // True= this object is in use
-    (*
-    FdoNotInstallInBackground: boolean; // True= do not install in background situation
-    FdoNotCheckInstallDirBinaries: boolean;
-    //True= do not use install directories to check for critical processes
-    *)
     Finstall_in_background: boolean;  // optional, default = true
     Fpath: string;  // Path to the installer inside the opsi product base dir
     Finstall_dir: string; // target directory where this installer will install to
@@ -102,12 +83,7 @@ type
     procedure writeCheckDirs(val: TStrings);
     procedure addtoCheckDirs(val: string);
   published
-    (*
-    property doNotInstallInBackground: boolean
-      read FdoNotInstallInBackground write FdoNotInstallInBackground;
-    property doNotCheckInstallDirBinaries: boolean
-      read FdoNotCheckInstallDirBinaries write FdoNotCheckInstallDirBinaries;
-      *)
+    property active: boolean read Factive write Factive;
     property install_in_background: boolean
       read Finstall_in_background write Finstall_in_background;
     property path: string read Fpath write Fpath;
@@ -135,8 +111,11 @@ type
     { public declarations }
     constructor Create;
     destructor Destroy;
+    procedure initMeta;
     procedure write_product_metadata_ToPath(path: string);
     procedure write_product_metadata_to_file(myfilename: string);
+    function convert_aktmeta_to_jsonstring(include_hidden: boolean): string;
+    procedure convert_jsonstring_to_aktmeta(jsonInputString: string);
   end;
 
 procedure aktProdToAktMeta;
@@ -146,9 +125,12 @@ var
 
 implementation
 
-//********************************
-// Meta data TMetaspecification
-//********************************
+uses
+  osdbasedata;
+
+  //********************************
+  // Meta data TMetaspecification
+  //********************************
 
 
 constructor TMetaspecification.Create;
@@ -261,23 +243,23 @@ end;
 // Meta data TopsiMeta
 //********************************
 
-procedure initMeta;
+procedure TopsiMeta.initMeta;
 var
   i: integer;
 begin
-  aktMeta.metaspecification.Fversion:='';
-  aktMeta.productMeta.FProductIconFilePath:='';
+  aktMeta.metaspecification.Fversion := '';
+  aktMeta.productMeta.FProductIconFilePath := '';
   for i := 0 to 2 do
   begin
-    aktMeta.InstallerMeta[i].Factive:= False;
-  aktMeta.InstallerMeta[i].Finstall_in_background := True;
-  aktMeta.InstallerMeta[i].Fpath := '';
-  aktMeta.InstallerMeta[i].Finstall_dir := '';
-  aktMeta.InstallerMeta[i].Fcheck_processes_from_dirs.Clear;
-  aktMeta.InstallerMeta[i].Fprocesses.Clear;
-  aktMeta.InstallerMeta[i].FMetaInstallerRequirement.Fos := os_unknown;
-  aktMeta.InstallerMeta[i].FMetaInstallerRequirement.Fos_arch := arch_unknown;
-  aktMeta.InstallerMeta[i].FMetaInstallerRequirement.FRequiredSpaceMB:=0;
+    aktMeta.InstallerMeta[i].Factive := False;
+    aktMeta.InstallerMeta[i].Finstall_in_background := True;
+    aktMeta.InstallerMeta[i].Fpath := '';
+    aktMeta.InstallerMeta[i].Finstall_dir := '';
+    aktMeta.InstallerMeta[i].Fcheck_processes_from_dirs.Clear;
+    aktMeta.InstallerMeta[i].Fprocesses.Clear;
+    aktMeta.InstallerMeta[i].FMetaInstallerRequirement.Fos := os_unknown;
+    aktMeta.InstallerMeta[i].FMetaInstallerRequirement.Fos_arch := arch_unknown;
+    aktMeta.InstallerMeta[i].FMetaInstallerRequirement.FRequiredSpaceMB := 0;
   end;
 end;
 
@@ -311,10 +293,7 @@ end;
 
 procedure TopsiMeta.write_product_metadata_to_file(myfilename: string);
 var
-  pinput: PChar;
-  poutput: PChar;
-  Streamer: TJSONStreamer;
-  JSONString, JSONFinalString, JSONArrayString: string;
+  JSONFinalString: string;
   myStringlist: TStringList;
   TOMLString: string;
   configDir: array[0..MaxPathLen] of char; //Allocate memory
@@ -339,91 +318,49 @@ begin
           LogDatei.log('failed to create metadata file directory: ' +
             configDir, LLError);
 
+    JSONFinalString := convert_aktmeta_to_jsonstring(False);
+
+    {$IFNDEF DARWIN}
     if Assigned(logdatei) then
-      logdatei.log('Convert metadata to json', LLDebug);
-    // http://wiki.freepascal.org/Streaming_JSON
-    Streamer := TJSONStreamer.Create(nil);
-    myStringlist := TStringList.Create;
+      logdatei.log('Convert json metadata to toml', LLDebug);
     try
-      // Save strings as JSON array
-      Streamer.Options := Streamer.Options + [jsoTStringsAsArray];
-      // JSON convert and output
-      // init JSONFinalString
-      JSONFinalString := '{}';
-      JSONString := Streamer.ObjectToJSONString(aktMeta.metaspecification);
-      //JSONFinalString := '{"specification":'+JSONString+'}';
-      jsonAsObjectAddKeyAndValue(JSONFinalString, 'specification', JSONString,
-        JSONFinalString);
-      //writeln(pfile, JSONString);
-      for i := 0 to 2 do
-        if aktMeta.InstallerMeta[i].FActive then
-        begin
-          JSONString := Streamer.ObjectToJSONString(aktMeta.InstallerMeta[i]);
-          // do not write install_in_background with default = true to meta data
-          if aktMeta.InstallerMeta[i].install_in_background then
-            jsonAsObjectDeleteByKey(JSONString, 'install_in_background');
-          if Assigned(logdatei) then
-            logdatei.log('JSONString: ' + JSONString, LLDebug);
-          myStringlist.Add(JSONString);
-        end;
-      stringListToJsonArray(myStringlist, JSONArrayString);
-      jsonAsObjectAddKeyAndValue(JSONFinalString, 'installers', JSONArrayString,
-        JSONFinalString);
-      //writeln(pfile, JSONString);
-      JSONString := Streamer.ObjectToJSONString(aktMeta.productMeta);
-      jsonAsObjectAddKeyAndValue(JSONFinalString, 'product', JSONString,
-        JSONFinalString);
-      //writeln(pfile, JSONString);
-      {$IFNDEF DARWIN}
-      if Assigned(logdatei) then
-        logdatei.log('Convert json metadata to toml', LLDebug);
+      lib_jyt := TLibJYT.Create;
       try
-        lib_jyt := TLibJYT.Create;
-        try
-          TOMLString := lib_jyt.json2toml(JSONFinalString);
-          (*
-          pinput := PChar(JSONFinalString);
-          lib_jyt := TLibJYT.Create;
-          poutput := lib_jyt.json2toml(pinput);
-          TOMLString := poutput;
-          lib_jyt.free_result(poutput);
-          *)
-        except
-          on E: Exception do
-            LogDatei.log('ERROR: exception: ' + E.ClassName + ': ' + E.Message, LLerror);
-        end;
-      finally
-        FreeAndNil(lib_jyt);
+        TOMLString := lib_jyt.json2toml(JSONFinalString);
+      except
+        on E: Exception do
+          LogDatei.log('ERROR: exception: ' + E.ClassName + ': ' + E.Message, LLerror);
       end;
-      if Assigned(logdatei) then
-        logdatei.log('write toml metadata to file', LLDebug);
-      AssignFile(pfile, myfilename);
-      Rewrite(pfile);
-      writeln(pfile, TOMLString);
-      CloseFile(pfile);
-      (*
-      logdatei.log('write json metadata to file', LLDebug);
-      AssignFile(pfile, myfilename + '.json');
-      Rewrite(pfile);
-      writeln(pfile, JSONFinalString);
-      CloseFile(pfile);
-      *)
-      {$ELSE DARWIN}
-      logdatei.log('write json metadata to file', LLDebug);
-      AssignFile(pfile, myfilename + '.json');
-      Rewrite(pfile);
-      writeln(pfile, JSONFinalString);
-      CloseFile(pfile);
+    finally
+      FreeAndNil(lib_jyt);
+    end;
+    // in TOML we want the strings in single quotes (no escapes needed)
+     TOMLString := StringReplace(TOMLString, '"',
+              '''', [rfReplaceAll, rfIgnoreCase]);
 
-      if Assigned(logdatei) then
-        logdatei.log('Convert json metadata file to toml', LLDebug);
-      convertJsonFileToTomlFile(myfilename + '.json', myfilename);
-      DeleteFile(myfilename + '.json');
-      {$EndIF DARWIN}
+    if Assigned(logdatei) then
+      logdatei.log('write toml metadata to file', LLDebug);
+    AssignFile(pfile, myfilename);
+    Rewrite(pfile);
+    writeln(pfile, TOMLString);
+    CloseFile(pfile);
+    {$ELSE DARWIN}
+    logdatei.log('write json metadata to file', LLDebug);
+    AssignFile(pfile, myfilename + '.json');
+    Rewrite(pfile);
+    writeln(pfile, JSONFinalString);
+    CloseFile(pfile);
 
+    if Assigned(logdatei) then
+      logdatei.log('Convert json metadata file to toml', LLDebug);
+    convertJsonFileToTomlFile(myfilename + '.json', myfilename);
+    DeleteFile(myfilename + '.json');
+    {$EndIF DARWIN}
+   (*
     finally
       Streamer.Destroy;
     end;
+    *)
     if Assigned(logdatei) then
       logdatei.log('Finished write metadata file', LLDebug2);
 
@@ -437,7 +374,7 @@ end;
 
 function aktprodTargetosToMetaOs(targetos: TTargetOS): TMeta_os;
 begin
-  if targetos = oswin then Result := windows
+  if targetos = oswin then Result := Windows
   else if targetos = oslin then Result := linux
   else if targetos = osmac then Result := macos
   else if targetos = osUnknown then Result := os_unknown
@@ -462,9 +399,10 @@ procedure aktProdToAktMeta;
 var
   i, k: integer;
   strlist: TStringList;
+  installdir, setupFileName: string;
 begin
   // reinitialize meta data structure
-  initMeta;
+  aktmeta.initMeta;
 
   strlist := TStringList.Create;
   aktMeta.metaspecification.version := '0.1';
@@ -476,26 +414,144 @@ begin
     if aktProduct.SetupFiles[i].active then
     begin
       aktMeta.InstallerMeta[i].Factive := True;
-      aktMeta.InstallerMeta[i].Finstall_dir :=
-        aktProduct.SetupFiles[i].installDirectory;
-      aktMeta.InstallerMeta[i].path :=
-        aktProduct.SetupFiles[i].installerSourceDir + '\' +
-        aktProduct.SetupFiles[i].setupFileName;
+      installdir := aktProduct.SetupFiles[i].installDirectory;
+      if (installdir <> '') and (LowerCase(installdir) <> 'unknown') then
+        aktMeta.InstallerMeta[i].Finstall_dir := installdir;
 
-      aktMeta.InstallerMeta[i].addtoCheckDirs(aktProduct.SetupFiles[i].installDirectory);
+      setupFileName := aktProduct.SetupFiles[i].setupFileName;
+      if setupFileName <> '' then
+        aktMeta.InstallerMeta[i].path :=
+          aktProduct.SetupFiles[i].installerSourceDir + '\' + setupFileName;
+      // check only for process at windows
+      if aktProduct.SetupFiles[i].targetOS = oswin then
+        aktMeta.InstallerMeta[i].addtoCheckDirs(
+          aktMeta.InstallerMeta[i].Finstall_dir);
       aktMeta.InstallerMeta[i].FMetaInstallerRequirement.os :=
         aktprodTargetosToMetaOs(aktProduct.SetupFiles[i].targetOS);
       aktMeta.InstallerMeta[i].FMetaInstallerRequirement.os_arch :=
         aktprodArchitectureToMetaOsArch(aktProduct.SetupFiles[i].architecture);
       aktMeta.InstallerMeta[i].FMetaInstallerRequirement.requiredSpaceMB :=
         aktProduct.SetupFiles[i].requiredSpace;
+      // do not install in background for 'with user' - to many reboots
+      if osdsettings.runmode in [analyzeCreateWithUser, createTemplateWithUser] then
+        aktMeta.InstallerMeta[i].install_in_background:= false;
     end;
   end;
   FreeAndNil(strlist);
 end;
 
-
+function TopsiMeta.convert_aktmeta_to_jsonstring(include_hidden: boolean): string;
+var
+  Streamer: TJSONStreamer;
+  JSONString, JSONFinalString, JSONArrayString: string;
+  myStringlist: TStringList;
+  i: integer;
 begin
+  Result := '';
+  try
+    if Assigned(logdatei) then
+      logdatei.log('Start convert metadata to json', LLDebug);
+
+    // http://wiki.freepascal.org/Streaming_JSON
+    Streamer := TJSONStreamer.Create(nil);
+    myStringlist := TStringList.Create;
+    try
+      // Save strings as JSON array
+      Streamer.Options := Streamer.Options + [jsoTStringsAsArray];
+      // JSON convert and output
+      // init JSONFinalString
+      JSONFinalString := '{}';
+      JSONString := Streamer.ObjectToJSONString(aktMeta.metaspecification);
+      //JSONFinalString := '{"specification":'+JSONString+'}';
+      jsonAsObjectAddKeyAndValue(JSONFinalString, 'specification', JSONString,
+        JSONFinalString);
+      //writeln(pfile, JSONString);
+      for i := 0 to 2 do
+        if aktMeta.InstallerMeta[i].FActive then
+        begin
+          JSONString := Streamer.ObjectToJSONString(aktMeta.InstallerMeta[i]);
+          if not include_hidden then
+          begin
+            // do not write install_in_background with default = true to meta data
+            if aktMeta.InstallerMeta[i].install_in_background then
+              jsonAsObjectDeleteByKey(JSONString, 'install_in_background');
+            // do not write active  to meta data
+            jsonAsObjectDeleteByKey(JSONString, 'active');
+          end;
+          myStringlist.Add(JSONString);
+        end;
+      stringListToJsonArray(myStringlist, JSONArrayString);
+      jsonAsObjectAddKeyAndValue(JSONFinalString, 'installers', JSONArrayString,
+        JSONFinalString);
+      //writeln(pfile, JSONString);
+      JSONString := Streamer.ObjectToJSONString(aktMeta.productMeta);
+      jsonAsObjectAddKeyAndValue(JSONFinalString, 'product', JSONString,
+        JSONFinalString);
+      Result := JSONFinalString;
+      if Assigned(logdatei) then
+        logdatei.log('meta data as JSONString: ' + Result, LLDebug);
+    finally
+      Streamer.Destroy;
+    end;
+    if Assigned(logdatei) then
+      logdatei.log('Finished convert metadata to json', LLDebug2);
+
+  except
+    on E: Exception do
+      if Assigned(logdatei) then
+        LogDatei.log('convert metadata to json failed. Details: ' +
+          E.ClassName + ': ' + E.Message, LLError);
+  end;
+end;
+
+procedure TopsiMeta.convert_jsonstring_to_aktmeta(jsonInputString: string);
+var
+  DeStreamer: TJSONDeStreamer;
+  JSONString, JSONArrayString: string;
+  i: integer;
+begin
+  try
+    if Assigned(logdatei) then
+      logdatei.log('Start convert json to metadata', LLDebug);
+
+    // http://wiki.freepascal.org/Streaming_JSON
+    DeStreamer := TJSONDeStreamer.Create(nil);
+    try
+      DeStreamer.Options := [jdoIgnorePropertyErrors, jdoIgnoreNulls];
+      // Load JSON data in the object
+      if jsonAsObjectGetValueByKey(jsonInputString, 'specification', JSONString) then
+        DeStreamer.JSONToObject(JSONString, aktMeta.metaspecification);
+      if jsonAsObjectGetValueByKey(jsonInputString, 'product', JSONString) then
+        DeStreamer.JSONToObject(JSONString, aktMeta.productMeta);
+      if jsonAsObjectGetValueByKey(jsonInputString, 'installers', JSONArrayString) then
+      begin
+        if jsonIsArray(JSONArrayString) then
+          for i := 0 to jsonAsArrayCountElements(JSONArrayString) - 1 do
+          begin
+            if jsonAsArrayGetElementByIndex(JSONArrayString, i, JSONString) then
+              DeStreamer.JSONToObject(JSONString, aktMeta.InstallerMeta[i]);
+          end;
+      end;
+
+    finally
+      DeStreamer.Destroy;
+    end;
+    if Assigned(logdatei) then
+      logdatei.log('Finished convert json to metadata', LLDebug2);
+
+  except
+    on E: Exception do
+      if Assigned(logdatei) then
+        LogDatei.log('convert json to metadata failed. Details: ' +
+          E.ClassName + ': ' + E.Message, LLError);
+  end;
+end;
+
+initialization
   aktMeta := TopsiMeta.Create;
-  initMeta;
+  aktmeta.initMeta;
+
+finalization
+  FreeAndNil(aktMeta)
+
 end.
