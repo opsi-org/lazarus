@@ -60,10 +60,10 @@ uses
   registry,
   osregistry,
   systemcriticalu,
-  osbackgroundinstall,
 
 {$IFDEF WIN32}
   osfuncwin2,
+  osbackgroundinstall,
 {$ENDIF WIN32}
   shellapi,
   wispecfolder,
@@ -901,7 +901,7 @@ end;
 function CheckForProcessProduct:boolean;
 begin
   Result := True; //Process product?
-{$IFDEF WINDOWS}
+{$IFDEF WIN32}
   // start with background handling:
   // are we in a background situation (users are logged in) ?
   if userAreLoggedIn then
@@ -971,7 +971,7 @@ begin
       LLdebug);
   // end with background handling:
   end;
-  {$ENDIF WINDOWS}
+  {$ENDIF WIN32}
   LogDatei.log('CheckForProcessProduct: '+ BoolToStr(Result, True), LLInfo);
 end;
 

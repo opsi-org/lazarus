@@ -85,6 +85,7 @@ uses //lcltranslator,
   DSiWin32 in 'DSiWin32.pas',
   oslocaladmin,
   jclexcerpt,
+  osbackgroundinstall,
   {$ENDIF WIN32}
   zipinter in 'zipinter.pas',
   wispecfolder in 'wispecfolder.pas',
@@ -100,7 +101,7 @@ uses //lcltranslator,
   osfilehelper,
   osTOML,
   osSSLPaths,
-  osEvaluateBooleanFunctions, osmeta, osbackgroundinstall, osbglistwinuser;
+  osEvaluateBooleanFunctions, osmeta, osbglistwinuser;
 
   {$IFNDEF GUI}
 type

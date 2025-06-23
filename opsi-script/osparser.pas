@@ -35,7 +35,6 @@ uses
   oswmi,
   osswaudit,
   shlwapi,
-  osbackgroundinstall,
   {$IFDEF WIN32}
   DSiWin32,
   osfuncwin2,
@@ -45,6 +44,7 @@ uses
   shlobj,
   VersionInfoX,
   {$IFNDEF WIN64}
+  osbackgroundinstall,
   oslocaladmin,
   {$ENDIF WIN64}
   {$ENDIF}
@@ -1965,7 +1965,9 @@ end;
 
 procedure TScriptConstants.Init;
 var
+  {$IFDEF WINDOWS}
   Regist: TuibRegistry;
+  {$ENDIF WINDOWS}
   saveIndent: integer;
   ValueToTake: string;
   computernaming: string;
@@ -2218,13 +2220,13 @@ begin
     {$ENDIF WINDOWS}
 
     {$IFDEF UNIX}
-    ConstantsNames.add('%PCNAME%');
+    // %PCNAME%
     ValueToTake := GetHostName;
     if valueToTake = valueEnvVarNotFound then
       valueToTake := getCommandResult('hostname');
     Add('%PCNAME%='+ValueToTake);
 
-    ConstantsNames.add('%HOST%');
+    // %HOST%
     ValueToTake := getCommandResult('hostname');
     Add('%HOST%='+ValueToTake);
     {$ENDIF LINUX}
