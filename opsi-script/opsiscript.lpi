@@ -25,8 +25,7 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="12"/>
-      <RevisionNr Value="17"/>
-      <BuildNr Value="2"/>
+      <RevisionNr Value="18"/>
       <StringTable Comments="Compiled with Lazarus 3.0 / FPC 3.2.2" CompanyName="uib gmbh" FileDescription="opsi-script" InternalName="opsi-script" LegalCopyright="AGPL v3" LegalTrademarks="opsi, opsi.org, open pc server integration" OriginalFilename="opsi-script" ProductName="opsi" ProductVersion="4.3"/>
     </VersionInfo>
     <BuildModes Count="18">
@@ -985,7 +984,7 @@
         <PackageName Value="FCL"/>
       </Item3>
     </RequiredPackages>
-    <Units Count="74">
+    <Units Count="79">
       <Unit0>
         <Filename Value="opsiscript.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -1319,6 +1318,27 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="CustomMessageBox"/>
       </Unit73>
+      <Unit74>
+        <Filename Value="osmeta.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit74>
+      <Unit75>
+        <Filename Value="../common/ostoml.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="osTOML"/>
+      </Unit75>
+      <Unit76>
+        <Filename Value="osbackgroundinstall.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit76>
+      <Unit77>
+        <Filename Value="backgroundinstall.txt"/>
+        <IsPartOfProject Value="True"/>
+      </Unit77>
+      <Unit78>
+        <Filename Value="osbglistwinuser.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit78>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

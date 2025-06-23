@@ -275,7 +275,13 @@ begin
   *)
   Height := 15 + ButtonRight.Height + 15 + Countdown.Height + 15 + MessageMemoHeight;
 
+  // scale for HighDPI
+  Height:= ScaleDesignToForm(Height);
+  width := ScaleDesignToForm(width);
+  Repaint;
+
   CenterFormOnScreen(self);
+  Application.ProcessMessages;
 end;
 
 // This message box can only hold up to three buttons

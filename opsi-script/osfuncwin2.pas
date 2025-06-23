@@ -865,8 +865,9 @@ var
       end
     else
       begin
+        // Do not log on warn level here, because we have always a lot of system processes here
         LogDatei.log('WARNING: GetFullProcessFileName: could not open process '
-           +IntToStr(PID)+' (probably insufficient privileges of opsi-script process)', LLWarning);
+           +IntToStr(PID)+' (probably insufficient privileges of opsi-script process)', LLInfo);
       end
   end;
 
@@ -909,8 +910,9 @@ var
       end
     else
       begin
+        // Do not log on warn level here, because we have always a lot of system processes here
         LogDatei.log('WARNING: GetFullProcessFileName: could not open process '
-           +IntToStr(PID)+' (probably insufficient privileges of opsi-script process)', LLWarning);
+           +IntToStr(PID)+' (probably insufficient privileges of opsi-script process)', LLinfo);
       end;
   end;
   //**************************************************************************
