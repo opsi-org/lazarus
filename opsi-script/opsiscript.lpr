@@ -87,6 +87,7 @@ uses //lcltranslator,
   jclexcerpt,
   osbackgroundinstall,
   {$ENDIF WIN32}
+  osbglistwinuser,
   zipinter in 'zipinter.pas',
   wispecfolder in 'wispecfolder.pas',
   VersionInfoX in 'VersionInfoX.pas',
@@ -101,7 +102,7 @@ uses //lcltranslator,
   osfilehelper,
   osTOML,
   osSSLPaths,
-  osEvaluateBooleanFunctions, osmeta, osbglistwinuser;
+  osEvaluateBooleanFunctions, osmeta;
 
   {$IFNDEF GUI}
 type
