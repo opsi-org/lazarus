@@ -179,7 +179,7 @@ opsi-script to binaryindex:
     - echo "deploy to binaryindex"
     - rm -rf upload
     - cd opsi-script
-    - opsi-dev-cli -l info --binary pull
+    - opsi-dev-cli -l info binary pull
     - cp compiler_out/binarys/i386-win32/opsi-script.exe upload/win32/opsi-script
     - cp upload/win32/opsi-script/opsi-script.exe upload/win32/opsi-script/winst32.exe
     - cp compiler_out/binarys/x86_64-win64/opsi-script.exe upload/win64/opsi-script
@@ -190,10 +190,10 @@ opsi-script to binaryindex:
     - cp compiler_out/binarys/x86_64-darwin/opsi-script-gui upload/mac64/opsi-script
     - ls -lah upload/*/opsi-script
     - echo "${BINARY_VERSION}"
-    - opsi-dev-cli -l info --binary push upload/win32/opsi-script opsi-script-bin windows x86 "${BINARY_VERSION}"
-    - opsi-dev-cli -l info --binary push upload/win64/opsi-script opsi-script-bin windows x64 "${BINARY_VERSION}"
-    - opsi-dev-cli -l info --binary push upload/lin64/opsi-script opsi-script-bin linux x64 "${BINARY_VERSION}"
-    - opsi-dev-cli -l info --binary push upload/mac64/opsi-script opsi-script-bin darwin x64 "${BINARY_VERSION}"
+    - opsi-dev-cli -l info binary push upload/win32/opsi-script opsi-script-bin windows x86 "${BINARY_VERSION}"
+    - opsi-dev-cli -l info binary push upload/win64/opsi-script opsi-script-bin windows x64 "${BINARY_VERSION}"
+    - opsi-dev-cli -l info binary push upload/lin64/opsi-script opsi-script-bin linux x64 "${BINARY_VERSION}"
+    - opsi-dev-cli -l info binary push upload/mac64/opsi-script opsi-script-bin darwin x64 "${BINARY_VERSION}"
 
 #*********************************
 # opsi-laz-gui-test
