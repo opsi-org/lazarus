@@ -190,10 +190,10 @@ opsi-script to binaryindex:
     - cp compiler_out/binarys/x86_64-darwin/opsi-script-gui upload/mac64/opsi-script
     - ls -lah upload/*/opsi-script
     - echo "${BINARY_VERSION}"
-    - opsi-dev-cli -l info binary push upload/win32/opsi-script opsi-script-bin windows x86 "${BINARY_VERSION}"
-    - opsi-dev-cli -l info binary push upload/win64/opsi-script opsi-script-bin windows x64 "${BINARY_VERSION}"
-    - opsi-dev-cli -l info binary push upload/lin64/opsi-script opsi-script-bin linux x64 "${BINARY_VERSION}"
-    - opsi-dev-cli -l info binary push upload/mac64/opsi-script opsi-script-bin darwin x64 "${BINARY_VERSION}"
+    - opsi-dev-cli -l info binary push --product opsi-script-bin --os windows --architecture x86 --version "${BINARY_VERSION}" upload/win32/opsi-script
+    - opsi-dev-cli -l info binary push --product opsi-script-bin --os windows --architecture x64 --version "${BINARY_VERSION}" upload/win64/opsi-script  
+    - opsi-dev-cli -l info binary push --product opsi-script-bin --os linux --architecture x64 --version "${BINARY_VERSION}" upload/lin64/opsi-script
+    - opsi-dev-cli -l info binary push --product opsi-script-bin --os darwin --architecture x64 --version "${BINARY_VERSION}" upload/mac64/opsi-script  
 
 #*********************************
 # opsi-laz-gui-test
