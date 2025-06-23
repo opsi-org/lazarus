@@ -1,0 +1,31 @@
+
+Changes for Background installation:
+
+0. starting point
+osparser.pas : procedure CreateAndProcessScript(const Scriptdatei: string; :
+if userAreLoggedIn then
+
+1. detect
+osmeta:  metaDataFound
+
+2. detect backgroundinstall Situation
+via WTSQuerySessionInformationW
+unit osbglistwinuser:
+function getLoggedInUserList: TStringList;
+unit osbackgroundinstall:
+function userAreLoggedIn: boolean;
+
+3. read meta data
+osmeta: getMetaInstallDirs,getMetaCheckProcesses
+
+4. create process lists
+osbackgroundinstall.checkAndHandleRunningProductProcesses
+
+5. check process lists
+osbackgroundinstall.checkAndHandleRunningProcFull
+
+6. call interaction dialog
+osbackgroundinstall.checkAndHandleRunningProcFull
+
+7. check for background_install module license
+osbackgroundinstall.checkAndHandleRunningProcFull: if opsidata.backgroundInstallActivated

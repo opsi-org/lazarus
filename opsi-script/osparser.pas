@@ -35,6 +35,7 @@ uses
   oswmi,
   osswaudit,
   shlwapi,
+  osbackgroundinstall,
   {$IFDEF WIN32}
   DSiWin32,
   osfuncwin2,
@@ -124,7 +125,8 @@ uses
   osnetutil,
   osstrlistutils,
   oscertificates,
-  osGetRegistryFunctions;
+  osGetRegistryFunctions,
+  osmeta;
 
 type
   TStatement = (tsNotDefined,
@@ -174,7 +176,8 @@ type
     tsSaveVersionToProfile,
     tsSetOutputLevel,
     tsSetExitOnError,
-    tsSetFatalError, tsSetSuccess, tsSetNoUpdate, tsSetSuspended,
+    tsSetFatalError, tsSetSuccess, tsSetNoUpdate, tsSetSuspended, tsSetDeferred,
+    //tsSetProductProgress,
     tsSetMarkerErrorNumber,
     tsSetReportMessages, tsSetTimeMark, tsLogDiffTime,
     tsSetDebugProg,
@@ -255,6 +258,18 @@ type
   end;
 
 
+  { TScriptConstants }
+
+  TScriptConstants = class(TStringList)
+  public
+    procedure Init;
+    function ReplaceInString(inString: string): string;
+    procedure ReplaceInList(var List: TXStringList);
+    constructor Create;
+    destructor Destroy;
+  end;
+
+
   TWorkSection = class(TuibIniScript) // class (TXStringList)
   private
     FSectionkind: TStatement;
@@ -322,6 +337,7 @@ type
     FFatalOnSyntaxError: boolean;
     FFatalOnRuntimeError: boolean;
     FSuspended: boolean;
+    FDeferred: boolean;
     FAutoActivityDisplay: boolean;
     FforceLogInAppendMode: boolean;
 
@@ -331,8 +347,8 @@ type
     FlistOfStringLists: TStringList;
     FValuesList: TStringList;
     FContentOfStringLists: TObjectList;
-    FConstList: TStringList;
-    FConstValuesList: TStringList;
+    //FConstList: TStringList;
+    //FConstValuesList: TStringList;
     FLastExitCodeOfExe: longint;
     FLastPrivateExitCode: longint; // not seen by getLastExitcode
     FFilename: string;
@@ -352,8 +368,8 @@ type
       var tempfilename: string; var passparas: string; var programparas: string;
       var programfilename: string): string;
     function IsPowershellExecutionPolicyRestricted: boolean;
-    function GetPowershellExecutionPolicy(
-      Scope: string = 'EffectiveExecutionPolicy'): string;
+    function GetPowershellExecutionPolicy(Scope: string =
+      'EffectiveExecutionPolicy'): string;
     procedure parsePowershellCall(var Command: string; var AccessString: string;
       var HandlePolicy: string; var Option: string; var Remaining: string;
       var syntaxCheck: boolean; var InfoSyntaxError: string;
@@ -382,6 +398,7 @@ type
     property FatalOnRuntimeError: boolean read FFatalOnRuntimeError
       write FFatalOnRuntimeError;
     property Suspended: boolean read FSuspended write FSuspended;
+    property Deferred: boolean read FDeferred write FDeferred;
     property AutoActivityDisplay: boolean read FAutoActivityDisplay
       write FAutoActivityDisplay;
     property forceLogInAppendMode: boolean read FforceLogInAppendMode
@@ -392,8 +409,8 @@ type
 
     property varList: TStringList read FvarList write FvarList;
     property valuesList: TStringList read Fvalueslist write FvaluesList;
-    property constList: TStringList read FconstList write FConstList;
-    property constValuesList: TStringList read FconstValuesList write FconstValuesList;
+    //property constList: TStringList read FconstList write FConstList;
+    //property constValuesList: TStringList read FconstValuesList write FconstValuesList;
     property listOfStringLists: TStringList read FlistOfStringLists
       write FlistOfStringLists;
     property ContentOfStringLists: TObjectList
@@ -719,6 +736,7 @@ const
 
 var
   PStatNames: TPStatementNames;
+  ScriptConstants:TScriptConstants;
   flag_all_ntuser, flag_ntuser, flag_all_usrclass: boolean;
   flag_encoding: string = 'system';
   runLoginScripts: boolean;
@@ -732,7 +750,9 @@ var
   opsiWinstStartdir: string;
   Script: TuibInstScript;
   aktsection: TWorkSection;
+  scriptfailed: boolean = false;
   scriptsuspendstate: boolean;
+  scriptdeferstate: boolean;
   scriptstopped: boolean;
   inDefFuncLevel: integer = 0;
   inDefFuncIndex: integer = -1; // index of the active defined function
@@ -1771,9 +1791,8 @@ begin
           (VGUID1.D4[3] = VGUID2.D4[3]) and (VGUID1.D4[4] = VGUID2.D4[4]) and
           (VGUID1.D4[5] = VGUID2.D4[5]) and (VGUID1.D4[6] = VGUID2.D4[6]) and
           (VGUID1.D4[7] = VGUID2.D4[7]) then
-          Result := Format(CLSFormatMACMask,
-            [VGUID1.D4[2], VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5],
-            VGUID1.D4[6], VGUID1.D4[7]]);
+          Result := Format(CLSFormatMACMask, [VGUID1.D4[2],
+            VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5], VGUID1.D4[6], VGUID1.D4[7]]);
     end;
   finally
     UnloadLibrary(VLibHandle);
@@ -1941,6 +1960,414 @@ end;
  *)
 {$ENDIF WINDOWS}
 
+
+{ TScriptConstants }
+
+procedure TScriptConstants.Init;
+var
+  Regist: TuibRegistry;
+  saveIndent: integer;
+  ValueToTake: string;
+  computernaming: string;
+  ipAddress: string;
+  ipName: string;
+  ErrorInfo: string;
+  ScriptDatei: string;
+begin
+  { Definition of global system variables }
+  LogDatei.log_prog('Start: Definition of global system variables', LLinfo);
+  //with Script do
+  begin
+    { Attention: every key need an value entry !
+      If value is missing AppyTextConstants will get an index error. }
+
+    {  System directories:  }
+    {$IFDEF WINDOWS}
+    // %Systemroot%
+    // on Win Terminalservers GetWinDirectory is redirected to %HOMEDRIVE%\Windows
+    ValueToTake := extractfiledrive(GetWinSystemDirectory) +
+      copy(GetWinDirectory, 3, length(GetWinDirectory));
+    { delete closing back slash }
+    System.Delete(ValueToTake, length(ValueToTake), 1);
+    Add('%Systemroot%='+ValueToTake);
+
+    // %System%
+    ValueToTake := GetWinSystemDirectory;
+    { delete closing back slash }
+    System.Delete(ValueToTake, length(ValueToTake), 1);
+    Add('%System%='+ValueToTake);
+
+    // %SystemDrive%
+    // on Win Terminalservers GetWinDirectory is redirected to %HOMEDRIVE%\Windows
+    ValueToTake := extractfiledrive(GetWinSystemDirectory);
+    Add('%SystemDrive%='+ValueToTake);
+
+    {$ENDIF WINDOWS}
+    // %ProfileDir%
+    ValueToTake := getProfilesPath;
+    Add('%ProfileDir%='+ValueToTake);
+
+    // %DefaultUserProfileDir%
+    ValueToTake := getDefaultUsersProfilesPath;
+    Add('%DefaultUserProfileDir%='+ValueToTake);
+
+    saveIndent := Logdatei.LogSIndentLevel;
+    {$IFDEF WINDOWS}
+    // %ProgramFilesDir%, %ProgramFiles32Dir%
+    ValueToTake := getSpecialFolder(CSIDL_PROGRAM_FILES);
+    LogDatei.LogSIndentLevel := saveIndent;
+    Add('%ProgramFilesDir%='+ValueToTake);
+    Add('%ProgramFiles32Dir%='+ValueToTake);
+
+    // %ProgramFiles64Dir%, %ProgramFilesSysnativeDir%
+    try
+      if (GetNTVersionMajor = 5) and (GetNTVersionMinor = 0) then
+      begin
+        { we are on win 2000 which can't handle redirections flags  }
+        Regist := Tuibregistry.Create;
+      end
+      else { we are on xp or higher  }
+      begin
+        Regist := Tuibregistry.Create(True, True);
+      end;
+      regist.OpenExistingKey('HKLM', 'SOFTWARE\Microsoft\Windows\CurrentVersion');
+      ValueToTake := regist.ReadString('ProgramFilesDir');
+      Regist.Free;
+      Regist := nil;
+    except
+      ValueToTake := 'C:\Program Files'
+    end;
+    Add('%ProgramFiles64Dir%='+ValueToTake);
+    Add('%ProgramFilesSysnativeDir%='+ValueToTake);
+
+
+
+    {  Usercontext data   }
+
+    // %Usercontext%
+    Add('%Usercontext%='+usercontext);
+
+    // %UsercontextSID%
+    Add('%UsercontextSID%='+usercontextSID);
+    {$ENDIF WINDOWS}
+
+    {  Common (AllUsers) directories: }
+
+    // %CommonAppDataDir%
+    ValueToTake := GetCommonAppDataPath;
+    Add('%CommonAppDataDir%='+ValueToTake);
+
+    // %AllUsersProfileDir%, %CommonProfileDir%
+    ValueToTake := guessCommonProfilesPath;
+    Add('%AllUsersProfileDir%='+ValueToTake);
+    Add('%CommonProfileDir%='+ValueToTake);
+
+    // %CommonStartmenuDir%, %CommonStartmenuPath%
+    ValueToTake := GetCommonStartmenuPath;
+    Add('%CommonStartmenuDir%='+ValueToTake);
+    Add('%CommonStartmenuPath%='+ValueToTake);
+
+    // %CommonDesktopDir%
+    ValueToTake := GetCommonDesktopPath;
+    Add('%CommonDesktopDir%='+ValueToTake);
+
+    // %CommonStartupDir%
+    ValueToTake := GetCommonStartupPath;
+    Add('%CommonStartupDir%='+ValueToTake);
+
+    // %CommonProgramsDir%
+    ValueToTake := GetCommonProgramsPath;
+    Add('%CommonProgramsDir%='+ValueToTake);
+
+    // %AppDataDir%
+    ValueToTake := GetAppDataPath;
+    Add('%AppDataDir%='+ValueToTake);
+
+    // %CurrentAppDataDir%
+    Add('%CurrentAppDataDir%='+ValueToTake);
+
+    // %CurrentStartmenuDir%
+    ValueToTake := GetStartmenuPath;
+    Add('%CurrentStartmenuDir%='+ValueToTake);
+
+    // %CurrentDesktopDir%
+    ValueToTake := GetDesktopPath;
+    Add('%CurrentDesktopDir%='+ValueToTake);
+
+    // %CurrentStartupDir%
+    ValueToTake := GetStartupPath;
+    Add('%CurrentStartupDir%='+ValueToTake);
+
+    // %CurrentProgramsDir%
+    ValueToTake := GetProgramsPath;
+    Add('%CurrentProgramsDir%='+ValueToTake);
+
+    // %CurrentSendToDir%
+    ValueToTake := GetSendToPath;
+    Add('%CurrentSendToDir%='+ValueToTake);
+
+    // %CurrentProfileDir%
+    ValueToTake := getUserProfilePath;
+    Add('%CurrentProfileDir%='+ValueToTake);
+
+    { /AllNtUserProfiles directory constants:
+     they are not defined here and will be replaced
+     at the working section code }
+
+
+    { opsi-script-Path and Directories }
+    ScriptDatei := ExtractFileDir(makeAbsoluteScriptPath(GetPathToScript,
+      opsidata.getProductScriptPath(opsidata.getProductActionRequest)));
+
+    // %ScriptDrive%
+    ValueToTake := extractfiledrive(ExpandFilename(Scriptdatei));
+    Add('%ScriptDrive%='+ValueToTake);
+
+    // %Scriptpath%, %ScriptDir%
+    ValueToTake := ExtractFileDir(Scriptdatei);
+    Add('%Scriptpath%='+ValueToTake);
+    Add('%ScriptDir%='+ValueToTake);
+
+    // %realScriptpath%
+    if FileExists(Scriptdatei) then
+      ValueToTake := ExtractFileDir(resolveSymlink(Scriptdatei))
+    else
+      ValueToTake := '';
+    (*
+    {$IFDEF WINDOWS}
+    ValueToTake := ExtractFileDir(resolveWinSymlink(Scriptdatei));
+    {$ENDIF WINDOWS}
+    {$IFDEF UNIX}
+    ValueToTake := ExtractFileDir(resolveUnixSymlink(Scriptdatei));
+    {$ENDIF UNIX}
+    *)
+    Add('%realScriptpath%='+ValueToTake);
+
+    // %WinstDir%, %OpsiscriptDir%
+    ValueToTake := ExtractFileDir(reencode(ParamStr(0), 'system'));
+    Add('%WinstDir%='+ValueToTake);
+    Add('%OpsiscriptDir%='+ValueToTake);
+
+    // %OpsiscriptProcName%
+    ValueToTake := opsiscriptProcName;
+    Add('%OpsiscriptProcName%='+ValueToTake);
+
+    // %WinstVersion%, %OpsiscriptVersion%
+    ValueToTake := osconf.OpsiscriptVersion;
+    Add('%WinstVersion%='+ValueToTake);
+    Add('%OpsiscriptVersion%='+ValueToTake);
+
+    // %LogFile%
+    Add('%LogFile%='+LogDatei.FileName);
+
+    // %opsiTmpDir%
+    {$IFDEF WINDOWS}
+    Add('%opsiTmpDir%=c:\opsi.org\tmp');
+    {$ENDIF WINDOWS}
+    {$IFDEF UNIX}
+    Add('%opsiTmpDir%=/tmp');
+    {$ENDIF UNIX}
+
+    // %opsiUserTmpDir%
+    {$IFDEF WINDOWS}
+    Add('%opsiUserTmpDir%=c:\opsi.org\usertmp');
+    {$ENDIF WINDOWS}
+    {$IFDEF UNIX}
+    Add('%opsiUserTmpDir%=/tmp');
+    {$ENDIF UNIX}
+
+    // %opsiLogDir%
+    Add('%opsiLogDir%='+copy(oslog.defaultStandardMainLogPath, 1,
+      Length(oslog.defaultStandardMainLogPath) - 1));
+
+    // %opsiapplog%
+    {$IFDEF WINDOWS}
+    Add('%opsiapplog%=c:\opsi.org\applog');
+    {$ENDIF WINDOWS}
+    {$IFDEF UNIX}
+    Add('%opsiapplog%=~/opsi.org/applog');
+    {$ENDIF UNIX}
+
+    // %opsidata%
+    {$IFDEF WINDOWS}
+    Add('%opsidata%=c:\opsi.org\data');
+    {$ENDIF WINDOWS}
+    {$IFDEF UNIX}
+    Add('%opsidata%=/var/lib/opsi-client-agent');
+    {$ENDIF UNIX}
+
+    {$IFDEF WINDOWS}
+    // %opsiScriptHelperPath%
+    ValueToTake := getSpecialFolder(CSIDL_PROGRAM_FILES) +
+      '\opsi.org\opsiScriptHelper';
+    Add('%opsiScriptHelperPath%='+ValueToTake);
+
+
+
+    { Network informations  }
+
+    // %PCNAME%
+    ValueToTake := ValueOfEnvVar('PCNAME');
+    if valueToTake = valueEnvVarNotFound then
+      valueToTake := ValueOfEnvVar('computername');
+    Add('%PCNAME%='+ValueToTake);
+
+    // %HOST%
+    ValueToTake := ValueOfEnvVar('HOST');
+    Add('%HOST%='+ValueToTake);
+    {$ENDIF WINDOWS}
+
+    {$IFDEF UNIX}
+    ConstantsNames.add('%PCNAME%');
+    ValueToTake := GetHostName;
+    if valueToTake = valueEnvVarNotFound then
+      valueToTake := getCommandResult('hostname');
+    Add('%PCNAME%='+ValueToTake);
+
+    ConstantsNames.add('%HOST%');
+    ValueToTake := getCommandResult('hostname');
+    Add('%HOST%='+ValueToTake);
+    {$ENDIF LINUX}
+
+    // %IPAddress%
+    FindLocalIPData(ipName, ipAddress);
+    Add('%IPAddress%='+ipAddress);
+
+    // %IPName%
+    Add('%IPName%='+ipName);
+
+
+    // %Username%
+    GetNetUser('', ValueToTake, ErrorInfo);
+    Add('%Username%='+ValueToTake);
+
+    {$IFDEF WINDOWS}
+    // %TempUser%
+    Add('%TempUser%='+TempUserRegKey);
+    {$ENDIF WINDOWS}
+
+    { opsi service values }
+
+    // %opsiserviceURL%
+    Add('%opsiserviceURL%='+opsiserviceURL);
+
+    // %opsiserviceUser%
+    Add('%opsiserviceUser%='+opsiserviceUser);
+
+
+    // %opsiservicePassword%
+    Add('%opsiservicePassword%='+opsiservicePassword);
+
+    // %opsiserviceClientId%
+    Add('%opsiserviceClientId%='+opsiserviceClientId);
+
+    // %hostID%
+    if opsiserviceClientId <> '' then
+      Add('%hostID%='+opsiserviceClientId)
+    else
+    begin
+      computernaming := osconf.computername;
+      if computernaming = '' then computernaming := oslog.getComputerName;
+      Add('%hostID%='+computernaming);
+    end;
+
+    // %FQDN% (fqdn in network not opsi service context)
+    Add('%FQDN%='+getFQDN);
+
+    // %opsiServer%
+    valuetotake := copy(opsiserviceUrl, pos('//', opsiserviceUrl) +
+      2, length(opsiserviceurl));
+    valuetotake := copy(valuetotake, 1, pos(':', valuetotake) - 1);
+    Add('%opsiServer='+ValueToTake);
+
+     // %opsiDepotId%
+    if opsidata = nil then
+      Add('%opsiDepotId%='+'')
+    else
+      Add('%opsiDepotId%='+trim(Topsi4data(opsidata).depotId));
+
+    // %installingProdName%
+    if opsidata = nil then
+      Add('%installingProdName%='+'')
+    else
+      Add('%installingProdName%='+Topsi4data(opsidata).getActualProductId);
+
+    // %installingProdVersion%
+    if opsidata = nil then
+      Add('%installingProdVersion%='+'')
+    else
+    try
+      Add('%installingProdVersion%='+opsidata.getActualProductVersion);
+    except
+      Add('%installingProdVersion%='+'');
+    end;
+
+    // %installingProduct%
+    if opsidata = nil then
+      Add('%installingProduct%='+'')
+    else
+    try
+      Add('%installingProduct%='+Topsi4data(opsidata).getActualProductId);
+    except
+      Add('%installingProduct%='+'');
+    end;
+  end;
+  LogDatei.log_prog('End: Definition of global system variables', LLinfo);
+end;
+
+
+function TScriptConstants.ReplaceInString(inString: string): string;
+var
+  i: integer;
+  tmpstr: string;
+  //list1: TXStringList;
+begin
+  tmpstr := inString;
+  for i := 0 to Count - 1 do
+  begin
+    tmpstr := StringReplace(tmpstr, Names[i],
+      ValueFromIndex[i], [rfReplaceAll, rfIgnoreCase]);
+    //logdatei.log_prog('replace: '+ Script.Constlist.Strings[i]+' by: '+ Script.ConstValuesList.Strings[i], LLinfo);
+  end;
+  Result := tmpstr;
+
+  (*
+  tmpstr := instring;
+  list1 := TXStringList.Create;
+  for i := 1 to Script.constList.Count do
+  begin
+    if list1.replaceInLine(tmpstr, Script.Constlist.Strings[i - 1],
+      Script.ConstValuesList.Strings[i - 1], False, tmpstr) then
+      replaceOpsiConstantsInString := tmpstr;
+  end;
+  FreeAndNil(list1);
+  *)
+end;
+
+procedure TScriptConstants.ReplaceInList(var List: TXStringList);
+var
+  i: integer;
+begin
+    for i := 0 to Count - 1 do
+    begin
+      List.GlobalReplace(1, Names[i],
+        ValueFromIndex[i], False);
+    end;
+end;
+
+
+
+constructor TScriptConstants.Create;
+begin
+
+end;
+
+destructor TScriptConstants.Destroy;
+begin
+
+end;
+
+
 constructor TWorkSection.Create(const NestLevel: integer;
   const ParentSection: TWorkSection = nil);
 begin
@@ -2059,6 +2486,7 @@ begin
   FFatalOnSyntaxError := True;
   FFatalOnRuntimeError := False;
   FSuspended := False;
+  FDeferred := False;
   //FAutoActivityDisplay := false;
   FAutoActivityDisplay := osconf.AutoActivityDisplay;
   FforceLogInAppendMode := False;
@@ -2071,8 +2499,6 @@ begin
 
   FlistOfStringLists := TStringList.Create;
   FContentOfStringLists := TObjectList.Create;
-  FConstList := TStringList.Create;
-  FConstValuesList := TStringList.Create;
   FLinesOriginList := TStringList.Create;
   FLibList := TStringList.Create;
   FsectionNameList := TStringList.Create;
@@ -8755,8 +9181,7 @@ var
             end;
           end;
           LogDatei.log('non UTF8 filenames will be converted to UTF8 assuming codepage '
-            +
-            FilenameCodepage, lldebug3);
+            + FilenameCodepage, lldebug3);
 
 
           if not testSyntax then
@@ -10613,8 +11038,8 @@ begin
 
     if pos('winst ', lowercase(BatchParameter)) > 0 then
     begin
-      winstparam := trim(copy(BatchParameter,
-        pos('winst ', lowercase(BatchParameter)) + 5, length(BatchParameter)));
+      winstparam := trim(copy(BatchParameter, pos('winst ',
+        lowercase(BatchParameter)) + 5, length(BatchParameter)));
       BatchParameter := trim(copy(BatchParameter, 0,
         pos('winst ', lowercase(BatchParameter)) - 1));
     end;
@@ -11415,8 +11840,7 @@ begin
         '"function Disable-ExecutionPolicy {' +
         '($ctx = $executioncontext.gettype().getfield' +
         '(''_context'',''nonpublic,instance'').getvalue( $executioncontext)).gettype().getfield'
-        +
-        '(''_authorizationManager'',''nonpublic,instance'').setvalue' +
+        + '(''_authorizationManager'',''nonpublic,instance'').setvalue' +
         '($ctx, (new-object System.Management.Automation.AuthorizationManager ''Microsoft.PowerShell''))}; '
         + 'Disable-ExecutionPolicy; ';
       //special construction for powershell
@@ -13766,17 +14190,8 @@ begin
             if not testSyntax then
             begin
               list.Clear;
-              for i := 1 to list1.Count do
-              begin
-                tmpstr := list1[i - 1];
-                for k := 1 to ConstList.Count do
-                begin
-                  if list1.replaceInLine(tmpstr, Constlist.Strings[k - 1],
-                    ConstValuesList.Strings[k - 1], False, tmpstr1) then
-                    tmpstr := tmpstr1;
-                end;
-                list.add(tmpstr);
-              end;
+              ScriptConstants.ReplaceInList(list1);
+              list.Assign(list1);
             end;
           end;
         list1.Free;
@@ -15064,8 +15479,7 @@ begin
           Logdatei.log('Line: ' + {$INCLUDE %LINE%} + ', Exception(' +
             e.ClassName + ' system message: ' + E.Message +
             ') in Evaluatestring (defined local function, getting FuncIndex, funcname: '
-            +
-            funcname + ', FuncIndex: ' + IntToStr(FuncIndex) +
+            + funcname + ', FuncIndex: ' + IntToStr(FuncIndex) +
             '), s0: ' + s0 + ', - giving up', LLCritical);
         end;
       end;
@@ -16132,10 +16546,10 @@ begin
             begin
               list1 := TXStringList.Create;
               tmpstr := s1;
-              for i := 1 to ConstList.Count do
+              for i := 1 to ScriptConstants.Count do
               begin
-                if list1.replaceInLine(tmpstr, Constlist.Strings[i - 1],
-                  ConstValuesList.Strings[i - 1], False, tmpstr1) then
+                if list1.replaceInLine(tmpstr, ScriptConstants.Names[i - 1],
+                  ScriptConstants.ValueFromIndex[i - 1], False, tmpstr1) then
                   tmpstr := tmpstr1;
               end;
               StringResult := tmpstr;
@@ -17473,6 +17887,7 @@ begin
                             if not testsyntax then
                             begin
                               CustomMessageForm := TCustomMessageForm.Create(nil);
+
                               CustomMessageForm.ShowBox(s, TStringList(list1),
                                 TStringList(itemlist), s1, s2);
                               StringResult := CustomMessageForm.ExitCode;
@@ -20732,7 +21147,8 @@ begin
                   begin
                     //  %SYSTEMDRIVE% is windows only - use Fallback
                     LogDatei.log(
-                      s1 + ' is only aviable at Windows - fallback to root dir: "/"', LLwarning);
+                      s1 + ' is only aviable at Windows - fallback to root dir: "/"',
+                      LLwarning);
                     // set s1 to actual root dir for use and further messages
                     s1 := '/';
                     drivenumber := adddisk(s1);
@@ -21338,13 +21754,13 @@ procedure TuibInstScript.ApplyTextConstants(var Sektion: TXStringList;
 var
   i: integer;
 begin
-  for i := 1 to ConstList.Count do
+  for i := 1 to ScriptConstants.Count do
     if CStringEscaping then
-      Sektion.GlobalReplace(1, Constlist.Strings[i - 1],
-        CEscaping(ConstValuesList.Strings[i - 1]), False)
+      Sektion.GlobalReplace(1, ScriptConstants.Names[i - 1],
+        CEscaping(ScriptConstants.ValueFromIndex[i - 1]), False)
     else
-      Sektion.GlobalReplace(1, Constlist.Strings[i - 1],
-        ConstValuesList.Strings[i - 1], False);
+      Sektion.GlobalReplace(1, ScriptConstants.Names[i - 1],
+        ScriptConstants.ValueFromIndex[i - 1], False);
 end;
 
 
@@ -21445,13 +21861,13 @@ var
   NewLine: string = '';
 begin
   //LogDatei.log_prog('ApplyTextConstantsToString - base: '+mystr,LLDebug2);
-  for i := 1 to ConstList.Count do
+  for i := 1 to ScriptConstants.Count do
   begin
     //LogDatei.log_prog('ApplyTextConstantsToString - const: '+Constlist.Strings [i-1],LLDebug2);
     if CStringEscaping then
     begin
-      if ReplaceInLine(mystr, Constlist.Strings[i - 1],
-        CEscaping(ConstValuesList.Strings[i - 1]), False, NewLine) then
+      if ReplaceInLine(mystr, ScriptConstants.Names[i - 1],
+        CEscaping(ScriptConstants.ValueFromIndex[i - 1]), False, NewLine) then
       begin
         mystr := NewLine;
         //LogDatei.log_prog('ApplyTextConstantsToString - new: '+mystr,LLDebug2);
@@ -21459,8 +21875,8 @@ begin
     end
     else
     begin
-      if ReplaceInLine(mystr, Constlist.Strings[i - 1],
-        ConstValuesList.Strings[i - 1], False, NewLine) then
+      if ReplaceInLine(mystr, ScriptConstants.Names[i - 1],
+        ScriptConstants.ValueFromIndex[i - 1], False, NewLine) then
       begin
         mystr := NewLine;
         //LogDatei.log_prog('ApplyTextConstantsToString - new: '+mystr,LLDebug2);
@@ -21625,8 +22041,8 @@ begin
     end
     else
     begin
-      LogDatei.log('Could not get execution policy for scope "' + Scope + '": ' +
-        ExecutionPolicy, LLWarning);
+      LogDatei.log('Could not get execution policy for scope "' +
+        Scope + '": ' + ExecutionPolicy, LLWarning);
     end;
   finally
     if Assigned(Output) then FreeAndNil(Output);
@@ -23407,10 +23823,10 @@ begin
                           'Found line in lib file (raw): ' + incline, LLDebug3);
                         LogDatei.log_prog(
                           'Found line in lib file (reencoded): ' + incline, LLDebug2);
-                        for constcounter := 1 to ConstList.Count do
+                        for constcounter := 1 to ScriptConstants.Count do
                           if Sektion.replaceInLine(incline,
-                            Constlist.Strings[constcounter - 1],
-                            ConstValuesList.Strings[constcounter - 1],
+                            ScriptConstants.Names[constcounter - 1],
+                            ScriptConstants.ValueFromIndex[constcounter - 1],
                             False, replacedline) then
                             incline := replacedline;
 
@@ -23739,10 +24155,10 @@ begin
                         //incline := reencode(incline, Encoding2use, usedEncoding);
                         //LogDatei.log_prog(
                         //  'Will Include line (reencoded): ' + incline, LLDebug3);
-                        for constcounter := 1 to ConstList.Count do
+                        for constcounter := 1 to ScriptConstants.Count do
                           if Sektion.replaceInLine(incline,
-                            Constlist.Strings[constcounter - 1],
-                            ConstValuesList.Strings[constcounter - 1],
+                            ScriptConstants.Names[constcounter - 1],
+                            ScriptConstants.ValueFromIndex[constcounter - 1],
                             False, replacedline) then
                             incline := replacedline;
                         LogDatei.log_prog(
@@ -23956,10 +24372,10 @@ begin
                         //readln(incfile, incline);
                         //incline := reencode(incline, Encoding2use, usedEncoding);
                         incline := inclist.Strings[k];
-                        for constcounter := 1 to ConstList.Count do
+                        for constcounter := 1 to ScriptConstants.Count do
                           if Sektion.replaceInLine(incline,
-                            Constlist.Strings[constcounter - 1],
-                            ConstValuesList.Strings[constcounter - 1],
+                            ScriptConstants.Names[constcounter - 1],
+                            ScriptConstants.ValueFromIndex[constcounter - 1],
                             False, replacedline) then
                             incline := replacedline;
                         // remove encoding= lines from include_append because
@@ -24091,7 +24507,8 @@ begin
                   if posSlash > 0 then
                   begin
                     LogDatei.log(
-                      'Using "/" to give the position of a bitmap is Windows only and depricated', LLwarning);
+                      'Using "/" to give the position of a bitmap is Windows only and depricated',
+                      LLwarning);
                     if (length(Remaining) >= posSlash + 1) and
                       (Remaining[posSlash + 1] in ['1'..'9']) then
                     begin
@@ -24246,8 +24663,8 @@ begin
                     InfoSyntaxError) then
                     // EvaluateString() faíled
                     ActionResult :=
-                      reportError(Sektion, linecounter, Sektion.strings[linecounter -
-                      1], InfoSyntaxError)
+                      reportError(Sektion, linecounter,
+                      Sektion.strings[linecounter - 1], InfoSyntaxError)
                   else
                     // EvaluateString() gave us a Parameter
                   try
@@ -24257,11 +24674,11 @@ begin
                     // StrToInt(Parameter) failed. Report Runtime Error.
                     if not testsyntax then
                     begin
-                      LogDatei.log('Runtime Error in Section: ['
-                        + Sektion.Name + '] (Command in line ' +
-                        IntToStr(Sektion.StartLineNo + linecounter) +
-                        '): ' + Expressionstr + ' -> ' +
-                        Parameter + ' -- expected an integer (number of secs) ',
+                      LogDatei.log('Runtime Error in Section: [' +
+                        Sektion.Name + '] (Command in line ' + IntToStr(
+                        Sektion.StartLineNo + linecounter) + '): ' +
+                        Expressionstr + ' -> ' + Parameter +
+                        ' -- expected an integer (number of secs) ',
                         LLError);
                     end
                   end;
@@ -24356,7 +24773,8 @@ begin
                   end
                   else
                     LogDatei.log('Could not set ActionProgress to: ' +
-                      Parameter + ', probably no service connection available', LLWarning);
+                      Parameter + ', probably no service connection available',
+                      LLWarning);
                 end;
               end;
 
@@ -24466,6 +24884,7 @@ begin
                   ActionResult :=
                     reportError(Sektion, linecounter, Expressionstr, InfoSyntaxError);
               end;
+
 
               tsShellcall:
               begin
@@ -25033,6 +25452,45 @@ begin
                     ' no parameter expected');
                 end;
 
+              tsSetDeferred:
+                if remaining = '' then
+                begin
+                  if not testSyntax then
+                  begin
+                    LogDatei.log('Set: Stop script and restore product state',
+                      LLnotice);
+                    runUpdate := False;
+                    script.deferred := True;
+                    scriptstopped := True;
+                    ActionResult := tsrExitProcess;
+                    //NestLevel:= NestingLevel;
+                    //ActLevel:= NestLevel;
+                  end;
+                end
+                else
+                begin
+                  ActionResult :=
+                    reportError(Sektion, linecounter,
+                    Sektion.strings[linecounter - 1], ' no parameter expected');
+                end;
+              (*
+              tsSetProductProgress:
+                // Set Progress and state according to actionrequest
+                // experimental and internal for background install
+                if remaining = '' then
+                begin
+                  if not testSyntax then
+                  begin
+                    SetAndSendProductProgress(opsidata.getProductActionRequest);
+                  end;
+                end
+                else
+                begin
+                  ActionResult :=
+                    reportError(Sektion, linecounter,
+                    Sektion.strings[linecounter - 1], ' no parameter expected');
+                end;
+                *)
               tsSetMarkerErrorNumber:
                 if remaining = '' then
                 begin
@@ -26405,12 +26863,10 @@ var
   oldNumberOfErrors: integer = 0;
   oldNumberOfWarnings: integer = 0;
   weiter: integer = 0;
-  ValueToTake: string = '';
   s: string = '';
   ErrorInfo: string = '';
-  saveIndent: integer = 0;
   hostnaming: string = '';
-  computernaming: string = '';
+  //computernaming: string = '';
   ipName: string = '';
   ipAddress: string = '';
   usedEncoding: string = '';
@@ -26421,7 +26877,6 @@ var
   str: string;
   depotdrive_bak, depotdir_bak: string;
   {$IFDEF WINDOWS}
-  Regist: TuibRegistry;
   {$ENDIF WINDOWS}
   isPlainAscii: boolean;
 begin
@@ -26682,12 +27137,6 @@ begin
 
     ps := FormatDateTime('yyyy-mm-dd  hh:mm:ss ', now);
 
-    computernaming := osconf.computername;
-
-    if computernaming = '' then
-      computernaming := oslog.getComputerName;
-
-
     ps := '             start: ' + ps;
     LogDatei.log(ps, LLessential);
 
@@ -26706,7 +27155,7 @@ begin
       end;
     end;
 
-    ps := '             on client named    "' + computernaming + '"';
+    ps := '             on client named    "' + ScriptConstants.Values['%hostID%'] + '"';
     LogDatei.log(ps, LLessential);
 
     ps := '             loggedin user    "' + getLoggedInUser + '"';
@@ -26793,8 +27242,8 @@ begin
 
     if opsidata <> nil then
     begin
-      LogDatei.log('opsi service version : ' +
-        opsidata.getOpsiServiceVersion + ' (' + opsidata.getOpsiVersion + ')',
+      LogDatei.log('opsi service version : ' + opsidata.getOpsiServiceVersion +
+        ' (' + opsidata.getOpsiVersion + ')',
         LLessential);
       //Logdatei.log('Setup script name: '+opsidata.getProductScriptPath(tacSetup), LLessential);
     end;
@@ -26804,344 +27253,15 @@ begin
 
     LogDatei.log('', LLessential);
 
+    // Set paths to script
+    ScriptConstants.Values['%ScriptDrive%'] := extractfiledrive(ExpandFilename(Scriptdatei));
+    ScriptConstants.Values['%Scriptpath%']:= ExtractFileDir(Scriptdatei);
+    ScriptConstants.Values['%ScriptDir%']:= ExtractFileDir(Scriptdatei);
+    if FileExists(Scriptdatei) then
+      ScriptConstants.Values['%realScriptpath%'] := ExtractFileDir(resolveSymlink(Scriptdatei))
+    else
+      ScriptConstants.Values['%realScriptpath%'] := '';
 
-    { Definition of global system variables }
-    LogDatei.log_prog('Start: Definition of global system variables', LLinfo);
-    with Script do
-    begin
-      { Attention: every key need an value entry !
-        If value is missing AppyTextConstants will get an index error. }
-
-      {  System directories:  }
-      {$IFDEF WINDOWS}
-      FConstList.add('%Systemroot%');
-      // on Win Terminalservers GetWinDirectory is redirected to %HOMEDRIVE%\Windows
-      ValueToTake := extractfiledrive(GetWinSystemDirectory) +
-        copy(GetWinDirectory, 3, length(GetWinDirectory));
-      { delete closing back slash }
-      System.Delete(ValueToTake, length(ValueToTake), 1);
-      FConstValuesList.add(ValueToTake);
-
-      FConstList.add('%System%');
-      ValueToTake := GetWinSystemDirectory;
-      { delete closing back slash }
-      System.Delete(ValueToTake, length(ValueToTake), 1);
-      FConstValuesList.add(ValueToTake);
-
-      FConstList.add('%SystemDrive%');
-      // on Win Terminalservers GetWinDirectory is redirected to %HOMEDRIVE%\Windows
-      ValueToTake := extractfiledrive(GetWinSystemDirectory);
-      FConstValuesList.add(ValueToTake);
-      {$ENDIF WINDOWS}
-      FConstList.add('%ProfileDir%');
-      ValueToTake := getProfilesPath;
-      FConstValuesList.add(ValueToTake);
-
-      FConstList.add('%DefaultUserProfileDir%');
-      ValueToTake := getDefaultUsersProfilesPath;
-      FConstValuesList.add(ValueToTake);
-
-
-      saveIndent := Logdatei.LogSIndentLevel;
-      {$IFDEF WINDOWS}
-      ValueToTake := getSpecialFolder(CSIDL_PROGRAM_FILES);
-      LogDatei.LogSIndentLevel := saveIndent;
-
-      FConstList.add('%ProgramFilesDir%');
-      FConstValuesList.add(ValueToTake);
-      FConstList.add('%ProgramFiles32Dir%');
-      FConstValuesList.add(ValueToTake);
-      try
-        if (GetNTVersionMajor = 5) and (GetNTVersionMinor = 0) then
-        begin
-          { we are on win 2000 which can't handle redirections flags  }
-          Regist := Tuibregistry.Create;
-        end
-        else { we are on xp or higher  }
-        begin
-          Regist := Tuibregistry.Create(True, True);
-        end;
-        regist.OpenExistingKey('HKLM', 'SOFTWARE\Microsoft\Windows\CurrentVersion');
-        ValueToTake := regist.ReadString('ProgramFilesDir');
-        Regist.Free;
-        Regist := nil;
-      except
-        ValueToTake := 'C:\Program Files'
-      end;
-      FConstList.add('%ProgramFiles64Dir%');
-      FConstValuesList.add(ValueToTake);
-      FConstList.add('%ProgramFilesSysnativeDir%');
-      FConstValuesList.add(ValueToTake);
-
-
-
-      {  Usercontext data   }
-
-      FConstList.add('%Usercontext%');
-      FConstValuesList.add(usercontext);
-
-      FConstList.add('%UsercontextSID%');
-      FConstValuesList.add(usercontextSID);
-      {$ENDIF WINDOWS}
-
-      {  Common (AllUsers) directories: }
-      FConstList.add('%CommonAppDataDir%');
-      ValueToTake := GetCommonAppDataPath;
-      FConstValuesList.add(ValueToTake);
-
-      FConstList.add('%AllUsersProfileDir%');
-      ValueToTake := guessCommonProfilesPath;
-      FConstValuesList.add(ValueToTake);
-      FConstList.add('%CommonProfileDir%');
-      FConstValuesList.add(ValueToTake);
-
-      FConstList.add('%CommonStartmenuDir%');
-      ValueToTake := GetCommonStartmenuPath;
-      FConstValuesList.add(ValueToTake);
-      FConstList.add('%CommonStartmenuPath%');
-      FConstValuesList.add(ValueToTake);
-
-      FConstList.add('%CommonDesktopDir%');
-      ValueToTake := GetCommonDesktopPath;
-      FConstValuesList.add(ValueToTake);
-
-      FConstList.add('%CommonStartupDir%');
-      ValueToTake := GetCommonStartupPath;
-      FConstValuesList.add(ValueToTake);
-
-      FConstList.add('%CommonProgramsDir%');
-      ValueToTake := GetCommonProgramsPath;
-      FConstValuesList.add(ValueToTake);
-
-      FConstList.add('%AppDataDir%');
-      ValueToTake := GetAppDataPath;
-      FConstValuesList.add(ValueToTake);
-      FConstList.add('%CurrentAppDataDir%');
-      FConstValuesList.add(ValueToTake);
-
-      FConstList.add('%CurrentStartmenuDir%');
-      ValueToTake := GetStartmenuPath;
-      FConstValuesList.add(ValueToTake);
-
-      FConstList.add('%CurrentDesktopDir%');
-      ValueToTake := GetDesktopPath;
-      FConstValuesList.add(ValueToTake);
-
-      FConstList.add('%CurrentStartupDir%');
-      ValueToTake := GetStartupPath;
-      FConstValuesList.add(ValueToTake);
-
-      FConstList.add('%CurrentProgramsDir%');
-      ValueToTake := GetProgramsPath;
-      FConstValuesList.add(ValueToTake);
-
-      FConstList.add('%CurrentSendToDir%');
-      ValueToTake := GetSendToPath;
-      FConstValuesList.add(ValueToTake);
-
-      FConstList.add('%CurrentProfileDir%');
-      ValueToTake := getUserProfilePath;
-      FConstValuesList.add(ValueToTake);
-
-      { /AllNtUserProfiles directory constants:
-       they are not defined here and will be replaced
-       at the working section code }
-
-
-      { opsi-script-Path and Directories }
-      FConstList.add('%ScriptDrive%');
-      ValueToTake := extractfiledrive(ExpandFilename(Scriptdatei));
-      FConstValuesList.add(ValueToTake);
-
-      FConstList.add('%Scriptpath%');
-      ValueToTake := ExtractFileDir(Scriptdatei);
-      FConstValuesList.add(ValueToTake);
-      FConstList.add('%ScriptDir%');
-      FConstValuesList.add(ValueToTake);
-
-      FConstList.add('%realScriptpath%');
-      if FileExists(Scriptdatei) then
-        ValueToTake := ExtractFileDir(resolveSymlink(Scriptdatei))
-      else
-        ValueToTake := '';
-      (*
-      {$IFDEF WINDOWS}
-      ValueToTake := ExtractFileDir(resolveWinSymlink(Scriptdatei));
-      {$ENDIF WINDOWS}
-      {$IFDEF UNIX}
-      ValueToTake := ExtractFileDir(resolveUnixSymlink(Scriptdatei));
-      {$ENDIF UNIX}
-      *)
-      FConstValuesList.add(ValueToTake);
-
-      FConstList.add('%WinstDir%');
-      ValueToTake := ExtractFileDir(reencode(ParamStr(0), 'system'));
-      FConstValuesList.add(ValueToTake);
-      FConstList.add('%OpsiscriptDir%');
-      ValueToTake := ExtractFileDir(reencode(ParamStr(0), 'system'));
-      FConstValuesList.add(ValueToTake);
-
-      FConstList.add('%OpsiscriptProcName%');
-      ValueToTake := opsiscriptProcName;
-      FConstValuesList.add(ValueToTake);
-
-      FConstList.add('%WinstVersion%');
-      ValueToTake := osconf.OpsiscriptVersion;
-      FConstValuesList.add(ValueToTake);
-      FConstList.add('%OpsiscriptVersion%');
-      ValueToTake := osconf.OpsiscriptVersion;
-      FConstValuesList.add(ValueToTake);
-
-      FConstList.add('%LogFile%');
-      FConstValuesList.add(LogDatei.FileName);
-
-      FConstList.add('%opsiTmpDir%');
-      {$IFDEF WINDOWS}
-      FConstValuesList.add('c:\opsi.org\tmp');
-      {$ENDIF WINDOWS}
-      {$IFDEF UNIX}
-      FConstValuesList.add('/tmp');
-      {$ENDIF UNIX}
-
-      FConstList.add('%opsiUserTmpDir%');
-      {$IFDEF WINDOWS}
-      FConstValuesList.add('c:\opsi.org\usertmp');
-      {$ENDIF WINDOWS}
-      {$IFDEF UNIX}
-      FConstValuesList.add('/tmp');
-      {$ENDIF UNIX}
-
-      FConstList.add('%opsiLogDir%');
-      FConstValuesList.add(copy(oslog.defaultStandardMainLogPath, 1,
-        Length(oslog.defaultStandardMainLogPath) - 1));
-
-      FConstList.add('%opsiapplog%');
-      {$IFDEF WINDOWS}
-      FConstValuesList.add('c:\opsi.org\applog');
-      {$ENDIF WINDOWS}
-      {$IFDEF UNIX}
-      FConstValuesList.add('~/opsi.org/applog');
-      {$ENDIF UNIX}
-
-      FConstList.add('%opsidata%');
-      {$IFDEF WINDOWS}
-      FConstValuesList.add('c:\opsi.org\data');
-      {$ENDIF WINDOWS}
-      {$IFDEF UNIX}
-      FConstValuesList.add('/var/lib/opsi-client-agent');
-      {$ENDIF UNIX}
-
-      {$IFDEF WINDOWS}
-      FConstList.add('%opsiScriptHelperPath%');
-      ValueToTake := getSpecialFolder(CSIDL_PROGRAM_FILES) +
-        '\opsi.org\opsiScriptHelper';
-      FConstValuesList.add(ValueToTake);
-
-
-
-      { Network informations  }
-      FConstList.add('%PCNAME%');
-      ValueToTake := ValueOfEnvVar('PCNAME');
-      if valueToTake = valueEnvVarNotFound then
-        valueToTake := ValueOfEnvVar('computername');
-      FConstValuesList.add(ValueToTake);
-
-      FConstList.add('%HOST%');
-      ValueToTake := ValueOfEnvVar('HOST');
-      FConstValuesList.add(ValueToTake);
-      {$ENDIF WINDOWS}
-
-      {$IFDEF UNIX}
-      FConstList.add('%PCNAME%');
-      ValueToTake := GetHostName;
-      if valueToTake = valueEnvVarNotFound then
-        valueToTake := getCommandResult('hostname');
-      FConstValuesList.add(ValueToTake);
-
-      FConstList.add('%HOST%');
-      ValueToTake := getCommandResult('hostname');
-      FConstValuesList.add(ValueToTake);
-      {$ENDIF LINUX}
-
-      FConstList.add('%IPAddress%');
-      FConstValuesList.add(ipAddress);
-
-      FConstList.add('%IPName%');
-      FConstValuesList.add(ipName);
-
-
-      FConstList.add('%Username%');
-      GetNetUser('', ValueToTake, ErrorInfo);
-      FConstValuesList.add(ValueToTake);
-
-      {$IFDEF WINDOWS}
-      FConstList.add('%TempUser%');
-      FConstValuesList.add(TempUserRegKey);
-      {$ENDIF WINDOWS}
-
-      { opsi service values }
-
-      FConstList.add('%opsiserviceURL%');
-      FConstValuesList.add(opsiserviceURL);
-
-      FConstList.add('%opsiserviceUser%');
-      FConstValuesList.add(opsiserviceUser);
-
-      FConstList.add('%opsiservicePassword%');
-      FConstValuesList.add(opsiservicePassword);
-
-      FConstList.add('%opsiserviceClientId%');
-      FConstValuesList.add(opsiserviceClientId);
-
-      FConstList.add('%hostID%');
-      if opsiserviceClientId <> '' then
-        FConstValuesList.add(opsiserviceClientId)
-      else
-        FConstValuesList.add(computernaming);
-
-      FConstList.add('%FQDN%'); // fqdn in network (not opsi service) context
-      FConstValuesList.add(getFQDN);
-
-      FConstList.add('%opsiServer%');
-
-      valuetotake := copy(opsiserviceUrl, pos('//', opsiserviceUrl) +
-        2, length(opsiserviceurl));
-      valuetotake := copy(valuetotake, 1, pos(':', valuetotake) - 1);
-      FConstValuesList.add(valuetotake);
-
-      FConstList.add('%opsiDepotId%');
-      if opsidata = nil then
-        FConstValuesList.add('')
-      else
-        FConstValuesList.add(trim(Topsi4data(opsidata).depotId));
-
-      FConstList.add('%installingProdName%');
-      if opsidata = nil then
-        FConstValuesList.add('')
-      else
-        FConstValuesList.add(Topsi4data(opsidata).getActualProductId);
-
-      FConstList.add('%installingProdVersion%');
-      if opsidata = nil then
-        FConstValuesList.add('')
-      else
-      try
-        FConstValuesList.add(opsidata.getActualProductVersion);
-      except
-        FConstValuesList.add('')
-      end;
-
-      FConstList.add('%installingProduct%');
-      if opsidata = nil then
-        FConstValuesList.add('')
-      else
-      try
-        FConstValuesList.add(Topsi4data(opsidata).getActualProductId);
-      except
-        FConstValuesList.add('')
-      end;
-    end;
-    LogDatei.log_prog('End: Definition of global system variables', LLinfo);
 
 
     Aktionsliste := TWorkSection.Create(NestingLevel, nil);
@@ -27224,8 +27344,7 @@ begin
             ']'' exists and is written correctly.' +
             ' Please also check that the actions section is not empty.' +
             ' If this is a meta package, please write in the setup script a non-empty actions section'
-            +
-            ' (e.g. with a command like ''comment "Meta package: %installingProdName%"'').'
+            + ' (e.g. with a command like ''comment "Meta package: %installingProdName%"'').'
             + ' Writing meta packages with no or an empty actions section is discouraged.'
             + ' We will turn this warning into an error in one of the next opsi-script versions.',
             LLWarning);
@@ -27355,6 +27474,7 @@ begin
     // reset current dir to the start value
     SetCurrentDir(opsiWinstStartdir);
     scriptsuspendstate := script.Suspended;
+    scriptdeferstate := script.Deferred;
 
     {$IFDEF WIN32}
     // Unblock Input
@@ -27388,7 +27508,7 @@ end;
 
 
 
-begin
+initialization
   randomize;
 
   //PreDefinedVariableSkinDirectory  := '$skindirectory$';
@@ -27471,7 +27591,10 @@ begin
   PStatNames^ [tsExitWindows] := 'ExitWindows';
   PStatNames^ [tsBlockInput] := 'BlockInput';
   PStatNames^ [tsSetDebugProg] := 'SetDebug_prog'; // undocumented
-
+  (*
+  PStatNames^ [tsSetProductProgress] := 'SetProductProgress';
+  // undocumented  background install
+  *)
   PStatNames^ [tsAddConnection] := 'AddConnection'; // undocumented
 
   PStatNames^ [tsSetOldLogLevel] := 'LogLevel';
@@ -27488,6 +27611,7 @@ begin
   PStatNames^ [tsSetFatalError] := 'IsFatalError';
   PStatNames^ [tsSetSuccess] := 'IsSuccess';
   PStatNames^ [tsSetSuspended] := 'IsSuspended';
+  PStatNames^ [tsSetDeferred] := 'IsDeferred';
   PStatNames^ [tsSetNoUpdate] := 'noUpdateScript';
   PStatNames^ [tsSetMarkerErrorNumber] := 'MarkErrornumber';
   PStatNames^ [tsSetReportMessages] := 'ScriptErrorMessages';
@@ -27521,6 +27645,8 @@ begin
 
   PStatNames^ [tsReloadProductList] := 'reloadProductList';
 
+  ScriptConstants := TScriptConstants.Create;
+
   runProfileActions := False;
   runLoginScripts := False;
   allLoginScripts := True;
@@ -27530,5 +27656,9 @@ begin
   runproductlist := False;
   runprocessproducts := False;
   scriptMode := tsmMachine;
+
+finalization
+  FreeMem(PStatNames);
+  ScriptConstants.Free;
 
 end.

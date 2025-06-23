@@ -100,7 +100,7 @@ uses //lcltranslator,
   osfilehelper,
   osTOML,
   osSSLPaths,
-  osEvaluateBooleanFunctions;
+  osEvaluateBooleanFunctions, osmeta, osbackgroundinstall, osbglistwinuser;
 
   {$IFNDEF GUI}
 type

@@ -246,13 +246,15 @@ type
     FProductStates: TStringList;
     FProductActionRequests: TStringList;
     ProductVars: TStringList;
-    FOpsiModules: ISuperObject;
+    //FOpsiModules: ISuperObject;
     FOpsiInformation: ISuperObject;
     FOpsiServiceVersion: string;
     FProductOnClient_aktobject: ISuperObject;
     FProductOnClientIndex: TStringList;
-    mylist: TStringList;
+    //mylist: TStringList;
+    FOpsiModules: TStringList;
     FCommunicationMode: integer;
+    function IsModuleActivated(name:string):boolean;
     function ProductPropertyState_getValues_KeyValueMapp(var error: boolean): TStringList;
     function getProductRequirements(productname: string;
       requirementType: string): TStringList;
@@ -300,6 +302,7 @@ type
     function stateToString(state: TProductState): string;
     function actionRequestToString(actionRequest: TActionRequest): string;
     function stateStringToState(s: string): TProductState;
+    //function stateStringToState4(s: string): TProductState;
     function actionRequestStringToActionRequest(s: string): TActionRequest;
     function actionProgressToString(actionProgress: TActionProgress) : string;
     function getMethodSignature(const methodname: string): TStringList;
@@ -344,6 +347,7 @@ type
     function withRoamingProfiles: boolean;
     function linuxAgentActivated: boolean;
     function macosAgentActivated: boolean;
+    function backgroundInstallActivated: boolean;
     function isConnected: boolean;
     function isConnected2(loglist: TStringList): boolean;
     function getMapOfLoginscripts2Run(allscripts: boolean): TStringList;
@@ -2633,7 +2637,7 @@ begin
   FProductActionRequests := nil;
   ProductVars := nil;
   FProductOnClientIndex := nil;
-  mylist := nil;
+  //mylist := nil;
 end;
 
 destructor TOpsi4Data.Destroy;
@@ -2691,7 +2695,7 @@ begin
     FServiceUrl := serviceURL;
     FDepotId := '';
     FOpsiServiceVersion := '4';
-    FOpsiModules := nil;
+    FOpsiModules := getOpsiModules;
     FOpsiInformation := nil;
     FProductOnClientIndex := TStringList.Create;
     FProductStates := TStringList.Create;
@@ -2702,7 +2706,6 @@ begin
     end;
   end;
 end;
-
 
 function TOpsi4Data.getOpsiModules: TStringList;
 {
@@ -2727,9 +2730,8 @@ It may be also a punishable violation of the Copyright, so for example of the
 "Gesetz über Urheberrecht und verwandte Schutzrechte (Urheberrechtsgesetz)"
 }
 var
+  FOpsiModules: ISuperObject;
   omc: TOpsiMethodCall;
-  //teststring : string;
-  //testbool : boolean;
   myModulesList: TStringList;
   myJsonModulesArray: ISuperObject;
   i: integer;
@@ -2737,7 +2739,7 @@ var
 begin
   myModulesList := TStringList.Create;
   FOpsiInformation := nil;
-  if FOpsiInformation = nil then
+  if isMethodProvided('backend_getLicensingInfo') then
   begin
     omc := TOpsiMethodCall.Create('backend_getLicensingInfo', []);
     if omc <> nil then
@@ -2755,60 +2757,54 @@ begin
           end;
           Result := myModulesList;
         end
-        else
-        begin
-          //  backend_getLicensingInfo failed - retry with backend_info
-          LogDatei.log(
-            'Problem getting backend_getLicensingInfo from service - perhaps old server, we fallback to backend_info',
-            LLwarning);
-          FOpsiInformation := nil;
-          if FOpsiInformation = nil then
-          begin
-            omc := TOpsiMethodCall.Create('backend_info', []);
-            if omc <> nil then
-            begin
-              try
-                FOpsiInformation := FjsonExecutioner.retrieveJsonObject(omc);
-                if (FOpsiInformation <> nil) and
-                  (FOpsiInformation.O['result'] <> nil) and
-                  (FopsiInformation.O['result'].O['modules'] <> nil) then
-                begin
-                  FOpsiModules := FopsiInformation.O['result'].O['modules'];
-                  if FOpsiModules <> nil then
-                    if FOpsiModules.AsObject.GetNames.IsType(stArray) then
-                    begin
-
-                      for i := 0 to FOpsiModules.AsObject.GetNames.AsArray.Length - 1 do
-                      begin
-                        if FOpsiModules.AsObject.GetNames.AsArray.B[i] then
-                        begin
-                          str := FOpsiModules.AsObject.GetNames.AsArray.S[i];
-                          myModulesList.Add(str);
-                        end;
-                        Result := myModulesList;
-                      end;
-                    end;
-                end
-                else
-                  LogDatei.log('Problem getting backend_info from service', LLerror);
-              except
-                LogDatei.log_prog('Exeception getting backend_info from service',
-                  LLerror);
-              end;
-            end
-            else
-              LogDatei.log_prog('Problem creating OpsiMethodCall backend_info', LLerror);
-          end;
-        end;
       except
-        LogDatei.log_prog('Exeception backend_getLicensingInfocalling ', LLerror);
+        LogDatei.log_prog('Exeception backend_getLicensingInfo calling ', LLerror);
       end;
     end
     else
       LogDatei.log_prog('Problem creating OpsiMethodCall backend_getLicensingInfo',
         LLerror);
+  end
+  else
+  begin
+    //  no backend_getLicensingInfo - try with backend_info
+    LogDatei.log(
+      'No method backend_getLicensingInfo at service - perhaps old server or opsiclientd, we fallback to backend_info',
+      LLinfo);
+    omc := TOpsiMethodCall.Create('backend_info', []);
+    if omc <> nil then
+    begin
+      try
+        FOpsiInformation := FjsonExecutioner.retrieveJsonObject(omc);
+        if (FOpsiInformation <> nil) and (FOpsiInformation.O['result'] <>
+          nil) and (FopsiInformation.O['result'].O['modules'] <> nil) then
+        begin
+          FOpsiModules := FopsiInformation.O['result'].O['modules'];
+          if FOpsiModules <> nil then
+            if FOpsiModules.AsObject.GetNames.IsType(stArray) then
+            begin
+              for i := 0 to FOpsiModules.AsObject.GetNames.AsArray.Length - 1 do
+              begin
+                if FOpsiModules.AsObject.GetNames.AsArray.B[i] then
+                begin
+                  str := FOpsiModules.AsObject.GetNames.AsArray.S[i];
+                  myModulesList.Add(str);
+                end;
+                Result := myModulesList;
+              end;
+            end
+            else
+              LogDatei.log('No license info via modules in backend_info', LLError);
+        end
+        else
+          LogDatei.log('No modules data in backend_info', LLinfo);
+      except
+        LogDatei.log_prog('Exeception backend_info calling ', LLerror);
+      end;
+    end
+    else
+      LogDatei.log_prog('Problem creating OpsiMethodCall backend_info', LLerror);
   end;
-
   omc.Free;
 end;
 
@@ -2878,42 +2874,12 @@ var
   index: integer;
   mylist: TStringList;
 begin
-  try
-    Result := False;
-    mylist := getOpsiModules;
-    if Assigned(mylist) then
-    begin
-      index := mylist.IndexOf('license_management');
-      FreeAndNil(mylist);
-    end;
-    if index >= 0 then Result := True;
-  except
-    LogDatei.log(
-      'licence management info not found (exception in withLicenceManagement)',
-      LLWarning);
-    Result := False;
-  end;
+  Result:= IsModuleActivated('license_management');
 end;
 
 function TOpsi4Data.withRoamingProfiles: boolean;
-var
-  index: integer;
 begin
-  try
-    Result := False;
-    mylist := getOpsiModules;
-    if Assigned(mylist) then
-    begin
-      index := mylist.IndexOf('roaming_profiles');
-      FreeAndNil(mylist);
-    end;
-    if index >= 0 then Result := True;
-  except
-    LogDatei.log(
-      'roaming_profiles info not found (exception in withRoamingProfiles)',
-      LLWarning);
-    Result := False;
-  end;
+  Result:= IsModuleActivated('roaming_profiles');
 end;
 
 
@@ -3094,50 +3060,19 @@ begin
 end;
 
 function TOpsi4Data.linuxAgentActivated: boolean;
-var
-  index: integer;
 begin
-  try
-    Result := False;
-    mylist := getOpsiModules;
-    if Assigned(mylist) then
-    begin
-      index := mylist.IndexOf('linux_agent');
-      FreeAndNil(mylist);
-    end;
-    if index >= 0 then Result := True;
-  except
-    LogDatei.log(
-      'linux_agent info not found (exception in linuxAgentActivated)',
-      LLWarning);
-    Result := False;
-  end;
+  Result:= IsModuleActivated('linux_agent');
 end;
-
-
 
 function TOpsi4Data.macosAgentActivated: boolean;
-var
-  index: integer;
 begin
-  try
-    Result := False;
-    mylist := getOpsiModules;
-    if Assigned(mylist) then
-    begin
-      index := mylist.IndexOf('macos_agent');
-      FreeAndNil(mylist);
-    end;
-    if index >= 0 then Result := True;
-  except
-    LogDatei.log(
-      'macos_agent info not found (exception in macosAgentActivated)',
-      LLWarning);
-    Result := False;
-  end;
+  Result:= IsModuleActivated('macos_agent');
 end;
 
-
+function TOpsi4Data.backgroundInstallActivated: boolean;
+begin
+  Result:= IsModuleActivated('background_install');
+end;
 
 procedure TOpsi4Data.saveOpsiConf;
 begin
@@ -3420,6 +3355,7 @@ var
   str: SOString;
   jO: ISuperObject;
   omcresult: TStringList;
+  ProductOnClient: TStringList;
 begin
   LogDatei.log('InitProduct', LLDebug);
   Result := True;
@@ -3452,12 +3388,12 @@ begin
     omc := TOpsiMethodCall.Create('productOnClient_getObjects',
       ['', '{"clientId": "' + actualClient + '", "productId": "' +
       Productvars.Values['productId'] + '", "productType": "LocalbootProduct"}']);
-    mylist := FjsonExecutioner.getListResult(omc);
+    ProductOnClient := FjsonExecutioner.getListResult(omc);
       omc.Free;
-    if (mylist <> nil) then
-      if mylist.Count >= 1 then
+    if (ProductOnClient <> nil) then
+      if ProductOnClient.Count >= 1 then
       begin
-        jO := SO(mylist.Strings[0]);
+        jO := SO(ProductOnClient.Strings[0]);
         str := jO.AsJSon;
         FProductOnClient_aktobject := SO(str);
       end
@@ -4429,6 +4365,26 @@ begin
   omc.Free;
 end;
 
+function TOpsi4Data.IsModuleActivated(Name: string):boolean;
+var
+  index: integer;
+begin
+  try
+    Result := False;
+    if Assigned(FOpsiModules) then
+    begin
+      index := FOpsiModules.IndexOf(Name);
+      FreeAndNil(FOpsiModules);
+    end;
+    if index >= 0 then Result := True;
+  except
+    LogDatei.log(
+      Name + ' info not found (exception in IsModuleActivated)',
+      LLWarning);
+    Result := False;
+  end;
+end;
+
 
 function TOpsi4Data.getProductState: TProductState;
 begin
@@ -4747,7 +4703,10 @@ begin
     //if lastAction <> tac4Custom then
     //  FProductOnClient_aktobject.S['targetConfiguration'] := targetConfigurationS;
     parastr := FProductOnClient_aktobject.asJson(False, False);
-    if lastAction <> tacCustom then
+    // Do not change product version
+    // if action request is custom or progess is 'Deferred'
+    if (lastAction <> tacCustom)
+        and (LowerCase(actionProgressS) <> 'deferred') then
     begin
       if (Productvars <> nil) and (Productvars.values['productVersion'] <> '') then
       begin
@@ -4761,7 +4720,10 @@ begin
           Productvars.Values['productVersion'];
       end;
     end;
-    if lastAction <> tacCustom then
+    // Do not change package version
+    // if action request is custom or progess is 'Deferred'
+    if (lastAction <> tacCustom)
+        and (LowerCase(actionProgressS) <> 'deferred') then
     begin
       if (Productvars <> nil) and (Productvars.values['packageVersion'] <> '') then
       begin

@@ -60,6 +60,8 @@ uses
   registry,
   osregistry,
   systemcriticalu,
+  osbackgroundinstall,
+
 {$IFDEF WIN32}
   osfuncwin2,
 {$ENDIF WIN32}
@@ -113,7 +115,8 @@ uses
   osnetutil,
   //IdSysLog,
   strutils,
-  inifiles;
+  inifiles,
+  osmeta;
 
 type
   TProgramMode = (pmNotSet, pmInfo, pmStandard, pmHistoDialog, pmBuildPC_classic,
@@ -221,6 +224,9 @@ function ValueOfEnvVar(const VarName: string): string;
 procedure saveVersionToProfile;
 function readVersionFromProfile: string;
 function scriptWasExecutedBefore: boolean;
+procedure SetAndSendProductProgress(const Verfahren: TActionRequest);
+function makeAbsoluteScriptPath(const Pfad: string; const ScriptPath: string): string;
+function GetPathToScript: string;
 
 
 
@@ -330,6 +336,7 @@ var
 const
   //MaxSavedScriptFiles = 20;
   StandardIniFile = 'opsi-script.ini';
+
 
 function ProgramModeToString(ProgramMode:TProgramMode):string;
 begin
@@ -846,7 +853,127 @@ begin
   end;
 end;
 
+procedure SetAndSendProductProgress(const Verfahren: TActionRequest);
+// set the progress according to the kind of request
+// and calls to send a update of the productOnClient object to the server
+begin
+  case Verfahren of
+    tacSetup: opsidata.setProductProgress(tppInstalling);
+    tacDeinstall: opsidata.setProductProgress(tppUninstalling);
+    tacOnce: opsidata.setProductProgress(tppInstalling);
+    tacAlways: opsidata.setProductProgress(tppInstalling);
+    tacCustom: opsidata.setProductProgress(tppInstalling);
+    tacLogin: opsidata.setProductProgress(tppInstalling);
+    tacUpdate: opsidata.setProductProgress(tppInstalling);
+  end;
+end;
 
+function GetPathToScript: string;
+var
+  Pfad: string;
+begin
+    //only for backward compatibility and for special circumstances
+  {$IFDEF UNIX}
+    if not DirectoryExists(depotdrive) then
+    begin
+      LogDatei.log('Setting depotdrive from: ' + depotdrive + ' to: ' + depotdrive_old,
+        LLdebug2);
+      depotdrive := depotdrive_old;
+    end;
+  {$ENDIF LINUX}
+
+    Pfad := opsidata.getSpecialScriptPath;
+    if Pfad = '' //this should be the normal case since winst 4.2
+    then
+      // take pfad from depotdrive + depotdir (coming from registry)
+    begin
+      Pfad := depotdrive + depotdir;
+
+      if Pfad[length(Pfad)] <> DirectorySeparator then
+        Pfad := Pfad + PathDelim;
+      Pfad := Pfad + Produkt;
+      if Pfad[length(Pfad)] <> PathDelim then
+        Pfad := Pfad + PathDelim;
+    end;
+  Result:=Pfad;
+end;
+
+function CheckForProcessProduct:boolean;
+begin
+  Result := True; //Process product?
+{$IFDEF WINDOWS}
+  // start with background handling:
+  // are we in a background situation (users are logged in) ?
+  if userAreLoggedIn then
+  begin
+    LogDatei.log(
+      'logged in users detected - so we check about background install',
+      LLnotice);
+    // is background-install enabled an licensed ?
+    if isBackgroundinstall_enabled then
+    begin
+      LogDatei.log(
+      'background install enabled',
+      LLnotice);
+      // check license module for background_install
+      if opsidata.backgroundInstallActivated then
+      begin
+         LogDatei.log(
+      'background install licensed',
+      LLnotice);
+        // do we have the meta data ?
+        if metaDataFound(ExtractFileDir(makeAbsoluteScriptPath(GetPathToScript,opsidata.getProductScriptPath(opsidata.getProductActionRequest)))) then
+        begin
+          LogDatei.log(
+            'meta data found: use it for background install',
+            LLnotice);
+          // handle background install
+          checkAndHandleRunningProductProcesses(osmeta.CheckDirs,
+            osmeta.processes, Result);
+           LogDatei.log(
+            'background install check finished - install: ' + BoolToStr(Result,true),
+            LLnotice);
+        end
+        else
+        begin
+          LogDatei.log(
+            'Background install situation, but no opsi-meta-data file found.',
+            LLwarning);
+          LogDatei.log(
+            'So we defer the installation.', LLwarning);
+          scriptdeferstate:= True;
+          Result:=False;
+        end;
+      end
+      else
+      begin
+        LogDatei.log(
+          'background install enabled but no license - so nothing to do about background install',
+          LLError);
+        LogDatei.log(
+          'Either set config backroundinstall_enabled=false or import license for background_install.',
+          LLError);
+        Result := False;
+      end;
+    end
+    else
+    begin
+       LogDatei.log(
+        'background install not enabled - so nothing to do about background install',
+        LLdebug);
+       Result := False;
+    end;
+  end
+  else
+  begin
+    LogDatei.log(
+      'No useres are logged in - so nothing to do about background install',
+      LLdebug);
+  // end with background handling:
+  end;
+  {$ENDIF WINDOWS}
+  LogDatei.log('CheckForProcessProduct: '+ BoolToStr(Result, True), LLInfo);
+end;
 
 procedure ProcessProdukt(var extremeErrorLevel: TErrorLevel);
 
@@ -906,33 +1033,13 @@ begin
         'failed opsidata.initProduct', LLcritical);
   end;
   LogDatei.log('ProcessNonZeroScript opsidata initialized', LLdebug2);
-  Pfad := opsidata.getSpecialScriptPath;
-  //only for backward compatibility and for special circumstances
-{$IFDEF UNIX}
-  if not DirectoryExists(depotdrive) then
-  begin
-    LogDatei.log('Setting depotdrive from: ' + depotdrive + ' to: ' + depotdrive_old,
-      LLdebug2);
-    depotdrive := depotdrive_old;
-  end;
-{$ENDIF LINUX}
 
-  if Pfad = '' //this should be the normal case since winst 4.2
-  then
-    // take pfad from depotdrive + depotdir (coming from registry)
-  begin
-    Pfad := depotdrive + depotdir;
-
-    if Pfad[length(Pfad)] <> DirectorySeparator then
-      Pfad := Pfad + PathDelim;
-    Pfad := Pfad + Produkt;
-  end;
+  Pfad:=GetPathToScript;
 
 
   if Pfad <> '' then
   begin
-    if Pfad[length(Pfad)] <> PathDelim then
-      Pfad := Pfad + PathDelim;
+
 
     if runloginscripts then
       Verfahren := tacLogin
@@ -942,8 +1049,12 @@ begin
     else
       Verfahren := opsidata.getProductActionRequest;
 
+
+    // this switches state and progress
     if Verfahren in [tacDeinstall, tacSetup, tacAlways] then
       opsidata.SetProductProgressByActionrequest(Verfahren);
+      SetAndSendProductProgress(Verfahren);
+
 
     if Verfahren in [tacDeinstall, tacSetup, tacOnce, tacAlways,
       tacCustom, tacLogin] then
@@ -1031,6 +1142,7 @@ var
   buildpcscript: TuibInstScript;
   tmplist: TStringList;
   Produkte: TStringList = nil;
+  initialProductState: string;
   goOn: boolean;
   problemString: string;
   aktActionRequestStr: string;
@@ -1289,12 +1401,15 @@ begin
           Logdatei.log('Actionrequest for product: ' + Produkt +
             ' is (original/actual): (' + opsidata.actionRequestToString(
             orgAction) + ' / ' + aktActionRequestStr + ')', LLInfo);
+          ScriptConstants.Init;
           // process product only if we have a original action request which is still set
-          if (aktAction <> tacNone) and (orgAction <> tacNone) then
+          if (aktAction <> tacNone) and (orgAction <> tacNone) and CheckForProcessProduct() then
             processProduct := True
           else
             processProduct := False;
         end;
+        initialProductState := opsidata.getActualProductInstallationState;
+        LogDatei.log('initialProductState: ' + initialProductState, LLInfo);
         if processProduct then
         begin
           LogDatei.log('BuildPC: process product .....', LLDebug3);
@@ -1308,24 +1423,63 @@ begin
           ProcessMess;
           {$ENDIF GUI}
           LogDatei.LogProduktId := True;
+          LogDatei.log('opsidata.getProductState: '
+             + opsidata.stateToString(opsidata.getProductState), LLInfo);
+
           ProcessProdukt(extremeErrorLevel);
 
-;
-          LogDatei.log('BuildPC: update switches .....', LLDebug);
-          if (PerformExitWindows < txrImmediateLogout) and (not scriptsuspendstate) then
+
+          if (PerformExitWindows < txrImmediateLogout)
+          then
           begin
-            LogDatei.log_prog('BuildPC: update switches 2.....', LLDebug);
+            LogDatei.log_prog('BuildPC: standard update switches .....', LLDebug);
             opsidata.UpdateSwitches(extremeErrorLevel, logdatei.actionprogress);
-          end;
+          end
+          else LogDatei.log('BuildPC: will not update switches .....', LLDebug);
+
           LogDatei.log_prog('BuildPC: finishProduct .....', LLDebug);
           opsidata.finishProduct;
           LogDatei.LogProduktId := False;
         end;
+         // store results to webservice
+          if (scriptfailed) then
+          begin
+            LogDatei.log('installation failed: set product state: unknown'
+             + initialProductState, LLInfo);
+            opsidata.ProductOnClient_update(opsidata.getActualProductActionRequest,  // progress
+                                            tarFailed,    // result
+                                            opsidata.actionRequestStringToActionRequest('None'),
+                                            opsidata.actionRequestStringToActionRequest(opsidata.getActualProductLastActionRequest),
+                                            opsidata.stateStringToState('unknown'));  // state
+          end
+          else if (scriptdeferstate) then
+          begin
+            LogDatei.log('installation deferred: set progress and restore the initial product state: '
+             + initialProductState, LLInfo);
+            opsidata.ProductOnClient_update('Deferred',  // progress
+                                            tarNone,    // result
+                                            opsidata.actionRequestStringToActionRequest(opsidata.getActualProductActionRequest),
+                                            opsidata.actionRequestStringToActionRequest(opsidata.getActualProductLastActionRequest),
+                                            opsidata.stateStringToState(initialProductState));  // state
+          end
+          else if (scriptsuspendstate) then
+          begin
+            LogDatei.log('installation suspended: set progress and restore the initial product state: '
+             + initialProductState, LLInfo);
+            opsidata.ProductOnClient_update('Suspended',
+                                            tarNone,
+                                            opsidata.actionRequestStringToActionRequest(opsidata.getActualProductActionRequest),
+                                            opsidata.actionRequestStringToActionRequest(opsidata.getActualProductLastActionRequest),
+                                            opsidata.stateStringToState('unknown'));
+          end;
+
         // At the recursive call to BuildPC we have lost the Produkte list
         // as a dirty hack we always reload here and do not increment the counter
         //Produkte := OpsiData.getListOfProductIDs;
         Inc(i);
       end;
+
+
       LogDatei.log('BuildPC: saveOpsiConf .....', LLDebug3);
       opsidata.saveOpsiConf;
 
@@ -2525,8 +2679,10 @@ begin
                 // we are in /serviceBatch mode and so we have to update the productOnClient via service
 
                 LogDatei.log('serviceBatch: update switches .....', LLDebug);
-                if (PerformExitWindows < txrImmediateLogout) and
-                  (not scriptsuspendstate) then
+                if (PerformExitWindows < txrImmediateLogout)
+                   and (not scriptsuspendstate)
+                   and (not scriptdeferstate)
+                then
                 begin
                   LogDatei.log_prog('serviceBatch: update switches 2.....', LLDebug);
                   // we are in /serviceBatch mode and so we act like having a actionrequest=setup
