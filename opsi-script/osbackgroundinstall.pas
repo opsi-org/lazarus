@@ -966,7 +966,8 @@ begin
           LogDatei.log('Allowed: ' + methodlist.Text, LLerror);
         end;
 
-
+        logdatei.log('procs to search:',LLdebug);
+        LogDatei.log_list(procList,LLdebug);
         if procList.Count > 0 then
         begin
           LogDatei.log('check for running processes before we start', LLnotice);
@@ -1240,6 +1241,8 @@ begin
               end;
             end;
           end;
+          logdatei.log('procs from checkdirs:',LLdebug);
+          LogDatei.log_list(allDirList,LLdebug);
           // add proclist
           // avoid double entries: remove proclist from allDirList
           if procList.Count > 0 then
@@ -1257,6 +1260,8 @@ begin
           begin
             if resultList[i] = '' then resultList.Delete(i);
           end;
+          logdatei.log('procs from dirs + procs:',LLdebug);
+          LogDatei.log_list(resultList,LLdebug);
           if resultList.Count > 0 then
           begin
             // call checkAndHandleRunningProcFull with defaults
