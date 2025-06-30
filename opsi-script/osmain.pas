@@ -961,7 +961,7 @@ begin
        LogDatei.log(
         'background install not enabled - so nothing to do about background install',
         LLdebug);
-       Result := False;
+       // The result has to be true here
     end;
   end
   else
