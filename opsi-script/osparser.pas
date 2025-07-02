@@ -1980,6 +1980,9 @@ begin
   LogDatei.log_prog('Start: Definition of global system variables', LLinfo);
   //with Script do
   begin
+    // may be called multiple times, so we clear
+    Clear;
+
     { Attention: every key need an value entry !
       If value is missing AppyTextConstants will get an index error. }
 
@@ -2280,7 +2283,7 @@ begin
     valuetotake := copy(opsiserviceUrl, pos('//', opsiserviceUrl) +
       2, length(opsiserviceurl));
     valuetotake := copy(valuetotake, 1, pos(':', valuetotake) - 1);
-    Add('%opsiServer='+ValueToTake);
+    Add('%opsiServer%='+ValueToTake);
 
      // %opsiDepotId%
     if opsidata = nil then

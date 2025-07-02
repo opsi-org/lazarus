@@ -1001,6 +1001,7 @@ var
       Result := True;
       Scriptname := Skriptdateiname;
       NestingLevel := 0;
+      ScriptConstants.Init;
       CreateAndProcessScript(Scriptname, NestingLevel, False, extremeErrorLevel);
       Logdatei.log_prog('After CreateAndProcessScript', LLdebug2);
     end;
@@ -2649,6 +2650,7 @@ begin
                 opsidata.setProductProgress(tppInstalling);
                 opsidata.setProductState(tpsUnkown);
               end;
+              ScriptConstants.Init;
               CreateAndProcessScript(scriptlist.Strings[scriptindex],
                 NestingLevel, False, extremeErrorLevel);
             end;

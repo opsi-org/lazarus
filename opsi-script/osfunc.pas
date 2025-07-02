@@ -4853,17 +4853,37 @@ begin
   {$IFDEF WINDOWS}
   WMIResults := TStringlist.Create;
   WMIProperties := TStringList.Create;
+  (*
   WMIProperties.Add('OSArchitecture');
   try
     if osGetWMI('root\cimv2', 'Win32_OperatingSystem', WMIProperties,
         '', WMIResults, ErrorMsg) then
     begin
       WMIResult := WMIResults.Values['OSArchitecture'];
-      if WMIResult = '32-Bit'then
+      LogDatei.log_prog('getOSArchitecture: WMIResult: '+WMIResult,LLinfo);
+      if lowercase(WMIResult) = '32-bit'then
         Result := 'x86_32'
-      else if WMIResult = '64-Bit' then
+      else if lowercase(WMIResult) = '64-bit' then
         Result := 'x86_64'
-      else if WMIResult = '64-Bit-ARM-Prozessor' then
+      else if lowercase(WMIResult).StartsWith('64-bit-arm-') then
+        Result := 'arm_64';
+    end;
+    *)
+    // https://learn.microsoft.com/en-us/windows/win32/api/sysinfoapi/ns-sysinfoapi-system_info
+  WMIProperties.Add('Architecture');
+  try
+    if osGetWMI('root\cimv2', 'WIN32_PROCESSOR', WMIProperties,
+        '', WMIResults, ErrorMsg) then
+    begin
+      WMIResult := WMIResults.Values['Architecture'];
+      LogDatei.log_prog('getOSArchitecture: WMIResult (CPU Architecture): '+WMIResult,LLinfo);
+      if WMIResult = '0'then
+        Result := 'x86_32'
+      else if WMIResult = '5' then
+        Result := 'arm'
+      else if WMIResult = '9' then
+        Result := 'x86_64'
+      else if WMIResult = '12'  then
         Result := 'arm_64';
     end;
   finally
@@ -4871,14 +4891,6 @@ begin
      FreeAndNil(WMIProperties);
   end;
   {$ENDIF WINDOWS}
-  //{$IFDEF WIN32}
-  //if DSiIsWow64 then Result := 'x86_64'
-  //else
-  //  Result := 'x86_32';
-  //{$ENDIF WIN32}
-  //{$IFDEF WIN64}
-  //Result := 'x86_64';
-  //{$ENDIF WIN64}
   {$IFDEF LINUX}
   // At the moment the only supported architecture at Linux
   Result := 'x86_64';
