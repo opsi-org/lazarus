@@ -2119,10 +2119,12 @@ begin
      they are not defined here and will be replaced
      at the working section code }
 
-
-    { opsi-script-Path and Directories }
-    ScriptDatei := ExtractFileDir(makeAbsoluteScriptPath(GetPathToScript,
-      opsidata.getProductScriptPath(opsidata.getProductActionRequest)));
+    // do not call webservice if it is not initialized
+    if opsidata <> nil then
+      if opsidata.isConnected then
+        { opsi-script-Path and Directories }
+        ScriptDatei := ExtractFileDir(makeAbsoluteScriptPath(GetPathToScript,
+          opsidata.getProductScriptPath(opsidata.getProductActionRequest)));
 
     // %ScriptDrive%
     ValueToTake := extractfiledrive(ExpandFilename(Scriptdatei));
