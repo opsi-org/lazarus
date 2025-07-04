@@ -4848,6 +4848,7 @@ var
   WMIProperties: TStringList;
   WMIResult: string;
   ErrorMsg: string;
+  is64OS : boolean;
 begin
   Result := 'unknown';
   {$IFDEF WINDOWS}
@@ -4877,14 +4878,27 @@ begin
     begin
       WMIResult := WMIResults.Values['Architecture'];
       LogDatei.log_prog('getOSArchitecture: WMIResult (CPU Architecture): '+WMIResult,LLinfo);
+      LogDatei.log_prog('0=intel32;5=arm32;9=intel64;12=arm64',LLinfo);
+      is64OS := Is64BitSystem;
+      LogDatei.log_prog('getOSArchitecture: Is64BitSystem (OS Architecture): '+BoolToStr(is64OS,true),LLinfo);
       if WMIResult = '0'then
+        // we are on 32 bit intel (nothing else is possible)
         Result := 'x86_32'
       else if WMIResult = '5' then
+        // we are on 32 bit arm (nothing else is possible)
         Result := 'arm'
       else if WMIResult = '9' then
-        Result := 'x86_64'
+      begin
+        // we are on 64 bit intel (possible: x86_32 or x86_64)
+        if is64OS then Result := 'x86_64'
+        else Result := 'x86_32';
+      end
       else if WMIResult = '12'  then
-        Result := 'arm_64';
+      begin
+        // we are on 64 bit aem (possible: arm or arm_64)
+        if is64OS then Result := 'arm_64'
+        else Result := 'arm';
+      end;
     end;
   finally
      FreeAndNil(WMIResults);
