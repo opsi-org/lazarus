@@ -30,7 +30,7 @@ function isBackgroundinstall_enabled: boolean;
 resourcestring
   rsBgDialog_Title = 'Quit programs';
   rsBgDialog_StopFor =
-    'The following programs must be stopped for the installation of \"#@ProgramName@#\" :';
+    'The following programs must be stopped for the installation of \"**#@ProgramName@#**\" :';
   rsBgDialog_timeoutMessage =
     'The default method: \"**#@defaultMethod@#**\" is automatically selected in : **{timeout}** minutes.';
   rsBgDialog_deferMessage =
@@ -900,6 +900,10 @@ var
 begin
   // create lists
   runningProcList := TStringList.Create;
+  // we want no duplicates in runningProcList
+  // https://www.freepascal.org/docs-html/rtl/classes/tstringlist.duplicates.html
+  runningProcList.Sorted:= true;
+  runningProcList.Duplicates:= dupIgnore;
   serviceBinaryList := TStringList.Create;
   messageList := TStringList.Create;
   methodlist := TStringList.Create;

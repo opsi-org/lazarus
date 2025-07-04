@@ -7,6 +7,8 @@ opsi-script (4.12.18.0) unreleased; urgency=medium
  * osfunc: getOSArchitecture:
    windows: use WMI CPU Architecture together with osfunc:Is64BitSystem (OS bitness)
    to dermine the os architecture (now arm / arm64 also supported)
+* osbackgroundinstall: bg-dialog: write: #@ProgramName@# bold
+* osbackgroundinstall: bg-dialog: no double process entries
 
 -- d.oertel <d.oertel@uib.de> 2025-03-24
 
