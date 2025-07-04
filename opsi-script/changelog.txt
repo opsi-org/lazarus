@@ -2,7 +2,7 @@ todo:
 isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-package-requires-a-reboot-of-my-system
 mac getIpByName liefert name von IPnum
 
-opsi-script (4.12.18.0) unreleased; urgency=medium
+opsi-script (4.12.18.1) unreleased; urgency=medium
 
  * osfunc: getOSArchitecture:
    windows: use WMI CPU Architecture together with osfunc:Is64BitSystem (OS bitness)
