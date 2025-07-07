@@ -749,7 +749,7 @@ begin
 
   NestingLevel := 0;
   configTestSyntax := True;
-  ScriptConstants.Init;
+  ScriptConstants.Init(SkriptDatei);
   CreateAndProcessScript(SkriptDatei, NestingLevel, False, dummyErrorLevel);
   LogDatei.Close;
   configTestSyntax := False;
@@ -871,7 +871,7 @@ begin
   end;
 
   NestingLevel := 0;
-  ScriptConstants.Init;
+  ScriptConstants.Init(SkriptDatei);
   CreateAndProcessScript(SkriptDatei, NestingLevel, False, dummyErrorLevel);
   LogDatei.Close;
 end;
@@ -893,7 +893,7 @@ begin
     LogDatei.initiate(LogDateiName, False);
 
   NestingLevel := 0;
-  ScriptConstants.Init;
+  ScriptConstants.Init(SkriptDatei);
   CreateAndProcessScript(SkriptDatei, NestingLevel, False, dummyErrorLevel);
 
 end;

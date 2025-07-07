@@ -262,7 +262,7 @@ type
 
   TScriptConstants = class(TStringList)
   public
-    procedure Init;
+    procedure Init(ScriptDatei: string);
     function ReplaceInString(inString: string): string;
     procedure ReplaceInList(var List: TXStringList);
     constructor Create;
@@ -1963,7 +1963,7 @@ end;
 
 { TScriptConstants }
 
-procedure TScriptConstants.Init;
+procedure TScriptConstants.Init(ScriptDatei: string);
 var
   {$IFDEF WINDOWS}
   Regist: TuibRegistry;
@@ -1974,10 +1974,10 @@ var
   ipAddress: string;
   ipName: string;
   ErrorInfo: string;
-  ScriptDatei: string;
 begin
   { Definition of global system variables }
   LogDatei.log_prog('Start: Definition of global system variables', LLinfo);
+  try
   //with Script do
   begin
     // may be called multiple times, so we clear
@@ -2118,13 +2118,6 @@ begin
     { /AllNtUserProfiles directory constants:
      they are not defined here and will be replaced
      at the working section code }
-
-    // do not call webservice if it is not initialized
-    if opsidata <> nil then
-      if opsidata.isConnected then
-        { opsi-script-Path and Directories }
-        ScriptDatei := ExtractFileDir(makeAbsoluteScriptPath(GetPathToScript,
-          opsidata.getProductScriptPath(opsidata.getProductActionRequest)));
 
     // %ScriptDrive%
     ValueToTake := extractfiledrive(ExpandFilename(Scriptdatei));
@@ -2317,6 +2310,16 @@ begin
       Add('%installingProduct%='+Topsi4data(opsidata).getActualProductId);
     except
       Add('%installingProduct%='+'');
+    end;
+  end;
+
+  except
+     on e: Exception do
+    begin
+      LogDatei.log('exception in TScriptConstants.Init  ' +
+        e.message, LLError);
+      LogDatei.log('List of constats before exception:  ', LLError);
+      LogDatei.log_list(self,LLError);
     end;
   end;
   LogDatei.log_prog('End: Definition of global system variables', LLinfo);

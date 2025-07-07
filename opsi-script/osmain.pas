@@ -1001,7 +1001,7 @@ var
       Result := True;
       Scriptname := Skriptdateiname;
       NestingLevel := 0;
-      ScriptConstants.Init;
+      ScriptConstants.Init(Scriptname);
       CreateAndProcessScript(Scriptname, NestingLevel, False, extremeErrorLevel);
       Logdatei.log_prog('After CreateAndProcessScript', LLdebug2);
     end;
@@ -1153,6 +1153,7 @@ var
   excludedProducts: TStringList;
   productscopy: TStringList;
   opsiclientd: boolean;
+  ScriptDatei : string;
   {$IFDEF WINDOWS}
   regDataType: tuibRegDataType;
   {$ENDIF WINDOWS}
@@ -1402,7 +1403,9 @@ begin
           Logdatei.log('Actionrequest for product: ' + Produkt +
             ' is (original/actual): (' + opsidata.actionRequestToString(
             orgAction) + ' / ' + aktActionRequestStr + ')', LLInfo);
-          ScriptConstants.Init;
+          ScriptDatei := ExtractFileDir(makeAbsoluteScriptPath(GetPathToScript,
+          opsidata.getProductScriptPath(opsidata.getProductActionRequest)));
+          ScriptConstants.Init(ScriptDatei);
           // process product only if we have a original action request which is still set
           if (aktAction <> tacNone) and (orgAction <> tacNone) and CheckForProcessProduct() then
             processProduct := True
@@ -2650,7 +2653,7 @@ begin
                 opsidata.setProductProgress(tppInstalling);
                 opsidata.setProductState(tpsUnkown);
               end;
-              ScriptConstants.Init;
+              ScriptConstants.Init(scriptlist.Strings[scriptindex]);
               CreateAndProcessScript(scriptlist.Strings[scriptindex],
                 NestingLevel, False, extremeErrorLevel);
             end;
