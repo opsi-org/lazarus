@@ -156,7 +156,6 @@ opsi-script-test windows:
   script:
     - echo "opsi-script-test on windows"
     - cp $PROJECT_REPOSITORY_PATH\compiler_out\binarys\i386-win32\opsi-script.exe %SystemDrive%\%ProgramFiles(x86)%\opsi.org\opsi-client-agent\opsi-script\opsi-script.exe
-    - cp $PROJECT_REPOSITORY_PATH\compiler_out\binarys\i386-win32\opsi-script.exe %SystemDrive%\%ProgramFiles(x86)%\opsi.org\opsi-client-agent\opsi-script\winst32.exe
     #- C:\"Program Files (x86)"\opsi.org\opsi-client-agent\opsi-script\opsi-script.exe $PROJECT_REPOSITORY_PATH\ci_cd_opsi-script-test.opsiscript /silent
     - C:\"Program Files (x86)"\opsi.org\opsi-client-agent\opsi-script\opsi-script.exe $PROJECT_REPOSITORY_PATH\ci_cd_opsi-script-test.opsiscript /batch /opsiservice $OPSISERVICEURL /clientid $LAZ_WINDOWS /username $LAZ_WINDOWS /password $PASSWORD_LAZ_WINDOWS
     #- ssh $USERNAME@bonifax.uib.gmbh #work this out
@@ -181,9 +180,7 @@ opsi-script to binaryindex:
     - cd opsi-script
     - opsi-dev-cli -l info binary pull
     - cp compiler_out/binarys/i386-win32/opsi-script.exe upload/win32/opsi-script
-    - cp upload/win32/opsi-script/opsi-script.exe upload/win32/opsi-script/winst32.exe
     - cp compiler_out/binarys/x86_64-win64/opsi-script.exe upload/win64/opsi-script
-    - cp upload/win64/opsi-script/opsi-script.exe upload/win64/opsi-script/winst64.exe
     - cp compiler_out/binarys/x86_64-linux/opsi-script upload/lin64/opsi-script
     - cp compiler_out/binarys/x86_64-linux/opsi-script-gui upload/lin64/opsi-script
     - cp compiler_out/binarys/x86_64-darwin/opsi-script upload/mac64/opsi-script
