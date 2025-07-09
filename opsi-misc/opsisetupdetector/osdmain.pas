@@ -508,8 +508,12 @@ begin
   if not DirectoryExists(osdsettings.mylocaledir) then
     osdsettings.mylocaledir := '';
   {$ENDIF LINUX}
-  //mylang := GetDefaultLang;  // depricated
-  osdsettings.mylang := SetDefaultLang('');
+  // use stored last language if possible
+  if myconfiguration.LastLanguage = 'de' then osdsettings.mylang := 'de'
+  else if myconfiguration.LastLanguage = 'en' then osdsettings.mylang := 'en'
+  else if myconfiguration.LastLanguage = 'fr' then osdsettings.mylang := 'fr'
+  else
+    osdsettings.mylang := SetDefaultLang('');
   SetDefaultLang(osdsettings.mylang, osdsettings.mylocaledir);
 
   {$IFDEF WINDOWS}
@@ -588,16 +592,23 @@ begin
   end
   else
   begin
-    //mylang := GetDefaultLang;  // depricated
-    osdsettings.mylang := SetDefaultLang('');
+    // use stored last language if possible
+    LogDatei.log('Stored lang: ' + myconfiguration.LastLanguage, LLInfo);
+    if myconfiguration.LastLanguage = 'de' then osdsettings.mylang := 'de'
+    else if myconfiguration.LastLanguage = 'en' then osdsettings.mylang := 'en'
+    else if myconfiguration.LastLanguage = 'fr' then osdsettings.mylang := 'fr'
+    else
+    begin
+      osdsettings.mylang := SetDefaultLang('');
+      LogDatei.log('Detected default lang: ' + osdsettings.mylang, LLInfo);
+    end;
+    SetDefaultLang(osdsettings.mylang, osdsettings.mylocaledir);
     {$IFDEF WINDOWS}
     if LowerCase(osdsettings.mylang) = '' then
       osdsettings.mylang := LowerCase(
         copy(GetSystemDefaultLocale(LOCALE_SABBREVLANGNAME), 1, 2));
     {$ENDIF WINDOWS}
     SetDefaultLang(osdsettings.mylang, osdsettings.mylocaledir);
-    LogDatei.log('Detected default lang: ' + osdsettings.mylang, LLInfo);
-    //LogDatei.log('Detected default lang: ' + SetDefaultLang(''), LLInfo);
   end;
 
 

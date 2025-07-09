@@ -331,8 +331,8 @@ type
     Panel21: TPanel;
     Panel22: TPanel;
     Panel23: TPanel;
-    Panel24: TPanel;
     Panel25: TPanel;
+    Panel26: TPanel;
     Panel27: TPanel;
     Panel28: TPanel;
     PanelBgMetaInst1: TPanel;
@@ -630,7 +630,7 @@ type
     procedure TabSheetCreateShow(Sender: TObject);
     procedure TabSheetIconsShow(Sender: TObject);
     procedure TabSheetProduct2ContextPopup(Sender: TObject; MousePos: TPoint;
-      var Handled: Boolean);
+      var Handled: boolean);
     procedure TabSheetSetup1Enter(Sender: TObject);
     procedure TabSheetSetup2Enter(Sender: TObject);
     procedure TabSheetSetup3Enter(Sender: TObject);
@@ -649,6 +649,7 @@ type
     procedure TIComboBoxBgOS1Change(Sender: TObject);
     procedure TIComboBoxChannelChange(Sender: TObject);
     procedure TIComboBoxChannelEditingDone(Sender: TObject);
+    procedure TIRadioGroupCreateModeEditingDone(Sender: TObject);
     procedure WingetInputEditingDone(Sender: TObject);
     procedure TIEditProdIDChange(Sender: TObject);
     procedure TIEditProdIDExit(Sender: TObject);
@@ -1000,6 +1001,8 @@ begin
       TISpinEditPrio.Link.SetObjectAndProperty(productdata, 'priority');
       // definition of class TProductData in unit osdbasedata line ~256
       TILabelDirSelIcon.Link.SetObjectAndProperty(osdbasedata.aktproduct.productdata,
+        'productImageFullFileName');
+      TIImageIconPreview.Link.SetObjectAndProperty(osdbasedata.aktproduct.productdata,
         'productImageFullFileName');
       TIGridDep.ListObject := osdbasedata.aktproduct.dependencies;
       TIGridProp.ListObject := osdbasedata.aktproduct.properties;
@@ -1644,6 +1647,9 @@ begin
 end;
 
 procedure TResultform1.MenuItemOpenProjClick(Sender: TObject);
+var
+  IconName: string;
+  IconImage: TImage;
 begin
   resetGUI;
   OpenDialog1.FilterIndex := 8;   // project file
@@ -1664,6 +1670,29 @@ begin
     TIGridProp.ListObject := osdbasedata.aktproduct.properties;
     TIGridProp.ReloadTIList;
     TIGridProp.Update;
+    if FileExists(osdbasedata.aktproduct.productdata.productImageFullFileName) then
+    begin
+      try
+        LabelIconName.Visible := True;
+        IconName :=
+          osdbasedata.aktproduct.productdata.productImageFullFileName;
+        LabelNameSelIcon.Caption := IconName;
+        LabelIconDir.Visible := True;
+        TILabelDirSelIcon.Visible := True;
+        // paint icon in preview
+        TIImageIconPreview.Visible := True;
+        // get selected icon
+        IconImage := TImage.Create(TabSheetIcons);
+        IconImage.Picture.LoadFromFile(IconName);
+        PaintPreview(IconImage);
+        // adjust checkboxes
+        CheckBoxNoIcon.Checked := False;
+        CheckBoxDefaultIcon.Checked := False;
+      finally
+        FreeAndNil(IconImage);
+      end;
+    end;
+
     // process osdsettings.runmode
     setRunMode;
     LogDatei.log('Finished import Project file from: ' + OpenDialog1.FileName, LLnotice);
@@ -1689,6 +1718,7 @@ begin
   osdsettings.mylang := 'de';
   SetDefaultLang('de', osdsettings.mylocaledir);
   initGUI;
+  myconfiguration.LastLanguage := 'de';
 end;
 
 procedure TResultform1.MenuItemLangEnClick(Sender: TObject);
@@ -1696,13 +1726,15 @@ begin
   osdsettings.mylang := 'en';
   SetDefaultLang('en', osdsettings.mylocaledir);
   initGUI;
+  myconfiguration.LastLanguage := 'en';
 end;
 
 procedure TResultform1.MenuItemLangEsClick(Sender: TObject);
 begin
-  osdsettings.mylang := 'en';
+  osdsettings.mylang := 'es';
   SetDefaultLang('es', osdsettings.mylocaledir);
   initGUI;
+  myconfiguration.LastLanguage := 'es';
 end;
 
 procedure TResultform1.MenuItemLangFrClick(Sender: TObject);
@@ -1710,6 +1742,7 @@ begin
   osdsettings.mylang := 'fr';
   SetDefaultLang('fr', osdsettings.mylocaledir);
   initGUI;
+  myconfiguration.LastLanguage := 'fr';
 end;
 
 procedure TResultform1.MenuItemStartClick(Sender: TObject);
@@ -2322,33 +2355,50 @@ procedure TResultform1.BtBgSaveFileClick(Sender: TObject);
 var
   myProdId: string;
   myStorePath: string;
+  client_data: string;
 begin
   // try to guess the correct workbench path
+  client_data := PathDelim + 'CLIENT_DATA';
   myProdId := aktProduct.productdata.productId;
   if myProdId <> '' then
   begin
     if AnsiContainsStr(myconfiguration.LastProjectFileDir, myProdId) then
-      myStorePath := myconfiguration.LastProjectFileDir + '\CLIENT_DATA'
+    begin
+      // last proj dir may be in OPSI or base dir
+      myStorePath := myconfiguration.LastProjectFileDir;
+      myStorePath := ExcludeTrailingPathDelimiter(myStorePath);
+      myStorePath := ReplaceStr(myStorePath, PathDelim + 'OPSI', '');
+      // now we should have the base dir and change to client data
+      myStorePath := myStorePath + client_data;
+    end
     else if AnsiContainsStr(myconfiguration.LastControlFileDir, myProdId) then
     begin
-      myStorePath := AnsiReplaceStr(myconfiguration.LastProjectFileDir, '\OPSI', '');
-      myStorePath := myStorePath + '\CLIENT_DATA';
+      // last control dir should be in OPSI
+      myStorePath := myconfiguration.LastControlFileDir;
+      myStorePath := ExcludeTrailingPathDelimiter(myStorePath);
+      myStorePath := ReplaceStr(myStorePath, PathDelim + 'OPSI', '');
+      // now we should have the base dir and change to client data
+      myStorePath := myStorePath + client_data;
     end
     else
-      myStorePath := myconfiguration.workbench_Path + '\' + myProdId + '\CLIENT_DATA';
+      myStorePath := myconfiguration.workbench_Path + PathDelim + myProdId + client_data;
   end
   else
     myStorePath := myconfiguration.workbench_Path;
   SaveDialogBgMetaData.InitialDir := myStorePath;
+  SaveDialogBgMetaData.FileName := 'opsi-meta-data.toml';
   if SaveDialogBgMetaData.Execute then
   begin
+    aktProduct.productdata.packageversion := aktProduct.productdata.packageversion + 1;
     aktMeta.write_product_metadata_to_file(SaveDialogBgMetaData.FileName);
+    createOpsiFiles('### Added:' + LineEnding + ' * opsi-meta-data.toml file ' +
+      LineEnding + '   added for background install');
   end;
 end;
 
 procedure TResultform1.BtCreateBackgroundInfoClick(Sender: TObject);
-var
-  localTOSset: TTargetOSset;
+//var
+//  localTOSset: TTargetOSset;
 begin
   resetGUI;
   osdsettings.runmode := createBackgroundInfo;
@@ -2687,8 +2737,8 @@ end;
 
 procedure TResultform1.BitBtnAddToList2Click(Sender: TObject);
 begin
-    //TIMemoBgCheckdirs2.Append(TIEditBgInstallDir2.Text);
-    aktMeta.InstallerMeta[1].check_processes_from_dirs.Add(TIEditBgInstallDir2.Text);
+  //TIMemoBgCheckdirs2.Append(TIEditBgInstallDir2.Text);
+  aktMeta.InstallerMeta[1].check_processes_from_dirs.Add(TIEditBgInstallDir2.Text);
 end;
 
 procedure TResultform1.BitBtnBgChooseInstDir1Click(Sender: TObject);
@@ -4669,7 +4719,7 @@ begin
 end;
 
 procedure TResultform1.TabSheetProduct2ContextPopup(Sender: TObject;
-  MousePos: TPoint; var Handled: Boolean);
+  MousePos: TPoint; var Handled: boolean);
 begin
 
 end;
@@ -4842,6 +4892,14 @@ end;
 procedure TResultform1.TIComboBoxChannelEditingDone(Sender: TObject);
 begin
 
+end;
+
+procedure TResultform1.TIRadioGroupCreateModeEditingDone(Sender: TObject);
+begin
+  if TIRadioGroupCreateMode.ItemIndex = 0 then
+    TIRadioGroupBuildMode.Enabled:=false
+  else
+  TIRadioGroupBuildMode.Enabled:=true;
 end;
 
 procedure TResultform1.WingetInputEditingDone(Sender: TObject);

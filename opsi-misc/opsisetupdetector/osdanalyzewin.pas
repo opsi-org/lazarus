@@ -1437,7 +1437,7 @@ begin
         get_null_info(FileName, mysetup);
         {nothing special right now for stBitrock, stSelfExtractingInstaller,
          stPortableApps, stInstall4J, st7zip, stNsis, stInstallShield,
-         st7zipsfx,stSetupFactory,stWise}
+         st7zipsfx,stSetupFactory,stWise, stVisualStudioInstaller}
     end;
 
 
