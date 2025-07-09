@@ -144,6 +144,40 @@ todo:
 
 # Changelog opsi-setup-detector
 
+## [4.3.7.0-1] - 2025-06-10
+
+### Fix
+* missing uninstallscript in meta control.toml
+* read incomplete control.toml files
+* Icon display is not changed after reload a project file
+
+### Change
+* move osd project file to OPSI directory
+  leave remark at old place
+* on create background-info-file:
+  - update changelog
+  - increment package number
+* Radiogroup 'build mode' is disabled if 'create mode'
+  does not contain 'build'
+
+
+
+### Add:
+* background meta data: preset os to windows
+* french translation for background meta data
+* Store and reload last selected language
+* new installer type 'visual studio installer'
+
+### templates:
+
+### todo
+
+- new installer type 'visual studio installer'
+
+
+(Detlef Oertel <d.oertel@uib.de>)
+
+
 ## [4.3.6.2-1] - 2025-05-15
 
 ### Fix

@@ -110,7 +110,11 @@ type
     amSelectable);
 
   // marker for add installers
-  TKnownInstaller = (stWinget, stMsixAppx, stWise,
+  TKnownInstaller = (
+    stVisualStudioInstaller,
+    stWinget,
+    stMsixAppx,
+    stWise,
     stQtInstaller,
     stSetupFactory,
     stInstallAnywhere,
@@ -562,6 +566,7 @@ default: ["xenial_bionic"]
     //FwriteMetaDataFile: boolean;  // true=write opsi-meta-data.toml file
     //FShowBackgroundInfoBtn: boolean;  // true=show the background Info Button at start tab
     FEnableBackgroundMetaData: boolean;  // false=hide all background related features
+    FLastLanguage: string;  // last language we used (default=auto)
     procedure SetLibraryLines(const AValue: TStrings);
     procedure SetPreInstallLines(const AValue: TStrings);
     procedure SetPostInstallLines(const AValue: TStrings);
@@ -619,6 +624,8 @@ default: ["xenial_bionic"]
     //  write FwriteMetaDataFile;
     property EnableBackgroundMetaData: boolean
       read FEnableBackgroundMetaData write FEnableBackgroundMetaData;
+    property LastLanguage: string
+      read FLastLanguage write FLastLanguage;
 
 
 
@@ -855,6 +862,18 @@ resourcestring
     LineEnding + LineEnding +
     'UniGetUI (formerly WingetUI), The Graphical Interface for your package managers' +
     LineEnding + LineEnding + '<https://www.marticliment.com/unigetui/>';
+    mdInstallerInfo_VisualStudioInstaller =
+    '## This is a Visual Studio installer Installer.' + LineEnding +
+    'By default it works as "web installer",' + LineEnding +
+    'so it will download while installing.' + LineEnding + LineEnding +
+    'The parameter "--all" means to install all possible components and workloads.' + LineEnding +
+    'You may use the parameter "--add"' + LineEnding +
+    'to control the components and workloads to install.' + LineEnding + LineEnding +
+    'In order to make an offline install,'+LineEnding +
+    'you need first to download the installfiles: ' + LineEnding +
+    'https://learn.microsoft.com/en-us/visualstudio/install/create-a-network-installation-of-visual-studio' + LineEnding +LineEnding +
+    'More info here: ' + LineEnding +
+    '<https://learn.microsoft.com/en-us/visualstudio/install/use-command-line-parameters-to-install-visual-studio>';
   // marker for add installers
 
 implementation
@@ -1780,6 +1799,7 @@ begin
   //FwriteMetaDataFile := False;
   //FShowBackgroundInfoBtn := False;
   FEnableBackgroundMetaData := False;
+  FLastLanguage := 'auto';
   //readconfig;
 end;
 
@@ -2394,6 +2414,8 @@ begin
     info_message_html.Text := mdInstallerInfo_MsixAppx;
   with installerArray[integer(stWinget)] do
     info_message_html.Text := mdInstallerInfo_winget;
+  with installerArray[integer(stVisualStudioInstaller)] do
+    info_message_html.Text := mdInstallerInfo_VisualStudioInstaller;
   // marker for add installers
 end;
 
@@ -2407,6 +2429,7 @@ begin
 
   // marker for add installers
   knownInstallerList := TStringList.Create;
+  knownInstallerList.Add('Visual Studio Installer');
   knownInstallerList.Add('Winget');
   knownInstallerList.Add('Msix_Appx');
   knownInstallerList.Add('Wise');
@@ -2717,6 +2740,7 @@ begin
     patterns.Add('boxstub.exe');
     //patterns.Add('Wix Toolset');
     //infopatterns.Add('RunProgram="');
+    notpatterns.Add('Visual Studio Installer');
     installErrorHandlingLines.Add(
       'includelog "%opsiLogDir%\"+$ProductId$+".install_log.txt" "50" "utf16le"');
     link :=
@@ -3112,6 +3136,30 @@ begin
     detected := @detectedbypatternwithor;
   end;
 
+
+  with installerArray[integer(stVisualStudioInstaller)] do
+  begin
+    // https://learn.microsoft.com/en-us/visualstudio/install/use-command-line-parameters-to-install-visual-studio
+    description :=
+      'Visual Studio Installer';
+    silentsetup := ' --quite --norestart --all';
+    unattendedsetup := ' --passive --norestart --all';
+    silentuninstall :=
+      ' uninstall --quite --norestart --installPath "$installDir$"';
+    unattendeduninstall :=
+      ' uninstall --passive --norestart --installPath "$installDir$"';
+    uninstall_waitforprocess := '';
+    uninstallProg := '%ProgramFiles32Dir%\Microsoft Visual Studio\Installer\setup.exe';
+    patterns.Add('Visual Studio Installer');
+    installErrorHandlingLines.Add('');
+    link :=
+      'https://learn.microsoft.com/en-us/visualstudio/install/use-command-line-parameters-to-install-visual-studio';
+    comment := 'Visual Studio Installer';
+    //uib_exitcode_function := 'isVSInstallerExitcodeFatal';
+    uib_exitcode_function := 'isMsiExitcodeFatal_short';
+    detected := @detectedbypatternwithand;
+  end;
+
   // marker for add installers
   reload_installer_info_messages;
 
@@ -3132,7 +3180,6 @@ begin
 
 
   FileVerInfo := TFileVersionInfo.Create(nil);
-
 
 try
   FileVerInfo.FileName := ParamStr(0);

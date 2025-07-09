@@ -19,7 +19,7 @@ type
   // Meta data structure
   //********************************
 
-  TMeta_os = (windows, linux, macos, os_unknown);
+  TMeta_os = (Windows, linux, macos, os_unknown);
 
   TMeta_os_arch = (x86, x64, arm64, arm, arch_unknown);
 
@@ -335,8 +335,8 @@ begin
       FreeAndNil(lib_jyt);
     end;
     // in TOML we want the strings in single quotes (no escapes needed)
-     TOMLString := StringReplace(TOMLString, '"',
-              '''', [rfReplaceAll, rfIgnoreCase]);
+    TOMLString := StringReplace(TOMLString, '"', '''',
+      [rfReplaceAll, rfIgnoreCase]);
 
     if Assigned(logdatei) then
       logdatei.log('write toml metadata to file', LLDebug);
@@ -424,17 +424,21 @@ begin
           aktProduct.SetupFiles[i].installerSourceDir + '\' + setupFileName;
       // check only for process at windows
       if aktProduct.SetupFiles[i].targetOS = oswin then
+      begin
         aktMeta.InstallerMeta[i].addtoCheckDirs(
           aktMeta.InstallerMeta[i].Finstall_dir);
-      aktMeta.InstallerMeta[i].FMetaInstallerRequirement.os :=
-        aktprodTargetosToMetaOs(aktProduct.SetupFiles[i].targetOS);
+        aktMeta.InstallerMeta[i].FMetaInstallerRequirement.os := Windows;
+      end
+      else
+        aktMeta.InstallerMeta[i].FMetaInstallerRequirement.os :=
+          aktprodTargetosToMetaOs(aktProduct.SetupFiles[i].targetOS);
       aktMeta.InstallerMeta[i].FMetaInstallerRequirement.os_arch :=
         aktprodArchitectureToMetaOsArch(aktProduct.SetupFiles[i].architecture);
       aktMeta.InstallerMeta[i].FMetaInstallerRequirement.requiredSpaceMB :=
         aktProduct.SetupFiles[i].requiredSpace;
       // do not install in background for 'with user' - to many reboots
       if osdsettings.runmode in [analyzeCreateWithUser, createTemplateWithUser] then
-        aktMeta.InstallerMeta[i].install_in_background:= false;
+        aktMeta.InstallerMeta[i].install_in_background := False;
     end;
   end;
   FreeAndNil(strlist);

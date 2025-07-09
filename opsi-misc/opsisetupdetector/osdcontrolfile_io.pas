@@ -289,18 +289,30 @@ var
   aktdependency: TPDependency;
   table: TTOMLData;
   tmpstrlist: TStringList;
+  tmpint: integer;
+  tmpbool: boolean;
 
   function getAndLogValue(section, key: string): string;
   var
     tmpstr: string;
     Value: TTOMLData;
   begin
-    Value := doc[section][key];
-    tmpstr := trim(string(Value));
-    tmpstr := trim(Value.ToString);
-    LogDatei.log('in section: ' + section + ' with key: ' + key +
-      ' got: ' + tmpstr, LLdebug);
-    Result := tmpstr;
+    try
+      Value := doc[section][key];
+      tmpstr := trim(string(Value));
+      tmpstr := trim(Value.ToString);
+      LogDatei.log('in section: ' + section + ' with key: ' + key +
+        ' got: ' + tmpstr, LLdebug);
+      Result := tmpstr;
+    except
+      on E: Exception do
+      begin
+        logdatei.log('readControlFileToml: Exception: ', LLWarning);
+        logdatei.log('While reading: ' + section + ' : ' + key, LLWarning);
+        logdatei.log('Exception: ' + E.Message, LLWarning);
+        Result := '';
+      end;
+    end;
   end;
 
   function getAndLogValueFromTable(indata: TTOMLData; key: string;
@@ -391,10 +403,12 @@ begin
     aktProduct.Productdata.Productversion := tmpstr;
   tmpstr := getAndLogValue('Product', 'priority');
   if (not filter) or import.priority then
-    aktProduct.Productdata.priority := StrToInt(tmpstr);
+    if TryStrToInt(tmpstr, tmpint) then
+      aktProduct.Productdata.priority := tmpint;
   tmpstr := getAndLogValue('Product', 'licenseRequired');
   if (not filter) or import.licenserequired then
-    aktProduct.Productdata.licenserequired := StrToBool(tmpstr);
+    if TryStrToBool(tmpstr, tmpbool) then
+      aktProduct.Productdata.licenserequired := tmpbool;
   tmpstr := getAndLogValue('Product', 'setupScript');
   if (not filter) or import.setupscript then
     aktProduct.Productdata.setupscript := tmpstr;
@@ -416,7 +430,6 @@ begin
   tmpstr := getAndLogValue('Product', 'userLoginScript');
   if (not filter) or import.userLoginscript then
     aktProduct.Productdata.userLoginscript := tmpstr;
-
   tmpstr := getAndLogValue('Product', 'description');
   if (not filter) or import.description then
     aktProduct.Productdata.description := tmpstr;
@@ -426,85 +439,87 @@ begin
 
   // ProductDependency
   if doc.Contains('ProductDependency') then
-  for table in doc['ProductDependency'] do
-  begin
-    aktdependency := TPDependency(osdbasedata.aktProduct.dependencies.add);
-    aktdependency.init;
-    if getAndLogValueFromTable(table, 'action', tmpstr) then
-      aktdependency.action := tmpstr;
-    if getAndLogValueFromTable(table, 'requiredProduct', tmpstr) then
-      aktdependency.Required_ProductId := tmpstr;
+    for table in doc['ProductDependency'] do
+    begin
+      aktdependency := TPDependency(osdbasedata.aktProduct.dependencies.add);
+      aktdependency.init;
+      if getAndLogValueFromTable(table, 'action', tmpstr) then
+        aktdependency.action := tmpstr;
+      if getAndLogValueFromTable(table, 'requiredProduct', tmpstr) then
+        aktdependency.Required_ProductId := tmpstr;
 
-    if getAndLogValueFromTable(table, 'requiredStatus', tmpstr) then
-      case tmpstr of
-        '': aktdependency.Required_State := noState;
-        'installed': aktdependency.Required_State := installed;
-        'not_installed': aktdependency.Required_State := not_installed;
-        'unknown': aktdependency.Required_State := unknown;
-      end;
+      if getAndLogValueFromTable(table, 'requiredStatus', tmpstr) then
+        case tmpstr of
+          '': aktdependency.Required_State := noState;
+          'installed': aktdependency.Required_State := installed;
+          'not_installed': aktdependency.Required_State := not_installed;
+          'unknown': aktdependency.Required_State := unknown;
+        end;
 
-    if getAndLogValueFromTable(table, 'requiredAction', tmpstr) then
-      case tmpstr of
-        '': aktdependency.Required_Action := noRequest;
-        'setup': aktdependency.Required_Action := setup;
-        'uninstall': aktdependency.Required_Action := uninstall;
-        'update': aktdependency.Required_Action := TPActionRequest.update;
-      end;
+      if getAndLogValueFromTable(table, 'requiredAction', tmpstr) then
+        case tmpstr of
+          '': aktdependency.Required_Action := noRequest;
+          'setup': aktdependency.Required_Action := setup;
+          'uninstall': aktdependency.Required_Action := uninstall;
+          'update': aktdependency.Required_Action := TPActionRequest.update;
+        end;
 
-    // requirement Type
-    if getAndLogValueFromTable(table, 'requirementType', tmpstr) then
-      case tmpstr of
-        '': aktdependency.Required_Type := doNotMatter;
-        'before': aktdependency.Required_Type := before;
-        'after': aktdependency.Required_Type := after;
-      end;
-  end;
+      // requirement Type
+      if getAndLogValueFromTable(table, 'requirementType', tmpstr) then
+        case tmpstr of
+          '': aktdependency.Required_Type := doNotMatter;
+          'before': aktdependency.Required_Type := before;
+          'after': aktdependency.Required_Type := after;
+        end;
+    end;
 
   if doc.Contains('ProductProperty') then
-  for table in doc['ProductProperty'] do
-  begin
-    myprop := TPProperty(osdbasedata.aktProduct.properties.add);
-    myprop.init;
-    if getAndLogValueFromTable(table, 'name', tmpstr) then
-      myprop.Property_Name := tmpstr;
-    if getAndLogValueFromTable(table, 'description', tmpstr) then
-      myprop.description := tmpstr;
-
-    if getAndLogValueFromTable(table, 'multivalue', tmpstr) then
-      myprop.multivalue := StrToBool(tmpstr); //multivalue
-    if getAndLogValueFromTable(table, 'editable', tmpstr) then
-      myprop.editable := StrToBool(tmpstr);  //editable
-
-    getAndLogValueFromTable(table, 'type', tmpstr);
-    if tmpstr = 'bool' then
+    for table in doc['ProductProperty'] do
     begin
-      myprop.Property_Type := bool;
-      if getAndLogValueFromTable(table, 'default', tmpstr) then
-        myprop.boolDefault := StrToBool(tmpstr);
-      tmpstrlist := TStringList.Create;
-      myprop.SetDefaultLines(TStrings(tmpstrlist));
-      myprop.SetValueLines(TStrings(tmpstrlist));
-      FreeAndNil(tmpstrlist);
-    end
-    else
-    begin
-      tmpstrlist := TStringList.Create;
-      myprop.Property_Type := unicode;  //type
-      // always call : we need tmpstr to initialize the stringlist
-      getAndLogValueFromTable(table, 'values', tmpstr);
-      //osjson.jsonAsArrayToStringList(tmpstr, tmpstrlist);
-      tmpstrlist.Text := tmpstr;
-      myprop.SetValueLines(TStrings(tmpstrlist));
+      myprop := TPProperty(osdbasedata.aktProduct.properties.add);
+      myprop.init;
+      if getAndLogValueFromTable(table, 'name', tmpstr) then
+        myprop.Property_Name := tmpstr;
+      if getAndLogValueFromTable(table, 'description', tmpstr) then
+        myprop.description := tmpstr;
 
-      // always call : we need tmpstr to initialize the stringlist
-      getAndLogValueFromTable(table, 'default', tmpstr);
-      //osjson.jsonAsArrayToStringList(tmpstr, tmpstrlist);
-      tmpstrlist.Text := tmpstr;
-      myprop.SetDefaultLines(TStrings(tmpstrlist));
-      FreeAndNil(tmpstrlist);
+      if getAndLogValueFromTable(table, 'multivalue', tmpstr) then
+        if TryStrToBool(tmpstr, tmpbool) then
+          myprop.multivalue := tmpbool; //multivalue
+      if getAndLogValueFromTable(table, 'editable', tmpstr) then
+        if TryStrToBool(tmpstr, tmpbool) then
+          myprop.editable := tmpbool;  //editable
+
+      getAndLogValueFromTable(table, 'type', tmpstr);
+      if tmpstr = 'bool' then
+      begin
+        myprop.Property_Type := bool;
+        if getAndLogValueFromTable(table, 'default', tmpstr) then
+          if TryStrToBool(tmpstr, tmpbool) then
+            myprop.boolDefault := tmpbool;
+        tmpstrlist := TStringList.Create;
+        myprop.SetDefaultLines(TStrings(tmpstrlist));
+        myprop.SetValueLines(TStrings(tmpstrlist));
+        FreeAndNil(tmpstrlist);
+      end
+      else
+      begin
+        tmpstrlist := TStringList.Create;
+        myprop.Property_Type := unicode;  //type
+        // always call : we need tmpstr to initialize the stringlist
+        getAndLogValueFromTable(table, 'values', tmpstr);
+        //osjson.jsonAsArrayToStringList(tmpstr, tmpstrlist);
+        tmpstrlist.Text := tmpstr;
+        myprop.SetValueLines(TStrings(tmpstrlist));
+
+        // always call : we need tmpstr to initialize the stringlist
+        getAndLogValueFromTable(table, 'default', tmpstr);
+        //osjson.jsonAsArrayToStringList(tmpstr, tmpstrlist);
+        tmpstrlist.Text := tmpstr;
+        myprop.SetDefaultLines(TStrings(tmpstrlist));
+        FreeAndNil(tmpstrlist);
+      end;
     end;
-  end;
-
   doc.Free;
 end;
 

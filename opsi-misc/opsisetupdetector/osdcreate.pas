@@ -31,6 +31,7 @@ uses
 function createProductStructure: boolean;
 function callOpsiPackageBuilder: boolean;
 function callServiceOrPackageBuilder: boolean;
+function createOpsiFiles(changelogMessage: string): boolean;
 
 function opsiquotestr(s1, s2: string): string;
 // returns s1 quoted with s2 (if it is quoted right now, nothing will be changed)
@@ -112,6 +113,14 @@ begin
   begin
     list1.Strings[i] := opsiquotestr(list1.Strings[i], s2);
   end;
+end;
+
+procedure initoutputpath;
+begin
+  prodpath := IncludeTrailingPathDelimiter(myconfiguration.workbench_Path) +
+    aktProduct.productdata.productId;
+  clientpath := prodpath + PathDelim + 'CLIENT_DATA';
+  opsipath := prodpath + PathDelim + 'OPSI';
 end;
 
 
@@ -1162,10 +1171,6 @@ begin
           cffCreateDestDirectory, cffPreserveTime], True);
       end;
 
-      // write project file
-      LogDatei.log('Write project file to path: ' + prodpath, LLnotice);
-      aktProduct.writeProjectFileToPath(prodpath);
-
       // write CLIENT_DATA\opsi-meta-data.toml
       if myconfiguration.EnableBackgroundMetaData then
         if osWin in aktProduct.productdata.targetOSset then
@@ -1209,182 +1214,101 @@ begin
 end;
 
 
-function createOpsiFiles: boolean;
+
+function createOpsiFiles(changelogMessage: string): boolean;
 var
-  textlist, helplist: TStringList;
-  i: integer;
+  textlist, helplist, oldtextlist: TStringList;
+  i, lineindex: integer;
   mydep: TPDependency;
   myprop: TPProperty;
   tmpstr: string;
   utcoffset: integer;
   utcoffsetstr: string;
+  handle : Text;
 begin
   Result := False;
   try
     helplist := TStringList.Create;
     textlist := TStringList.Create;
-
-    // create control file (pre 4.3 not_toml style)
-    textlist.Add('[Package]');
-    textlist.Add('version: ' + IntToStr(aktProduct.productdata.packageversion));
-    textlist.Add('depends: ');
-    textlist.Add('');
-    textlist.Add('[Product]');
-    textlist.Add('type: ' + aktProduct.productdata.producttype);
-    textlist.Add('id: ' + aktProduct.productdata.productId);
-    textlist.Add('name: ' + aktProduct.productdata.productName);
-    textlist.Add('description: ' + aktProduct.productdata.description);
-    textlist.Add('advice: ' + aktProduct.productdata.advice);
-    textlist.Add('version: ' + aktProduct.productdata.productversion);
-    textlist.Add('priority: ' + IntToStr(aktProduct.productdata.priority));
-    textlist.Add('licenseRequired: False');
-    textlist.Add('productClasses: ');
-    textlist.Add('setupScript: ' + aktProduct.productdata.setupscript);
-    // No uninstall for Meta
-    if not (osdsettings.runmode in [createMeta]) then
-      textlist.Add('uninstallScript: ' + aktProduct.productdata.uninstallscript);
-    textlist.Add('updateScript: ' + aktProduct.productdata.updatescript);
-    textlist.Add('alwaysScript: ');
-    textlist.Add('onceScript: ');
-    textlist.Add('customScript: ');
-    if aktProduct.productdata.customizeProfile then
-      textlist.Add('userLoginScript: ' + aktProduct.productdata.setupscript)
-    else
-      textlist.Add('userLoginScript: ');
-
-
-    //dependencies
-    for i := 0 to aktProduct.dependencies.Count - 1 do
-    begin
-      mydep := TPDependency(aktProduct.dependencies.Items[i]);
-      textlist.Add('');
-      textlist.Add('[ProductDependency]');
-      textlist.Add('action: ' + mydep.Action);
-      textlist.Add('requiredProduct: ' + mydep.Required_ProductId);
-      case mydep.Required_State of
-        noState: ;
-        installed: textlist.Add('requiredStatus: installed');
-        not_installed: textlist.Add('requiredStatus: not_installed');
-        unknown: textlist.Add('requiredStatus: unknown');
-      end;
-      case mydep.Required_Action of
-        noRequest: ;
-        setup: textlist.Add('requiredAction: setup');
-        uninstall: textlist.Add('requiredAction: uninstall');
-        TPActionRequest.update: textlist.Add('requiredAction: update');
-      end;
-      case mydep.Required_Type of
-        doNotMatter: textlist.Add('requirementType: ');
-        before: textlist.Add('requirementType: before');
-        after: textlist.Add('requirementType: after');
-      end;
-    end;
-
-    //ProductProperties
-    for i := 0 to aktProduct.properties.Count - 1 do
-    begin
-      myprop := TPProperty(aktProduct.properties.Items[i]);
-      textlist.Add('');
-      textlist.Add('[ProductProperty]');
-      case myprop.Property_Type of
-        bool: textlist.Add('type: bool');
-        unicode: textlist.Add('type: unicode');
-      end;
-      textlist.Add('name: ' + myprop.Property_Name);
-      textlist.Add('description: ' + myprop.description);
-      if myprop.Property_Type = bool then
+    oldtextlist := TStringList.Create;
+    try
+      initoutputpath;
+      // write project file
+      LogDatei.log('Write project file to path: ' + prodpath, LLnotice);
+      aktProduct.writeProjectFileToPath(opsipath);
+      // remove old projectfile from prodpath
+      tmpstr := prodpath + PathDelim + 'opsi-project.osd';
+      if fileexists(tmpstr) then
       begin
-        textlist.Add('default: ' + BoolToStr(myprop.boolDefault, True));
-      end
-      else
-      begin
-        textlist.Add('multivalue: ' + BoolToStr(myprop.multivalue, True));
-        textlist.Add('editable: ' + BoolToStr(myprop.editable, True));
-        helplist.Text := myprop.GetValueLines.Text;
-        opsiquotelist(helplist, '"');
-        if stringListToJsonArray(helplist, tmpstr) then
-          textlist.Add('values: ' + tmpstr)
-        else
-          LogDatei.log('Failed to write property values entry for property: ' +
-            myprop.Property_Name, LLerror);
-        helplist.Text := myprop.GetDefaultLines.Text;
-        opsiquotelist(helplist, '"');
-        if stringListToJsonArray(helplist, tmpstr) then
-          textlist.Add('default: ' + tmpstr)
-        else
-          LogDatei.log('Failed to write property default entry for property: ' +
-            myprop.Property_Name, LLerror);
+        LogDatei.log('remove old projectfile: ' + tmpstr, LLnotice);
+        DeleteFile(tmpstr);
+        // Leave trace
+        tmpstr := prodpath+PathDelim+'osd_project_file_moved_to_opsi_dir.txt';
+        LogDatei.log('create file: ' + tmpstr, LLnotice);
+        FileClose(FileCreateUTF8(tmpstr));
+        (*                               S
+        AssignFile(handle,opsipath+PathDelim+'osd_project_file_moved_to_opsi_dir.txt');
+        Rewrite(handle);
+        writeln(handle,'osd_project_file_moved_to_opsi_dir');
+        CloseFile(handle);
+        *)
       end;
-    end;
-    textlist.SaveToFile(opsipath + pathdelim + 'control');
-    // END: create control file (pre 4.3 not_toml style)
 
-    if myconfiguration.control_in_toml_format then
-    begin
-      // create control file (4.3 toml style)
-      textlist.Clear;
+      // create control file (pre 4.3 not_toml style)
       textlist.Add('[Package]');
-      textlist.Add('version = "' +
-        IntToStr(aktProduct.productdata.packageversion) + '"');
-      textlist.Add('depends = []');
+      textlist.Add('version: ' + IntToStr(aktProduct.productdata.packageversion));
+      textlist.Add('depends: ');
       textlist.Add('');
       textlist.Add('[Product]');
-      textlist.Add('type = "' + aktProduct.productdata.producttype + '"');
-      textlist.Add('id = "' + aktProduct.productdata.productId + '"');
-      textlist.Add('name = "' + escapeStringForToml(
-        aktProduct.productdata.productName) + '"');
-      textlist.Add('description = """' + escapeStringForToml(
-        aktProduct.productdata.description) + '"""');
-      textlist.Add('advice = """' + escapeStringForToml(
-        aktProduct.productdata.advice) + '"""');
-      textlist.Add('version = "' + escapeStringForToml(
-        aktProduct.productdata.productversion) + '"');
-      textlist.Add('priority = ' + IntToStr(aktProduct.productdata.priority));
-      textlist.Add('licenseRequired = false');
-      textlist.Add('productClasses = []');
-      textlist.Add('setupScript = "' + escapeStringForToml(
-        aktProduct.productdata.setupscript) + '"');
+      textlist.Add('type: ' + aktProduct.productdata.producttype);
+      textlist.Add('id: ' + aktProduct.productdata.productId);
+      textlist.Add('name: ' + aktProduct.productdata.productName);
+      textlist.Add('description: ' + aktProduct.productdata.description);
+      textlist.Add('advice: ' + aktProduct.productdata.advice);
+      textlist.Add('version: ' + aktProduct.productdata.productversion);
+      textlist.Add('priority: ' + IntToStr(aktProduct.productdata.priority));
+      textlist.Add('licenseRequired: False');
+      textlist.Add('productClasses: ');
+      textlist.Add('setupScript: ' + aktProduct.productdata.setupscript);
       // No uninstall for Meta
-      if not (osdsettings.runmode in [createMeta]) then
-        textlist.Add('uninstallScript = "' +
-          escapeStringForToml(aktProduct.productdata.uninstallscript) + '"');
-      textlist.Add('updateScript = "' + escapeStringForToml(
-        aktProduct.productdata.updatescript) + '"');
-      textlist.Add('alwaysScript = ""');
-      textlist.Add('onceScript = ""');
-      textlist.Add('customScript = ""');
-      if aktProduct.productdata.customizeProfile then
-        textlist.Add('userLoginScript = "' + escapeStringForToml(
-          aktProduct.productdata.setupscript) + '"')
+      if osdsettings.runmode in [createMeta] then
+        textlist.Add('uninstallScript: ')
       else
-        textlist.Add('userLoginScript = ""');
-      // the next line avoids a bug in  opsi-makepackage 4.3.0.36 [python-opsi=4.3.0.14]
-      textlist.Add('windowsSoftwareIds = []');
+        textlist.Add('uninstallScript: ' + aktProduct.productdata.uninstallscript);
+      textlist.Add('updateScript: ' + aktProduct.productdata.updatescript);
+      textlist.Add('alwaysScript: ');
+      textlist.Add('onceScript: ');
+      textlist.Add('customScript: ');
+      if aktProduct.productdata.customizeProfile then
+        textlist.Add('userLoginScript: ' + aktProduct.productdata.setupscript)
+      else
+        textlist.Add('userLoginScript: ');
+
 
       //dependencies
       for i := 0 to aktProduct.dependencies.Count - 1 do
       begin
         mydep := TPDependency(aktProduct.dependencies.Items[i]);
         textlist.Add('');
-        textlist.Add('[[ProductDependency]]');
-        textlist.Add('action = "' + mydep.Action + '"');
-        textlist.Add('requiredProduct = "' + mydep.Required_ProductId + '"');
+        textlist.Add('[ProductDependency]');
+        textlist.Add('action: ' + mydep.Action);
+        textlist.Add('requiredProduct: ' + mydep.Required_ProductId);
         case mydep.Required_State of
           noState: ;
-          installed: textlist.Add('requiredStatus = "installed"');
-          not_installed: textlist.Add('requiredStatus = "not_installed"');
-          unknown: textlist.Add('requiredStatus = "unknown"');
+          installed: textlist.Add('requiredStatus: installed');
+          not_installed: textlist.Add('requiredStatus: not_installed');
+          unknown: textlist.Add('requiredStatus: unknown');
         end;
         case mydep.Required_Action of
           noRequest: ;
-          setup: textlist.Add('requiredAction = "setup"');
-          uninstall: textlist.Add('requiredAction = "uninstall"');
-          TPActionRequest.update: textlist.Add('requiredAction = "update"');
+          setup: textlist.Add('requiredAction: setup');
+          uninstall: textlist.Add('requiredAction: uninstall');
+          TPActionRequest.update: textlist.Add('requiredAction: update');
         end;
         case mydep.Required_Type of
-          doNotMatter: textlist.Add('requirementType = ""');
-          before: textlist.Add('requirementType = "before"');
-          after: textlist.Add('requirementType = "after"');
+          doNotMatter: textlist.Add('requirementType: ');
+          before: textlist.Add('requirementType: before');
+          after: textlist.Add('requirementType: after');
         end;
       end;
 
@@ -1393,95 +1317,239 @@ begin
       begin
         myprop := TPProperty(aktProduct.properties.Items[i]);
         textlist.Add('');
-        textlist.Add('[[ProductProperty]]');
+        textlist.Add('[ProductProperty]');
         case myprop.Property_Type of
-          bool: textlist.Add('type = "bool"');
-          unicode: textlist.Add('type = "unicode"');
+          bool: textlist.Add('type: bool');
+          unicode: textlist.Add('type: unicode');
         end;
-        textlist.Add('name = "' + myprop.Property_Name + '"');
-        textlist.Add('description = "' + escapeStringForToml(myprop.description) + '"');
+        textlist.Add('name: ' + myprop.Property_Name);
+        textlist.Add('description: ' + myprop.description);
         if myprop.Property_Type = bool then
         begin
-          textlist.Add('default = [' + lowercase(
-            BoolToStr(myprop.boolDefault, True)) + ']');
+          textlist.Add('default: ' + BoolToStr(myprop.boolDefault, True));
         end
         else
         begin
-          textlist.Add('multivalue = ' + lowercase(BoolToStr(myprop.multivalue, True)));
-          textlist.Add('editable = ' + lowercase(BoolToStr(myprop.editable, True)));
-          FreeAndNil(helplist);
-          helplist := escapeListForToml(TStringList(myprop.GetValueLines));
+          textlist.Add('multivalue: ' + BoolToStr(myprop.multivalue, True));
+          textlist.Add('editable: ' + BoolToStr(myprop.editable, True));
+          helplist.Text := myprop.GetValueLines.Text;
           opsiquotelist(helplist, '"');
           if stringListToJsonArray(helplist, tmpstr) then
-            textlist.Add('values = ' + tmpstr)
+            textlist.Add('values: ' + tmpstr)
           else
             LogDatei.log('Failed to write property values entry for property: ' +
               myprop.Property_Name, LLerror);
-          FreeAndNil(helplist);
-          helplist := escapeListForToml(TStringList(myprop.GetDefaultLines));
+          helplist.Text := myprop.GetDefaultLines.Text;
           opsiquotelist(helplist, '"');
           if stringListToJsonArray(helplist, tmpstr) then
-            textlist.Add('default = ' + tmpstr)
+            textlist.Add('default: ' + tmpstr)
           else
             LogDatei.log('Failed to write property default entry for property: ' +
               myprop.Property_Name, LLerror);
         end;
       end;
-      textlist.SaveToFile(opsipath + pathdelim + 'control.toml');
-      // END: create control file (4.3 toml style)
-    end;
+      textlist.SaveToFile(opsipath + pathdelim + 'control');
+      // END: create control file (pre 4.3 not_toml style)
+
+      if myconfiguration.control_in_toml_format then
+      begin
+        // create control file (4.3 toml style)
+        textlist.Clear;
+        textlist.Add('[Package]');
+        textlist.Add('version = "' +
+          IntToStr(aktProduct.productdata.packageversion) + '"');
+        textlist.Add('depends = []');
+        textlist.Add('');
+        textlist.Add('[Product]');
+        textlist.Add('type = "' + aktProduct.productdata.producttype + '"');
+        textlist.Add('id = "' + aktProduct.productdata.productId + '"');
+        textlist.Add('name = "' + escapeStringForToml(
+          aktProduct.productdata.productName) + '"');
+        textlist.Add('description = """' + escapeStringForToml(
+          aktProduct.productdata.description) + '"""');
+        textlist.Add('advice = """' + escapeStringForToml(
+          aktProduct.productdata.advice) + '"""');
+        textlist.Add('version = "' + escapeStringForToml(
+          aktProduct.productdata.productversion) + '"');
+        textlist.Add('priority = ' + IntToStr(aktProduct.productdata.priority));
+        textlist.Add('licenseRequired = false');
+        textlist.Add('productClasses = []');
+        textlist.Add('setupScript = "' + escapeStringForToml(
+          aktProduct.productdata.setupscript) + '"');
+        // No uninstall for Meta
+        if osdsettings.runmode in [createMeta] then
+          textlist.Add('uninstallScript = ""')
+        else
+          textlist.Add('uninstallScript = "' +
+            escapeStringForToml(aktProduct.productdata.uninstallscript) + '"');
+
+        textlist.Add('updateScript = "' + escapeStringForToml(
+          aktProduct.productdata.updatescript) + '"');
+        textlist.Add('alwaysScript = ""');
+        textlist.Add('onceScript = ""');
+        textlist.Add('customScript = ""');
+        if aktProduct.productdata.customizeProfile then
+          textlist.Add('userLoginScript = "' + escapeStringForToml(
+            aktProduct.productdata.setupscript) + '"')
+        else
+          textlist.Add('userLoginScript = ""');
+        // the next line avoids a bug in  opsi-makepackage 4.3.0.36 [python-opsi=4.3.0.14]
+        textlist.Add('windowsSoftwareIds = []');
+
+        //dependencies
+        for i := 0 to aktProduct.dependencies.Count - 1 do
+        begin
+          mydep := TPDependency(aktProduct.dependencies.Items[i]);
+          textlist.Add('');
+          textlist.Add('[[ProductDependency]]');
+          textlist.Add('action = "' + mydep.Action + '"');
+          textlist.Add('requiredProduct = "' + mydep.Required_ProductId + '"');
+          case mydep.Required_State of
+            noState: ;
+            installed: textlist.Add('requiredStatus = "installed"');
+            not_installed: textlist.Add('requiredStatus = "not_installed"');
+            unknown: textlist.Add('requiredStatus = "unknown"');
+          end;
+          case mydep.Required_Action of
+            noRequest: ;
+            setup: textlist.Add('requiredAction = "setup"');
+            uninstall: textlist.Add('requiredAction = "uninstall"');
+            TPActionRequest.update: textlist.Add('requiredAction = "update"');
+          end;
+          case mydep.Required_Type of
+            doNotMatter: textlist.Add('requirementType = ""');
+            before: textlist.Add('requirementType = "before"');
+            after: textlist.Add('requirementType = "after"');
+          end;
+        end;
+
+        //ProductProperties
+        for i := 0 to aktProduct.properties.Count - 1 do
+        begin
+          myprop := TPProperty(aktProduct.properties.Items[i]);
+          textlist.Add('');
+          textlist.Add('[[ProductProperty]]');
+          case myprop.Property_Type of
+            bool: textlist.Add('type = "bool"');
+            unicode: textlist.Add('type = "unicode"');
+          end;
+          textlist.Add('name = "' + myprop.Property_Name + '"');
+          textlist.Add('description = "' + escapeStringForToml(myprop.description) + '"');
+          if myprop.Property_Type = bool then
+          begin
+            textlist.Add('default = [' + lowercase(
+              BoolToStr(myprop.boolDefault, True)) + ']');
+          end
+          else
+          begin
+            textlist.Add('multivalue = ' + lowercase(BoolToStr(myprop.multivalue, True)));
+            textlist.Add('editable = ' + lowercase(BoolToStr(myprop.editable, True)));
+            FreeAndNil(helplist);
+            helplist := escapeListForToml(TStringList(myprop.GetValueLines));
+            opsiquotelist(helplist, '"');
+            if stringListToJsonArray(helplist, tmpstr) then
+              textlist.Add('values = ' + tmpstr)
+            else
+              LogDatei.log('Failed to write property values entry for property: ' +
+                myprop.Property_Name, LLerror);
+            FreeAndNil(helplist);
+            helplist := escapeListForToml(TStringList(myprop.GetDefaultLines));
+            opsiquotelist(helplist, '"');
+            if stringListToJsonArray(helplist, tmpstr) then
+              textlist.Add('default = ' + tmpstr)
+            else
+              LogDatei.log('Failed to write property default entry for property: ' +
+                myprop.Property_Name, LLerror);
+          end;
+        end;
+        textlist.SaveToFile(opsipath + pathdelim + 'control.toml');
+        // END: create control file (4.3 toml style)
+      end;
 
 
-    // changelog
-    textlist.Clear;
-    // new 4.3 style
-    textlist.Add('');
-    textlist.Add('# Changelog ' + aktProduct.productdata.productId);
-    textlist.Add('');
-    tmpstr := aktProduct.productdata.productversion + '-' + IntToStr(
-      aktProduct.productdata.packageversion);
-    textlist.Add('## [' + tmpstr + '] - ' + FormatDateTime('yyyy-mm-dd', now));
-    textlist.Add('');
-    textlist.Add('### Added');
-    textlist.Add('- created / updated to: ' + aktProduct.productdata.productId +
-      ' ' + tmpstr);
-    textlist.Add('  using opsi-setup-detector - Version: ' + myVersion);
-    textlist.Add('');
-    textlist.Add('(' + myconfiguration.fullName + ' <' +
-      myconfiguration.email_address + '>)');
-    textlist.SaveToFile(opsipath + pathdelim + 'changelog.md');
-
-    // readme.txt
-    if (myconfiguration.Readme_txt_templ <> '') and
-      FileExists(myconfiguration.Readme_txt_templ) then
-    begin
+      // changelog
       textlist.Clear;
-      utcoffset := (GetLocalTimeOffset div 60) * 100 * -1;
-      if utcoffset >= 0 then
-        utcoffsetstr := '+';
-      utcoffsetstr := utcoffsetstr + format('%4.4d', [utcoffset]);
-      textlist.LoadFromFile(myconfiguration.Readme_txt_templ);
+      // new 4.3 style
+      textlist.Add('');
+      textlist.Add('# Changelog ' + aktProduct.productdata.productId);
       textlist.Add('');
       tmpstr := aktProduct.productdata.productversion + '-' + IntToStr(
         aktProduct.productdata.packageversion);
-      textlist.Add(aktProduct.productdata.productId + ' (' + tmpstr + ')');
+      textlist.Add('## [' + tmpstr + '] - ' + FormatDateTime('yyyy-mm-dd', now));
       textlist.Add('');
-      textlist.Add('-- ' + myconfiguration.fullName + ' <' +
-        myconfiguration.email_address + '> ' + FormatDateTime(
-        'ddd, dd mmm yyyy hh:nn:ss', LocalTimeToUniversal(now)) + ' ' + utcoffsetstr);
-      //mon, 04 Jun 12:00:00 + 0100
-      textlist.SaveToFile(opsipath + pathdelim + 'readme.txt');
-    end;
+      if changelogMessage <> '' then
+      begin
+        textlist.Add(changelogMessage);
+        LogDatei.log('Added changelog message:' +changelogMessage,LLinfo);
+      end
+      else
+      begin
+        textlist.Add('### Added');
+        textlist.Add('- created / updated to: ' + aktProduct.productdata.productId +
+          ' ' + tmpstr);
+      end;
+      textlist.Add('  using opsi-setup-detector - Version: ' + myVersion);
+      textlist.Add('');
+      textlist.Add('(' + myconfiguration.fullName + ' <' +
+        myconfiguration.email_address + '>)');
+      textlist.Add('');
+      if fileexists(opsipath + pathdelim + 'changelog.md') then
+      begin
+        LogDatei.log('Found old changelog.md and append this to the new entry.',LLinfo);
+        oldtextlist.LoadFromFile(opsipath + pathdelim + 'changelog.md');
+        // remove: # Changelog <productId>
+        lineindex := oldtextlist.IndexOf('# Changelog ' +
+          aktProduct.productdata.productId);
+        if lineindex > -1 then oldtextlist.Delete(lineindex);
+        textlist.Append(oldtextlist.Text);
+      end
+      else if fileexists(opsipath + pathdelim + 'changelog.txt') then
+      begin
+        LogDatei.log('Found old changelog.txt and append this to the new entry.',LLinfo);
+        oldtextlist.LoadFromFile(opsipath + pathdelim + 'changelog.txt');
+        // remove: # Changelog <productId>
+        lineindex := oldtextlist.IndexOf('# Changelog ' +
+          aktProduct.productdata.productId);
+        if lineindex > -1 then oldtextlist.Delete(lineindex);
+        textlist.Append(oldtextlist.Text);
+      end;
+      // save the file
+      textlist.SaveToFile(opsipath + pathdelim + 'changelog.md');
 
-    FreeAndNil(textlist);
-    Result := True;
-  except
-    on E: Exception do
-    begin
-      LogDatei.log('Error in createOpsiFiles', LLError);
-      LogDatei.log('Error: ' + e.Message, LLError);
-      FreeAndNil(textlist);
+      // readme.txt
+      if (myconfiguration.Readme_txt_templ <> '') and
+        FileExists(myconfiguration.Readme_txt_templ) then
+      begin
+        textlist.Clear;
+        utcoffset := (GetLocalTimeOffset div 60) * 100 * -1;
+        if utcoffset >= 0 then
+          utcoffsetstr := '+';
+        utcoffsetstr := utcoffsetstr + format('%4.4d', [utcoffset]);
+        textlist.LoadFromFile(myconfiguration.Readme_txt_templ);
+        textlist.Add('');
+        tmpstr := aktProduct.productdata.productversion + '-' + IntToStr(
+          aktProduct.productdata.packageversion);
+        textlist.Add(aktProduct.productdata.productId + ' (' + tmpstr + ')');
+        textlist.Add('');
+        textlist.Add('-- ' + myconfiguration.fullName + ' <' +
+          myconfiguration.email_address + '> ' + FormatDateTime(
+          'ddd, dd mmm yyyy hh:nn:ss', LocalTimeToUniversal(now)) + ' ' + utcoffsetstr);
+        //mon, 04 Jun 12:00:00 + 0100
+        textlist.SaveToFile(opsipath + pathdelim + 'readme.txt');
+      end;
+
+
+      Result := True;
+    except
+      on E: Exception do
+      begin
+        LogDatei.log('Error in createOpsiFiles', LLError);
+        LogDatei.log('Error: ' + e.Message, LLError);
+      end;
     end;
+  finally
+    FreeAndNil(textlist);
+    FreeAndNil(oldtextlist);
   end;
 end;
 
@@ -1523,15 +1591,13 @@ begin
   procmess;
 end;
 
+
 function createProductdirectory: boolean;
 var
   goon: boolean;
   task: string;
 begin
-  prodpath := IncludeTrailingPathDelimiter(myconfiguration.workbench_Path) +
-    aktProduct.productdata.productId;
-  clientpath := prodpath + PathDelim + 'CLIENT_DATA';
-  opsipath := prodpath + PathDelim + 'OPSI';
+  initoutputpath;
   goon := True;
   if DirectoryExists(prodpath) then
   begin
@@ -1682,7 +1748,7 @@ begin
   else
     Logdatei.log('createProductdirectory done', LLnotice);
   procmess;
-  if not (goon and createOpsiFiles) then
+  if not (goon and createOpsiFiles('')) then
   begin
     Logdatei.log('createOpsiFiles failed', LLCritical);
     system.ExitCode := 1;
