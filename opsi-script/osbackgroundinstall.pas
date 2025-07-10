@@ -153,6 +153,10 @@ begin
   end
   else
   begin
+    LogDatei.log_prog('We start a new service connection to the local opsiclientd.',LLinfo);
+    LogDatei.log_prog('This will lead to some messages you should ignore:',LLinfo);
+    LogDatei.log_prog('Ignore: "No method backend_getLicensingInfo at service - perhaps old server or opsiclientd, we fallback to backend_info"',LLinfo);
+    LogDatei.log_prog('Ignore: "No modules data in backend_info"',LLinfo);
     local_opsidata := TOpsi4Data.Create;
     UserAgent := 'opsi-script (RpcShowDialog:opsiclientd)';
     local_opsidata.initOpsiConf(serviceurl, username, password,
@@ -407,6 +411,10 @@ begin
   fullpathlist := TStringList.Create;
   foundList := TStringList.Create;
   Result := TStringList.Create;
+  // we want no duplicates in Result
+  // https://www.freepascal.org/docs-html/rtl/classes/tstringlist.duplicates.html
+  Result.Sorted:= true;
+  Result.Duplicates:= dupIgnore;
 
   LogDatei.log('Got list of searched processes: ', LLdebug2);
   LogDatei.log_list(searchProcessList, LLdebug2);
@@ -899,11 +907,6 @@ var
   ButtonList: TStringList; // '["Jetzt nicht","Nochmal probieren","Prozess beenden"]'
 begin
   // create lists
-  runningProcList := TStringList.Create;
-  // we want no duplicates in runningProcList
-  // https://www.freepascal.org/docs-html/rtl/classes/tstringlist.duplicates.html
-  runningProcList.Sorted:= true;
-  runningProcList.Duplicates:= dupIgnore;
   serviceBinaryList := TStringList.Create;
   messageList := TStringList.Create;
   methodlist := TStringList.Create;
@@ -978,7 +981,7 @@ begin
           // the running processes from the search list
           runningProcList := getRunningProcesses(procList);
           // remove the service binaries from the running list
-          runningProcList := removeServicesBinariesFromList(runningProcList);
+          runningProcList.Text := removeServicesBinariesFromList(runningProcList).Text;
 
           // Any critical processes to handle ?
           if runningProcList.Count > 0 then

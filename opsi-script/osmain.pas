@@ -898,7 +898,7 @@ begin
   Result:=Pfad;
 end;
 
-function CheckForProcessProduct:boolean;
+function CheckForProcessProduct(produktname : string):boolean;
 begin
   Result := True; //Process product?
 {$IFDEF WIN32}
@@ -907,7 +907,7 @@ begin
   if userAreLoggedIn then
   begin
     LogDatei.log(
-      'logged in users detected - so we check about background install',
+      'logged in users detected - so we check about background install for Product: '+produktname,
       LLnotice);
     // is background-install enabled an licensed ?
     if isBackgroundinstall_enabled then
@@ -931,13 +931,13 @@ begin
           checkAndHandleRunningProductProcesses(osmeta.CheckDirs,
             osmeta.processes, Result);
            LogDatei.log(
-            'background install check finished - install: ' + BoolToStr(Result,true),
+            'background install check finished for product: '+produktname+' - install: ' + BoolToStr(Result,true),
             LLnotice);
         end
         else
         begin
           LogDatei.log(
-            'Background install situation, but no opsi-meta-data file found.',
+            'Background install situation, but no opsi-meta-data file found for product: '+produktname,
             LLwarning);
           LogDatei.log(
             'So we defer the installation.', LLwarning);
@@ -1407,7 +1407,7 @@ begin
           opsidata.getProductScriptPath(opsidata.getProductActionRequest)));
           ScriptConstants.Init(ScriptDatei);
           // process product only if we have a original action request which is still set
-          if (aktAction <> tacNone) and (orgAction <> tacNone) and CheckForProcessProduct() then
+          if (aktAction <> tacNone) and (orgAction <> tacNone) and CheckForProcessProduct(Produkt) then
             processProduct := True
           else
             processProduct := False;
