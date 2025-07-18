@@ -1296,36 +1296,79 @@ var
   i: integer;
   selfprocess: string;
 begin
+  LogDatei.log('Start KillProcessbyname', LLDebug);
+  LogDatei.log('LogDatei.force_min_loglevel: ' + IntToStr(LogDatei.force_min_loglevel),
+    LLDebug);
+  LogDatei.log('Start KillProcessbyname LL8', LLDebug2);
   Result := 0;
   found := 0;
   myuser := '';
   mydomain := '';
   selfuser := '';
   selfdom := '';
-  procdetails := TXStringlist.Create;
-  h := FindWindow('explorer', nil);
+
+  // this does not work on french system - because the window name is  'Explorateur de fichiers'
+  // h := FindWindow('explorer', nil);
+  // 'explorer' seems not to be a valid lpClassname
+  // interesting is that 'progman' is a valid lpClassname for the shell window
+  // h := FindWindow('progman', nil);
+  // however the better solution is: GetShellWindow
+  // https://learn.microsoft.com/de-de/windows/win32/api/winuser/nf-winuser-getshellwindow
+  h := GetShellWindow;
   if h <> 0 then
   begin
     if GetWindowThreadProcessId(h, @pid) <> 0 then
     begin
-      if not GetProcessUserBypid(pid, myuser, mydomain) then
-        LogDatei.log('Could not get user for pid: ' + IntToStr(pid), LLDebug2);
+      if GetProcessUserBypid(pid, myuser, mydomain) then
+      begin
+        myuser := WinCPToUTF8(myuser);
+        mydomain := WinCPToUTF8(mydomain);
+        LogDatei.log_prog('Got user for pid: ' + mydomain + '\' + myuser, LLDebug)
+      end
+      else
+        LogDatei.log('Could not get user for pid: ' + IntToStr(pid), LLDebug);
     end
     else
       LogDatei.log('Could not get pid for current session', LLDebug2);
   end
   else
-    LogDatei.log('Could not get handle for current session: no user', LLDebug2);
+    LogDatei.log('Got zero handle for current session: no user', LLDebug2);
+
+  // if have no user by window name, let us try with process name
+  if myuser = '' then
+  begin
+    if getpid4exe('explorer.exe', pid) then
+    begin
+      LogDatei.log_prog('Got pid for explorer.exe: ' + IntToStr(pid), LLDebug);
+      if GetProcessUserBypid(pid, myuser, mydomain) then
+      begin
+        myuser := WinCPToUTF8(myuser);
+        mydomain := WinCPToUTF8(mydomain);
+        LogDatei.log_prog('Got user for pid: ' + mydomain + '\' + myuser, LLDebug)
+      end
+      else
+        LogDatei.log('Could not get user for pid: ' + IntToStr(pid), LLDebug);
+    end
+    else
+      LogDatei.log('Could not get pid for explorer.exe', LLDebug);
+  end;
+
+  // check the result
   if not (myuser = GetUserNameEx_) then
-    LogDatei.log('Strange: different users found: ' + myuser + ' + ' +
-      GetUserNameEx_, LLDebug);
+    LogDatei.log('Strange: different users found: ' + myuser +
+      ' + ' + GetUserNameEx_, LLDebug);
   LogDatei.log('Session owner found: ' + mydomain + '\' + myuser, LLDebug);
+
+  // check self user
   selfprocess := ExtractFileName(ParamStr(0));
+  LogDatei.log_prog('selfprocess: ' + selfprocess, LLDebug);
   if getpid4exe(selfprocess, pid) then
   begin
     if GetProcessUserBypid(pid, selfuser, selfdom) then
     begin
-      LogDatei.log_prog('opsi-script owner found: ' + selfdom + '\' + selfuser, LLDebug);
+      selfuser := WinCPToUTF8(selfuser);
+      selfdom := WinCPToUTF8(selfdom);
+      LogDatei.log_prog('opsi-script dom\user found: ' + selfdom + '\'+selfuser, LLDebug);
     end
     else
       LogDatei.log('Could not get owner for current ' + selfprocess, LLDebug);
@@ -1333,43 +1376,53 @@ begin
   else
     LogDatei.log('Could not get pid for current ' + selfprocess, LLDebug);
 
-  //while getpid4exe(exename,pid) do
-  proclist := getWinProcessList;
-  for i := 0 to proclist.Count - 1 do
-  begin
-    procdetails.Clear;
-    stringsplit(proclist.Strings[i], ';', procdetails);
-    //Logdatei.Log(proclist.Strings[i],LLDebug);
-    LogDatei.log_prog('analyze: exe: ' + procdetails.Strings[0] +
-      ' pid: ' + procdetails.Strings[1] + ' from user: ' +
-      procdetails.Strings[2], LLDebug);
-    if procdetails.Strings[1] <> '' then
+  // now check for process to kill
+  try
+    procdetails := TXStringlist.Create;
+    proclist := getWinProcessList;
+    for i := 0 to proclist.Count - 1 do
     begin
-      try
-        pid := StrToInt(procdetails.Strings[1]);
-      except
-        pid := 0;
-      end;
-      foundexe := procdetails.Strings[0];
-      domuser := procdetails.Strings[2];
-      if UpperCase(exename) = UpperCase(foundexe) then
+      procdetails.Clear;
+      stringsplit(proclist.Strings[i], ';', procdetails);
+      //Logdatei.Log(proclist.Strings[i],LLDebug);
+      LogDatei.log_prog('analyze: exe: ' + procdetails.Strings[0] +
+        ' pid: ' + procdetails.Strings[1] + ' from user: ' +
+        procdetails.Strings[2], LLDebug);
+      if procdetails.Strings[1] <> '' then
       begin
-        if (domuser = mydomain + '\' + myuser) or
-          (domuser = selfdom + '\' + selfuser) or (domuser = '') or
-          (selfuser = 'SYSTEM') then
+        try
+          pid := StrToInt(procdetails.Strings[1]);
+        except
+          pid := 0;
+        end;
+        foundexe := procdetails.Strings[0];
+        domuser := procdetails.Strings[2];
+        if UpperCase(exename) = UpperCase(foundexe) then
         begin
-          LogDatei.log('Will kill exe: ' + foundexe + ' pid: ' +
-            IntToStr(pid) + ' from user: ' + domuser, LLDebug);
-          Inc(found);
-          if KillProcessbypid(pid) then
-            Result := Result + 1;
-        end
-        else
-          LogDatei.log('Will not kill exe: ' + foundexe + ' pid: ' +
-            IntToStr(pid) + ' from user: ' + domuser, LLDebug);
+          LogDatei.log_prog('domuser: ' + domuser + ' ; self: ' + selfdom +
+            '\' + selfuser, LLdebug);
+          // we will only try to kill processes from the loged in user
+          // or from the account we running with
+          if (domuser = mydomain + '\' + myuser) or
+            (domuser = selfdom + '\' + selfuser) or (domuser = '') or
+            (selfuser = 'SYSTEM') then
+          begin
+            LogDatei.log('Will kill exe: ' + foundexe + ' pid: ' +
+              IntToStr(pid) + ' from user: ' + domuser, LLDebug);
+            Inc(found);
+            if KillProcessbypid(pid) then
+              Result := Result + 1;
+          end
+          else
+            LogDatei.log('Will not kill exe: ' + foundexe + ' pid: ' +
+              IntToStr(pid) + ' from user: ' + domuser, LLDebug);
+        end;
+        //else Logdatei.Log('No user found for exe: '+exename+' and pid: '+IntToStr(pid),LLDebug);
       end;
-      //else Logdatei.Log('No user found for exe: '+exename+' and pid: '+IntToStr(pid),LLDebug);
     end;
+  finally
+    FreeAndNil(proclist);
+    FreeAndNil(procdetails);
   end;
 end;// KillProcessbyname(const exename : string;): Boolean;
 

@@ -1760,6 +1760,7 @@ var
   {$ENDIF WINDOWS}
 
 begin
+  LogDatei.log_prog('Start Loginscripts', LLinfo);
   LogDatei.LogProduktId := False;
   goOn := True;
   {$IFDEF GUI}
@@ -1767,6 +1768,7 @@ begin
   {$ENDIF GUI}
   maxtries := 10;
   trycounter := 0;
+  LogDatei.log_prog('usercontext: '+usercontext, LLinfo);
   if (usercontext = '') or (usercontext = '\') then
     repeat
       begin
@@ -1777,9 +1779,10 @@ begin
         //##LINUX
         {$IFDEF WIN32}
         usercontext := getloggedonDomUser;
-{$ENDIF}
+        {$ENDIF WIN32}
       end;
     until (trycounter > maxtries) or (not (usercontext = '\'));
+  LogDatei.log_prog('usercontext: '+usercontext, LLinfo);
   itemlist := TXStringlist.Create;
   stringsplit(usercontext, '\', itemlist);
   if itemlist.Count > 1 then
