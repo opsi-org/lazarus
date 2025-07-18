@@ -378,12 +378,10 @@ end;
 {****************************************************** }
 
 begin
-  //uibNTVersion := GetUibNTVersion(errorinfo);
   specialFolders := TStringList.Create;
   debugmessages := TStringList.Create;
-  //retrieveFoldersFromHKLM;
-  //retrieveFoldersFromWinApi;
   // If we do it here, there is no log file !
-  //retrieveFolders4Linux;
+  // but we do it for windos at the same place in wispecfolder
+  retrieveFolders4Linux;
 end.
 
