@@ -2,9 +2,10 @@ todo:
 isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-package-requires-a-reboot-of-my-system
 mac getIpByName liefert name von IPnum
 
-opsi-script (4.12.18.2) unreleased; urgency=medium
+opsi-script (4.12.18.2)
 
- * fix  issue 59 osfuncwin2: KillProcessbyname does not work on french systems
+ * earlier call of retrieveFolders4Linux; fix problems from 4.12.18.1
+* fix  issue 59 osfuncwin2: KillProcessbyname does not work on french systems
    osfuncwin2: KillProcessbyname
    h := GetShellWindow; work language independent
    if this didn't worked: let us try with process name
@@ -14,7 +15,8 @@ opsi-script (4.12.18.2) unreleased; urgency=medium
    osmain: Loginscripts:
    some more logging
 
--- d.oertel <d.oertel@uib.de> 2025-07-08
+
+-- d.oertel <d.oertel@uib.de> 2025-07-18
 
 opsi-script (4.12.18.1) unreleased; urgency=medium
 

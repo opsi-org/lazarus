@@ -26970,6 +26970,8 @@ begin
     //setDetailLabel(CentralForm.Label2.Caption);
     {$ENDIF GUI}
     {$IFDEF UNIX}
+    // we called retrieveFolders4Linux in the initialization of lispecfolder
+    // we only need to call it here again to have a log of this
     lispecfolder.retrieveFolders4Linux;
     {$ENDIF LINUX}
     if Scriptdatei <> '' then

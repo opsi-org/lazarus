@@ -132,12 +132,14 @@ begin
 
   commandline := FileName + ' ' + trim(Parameters);
 
-  LogDatei.log('Executing ' + commandline, LLDebug2);
+  if Logdatei <> nil then
+    LogDatei.log('Executing ' + commandline, LLDebug2);
 
   if not RunCommandAndCaptureOut(commandline, True, Result, report,
     SW_Minimize, exitcode, False, 2) then
   begin
-    LogDatei.log('Error: ' + Report, LLcritical);
+    if Logdatei <> nil then
+      LogDatei.log('Error: ' + Report, LLcritical);
     //FExtremeErrorLevel := LevelFatal;
     //scriptstopped := true;
     Result.Clear;
