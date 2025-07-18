@@ -1033,7 +1033,7 @@ begin
                   buttonindex := StrToInt(dialogResult);
                   if buttonindex = -1 then
                   begin
-                    LogDatei.log('showmessagebox timeount. We use default: ' +
+                    LogDatei.log('showmessagebox timeout. We use default: ' +
                       defaultMethod, LLwarning);
                     buttonindex := methodlist.IndexOf(defaultMethod);
                   end;
