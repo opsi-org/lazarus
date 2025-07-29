@@ -208,6 +208,7 @@ begin
         AddListFromJsonObjectToStringList(installer_list_to_use[i],'check_processes_from_dirs', checkdirs);
         // Add for processes
         AddListFromJsonObjectToStringList(installer_list_to_use[i],'processes', processes);
+        install_in_background := true;
       end
       else
       begin

@@ -1216,90 +1216,93 @@ var
   installdir: string;
   i, k, index: integer;
 begin
-    if getInstallInBackgroundFlag then
-    begin
-      LogDatei.log('install_in_background=true: Installer is allowed for background_install',
-        LLnotice);
-      dirList := TStringList.Create;
-      allDirList := TStringList.Create;
-      resultList := TStringList.Create;
+  if getInstallInBackgroundFlag then
+  begin
+    LogDatei.log('install_in_background=true: Installer is allowed for background_install',
+      LLnotice);
+    dirList := TStringList.Create;
+    allDirList := TStringList.Create;
+    resultList := TStringList.Create;
+    try
       try
-        try
-          // collect from installdirs
-          if checkDirList.Count > 0 then
+        // collect from installdirs
+        if checkDirList.Count > 0 then
+        begin
+          for i := 0 to checkDirList.Count - 1 do
           begin
-            for i := 0 to checkDirList.Count - 1 do
+            installdir := checkDirList[i];
+            installdir := ScriptConstants.ReplaceInString(installdir);
+            if directoryExists(installdir) then
             begin
-              installdir := checkDirList[i];
-              installdir := ScriptConstants.ReplaceInString(installdir);
-              if directoryExists(installdir) then
+              FindAllFiles(dirList, installdir, '*.exe', True);
+              // avoid double entries: remove allDirList from dirList
+              if allDirList.Count > 0 then
               begin
-                FindAllFiles(dirList, installdir, '*.exe', True);
-                // avoid double entries: remove allDirList from dirList
-                if allDirList.Count > 0 then
+                for k := 0 to allDirList.Count - 1 do
                 begin
-                  for k := 0 to allDirList.Count - 1 do
-                  begin
-                    index := dirList.IndexOf(allDirList[k]);
-                    if index > -1 then dirList.Delete(index);
-                  end;
+                  index := dirList.IndexOf(allDirList[k]);
+                  if index > -1 then dirList.Delete(index);
                 end;
-                allDirList.AddStrings(TStrings(dirList));
               end;
+              allDirList.AddStrings(TStrings(dirList));
             end;
-          end;
-          logdatei.log('procs from checkdirs:',LLdebug);
-          LogDatei.log_list(allDirList,LLdebug);
-          // add proclist
-          // avoid double entries: remove proclist from allDirList
-          if procList.Count > 0 then
-          begin
-            for i := 0 to procList.Count - 1 do
-            begin
-              index := allDirList.IndexOf(procList[i]);
-              if index > -1 then allDirList.Delete(index);
-            end;
-          end;
-          resultList.Text := allDirList.Text;
-          resultList.AddStrings(TStrings(procList));
-          // avoid empty entries
-          for i := 0 to resultList.Count - 1 do
-          begin
-            if resultList[i] = '' then resultList.Delete(i);
-          end;
-          logdatei.log('procs from dirs + procs:',LLdebug);
-          LogDatei.log_list(resultList,LLdebug);
-          if resultList.Count > 0 then
-          begin
-            // call checkAndHandleRunningProcFull with defaults
-            checkAndHandleRunningProc(resultList, ContinueWithInstallation);
-          end
-          else
-            LogDatei.log(
-              'checkAndHandleRunningProductProcesses: No meta data matching processes found',
-              LLnotice);
-
-        except
-          on E: Exception do
-          begin
-            LogDatei.log('Exception in checkAndHandleRunningProductProcesses ', LLError);
-            LogDatei.log('Exception: Message: ' + E.message, LLError);
           end;
         end;
-      finally
-        FreeAndNil(dirList);
-        FreeAndNil(allDirList);
-        FreeAndNil(resultList);
+        logdatei.log('procs from checkdirs:', LLdebug);
+        LogDatei.log_list(allDirList, LLdebug);
+        // add proclist
+        // avoid double entries: remove proclist from allDirList
+        if procList.Count > 0 then
+        begin
+          for i := 0 to procList.Count - 1 do
+          begin
+            index := allDirList.IndexOf(procList[i]);
+            if index > -1 then allDirList.Delete(index);
+          end;
+        end;
+        resultList.Text := allDirList.Text;
+        resultList.AddStrings(TStrings(procList));
+        // avoid empty entries
+        for i := 0 to resultList.Count - 1 do
+        begin
+          if resultList[i] = '' then resultList.Delete(i);
+        end;
+        logdatei.log('procs from dirs + procs:', LLdebug);
+        LogDatei.log_list(resultList, LLdebug);
+        if resultList.Count > 0 then
+        begin
+          // call checkAndHandleRunningProcFull with defaults
+          checkAndHandleRunningProc(resultList, ContinueWithInstallation);
+        end
+        else
+        begin
+          LogDatei.log(
+            'checkAndHandleRunningProductProcesses: No meta data matching processes found',
+            LLnotice);
+          ContinueWithInstallation := True;
+        end;
+      except
+        on E: Exception do
+        begin
+          LogDatei.log('Exception in checkAndHandleRunningProductProcesses ', LLError);
+          LogDatei.log('Exception: Message: ' + E.message, LLError);
+          ContinueWithInstallation := False;
+        end;
       end;
-    end
-    else
-    begin
-      LogDatei.log('install_in_background=false: Set Deferred: Stop script',
-        LLnotice);
-      scriptdeferstate := True;
-      scriptstopped := True;
+    finally
+      FreeAndNil(dirList);
+      FreeAndNil(allDirList);
+      FreeAndNil(resultList);
     end;
+  end
+  else
+  begin
+    LogDatei.log('install_in_background=false: Set Deferred: Stop script',
+      LLnotice);
+    scriptdeferstate := True;
+    scriptstopped := True;
+    ContinueWithInstallation := False;
+  end;
 end;
-
 
 end.

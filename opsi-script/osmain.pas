@@ -972,7 +972,7 @@ begin
   // end with background handling:
   end;
   {$ENDIF WIN32}
-  LogDatei.log('CheckForProcessProduct: '+ BoolToStr(Result, True), LLInfo);
+  LogDatei.log('CheckForProcessProduct ContinueWithInstallation: '+ BoolToStr(Result, True), LLInfo);
 end;
 
 procedure ProcessProdukt(var extremeErrorLevel: TErrorLevel);
@@ -1010,7 +1010,7 @@ var
 
 begin
   //updateAfterSetup := false;
-  Logdatei.log_prog('Entering ProcessNonZeroScript', LLdebug2);
+  Logdatei.log_prog('Entering ProcessProdukt', LLdebug2);
 
   runUpdate := True;
 
@@ -1055,6 +1055,7 @@ begin
     if Verfahren in [tacDeinstall, tacSetup, tacAlways] then
       opsidata.SetProductProgressByActionrequest(Verfahren);
       SetAndSendProductProgress(Verfahren);
+      opsidata.setProductState(tpsUnkown);
 
 
     if Verfahren in [tacDeinstall, tacSetup, tacOnce, tacAlways,
@@ -1385,6 +1386,10 @@ begin
       while (i <= Produkte.Count) and (PerformExitWindows < txrReboot) and
         (not PerformExitProgram) do
       begin
+        // Reset LogLevel to standard
+        Logdatei.LogLevel:= osconf.default_loglevel;
+        logDatei.log('default_loglevel reset to: ' + IntToStr(osconf.default_loglevel),
+            LLessential);
         processProduct := False;
         Produkt := Produkte.Strings[i - 1];
         opsidata.setActualProductName(Produkt);
