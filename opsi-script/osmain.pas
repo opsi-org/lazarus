@@ -1053,9 +1053,11 @@ begin
 
     // this switches state and progress
     if Verfahren in [tacDeinstall, tacSetup, tacAlways] then
+    begin
       opsidata.SetProductProgressByActionrequest(Verfahren);
       SetAndSendProductProgress(Verfahren);
       opsidata.setProductState(tpsUnkown);
+    end;
 
 
     if Verfahren in [tacDeinstall, tacSetup, tacOnce, tacAlways,
@@ -2291,12 +2293,15 @@ begin
             //ForceDirectories('c:\opsi.org\log');
             LogPath := logdatei.StandardLogPath;
             LogDateiName := LogPath + getLoggedInUser + '_login.log';
+            // do not write login script log to  Component log file (lastprodlog)
+            LogDatei.WriteComponentFile := false;
             startupmessages.Append('startmessage create log: ' + DateTimeToStr(Now));
             LogDatei.CreateTheLogfile(LogDateiName, False);
           end
           else
           begin
             LogDateiName := OpsiData.getLogFileName(LogDateiName);
+            LogDatei.WriteComponentFile := osconf.configWriteProductLogFile;
             startupmessages.Append('startmessage create log: ' + DateTimeToStr(Now));
             LogDatei.WriteHistFile := True;
             LogDatei.CreateTheLogfile(LogDateiName);
@@ -2305,7 +2310,6 @@ begin
           LogDatei.debug_prog := osconf.debug_prog;
           LogDatei.LogLevel := osconf.default_loglevel;
           LogDatei.debug_lib := osconf.debug_lib;
-          LogDatei.WriteComponentFile := osconf.configWriteProductLogFile;
           logDatei.log('force_min_loglevel: ' + IntToStr(osconf.force_min_loglevel),
             LLessential);
           logDatei.log('default_loglevel: ' + IntToStr(osconf.default_loglevel),
