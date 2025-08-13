@@ -598,6 +598,9 @@ begin
       if foundList.Count = 0 then
       begin
         // add unique element
+        // That would be something like this: pathname="c:\program files (x86)\anydesk\anydesk.exe"
+        // remove 'pathname='
+        proclong := copy(proclong,10,length(proclong));
         fullpathlist.Add(proclong);
       end;
     end;
