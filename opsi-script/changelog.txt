@@ -2,6 +2,14 @@ todo:
 isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-package-requires-a-reboot-of-my-system
 mac getIpByName liefert name von IPnum
 
+opsi-script (4.12.18.5)
+
+* osbackgroundinstall: removeServicesBinariesFromList: fix service list handling
+* osmain: CheckForProcessProduct: Abort Installation on no usable installer in meta file
+  (scriptstopped=true)
+
+-- d.oertel <d.oertel@uib.de> 2025-08-13
+
 opsi-script (4.12.18.4)
 
 * osmain: ProcessProdukt: update state and progress not for tacLogin

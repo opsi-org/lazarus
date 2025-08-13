@@ -924,6 +924,16 @@ begin
         // do we have the meta data ?
         if metaDataFound(ExtractFileDir(makeAbsoluteScriptPath(GetPathToScript,opsidata.getProductScriptPath(opsidata.getProductActionRequest)))) then
         begin
+          if scriptstopped then
+          begin
+            LogDatei.log(
+            'meta data found but does not match the situation', LLerror);
+             LogDatei.log(
+            'So we abort the installation.', LLerror);
+            Result:=False;
+          end
+          else
+          begin
           LogDatei.log(
             'meta data found: use it for background install',
             LLnotice);
@@ -933,6 +943,7 @@ begin
            LogDatei.log(
             'background install check finished for product: '+produktname+' - install: ' + BoolToStr(Result,true),
             LLnotice);
+          end;
         end
         else
         begin
