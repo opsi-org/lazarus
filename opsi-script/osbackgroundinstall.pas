@@ -1104,8 +1104,8 @@ begin
                 // isDeferred
                 LogDatei.log('Set Deferred: Stop script and restore product state',
                   LLnotice);
-                scriptdeferstate := True;
-                scriptstopped := True;
+                productDeferred := True;
+                productStopped := True;
               end
               else
               begin
@@ -1302,8 +1302,8 @@ begin
   begin
     LogDatei.log('install_in_background=false: Set Deferred: Stop script',
       LLnotice);
-    scriptdeferstate := True;
-    scriptstopped := True;
+    productDeferred := True;
+    productStopped := True;
     ContinueWithInstallation := False;
   end;
 end;

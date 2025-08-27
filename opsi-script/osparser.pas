@@ -750,10 +750,12 @@ var
   opsiWinstStartdir: string;
   Script: TuibInstScript;
   aktsection: TWorkSection;
-  scriptfailed: boolean = false;
   scriptsuspendstate: boolean;
   scriptdeferstate: boolean;
   scriptstopped: boolean;
+  productStopped: boolean;   // init at osmain buildPC product loop
+  productDeferred: boolean;   // init at osmain buildPC product loop
+  productFailed: boolean;   // init at osmain buildPC product loop
   inDefFuncLevel: integer = 0;
   inDefFuncIndex: integer = -1; // index of the active defined function
   IfElseEndifLevel: longint = 0; // global nestlevel store (do 18.1.2018)

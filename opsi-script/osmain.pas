@@ -924,7 +924,7 @@ begin
         // do we have the meta data ?
         if metaDataFound(ExtractFileDir(makeAbsoluteScriptPath(GetPathToScript,opsidata.getProductScriptPath(opsidata.getProductActionRequest)))) then
         begin
-          if scriptstopped then
+          if productStopped then
           begin
             LogDatei.log(
             'meta data found but does not match the situation', LLerror);
@@ -952,7 +952,7 @@ begin
             LLwarning);
           LogDatei.log(
             'So we defer the installation.', LLwarning);
-          scriptdeferstate:= True;
+          productDeferred:= True;
           Result:=False;
         end;
       end
@@ -1158,6 +1158,7 @@ var
   tmplist: TStringList;
   Produkte: TStringList = nil;
   initialProductState: string;
+  initialActionRequest: string;
   goOn: boolean;
   problemString: string;
   aktActionRequestStr: string;
@@ -1370,7 +1371,7 @@ begin
 
       begin
         if (Bootmode = 'REINS')
-        {$IFDEF WINDOWS}
+          {$IFDEF WINDOWS}
           and bootmodeFromRegistry
         {$ENDIF WINDOWS}
         then
@@ -1400,10 +1401,15 @@ begin
         (not PerformExitProgram) do
       begin
         // Reset LogLevel to standard
-        Logdatei.LogLevel:= osconf.default_loglevel;
+        Logdatei.LogLevel := osconf.default_loglevel;
         logDatei.log('default_loglevel reset to: ' + IntToStr(osconf.default_loglevel),
-            LLessential);
+          LLessential);
+        // Init product flags at loop start
         processProduct := False;
+        productStopped := False;
+        productDeferred := False;
+        productFailed := False;
+
         Produkt := Produkte.Strings[i - 1];
         opsidata.setActualProductName(Produkt);
         // get the actionrequest from the original productlist created at startup
@@ -1422,16 +1428,19 @@ begin
             ' is (original/actual): (' + opsidata.actionRequestToString(
             orgAction) + ' / ' + aktActionRequestStr + ')', LLInfo);
           ScriptDatei := ExtractFileDir(makeAbsoluteScriptPath(GetPathToScript,
-          opsidata.getProductScriptPath(opsidata.getProductActionRequest)));
+            opsidata.getProductScriptPath(opsidata.getProductActionRequest)));
           ScriptConstants.Init(ScriptDatei);
           // process product only if we have a original action request which is still set
-          if (aktAction <> tacNone) and (orgAction <> tacNone) and CheckForProcessProduct(Produkt) then
+          if (aktAction <> tacNone) and (orgAction <> tacNone) and
+            CheckForProcessProduct(Produkt) then
             processProduct := True
           else
             processProduct := False;
         end;
         initialProductState := opsidata.getActualProductInstallationState;
-        LogDatei.log('initialProductState: ' + initialProductState, LLInfo);
+        initialActionRequest := opsidata.getActualProductActionRequest;
+        LogDatei.log('initialProductState: ' + initialProductState +
+          ' initialActionRequest : ' + initialActionRequest, LLInfo);
         if processProduct then
         begin
           LogDatei.log('BuildPC: process product .....', LLDebug3);
@@ -1445,62 +1454,78 @@ begin
           ProcessMess;
           {$ENDIF GUI}
           LogDatei.LogProduktId := True;
-          LogDatei.log('opsidata.getProductState: '
-             + opsidata.stateToString(opsidata.getProductState), LLInfo);
+          LogDatei.log('opsidata.getProductState: ' +
+            opsidata.stateToString(opsidata.getProductState), LLInfo);
 
           ProcessProdukt(extremeErrorLevel);
 
 
-          if (PerformExitWindows < txrImmediateLogout)
-          then
+          if (PerformExitWindows < txrImmediateLogout) then
           begin
             LogDatei.log_prog('BuildPC: standard update switches .....', LLDebug);
             opsidata.UpdateSwitches(extremeErrorLevel, logdatei.actionprogress);
           end
-          else LogDatei.log('BuildPC: will not update switches .....', LLDebug);
+          else
+            LogDatei.log('BuildPC: will not update switches .....', LLDebug);
 
-          LogDatei.log_prog('BuildPC: finishProduct .....', LLDebug);
-          opsidata.finishProduct;
-          LogDatei.LogProduktId := False;
         end;
-         // store results to webservice
-          if (scriptfailed) then
-          begin
-            LogDatei.log('installation failed: set product state: unknown'
-             + initialProductState, LLInfo);
-            opsidata.ProductOnClient_update(opsidata.getActualProductActionRequest,  // progress
-                                            tarFailed,    // result
-                                            opsidata.actionRequestStringToActionRequest('None'),
-                                            opsidata.actionRequestStringToActionRequest(opsidata.getActualProductLastActionRequest),
-                                            opsidata.stateStringToState('unknown'));  // state
-          end
-          else if (scriptdeferstate) then
-          begin
-            LogDatei.log('installation deferred: set progress and restore the initial product state: '
-             + initialProductState, LLInfo);
-            opsidata.ProductOnClient_update('Deferred',  // progress
-                                            tarNone,    // result
-                                            opsidata.actionRequestStringToActionRequest(opsidata.getActualProductActionRequest),
-                                            opsidata.actionRequestStringToActionRequest(opsidata.getActualProductLastActionRequest),
-                                            opsidata.stateStringToState(initialProductState));  // state
-          end
-          else if (scriptsuspendstate) then
-          begin
-            LogDatei.log('installation suspended: set progress and restore the initial product state: '
-             + initialProductState, LLInfo);
-            opsidata.ProductOnClient_update('Suspended',
-                                            tarNone,
-                                            opsidata.actionRequestStringToActionRequest(opsidata.getActualProductActionRequest),
-                                            opsidata.actionRequestStringToActionRequest(opsidata.getActualProductLastActionRequest),
-                                            opsidata.stateStringToState('unknown'));
-          end;
+
+        // if product is deferred script is also deferred
+        if productDeferred then scriptdeferstate :=  productDeferred;
+
+        // store results to webservice
+        if (productFailed) then
+        begin
+          LogDatei.log('installation failed: set product state: unknown' +
+            initialProductState, LLInfo);
+          opsidata.ProductOnClient_update(opsidata.getActualProductActionRequest,
+            // progress
+            tarFailed,    // result
+            opsidata.actionRequestStringToActionRequest(
+            'None'),
+            opsidata.actionRequestStringToActionRequest(
+            opsidata.getActualProductLastActionRequest),
+            opsidata.stateStringToState('unknown'));
+          // state
+        end
+        else if (scriptdeferstate) then
+        begin
+          LogDatei.log(
+            'installation deferred: set progress and restore the initial product state: '
+            +
+            initialProductState, LLInfo);
+          opsidata.ProductOnClient_update('Deferred',  // progress
+            tarNone,    // result
+            opsidata.actionRequestStringToActionRequest(
+            opsidata.getActualProductActionRequest),
+            opsidata.actionRequestStringToActionRequest(
+            opsidata.getActualProductLastActionRequest),
+            opsidata.stateStringToState(
+            initialProductState));  // state
+        end
+        else if (scriptsuspendstate) then
+        begin
+          LogDatei.log(
+            'installation suspended: set progress and restore the initial action request: '
+            +
+            initialProductState, LLInfo);
+          opsidata.ProductOnClient_update('Suspended',
+            tarNone,
+            opsidata.actionRequestStringToActionRequest(initialActionRequest),
+            opsidata.actionRequestStringToActionRequest(
+            opsidata.getActualProductLastActionRequest),
+            opsidata.stateStringToState('unknown'));
+        end;
+
+        LogDatei.log_prog('BuildPC: finishProduct .....', LLDebug);
+        opsidata.finishProduct;
+        LogDatei.LogProduktId := False;
 
         // At the recursive call to BuildPC we have lost the Produkte list
         // as a dirty hack we always reload here and do not increment the counter
         //Produkte := OpsiData.getListOfProductIDs;
         Inc(i);
       end;
-
 
       LogDatei.log('BuildPC: saveOpsiConf .....', LLDebug3);
       opsidata.saveOpsiConf;
@@ -1529,7 +1554,7 @@ begin
     errorNumber := 0;
 
     // LINUX see below
-  {$IFDEF WINDOWS}
+    {$IFDEF WINDOWS}
     LogDatei.log('BuildPC: handle reboot options: write to registry .....', LLDebug3);
     RegLogOutOptions := TuibRegistry.Create;
     with RegLogOutOptions do
@@ -1705,10 +1730,11 @@ begin
               TheExitMode := txmReboot;
               if not ExitSession(TheExitMode, Fehler) then
                 {$IFDEF GUI}
-                MyMessageDlg.WiMessage('ExitWindows Error ' + LineEnding + Fehler, [mrOk]);
-                {$ELSE GUI}
+                MyMessageDlg.WiMessage('ExitWindows Error ' +
+                  LineEnding + Fehler, [mrOk]);
+              {$ELSE GUI}
               writeln('ExitWindows Error ' + LineEnding + Fehler);
-                {$ENDIF GUI}
+              {$ENDIF GUI}
             end;
           end;
 
@@ -1744,7 +1770,7 @@ begin
       LogDatei.log('BuildPC: Terminating .....', LLDebug3);
       {$IFDEF WINDOWS}
       SystemCritical.IsCritical := False;
-{$ENDIF WINDOWS}
+      {$ENDIF WINDOWS}
       TerminateApp;
     end;
   end;
