@@ -240,8 +240,8 @@ begin
   else
   begin
     logdatei.log('No Installers to use found. Setup script will not run.', LLcritical);
-    scriptfailed := True;
-    scriptstopped := True;
+    productFailed := True;
+    productStopped := True;
   end;
 
 

@@ -2,6 +2,17 @@ todo:
 isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-package-requires-a-reboot-of-my-system
 mac getIpByName liefert name von IPnum
 
+opsi-script (4.12.18.6)
+
+* osmain: CheckForProcessProduct: use productStopped (instead of scriptstopped)
+  to flag prescript product stop
+* osmain / osmeta: CheckForProcessProduct: use productFailed (instead of scriptfailed)
+  to flag prescript product failed
+* osmain: BuildPC: fix set product on cilent for scriptsuspendstate
+
+-- d.oertel <d.oertel@uib.de> 2025-08-20
+
+
 opsi-script (4.12.18.5)
 
 * osbackgroundinstall: removeServicesBinariesFromList: fix service list handling

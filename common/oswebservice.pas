@@ -3420,7 +3420,8 @@ end;
 
 procedure TOpsi4Data.finishProduct;
 begin
-  ProductVars.Free;
+  FreeAndNil(ProductVars);
+  LogDatei.log_prog('opsi4data.finishProduct : free and nil ProductVars', LLDebug);
 end;
 
 function TOpsi4Data.getLogFileName(const LogFilename: string): string;
@@ -4737,14 +4738,19 @@ begin
     if lastAction <> tacCustom then
       FProductOnClient_aktobject.S['installationStatus'] := installationStatusS;
     parastr := FProductOnClient_aktobject.asJson(False, False);
-    LogDatei.log('Opsi4Data.ProductOnClient_update, params (JSON): ' +
-      parastr, LLDebug2);
+    LogDatei.log_prog('Opsi4Data.ProductOnClient_update, params (JSON) : ' +
+      parastr, LLDebug);
     omc := TOpsiMethodCall.Create('productOnClient_updateObject', [parastr]);
     jO := FjsonExecutioner.retrieveJSONObject(omc);
     omc.Free;
   except
-    LogDatei.log('Error in opsi4data.ProductOnClient_update, parastr: ' +
-      parastr, LLerror);
+    on e: Exception do
+    begin
+      LogDatei.log('exception in opsi4data.ProductOnClient_update  ' +
+        e.message, LLError);
+      LogDatei.log('Error in opsi4data.ProductOnClient_update, parastr: ' +
+        parastr, LLerror);
+    end;
   end;
 end;
 
@@ -5051,8 +5057,13 @@ begin
       end; // failed
     end;
   except
-    LogDatei.log('Error in opsi4data.UpdateSwitches, Actionstr: ' +
-      Actionstr, LLerror);
+    on e: Exception do
+    begin
+      LogDatei.log('exception in opsi4data.UpdateSwitchest  ' +
+        e.message, LLError);
+      LogDatei.log('Error in opsi4data.UpdateSwitches, Actionstr: ' +
+        Actionstr, LLerror);
+    end;
   end;
 end;
 
