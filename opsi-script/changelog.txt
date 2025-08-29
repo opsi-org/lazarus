@@ -2,6 +2,18 @@ todo:
 isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-package-requires-a-reboot-of-my-system
 mac getIpByName liefert name von IPnum
 
+opsi-script (4.12.18.7)
+
+* osparser: osparser.pas: new script constant %installingVersion%
+            %installingVersion% = product version without package version, e.g. 4.12.18.7
+             needed for background install
+             see https://mattermost.uib.gmbh/uib/pl/y96n4fqmrpfqpps8g78a77rtsr
+             (j.werner, !272)
+
+-- j.werner <j.werner@uib.de> 2025-08-29
+
+
+
 opsi-script (4.12.18.6)
 
 * osmain: CheckForProcessProduct: use productStopped (instead of scriptstopped)
