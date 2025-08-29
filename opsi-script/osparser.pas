@@ -2304,6 +2304,16 @@ begin
       Add('%installingProdVersion%='+'');
     end;
 
+    // %installingVersion%
+    if opsidata = nil then
+      Add('%installingVersion%='+'')
+    else
+    try
+      Add('%installingVersion%='+SplitString(opsidata.getActualProductVersion,'-')[0]);
+    except
+      Add('%installingVersion%='+'');
+    end;
+
     // %installingProduct%
     if opsidata = nil then
       Add('%installingProduct%='+'')
