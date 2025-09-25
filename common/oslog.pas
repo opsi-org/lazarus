@@ -219,6 +219,7 @@ type
     property StandardPartLogPath: string read FStandardPartLogPath
       write FStandardPartLogPath;
     property UsedLogLevel: integer read FUsedLogLevel write FUsedLogLevel;
+    property ConfidentialStrings: TStringList read FConfidentialStrings;
     //function copyPartLogToFullLog: boolean;
   end;
 
@@ -1324,8 +1325,7 @@ var
   peaklen: integer = 0;
   //usedloglevel: integer = 0;
   i: integer;
-  dummybool: boolean;
-  orgfilename, mainfilename, sectionFilename: string;
+  orgfilename, mainfilename: string;
   {$IFDEF GUI}
   dlgresult: TModalresult;
   {$ENDIF}
@@ -1398,8 +1398,10 @@ begin
        {$ENDIF}
         // hide all confidential strings
         for i := 0 to FConfidentialStrings.Count - 1 do
+        begin
           st := SysUtils.StringReplace(st, FConfidentialStrings[i],
             passwordFiller, [rfReplaceAll]);
+        end;
       end;
       // replace ' -->' by ' ==>' because the opsi web service get in trouble because it is interpreted as xml comment
       st := SysUtils.StringReplace(st, ' -->', ' ==>', [rfReplaceAll]);
@@ -1761,9 +1763,40 @@ begin
   end;
 end;
 
+
+(*
+The problem of confidential string parts:
+We replace confidential strings if they are found in the log string.
+But perhaps is the first match is not the best.
+If our confidential strings are:
+123
+123456
+and our log string is '0123456789' than (working with the list above)
+we would replace '123' because this is the first match.
+This problem may appear often, because our splitstring* functions
+will declare all parts of a string as confidential if the source string is confidential.
+In order to reduce the problem, we sort the confidential list by string length.
+So in this cas we start with the long confidentil strings
+and so the first match should be the longest one.
+Implementation for sort by length:
+[SOLVED] Sorting items by length
+https://forum.lazarus.freepascal.org/index.php?topic=64188.0
+*)
+
+function CompareStringLengths_small_first(List: TStringList; Index1, Index2: Integer): Integer;
+begin
+  Result := UTF8Length(List.Strings[Index1]) - UTF8Length(List.Strings[Index2]);
+end;
+
+function CompareStringLengths_long_first(List: TStringList; Index1, Index2: Integer): Integer;
+begin
+  Result := UTF8Length(List.Strings[Index2]) - UTF8Length(List.Strings[Index1]);
+end;
+
 procedure TLogInfo.AddToConfidentials(newsecret: string);
 begin
   FConfidentialStrings.Append(newsecret);
+  FConfidentialStrings.CustomSort(@CompareStringLengths_long_first);
 end;
 
 function TLogInfo.isConfidential(teststring: string): boolean;

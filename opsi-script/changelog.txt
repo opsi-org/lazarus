@@ -2,6 +2,28 @@ todo:
 isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-package-requires-a-reboot-of-my-system
 mac getIpByName liefert name von IPnum
 
+opsi-script (4.12.18.8)
+
+* oslog: Sort FConfidentialStrings by length in TLogInfo.AddToConfidentials
+The problem of confidential string parts:
+We replace confidential strings if they are found in the log string.
+But perhaps is the first match is not the best.
+If our confidential strings are:
+123
+123456
+and our log string is '0123456789' than (working with the list above)
+we would replace '123' because this is the first match.
+This problem may appear often, because our splitstring* functions
+will declare all parts of a string as confidential if the source string is confidential.
+In order to reduce the problem, we sort the confidential list by string length.
+So in this cas we start with the long confidentil strings
+and so the first match should be the longest one.
+Implementation for sort by length:
+[SOLVED] Sorting items by length
+https://forum.lazarus.freepascal.org/index.php?topic=64188.0
+
+-- d.oertel <d.oertel@uib.de> 2025-09-16
+
 opsi-script (4.12.18.7)
 
 * osparser: osparser.pas: new script constant %installingVersion%
