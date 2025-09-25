@@ -1,13 +1,13 @@
 object CustomMessageForm: TCustomMessageForm
-  Left = 1361
+  Left = 968
   Height = 232
-  Top = 283
+  Top = 342
   Width = 500
   Caption = 'Message'
   ClientHeight = 232
   ClientWidth = 500
   OnClose = FormClose
-  LCLVersion = '3.0.0.3'
+  LCLVersion = '3.2.0.0'
   object ButtonLeft: TButton
     AnchorSideLeft.Control = Owner
     AnchorSideBottom.Control = Owner
