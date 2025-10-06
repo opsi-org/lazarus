@@ -8607,6 +8607,8 @@ var
 
     workingSection := TXStringList.Create;
     workingSection.Assign(Section);
+    LogDatei.log('Files Section fileActionsMain',LLDebug);
+    LogDatei.log(workingSection.Text,LLDebug);
     for i := 0 to Sektion.Count - 1 do
     begin
       Remaining := cutLeftBlanks(workingSection.strings[i]);
@@ -24174,18 +24176,6 @@ begin
                         incline := inclist.Strings[k];
                         LogDatei.log_prog(
                           'Will Include line (raw): ' + incline, LLDebug3);
-                        //incline := reencode(incline, Encoding2use, usedEncoding);
-                        //LogDatei.log_prog(
-                        //  'Will Include line (reencoded): ' + incline, LLDebug3);
-                        for constcounter := 1 to ScriptConstants.Count do
-                          if Sektion.replaceInLine(incline,
-                            ScriptConstants.Names[constcounter - 1],
-                            ScriptConstants.ValueFromIndex[constcounter - 1],
-                            False, replacedline) then
-                            incline := replacedline;
-                        LogDatei.log_prog(
-                          'Will Include line (constants replaced): ' +
-                          incline, LLDebug3);
                         insertindex := linecounter + k;
                         //Sektion.Insert(linecounter - 1 + k, incline);
                         Sektion.Insert(insertindex, incline);
@@ -24394,12 +24384,6 @@ begin
                         //readln(incfile, incline);
                         //incline := reencode(incline, Encoding2use, usedEncoding);
                         incline := inclist.Strings[k];
-                        for constcounter := 1 to ScriptConstants.Count do
-                          if Sektion.replaceInLine(incline,
-                            ScriptConstants.Names[constcounter - 1],
-                            ScriptConstants.ValueFromIndex[constcounter - 1],
-                            False, replacedline) then
-                            incline := replacedline;
                         // remove encoding= lines from include_append because
                         // this line can become a part of a secondary section (do 20.7.2021)
                         if AnsiStartsStr('encoding', trim(incline)) then
