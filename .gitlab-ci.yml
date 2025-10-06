@@ -84,12 +84,10 @@ compile opsi-script windows:
   script:
     - $LAZ_PROJECT_FILE=Join-Path ${PROJECT_REPOSITORY_PATH}\  "${PROJECT_NAME}.lpi"
     - echo "$LAZ_PROJECT_FILE"
+    - echo "Compiling $PROJECT_NAME for Win32"
     - C:\lazarus\lazbuild.exe $LAZ_PROJECT_FILE --build-all --build-mode=Release_Win32
     - echo "Compiling $PROJECT_NAME for Win64"
     - C:\lazarus\lazbuild.exe $LAZ_PROJECT_FILE --build-all --build-mode=Release_Win64
-    - echo "Code signing opsi-script for windows"
-    - opsi-dev-tool -l info --signserver-sign $PROJECT_REPOSITORY_PATH\compiler_out\binarys\i386-win32\opsi-script.exe
-    - opsi-dev-tool -l info --signserver-sign $PROJECT_REPOSITORY_PATH\compiler_out\binarys\x86_64-win64\opsi-script.exe
   artifacts:
     name: "opsi-script $BINARY_VERSION windows"
     paths:
@@ -185,6 +183,9 @@ opsi-script to binaryindex:
     - cp compiler_out/binarys/x86_64-linux/opsi-script-gui upload/lin64/opsi-script
     - cp compiler_out/binarys/x86_64-darwin/opsi-script upload/mac64/opsi-script
     - cp compiler_out/binarys/x86_64-darwin/opsi-script-gui upload/mac64/opsi-script
+    - opsi-dev-cli -l info signserver sign upload/win32/opsi-script/opsi-script.exe
+    - opsi-dev-cli -l info signserver sign upload/win64/opsi-script/opsi-script.exe
+    #- opsi-dev-cli -l info virustotal check upload/win32/opsi-script/opsi-script.exe upload/win64/opsi-script/opsi-script.exe --allow-detections=10
     - ls -lah upload/*/opsi-script
     - echo "${BINARY_VERSION}"
     - opsi-dev-cli -l info binary push --product opsi-script-bin --os windows --architecture x86 --version "${BINARY_VERSION}" upload/win32/opsi-script
@@ -255,8 +256,8 @@ opsi-laz-gui-test to binaryindex:
   script:
     - echo "deploy to binaryindex"
     - cd helper/opsi-laz-gui-test
-    - opsi-dev-tool -l info --binary-push binarys/linux/opsi-laz-gui-test opsi-laz-gui-test linux x64 "${BINARY_VERSION}"
-    - opsi-dev-tool -l info --binary-push binarys/mac/opsi-laz-gui-test opsi-laz-gui-test darwin x64 "${BINARY_VERSION}"
+    - opsi-dev-cli binary push binarys/linux/opsi-laz-gui-test --product=opsi-laz-gui-test --system=linux --version="${BINARY_VERSION}"
+    - opsi-dev-cli binary push binarys/mac/opsi-laz-gui-test --product=opsi-laz-gui-test --system=darwin --version="${BINARY_VERSION}"
 
 
 
@@ -288,6 +289,13 @@ compile opsi-client-systray windows:
     - C:\lazarus\lazbuild.exe $LAZ_PROJECT_FILE --build-mode=Release_Win32
     - echo "Compiling $PROJECT_NAME for Win64"
     - C:\lazarus\lazbuild.exe $LAZ_PROJECT_FILE --build-mode=Release_Win64
+    - cd $PROJECT_REPOSITORY_PATH/compiler_out/binarys
+    - ls -lah
+    - opsi-dev-cli -l info signserver sign i386-win32\$BINARY_NAME.exe
+    - opsi-dev-cli -l info signserver sign x86_64-win64\$BINARY_NAME.exe
+    #- opsi-dev-cli -l info virustotal check i386-win32\$BINARY_NAME.exe x86_64-win64\$BINARY_NAME.exe --allow-detections=10
+    - opsi-dev-cli binary push i386-win32\$BINARY_NAME.exe --product opsi-client-systray --system windows --architecture x86 --version "${BINARY_VERSION}"
+    - opsi-dev-cli binary push x86_64-win64\$BINARY_NAME.exe --product opsi-client-systray --system windows --architecture x64 --version "${BINARY_VERSION}"
   artifacts:
     name: "$BINARY_NAME $BINARY_VERSION windows"
     paths:
@@ -311,6 +319,9 @@ compile opsi-client-systray linux:
     - /usr/bin/lazbuild $LAZ_PROJECT_FILE --build-mode=Release_Lin_64_nogui
     - echo "Compiling $PROJECT_NAME for Linux with GUI"
     - /usr/bin/lazbuild $LAZ_PROJECT_FILE --build-mode=Release_Lin_64_gui
+    - cd $PROJECT_REPOSITORY_PATH/compiler_out/binarys
+    - ls -lah
+    - opsi-dev-cli binary push x86_64-linux/$BINARY_NAME --product opsi-client-systray --system linux --version "${BINARY_VERSION}"
   artifacts:
     name: "$BINARY_NAME $BINARY_VERSION linux"
     paths:
@@ -333,6 +344,9 @@ compile opsi-client-systray macos:
     - /Applications/Lazarus/lazbuild $LAZ_PROJECT_FILE --build-mode=Release_mac_nogui --ws=cocoa
     - echo "Compiling $PROJECT_NAME for MacOS with GUI"
     - /Applications/Lazarus/lazbuild $LAZ_PROJECT_FILE --build-mode=Release_mac_gui --ws=cocoa
+    - cd $PROJECT_REPOSITORY_PATH/compiler_out/binarys
+    - ls -lah
+    - opsi-dev-cli binary push x86_64-darwin/$BINARY_NAME --product opsi-client-systray --system darwin --version "${BINARY_VERSION}"
     # - $BINARY_OUT_PATH = $PROJECT_NAME -eq "opsiscript")
   artifacts:
     name: "$BINARY_NAME $BINARY_VERSION macos"
