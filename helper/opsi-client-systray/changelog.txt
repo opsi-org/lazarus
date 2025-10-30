@@ -1,5 +1,20 @@
 
 [changelog]
+
+opsi_client_systray  4.3.0.1
+
+* new opsi Icon in code and git
+* also new black and white icons
+* fix deprecated getdaultlang
+
+-- Detlef Oertel <d.oertel@uib.de> 2025-10-17
+
+opsi_client_systray  4.3.0.0
+
+* new opsi Icon
+
+-- Unknown   2023-10-05
+
 opsi_client_systray  4.2.1.0
 
 * fix macos opsiclientd detection

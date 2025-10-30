@@ -24,8 +24,8 @@
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
-      <MinorVersionNr Value="2"/>
-      <RevisionNr Value="1"/>
+      <MinorVersionNr Value="3"/>
+      <BuildNr Value="1"/>
       <StringTable CompanyName="uib gmbh / opsi.org" InternalName="opsi-client-systray" LegalCopyright="AGPLv3" LegalTrademarks="opsi, opsi.org, open pc server integration" OriginalFilename="opsi-client-systray" ProductName="opsi / opsi.org" ProductVersion="4.2.0.0"/>
     </VersionInfo>
     <BuildModes Count="4">
@@ -114,9 +114,10 @@
             <CustomOptions Value="-dOPSI
 -dOPSI_AS_USER
 -dSSLPATH"/>
-            <OtherDefines Count="2">
+            <OtherDefines Count="3">
               <Define0 Value="OPSI"/>
               <Define1 Value="OPSI_AS_USER"/>
+              <Define2 Value="SSLPATH"/>
             </OtherDefines>
           </Other>
         </CompilerOptions>
