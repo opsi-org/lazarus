@@ -393,7 +393,7 @@ begin
   end;
 
 
-  mylang := GetDefaultLang;
+  mylang := SetDefaultLang('');
   {$IFDEF WINDOWS}
   if Mylang = '' then
     mylang := LowerCase(copy(GetSystemDefaultLocale(LOCALE_SABBREVLANGNAME), 1, 2));
@@ -404,14 +404,14 @@ begin
   {$ENDIF DARWIN}
   SetDefaultLang(mylang);
   preloglist.Add('Detected default lang: ' + mylang);
-  preloglist.Add('Detected default lang by laz: ' + GetDefaultLang);
+  preloglist.Add('Detected default lang by laz: ' + SetDefaultLang(''));
 
   if Application.HasOption('lang') then
   begin
     preloglist.Add('Found Parameter lang');
     SetDefaultLang(Application.GetOptionValue('lang'));
     preloglist.Add('Found Parameter lang: ' + Application.GetOptionValue('lang'));
-    preloglist.Add('Active lang: ' + GetDefaultLang);
+    preloglist.Add('Active lang: ' + SetDefaultLang(''));
   end;
 
   if Application.HasOption('service_url_port') then
