@@ -286,9 +286,7 @@ compile opsi-client-systray windows:
     - $LAZ_PROJECT_FILE=Join-Path ${PROJECT_REPOSITORY_PATH}\  "${PROJECT_NAME}.lpi"
     - echo "$LAZ_PROJECT_FILE"
     - echo "Compiling $PROJECT_NAME for Win32"
-    - C:\lazarus\lazbuild.exe $LAZ_PROJECT_FILE --build-mode=Release_win32
-    - echo "Compiling $PROJECT_NAME for Win64"
-    - C:\lazarus\lazbuild.exe $LAZ_PROJECT_FILE --build-mode=Release_win64
+    - C:\lazarus\lazbuild.exe $LAZ_PROJECT_FILE --build-mode=Release
     - cd $PROJECT_REPOSITORY_PATH/compiler_out/binarys
     - ls -lah
     - opsi-dev-cli -l info signserver sign i386-win32\$BINARY_NAME.exe
@@ -315,10 +313,8 @@ compile opsi-client-systray linux:
   script:
     - LAZ_PROJECT_FILE=${PROJECT_REPOSITORY_PATH}/${PROJECT_NAME}.lpi
     - echo "$LAZ_PROJECT_FILE"
-    - echo "Compiling $PROJECT_NAME for Linux with no GUI"
-    - /usr/bin/lazbuild $LAZ_PROJECT_FILE --build-mode=Release_lin_64_nogui
-    - echo "Compiling $PROJECT_NAME for Linux with GUI"
-    - /usr/bin/lazbuild $LAZ_PROJECT_FILE --build-mode=Release_lin_64_gui
+    - echo "Compiling $PROJECT_NAME for Linux x64"
+    - /usr/bin/lazbuild $LAZ_PROJECT_FILE --build-mode=Release
     - cd $PROJECT_REPOSITORY_PATH/compiler_out/binarys
     - ls -lah
     - opsi-dev-cli binary push x86_64-linux/$BINARY_NAME --product opsi-client-systray --system linux --version "${BINARY_VERSION}"
@@ -340,10 +336,8 @@ compile opsi-client-systray macos:
   script:
     - LAZ_PROJECT_FILE=${PROJECT_REPOSITORY_PATH}/${PROJECT_NAME}.lpi
     - echo "$LAZ_PROJECT_FILE"
-    - echo "Compiling $PROJECT_NAME for MacOS with no GUI"
-    - /Applications/Lazarus/lazbuild $LAZ_PROJECT_FILE --build-mode=Release_mac_nogui --ws=cocoa
-    - echo "Compiling $PROJECT_NAME for MacOS with GUI"
-    - /Applications/Lazarus/lazbuild $LAZ_PROJECT_FILE --build-mode=Release_mac_gui --ws=cocoa
+    - echo "Compiling $PROJECT_NAME for MacOS x64"
+    - /Applications/Lazarus/lazbuild $LAZ_PROJECT_FILE --build-mode=Release_mac --ws=cocoa
     - cd $PROJECT_REPOSITORY_PATH/compiler_out/binarys
     - ls -lah
     - opsi-dev-cli binary push x86_64-darwin/$BINARY_NAME --product opsi-client-systray --system darwin --version "${BINARY_VERSION}"
