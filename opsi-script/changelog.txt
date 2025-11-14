@@ -2,6 +2,19 @@ todo:
 isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-package-requires-a-reboot-of-my-system
 mac getIpByName liefert name von IPnum
 
+ opsi-script (4.12.19.0)
+
+* osparser.pas: new opsi-script command ExitScript, usage:
+  ExitScript <Status> <Report> <ActionRequest>
+  example: ExitScript "not_installed" "Script exit" "none"
+  ExitScript (equals ExitScript "unknown" "ExitScript" "none"  (default values))
+  ExitScript <Status> (equals ExitScript <Status> "ExitScript" "none")
+  ExitScript <Status> <Report> (equals ExitScript <Status> <Report> "none")
+  (j.werner, !279)
+
+-- j.werner <j.werner@uib.de> 2025-11-14
+
+
 opsi-script (4.12.18.8)
 
 * oslog: Sort FConfidentialStrings by length in TLogInfo.AddToConfidentials
