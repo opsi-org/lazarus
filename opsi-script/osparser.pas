@@ -25487,8 +25487,8 @@ begin
               begin
                 Parameters.Clear;
                 //Defaults
-                Parameters.Add('not_installed'); //first parameter (status)
-                Parameters.Add('ExitScript:'); //second parameter (report)
+                Parameters.Add('unknown'); //first parameter (status)
+                Parameters.Add('ExitScript'); //second parameter (report)
                 Parameters.Add('none'); //third parameter (action request)
                 ParamIndex := 0;
                 while (remaining <> '') and (ParamIndex < Parameters.Count) do
