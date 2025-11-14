@@ -1462,7 +1462,7 @@ begin
 
           if (PerformExitWindows < txrImmediateLogout) then
           begin
-            LogDatei.log_prog('BuildPC: standard update switches .....', LLDebug);
+            LogDatei.log('BuildPC: standard update switches .....', LLDebug);
             opsidata.UpdateSwitches(extremeErrorLevel, logdatei.actionprogress);
           end
           else
@@ -1515,7 +1515,12 @@ begin
             opsidata.actionRequestStringToActionRequest(
             opsidata.getActualProductLastActionRequest),
             opsidata.stateStringToState('unknown'));
+        end
+        else if (scriptexitstate) then
+        begin
+          LogDatei.log('exit script', LLInfo);
         end;
+
 
         LogDatei.log_prog('BuildPC: finishProduct .....', LLDebug);
         opsidata.finishProduct;
@@ -1526,9 +1531,6 @@ begin
         //Produkte := OpsiData.getListOfProductIDs;
         Inc(i);
       end;
-
-      LogDatei.log('BuildPC: saveOpsiConf .....', LLDebug3);
-      opsidata.saveOpsiConf;
 
       Produkte.Free;
       Produkte := nil;
@@ -2736,6 +2738,7 @@ begin
                 if (PerformExitWindows < txrImmediateLogout)
                    and (not scriptsuspendstate)
                    and (not scriptdeferstate)
+                   and (not scriptexitstate)
                 then
                 begin
                   LogDatei.log_prog('serviceBatch: update switches 2.....', LLDebug);

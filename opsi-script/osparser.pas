@@ -177,6 +177,7 @@ type
     tsSetOutputLevel,
     tsSetExitOnError,
     tsSetFatalError, tsSetSuccess, tsSetNoUpdate, tsSetSuspended, tsSetDeferred,
+    tsSetExit,
     //tsSetProductProgress,
     tsSetMarkerErrorNumber,
     tsSetReportMessages, tsSetTimeMark, tsLogDiffTime,
@@ -338,6 +339,7 @@ type
     FFatalOnRuntimeError: boolean;
     FSuspended: boolean;
     FDeferred: boolean;
+    FExit: boolean;
     FAutoActivityDisplay: boolean;
     FforceLogInAppendMode: boolean;
 
@@ -378,6 +380,7 @@ type
       var linecounter: integer; var FaktScriptLineNumber: int64;
       var Sektion: TWorksection; SectionSpecifier: TSectionSpecifier;
       const call: string; const NewFunction: boolean): TStringList;
+    function ExitScript(const Parameters:TStringList): TSectionResult;
   protected
     function getVarValues: TStringList; //nicht verwendet
 
@@ -399,6 +402,7 @@ type
       write FFatalOnRuntimeError;
     property Suspended: boolean read FSuspended write FSuspended;
     property Deferred: boolean read FDeferred write FDeferred;
+    property ExitByCommand: boolean read FExit write FExit;
     property AutoActivityDisplay: boolean read FAutoActivityDisplay
       write FAutoActivityDisplay;
     property forceLogInAppendMode: boolean read FforceLogInAppendMode
@@ -752,6 +756,7 @@ var
   aktsection: TWorkSection;
   scriptsuspendstate: boolean;
   scriptdeferstate: boolean;
+  scriptexitstate: boolean;
   scriptstopped: boolean;
   productStopped: boolean;   // init at osmain buildPC product loop
   productDeferred: boolean;   // init at osmain buildPC product loop
@@ -2544,7 +2549,7 @@ end;
 
 
 
-procedure TuibInstScript.LoadValidLinesFromFile(FName: string;
+procedure TuibInstScript.loadValidLinesFromFile(FName: string;
   expectedEncoding: string; var Section: TWorkSection);
 var
   OriginalList: TXStringList;
@@ -12073,9 +12078,9 @@ begin
   end;
 end;
 
-function TuibInstScript.produceStringList
-  (const section: TuibIniScript; const s0: string; var Remaining: string;
-  var list: TXStringList; var InfoSyntaxError: string): boolean;
+function TuibInstScript.produceStringList(const section: TuibIniScript;
+  const s0: string; var Remaining: string; var list: TXStringlist;
+  var InfoSyntaxError: string): boolean;
 begin
   Result := produceStringList(section, s0, Remaining, list, InfoSyntaxError,
     IfElseEndifLevel, inDefFuncIndex);
@@ -12144,9 +12149,9 @@ begin
     syntaxCheck := False;
 end;
 
-function TuibInstScript.produceStringList
-  (const section: TuibIniScript; const s0: string; var Remaining: string;
-  var list: TXStringList; var InfoSyntaxError: string; var NestLevel: integer;
+function TuibInstScript.produceStringList(const section: TuibIniScript;
+  const s0: string; var Remaining: string; var list: TXStringlist;
+  var InfoSyntaxError: string; var NestLevel: integer;
   const inDefFuncIndex: integer): boolean;
 var
   VarIndex: integer = 0;
@@ -21971,6 +21976,23 @@ begin
   end;
 end;
 
+function TuibInstScript.ExitScript(const Parameters: TStringList): TSectionResult;
+begin
+  LogDatei.log('Exit script', LLnotice);
+  PerformExitWindows := txrImmediateLogout;
+  runUpdate := False;
+  script.ExitByCommand := True;
+  scriptstopped := True;
+  Result := tsrExitProcess;
+  opsidata.ProductOnClient_update(
+    Parameters.Strings[1],
+    tarNone,
+    opsidata.actionRequestStringToActionRequest(Parameters.Strings[2]),
+    opsidata.actionRequestStringToActionRequest(opsidata.getActualProductLastActionRequest),
+    opsidata.stateStringToState(Parameters[0])
+  );
+end;
+
 procedure TuibInstScript.parsePowershellCall(var Command: string;
   var AccessString: string; var HandlePolicy: string; var Option: string;
   var Remaining: string; var syntaxCheck: boolean; var InfoSyntaxError: string;
@@ -22198,6 +22220,7 @@ var
   //i : integer=0;
   StartlineOfSection: integer = 0;
   Parameter: string = '';
+  Parameters: TStringList;
   Filename: string = '';
   SectionSpecifier: TSectionSpecifier;
   posSlash: integer = 0;
@@ -22318,6 +22341,7 @@ var
   insertindex: integer;
   isPlainAscii: boolean;
   varIndex: integer;
+  ParamIndex: integer = 0;
 
 
   function parseAndCallRegistry(ArbeitsSektion: TWorkSection;
@@ -22526,6 +22550,7 @@ var
 *)
 begin
   logdatei.log_prog('Starting doAktionen: ', LLDebug2);
+  Parameters := TStringList.Create;
   Script.FLastSection := Script.FActiveSection;
   Script.ActiveSection := sektion;
   Result := tsrPositive;
@@ -25458,6 +25483,44 @@ begin
                     ' no parameter expected');
                 end;
 
+              tsSetExit:
+              begin
+                Parameters.Clear;
+                //Defaults
+                Parameters.Add('not_installed'); //first parameter (status)
+                Parameters.Add('ExitScript:'); //second parameter (report)
+                Parameters.Add('none'); //third parameter (action request)
+                ParamIndex := 0;
+                while (remaining <> '') and (ParamIndex < Parameters.Count) do
+                begin
+                  if EvaluateString(remaining, remaining, Parameter, infosyntaxerror) then
+                  begin
+                    //overwrite default Parameter
+                    Parameters.Strings[ParamIndex] := Parameter;
+                    inc(ParamIndex);
+                  end
+                  else
+                  begin
+                    ActionResult :=
+                      reportError(Sektion, linecounter, Sektion.strings[linecounter - 1],
+                      infosyntaxerror);
+                    SyntaxCheck := False;
+                    Break;
+                  end;
+                end;
+                if (remaining <> '') and SyntaxCheck then
+                begin
+                  ActionResult :=
+                    reportError(Sektion, linecounter, Sektion.strings[linecounter - 1],
+                    ' no parameter expected');
+                end;
+                if SyntaxCheck then
+                begin
+                  if not testsyntax then ActionResult := ExitScript(Parameters);
+                end;
+              end;
+
+
               tsSetDeferred:
                 if remaining = '' then
                 begin
@@ -26790,6 +26853,7 @@ begin
   output.Free;
   // restore last section
   Script.ActiveSection := Script.FLastSection;
+  FreeAndNil(Parameters);
 end;
 
 
@@ -27483,6 +27547,7 @@ begin
     SetCurrentDir(opsiWinstStartdir);
     scriptsuspendstate := script.Suspended;
     scriptdeferstate := script.Deferred;
+    scriptexitstate := script.ExitByCommand;
 
     {$IFDEF WIN32}
     // Unblock Input
@@ -27620,6 +27685,7 @@ initialization
   PStatNames^ [tsSetSuccess] := 'IsSuccess';
   PStatNames^ [tsSetSuspended] := 'IsSuspended';
   PStatNames^ [tsSetDeferred] := 'IsDeferred';
+  PStatNames^ [tsSetExit] := 'ExitScript';
   PStatNames^ [tsSetNoUpdate] := 'noUpdateScript';
   PStatNames^ [tsSetMarkerErrorNumber] := 'MarkErrornumber';
   PStatNames^ [tsSetReportMessages] := 'ScriptErrorMessages';
