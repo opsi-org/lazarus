@@ -490,7 +490,7 @@ begin
             nowtime := now;
             running := False;
             DecodeTime((nowtime - starttime), hhword, mmword, seconds, msword);
-
+            seconds := seconds + (mmword * 60) + (hhword * 60 *60);
             if catchout then
             begin
               repeat
@@ -760,6 +760,7 @@ begin
              {$ENDIF GUI}
 
               DecodeTime((nowtime - starttime), hhword, mmword, seconds, msword);
+              seconds := seconds + (mmword * 60) + (hhword * 60 *60);
               if seconds > seccounter then
               begin
                 logdatei.log('Waiting for ending at ' +
