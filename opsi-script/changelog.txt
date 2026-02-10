@@ -2,6 +2,31 @@ todo:
 isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-package-requires-a-reboot-of-my-system
 mac getIpByName liefert name von IPnum
 
+opsi-script (4.12.20.0)
+
+* new unit oswinandproclist   This unit handles to make a list of all windows over all desktops
+                              and put this together with the processlist
+                              In the case that a process has multiple windows,
+                              we will get the info of the last visible window.
+                              If no window is visible,
+                              we will get the info of the last unvisible window.
+
+* oswinandproclist: new: function getWinProcessListWithPathAndWindowInfo: TStringList;
+* oswinandproclist: new: function getRunningForegroundProcesses: TStringList;
+                         // hereby means 'foreground' that a process has a visible window.
+* osbackgroundinstall:  new: function getSearchedRunningForgroundProcesses(procList); : TStringList;
+* osbackgroundinstall: checkAndHandleRunningProcFull : use getSearchedRunningForgroundProcesses
+* osfuncwin2: new function: KillProcessByNameAndUser (allow to restrict killing to processe of given user
+* osfuncwin2: old function KillProcessByName now wrapper around KillProcessByNameAndUser
+* osbglistwinuser: function getLoggedInUserList(activeonly : boolean = false): TStringList;
+  can now list all logedon users or the active only
+* osbackgroundinstall: checkAndHandleRunningProcFull kills only user processes
+    via getSessionOwner  and getLoggedInUserList(true)
+* osbackgroundinstall: checkAndHandleRunningProductProcesses: search also
+    for all *.bin files (used by platorm idependent software like libreoffice, nomachine)
+
+-- d.oertel <d.oertel@uib.de> 2025-11-04
+
  opsi-script (4.12.19.0)
 
 * osparser.pas: new opsi-script command ExitScript, usage:
@@ -36,6 +61,7 @@ Implementation for sort by length:
 https://forum.lazarus.freepascal.org/index.php?topic=64188.0
 
 -- d.oertel <d.oertel@uib.de> 2025-09-16
+
 
 opsi-script (4.12.18.7)
 

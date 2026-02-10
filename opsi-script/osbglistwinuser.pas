@@ -1,4 +1,11 @@
 unit osbglistwinuser;
+(******************************************************************
+This unit is part of opsi-script background-install extension
+Winows only
+
+used to get the list of logged on users
+******************************************************************)
+
 
 {$mode Delphi}
 
@@ -16,7 +23,7 @@ uses
   // https://forum.lazarus.freepascal.org/index.php?topic=51125.0
   // https://www.delphipraxis.net/192001-wie-findet-man-den-richtigen-angemeldeten-windows-benutzer.html
 
-function getLoggedInUserList: TStringList;
+function getLoggedInUserList(activeonly : boolean = false): TStringList;
 
 implementation
 
@@ -24,14 +31,23 @@ function getUsernameBySession(sessionId: DWord): string;
 var
   pBuffer: LPWSTR = nil;
   Bytes: DWORD = 0;
-  Username: string;
+  Username, Domainname: string;
 begin
+  Domainname := '';
   if WTSQuerySessionInformationW(WTS_CURRENT_SERVER_HANDLE, sessionId,
     WTSUserName, pBuffer, Bytes) then
   begin
     try
       SetString(Username, pBuffer, lstrlenW(pBuffer)); //copy content of pBuffer to Username (not including the terminating null character)
-      Result := UTF8Encode(Username);
+      // get also domain name
+      pBuffer := nil;
+      Bytes := 0;
+      if WTSQuerySessionInformationW(WTS_CURRENT_SERVER_HANDLE, sessionId,
+        WTSDomainName, pBuffer, Bytes) then
+        begin
+         SetString(Domainname, pBuffer, lstrlenW(pBuffer));
+        end;
+      Result := UTF8Encode(Domainname)+'\'+UTF8Encode(Username);
       LogDatei.log_prog('getUsernameBySession: ' + Result, LLnotice);
     finally
       WTSFreeMemory(pBuffer);
@@ -59,7 +75,7 @@ begin
   end;
 end;
 
-function getLoggedInUserList: TStringList;
+function getLoggedInUserList(activeonly : boolean = false): TStringList;
 var
   pSessionInfo: PWtsSessionInfoW; //A pointer to an array of WTS_SESSION_INFO structures that represent the retrieved sessions. To free the returned buffer, call the WTSFreeMemory function.
   Count: DWord; //number of WTS_SESSION_INFO structures returned in pSessionInfo
@@ -85,10 +101,13 @@ begin
           LogDatei.log_prog('WtsEnum: SessionID=' + IntToStr(SessionID), LLnotice);
           LogDatei.log_prog('WtsEnum: WinStationName=' + WinStationName, LLnotice);
           LogDatei.log_prog('WtsEnum: State=' + ConStateToStr(State), LLnotice);
-          if State = WTSActive then // WTSActive: A user is logged on to the WinStation. This state occurs when a user is signed in and actively connected to the device.
+          if (not activeonly) or (activeonly and (State = WTSActive)) then // WTSActive: A user is logged on to the WinStation. This state occurs when a user is signed in and actively connected to the device.
           begin
             Username := getUsernameBySession(SessionID);
-            Result.Add(Username);
+            if Username <> '' then
+            begin
+              Result.Add(Username);
+            end;
             LogDatei.log('Found logged in user: ' + Username, LLDebug);
           end;
           Inc(pSessionInfo); // next structure

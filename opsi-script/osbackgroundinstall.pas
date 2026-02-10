@@ -1,5 +1,12 @@
 unit osbackgroundinstall;
 
+(******************************************************************
+This unit is part of opsi-script background-install extension
+Winows only
+
+******************************************************************)
+
+
 {$mode Delphi}
 
 interface
@@ -20,7 +27,10 @@ uses
   wispecfolder,
   shlobj,
   osmeta,
-  osbglistwinuser;
+  osbglistwinuser,
+  osfuncwin2,
+  oswinandproclist,
+  lazutf8;
 
 procedure checkAndHandleRunningProductProcesses(const checkDirList: TStringList;
   const procList: TStringList; var ContinueWithInstallation: boolean);
@@ -153,10 +163,13 @@ begin
   end
   else
   begin
-    LogDatei.log_prog('We start a new service connection to the local opsiclientd.',LLinfo);
-    LogDatei.log_prog('This will lead to some messages you should ignore:',LLinfo);
-    LogDatei.log_prog('Ignore: "No method backend_getLicensingInfo at service - perhaps old server or opsiclientd, we fallback to backend_info"',LLinfo);
-    LogDatei.log_prog('Ignore: "No modules data in backend_info"',LLinfo);
+    LogDatei.log_prog('We start a new service connection to the local opsiclientd.',
+      LLinfo);
+    LogDatei.log_prog('This will lead to some messages you should ignore:', LLinfo);
+    LogDatei.log_prog(
+      'Ignore: "No method backend_getLicensingInfo at service - perhaps old server or opsiclientd, we fallback to backend_info"',
+      LLinfo);
+    LogDatei.log_prog('Ignore: "No modules data in backend_info"', LLinfo);
     local_opsidata := TOpsi4Data.Create;
     UserAgent := 'opsi-script (RpcShowDialog:opsiclientd)';
     local_opsidata.initOpsiConf(serviceurl, username, password,
@@ -382,7 +395,7 @@ begin
   Result := readloop;
 end;
 
-
+{
 function getRunningProcesses(searchProcessList: TStringList): TStringList;
 (*
 ;@author    Detlef Oertel
@@ -413,8 +426,8 @@ begin
   Result := TStringList.Create;
   // we want no duplicates in Result
   // https://www.freepascal.org/docs-html/rtl/classes/tstringlist.duplicates.html
-  Result.Sorted:= true;
-  Result.Duplicates:= dupIgnore;
+  Result.Sorted := True;
+  Result.Duplicates := dupIgnore;
 
   LogDatei.log('Got list of searched processes: ', LLdebug2);
   LogDatei.log_list(searchProcessList, LLdebug2);
@@ -434,7 +447,7 @@ begin
     begin
       procshort := proclistPartsList[0];
       proclong := proclistPartsList[3];
-      setlength(proclistPartsList,0);
+      setlength(proclistPartsList, 0);
       proclistPartsList := nil;
       //avoid empty entries
       if not (proclong = '') then
@@ -502,21 +515,144 @@ begin
   FreeAndNil(fullpathlist);
   FreeAndNil(foundList);
 end;
+}
 
+function getSearchedRunningForegroundProcesses(searchProcessList:
+  TStringList): TStringList;
+
+  //@author    Detlef Oertel
+  //@date      24.9.2025
+  //@Description  Returns from $searchProcessList$ only the running once with visible window
+  //@Returns    Returns the list of running processes out of $searchProcessList$
+  //@OnError    Returns empty list
+  //@SpecialCase
+  //@References
+  //@Links
+  //@Requires
+  //@ParamDesc_$searchProcessList$  List of processe to look for
+  //@Example  set $runningProcessList$ = getSearchedRunningForegroundProcesses($searchProcessList$)
+var
+  procname: string;
+  procshort: string;
+  proclong: string;
+  i, k: integer;
+
+  fullpathlist: TStringList;
+  foreGroundProcessList: TStringList;
+  proclistPartsList: TStringArray;
+  foundList: TStringList;
+begin
+  fullpathlist := TStringList.Create;
+  foundList := TStringList.Create;
+  Result := TStringList.Create;
+  // we want no duplicates in Result
+  // https://www.freepascal.org/docs-html/rtl/classes/tstringlist.duplicates.html
+  Result.Sorted := True;
+  Result.Duplicates := dupIgnore;
+
+  LogDatei.log('Got list of searched processes: ', LLdebug2);
+  LogDatei.log_list(searchProcessList, LLdebug2);
+
+  // get process list
+  foreGroundProcessList := getRunningForegroundProcesses;
+  LogDatei.log('Got foreGroundProcessList: ', LLdebug2);
+  LogDatei.log_list(foreGroundProcessList, LLdebug2);
+
+  // create list with running processes, where we have the full path entries
+  for i := 0 to foreGroundProcessList.Count - 1 do
+  begin
+    procname := foreGroundProcessList[i];
+    proclistPartsList := splitstring(procname, ';');
+    // do we have a long name (with path) ?
+    if length(proclistPartsList) >= 4 then
+    begin
+      procshort := proclistPartsList[0];
+      proclong := proclistPartsList[3];
+      setlength(proclistPartsList, 0);
+      proclistPartsList := nil;
+      //avoid empty entries
+      if not (proclong = '') then
+      begin
+        // avoid double entries
+        for k := 0 to fullpathlist.Count - 1 do
+        begin
+          foundList.Clear;
+          if lowercase(fullpathlist.Strings[k]) = lowercase(proclong) then
+            foundList.Add(proclong);
+        end;
+        if foundList.Count = 0 then
+        begin
+          // add unique element
+          fullpathlist.Add(proclong);
+        end;
+      end;
+    end;
+  end;
+
+  LogDatei.log('Got Full path foreGroundProcessList: ', LLdebug2);
+  LogDatei.log_list(fullpathlist, LLdebug2);
+
+  // get list of running searched processes
+  for i := 0 to searchProcessList.Count - 1 do
+  begin
+    procname := searchProcessList[i];
+    LogDatei.log_prog('Search for proc: ' + procname, LLdebug);
+    // is it proc with path ?
+    if fileexists(procname) then
+    begin
+      LogDatei.log_prog('Search file exists: ' + procname, LLdebug2);
+      foundList.Clear;
+      for k := 0 to fullpathlist.Count - 1 do
+      begin
+        LogDatei.log_prog('Is equal ? : ' + procname + ' =  ' +
+          fullpathlist.Strings[k], LLdebug);
+        if lowercase(fullpathlist.Strings[k]) = lowercase(procname) then
+        begin
+          LogDatei.log('Add search proc (long): ' + procname, LLdebug);
+          foundList.Add(procname);
+        end;
+      end;
+      if foundList.Count >= 0 then
+      begin
+        // add found elements
+        Result.AddStrings(foundList);
+      end;
+    end
+    else
+    begin
+      // only short procname
+      if processIsRunning(procname) then
+      begin
+        LogDatei.log('Add search proc (short): ' + procname, LLdebug);
+        Result.Add(procname);
+      end;
+    end;
+  end;
+
+  LogDatei.log('Got list of running searched foreGroundProcesses: ', LLdebug);
+  LogDatei.log_list(Result, LLdebug);
+
+  FreeAndNil(foreGroundProcessList);
+  FreeAndNil(fullpathlist);
+  FreeAndNil(foundList);
+end;
+
+(* not needed any more, because we have only procs with visible window right now
+          // remove the service binaries from the running list
 function removeServicesBinariesFromList(runningProcessList: TStringList): TStringList;
-(*
-;@author    Detlef Oertel
-;@date      28.4.2025
-;@Description  Returns from runningProcessList only the entries that not detected as service binaries
-;@Returns    Returns the list runningProcessList with all  service processes removed
-;@OnError    Returns empty list
-;@SpecialCase
-;@References
-;@Links
-;@Requires
-;@ParamDesc_runningProcessList  List of processe to look for
-;@Example  runningProcessList = removeServicesBinariesFromList(removeServicesBinariesFromList)
-*)
+
+//@author    Detlef Oertel
+//@date      28.4.2025
+//@Description  Returns from runningProcessList only the entries that not detected as service binaries
+//@Returns    Returns the list runningProcessList with all  service processes removed
+//@OnError    Returns empty list
+//@SpecialCase
+//@References
+//@Links
+//@Requires
+//@ParamDesc_runningProcessList  List of processe to look for
+//@Example  runningProcessList = removeServicesBinariesFromList(removeServicesBinariesFromList)
+
 var
   procname: string;
   proclong: string;
@@ -526,11 +662,11 @@ var
   fullpathlist: TStringList;
   servicelist: TStringList;
   foundList: TStringList;
-  ErrorMsg:string;
-  WMIProperties :TStringList;
+  ErrorMsg: string;
+  WMIProperties: TStringList;
 begin
   fullpathlist := TStringList.Create;
-  servicelist:= TStringlist.Create;
+  servicelist := TStringList.Create;
   foundList := TStringList.Create;
   Result := TStringList.Create;
   WMIProperties := TStringList.Create;
@@ -543,11 +679,11 @@ begin
 
   //create list with full service path entries
   try
-    if osGetWMI('root\cimv2', 'Win32_Service', WMIProperties,
-      '', servicelist, ErrorMsg) then
+    if osGetWMI('root\cimv2', 'Win32_Service', WMIProperties, '',
+      servicelist, ErrorMsg) then
     begin
       LogDatei.log('Got list of service processes1: ', LLdebug2);
-      LogDatei.log_list(servicelist, LLdebug2)
+      LogDatei.log_list(servicelist, LLdebug2);
     end;
   except
     on e: Exception do
@@ -600,7 +736,7 @@ begin
         // add unique element
         // That would be something like this: pathname="c:\program files (x86)\anydesk\anydesk.exe"
         // remove 'pathname='
-        proclong := copy(proclong,10,length(proclong));
+        proclong := copy(proclong, 10, length(proclong));
         fullpathlist.Add(proclong);
       end;
     end;
@@ -662,7 +798,9 @@ begin
   FreeAndNil(servicelist);
   FreeAndNil(WMIProperties);
 end;
+*)
 
+// 'stolen' from osconfig - avoid to change osconfig
 function StringListAsJsonArray(const StringList: TStringList): string;
   // function StringListAsJsonArray converts a StringList into an JSON array:
   // 'String1', 'String2' -> '["String1,"String2"]'
@@ -677,7 +815,7 @@ begin
   Result := JsonArray;
 end;
 
-
+// 'stolen' from osconfig - avoid to change osconfig
 function ConfigValueToBool(const Value: string; const ConfigName: string;
   Default: boolean): boolean;
 begin
@@ -693,6 +831,7 @@ begin
   end;
 end;
 
+// 'stolen' from osconfig - avoid to change osconfig
 function ConfigValueToInt(const Value: string; const ConfigName: string;
   Default: integer): integer;
 begin
@@ -708,6 +847,7 @@ begin
   end;
 end;
 
+// 'stolen' from osconfig - avoid to change osconfig
 function ConfigValueToStr(const Value: string; const ConfigName: string;
   Default: string): string;
 begin
@@ -820,8 +960,7 @@ begin
     ConfigIDs.Clear;
     //Include here any new opsi-script Backgound configs in the list.
     //Do not forget to do this for the procedure SetConfig, too.
-    ConfigIDs.Append(LowerCase(
-      'opsi-script.backgroundinstall.active'));
+    ConfigIDs.Append(LowerCase('opsi-script.backgroundinstall.active'));
     ConfigIDs.Append(LowerCase('opsi-script.backgroundinstall.default_action'));
     ConfigIDs.Append(LowerCase('opsi-script.backgroundinstall.max_defer'));
     ConfigIDs.Append(LowerCase('opsi-script.backgroundinstall.max_recheck'));
@@ -838,8 +977,8 @@ begin
           if OpsiData.isMethodProvided('configState_getValues') then
           begin
             //opsi 4.3
-            JsonRpcResponse := OpsiData.getConfigStateValuesFromService(
-              ConfigIDsAsJsonArray);
+            JsonRpcResponse :=
+              OpsiData.getConfigStateValuesFromService(ConfigIDsAsJsonArray);
             // This will overwrite the hard coded defaults by the configs:
             SetBackgoundConfigsOpsi43(JsonRpcResponse);
             Result := True;
@@ -858,7 +997,8 @@ begin
         end;
       end
       else
-        Logdatei.log('No opsi-service in readBackgoundConfigsFromService: opsidata not connected.'
+        Logdatei.log(
+          'No opsi-service in readBackgoundConfigsFromService: opsidata not connected.'
           , LLwarning);
     end
     else
@@ -878,8 +1018,23 @@ begin
   Result := backgroundinstall_enabledDefault;
 end;
 
+procedure getSessionOwner(var domuser: string);
+var
+  userlist: TStringList;
+begin
+  try
+    userlist := getLoggedInUserList(True);
+    if userlist.Count > 0 then
+      domuser := userlist[0];
+    LogDatei.log('Got active session owner : ' + domuser, LLDebug);
+  finally
+    FreeAndNil(userlist);
+  end;
+end;
+
 procedure checkAndHandleRunningProcFull(procList: TStringList;
-  defaultMethod: string; maxDeferLoops: integer; maxRecheckLoops: integer; var ContinueWithInstallation: boolean);
+  defaultMethod: string; maxDeferLoops: integer; maxRecheckLoops: integer;
+  var ContinueWithInstallation: boolean);
 var
   handle_running_process_method: string;
   deferloops: integer;
@@ -899,9 +1054,10 @@ var
   buttonindex: integer;
   i: integer;
   recheckCounter: integer;
-  infostr: string;
   productID: string;
   tmpstr: string;
+  sessionowner: string;
+  foundprocnumber: integer;
 
   runningProcList: TStringList;
   serviceBinaryList: TStringList;
@@ -930,7 +1086,7 @@ begin
   productID := opsidata.getActualProductId;
 
   try
-    ContinueWithInstallation := false;
+    ContinueWithInstallation := False;
     if backgroundinstall_enabled then
     begin
       LogDatei.log('backgroundinstall is enabled', LLnotice);
@@ -976,15 +1132,18 @@ begin
           LogDatei.log('Allowed: ' + methodlist.Text, LLerror);
         end;
 
-        logdatei.log('procs to search:',LLdebug);
-        LogDatei.log_list(procList,LLdebug);
+        logdatei.log('procs to search:', LLdebug);
+        LogDatei.log_list(procList, LLdebug);
         if procList.Count > 0 then
         begin
           LogDatei.log('check for running processes before we start', LLnotice);
           // the running processes from the search list
-          runningProcList := getRunningProcesses(procList);
+          runningProcList := getSearchedRunningForegroundProcesses(procList);
+
+          (* not needed any more, because we have only procs with visible window right now
           // remove the service binaries from the running list
           runningProcList.Text := removeServicesBinariesFromList(runningProcList).Text;
+          *)
 
           // Any critical processes to handle ?
           if runningProcList.Count > 0 then
@@ -1044,7 +1203,8 @@ begin
                   if handle_running_process_method = 'recheck' then
                   begin
                     // does the user stopped the process ?
-                    runningProcList := getRunningProcesses(runningProcList);
+                    runningProcList :=
+                      getSearchedRunningForegroundProcesses(runningProcList);
                     if runningProcList.Count = 0 then
                     begin
                       handle_running_process_method := 'solved';
@@ -1127,7 +1287,8 @@ begin
             begin
               ContinueWithInstallation := True;
               LogDatei.log('running processes: ' + runningProcNamesStr +
-                ' were stopped - install: ' + BoolToStr(ContinueWithInstallation, True), LLnotice);
+                ' were stopped - install: ' +
+                BoolToStr(ContinueWithInstallation, True), LLnotice);
               // no process is running - delete the loopcounter if exists
               deferloops := productLoopCounter(productID, 'defer', 'del');
             end
@@ -1141,12 +1302,18 @@ begin
             end;
             if handle_running_process_method = 'kill' then
             begin
+              getSessionowner(sessionowner);
               for i := 0 to runningProcList.Count - 1 do
-                KillTask(ExtractFileName(runningProcList[i]), infostr);
+              begin
+                //KillTask(ExtractFileName(runningProcList[i]), infostr);
+                // kill only procs from session owner
+                KillProcessByNameAndUser(ExtractFileName(runningProcList[i]),
+                  sessionowner, foundprocnumber);
+              end;
               Sleep(2000);
               // delete the loopcounter if exists
               deferloops := productLoopCounter(productID, 'defer', 'del');
-              runningProcList := getRunningProcesses(runningProcList);
+              runningProcList := getSearchedRunningForegroundProcesses(runningProcList);
               if runningProcList.Count > 0 then
               begin
                 LogDatei.log('failed to kill: ' + runningProcNamesStr +
@@ -1154,14 +1321,15 @@ begin
               end
               else
               begin
-                ContinueWithInstallation := true;
-                LogDatei.log('processes successful killed - install: ' + BoolToStr(ContinueWithInstallation,true), LLnotice);
+                ContinueWithInstallation := True;
+                LogDatei.log('processes successful killed - install: ' +
+                  BoolToStr(ContinueWithInstallation, True), LLnotice);
               end;
             end;
           end
           else
           begin
-            ContinueWithInstallation := true;
+            ContinueWithInstallation := True;
             LogDatei.log('no process is running', LLnotice);
             //- delete the loopcounter if exists
             deferloops := productLoopCounter(productID, 'defer', 'del');
@@ -1169,7 +1337,7 @@ begin
         end
         else
         begin
-          ContinueWithInstallation := true;
+          ContinueWithInstallation := True;
           LogDatei.log('no process to check', LLnotice);
           // delete the loopcounter if exists
           deferloops := productLoopCounter(productID, 'defer', 'del');
@@ -1197,7 +1365,8 @@ begin
   end;
 end;
 
-procedure checkAndHandleRunningProc(procList: TStringList; var ContinueWithInstallation: boolean);
+procedure checkAndHandleRunningProc(procList: TStringList;
+  var ContinueWithInstallation: boolean);
 begin
   try
     checkAndHandleRunningProcFull(procList, '', 0, 0, ContinueWithInstallation);
@@ -1237,7 +1406,9 @@ begin
             installdir := ScriptConstants.ReplaceInString(installdir);
             if directoryExists(installdir) then
             begin
-              FindAllFiles(dirList, installdir, '*.exe', True);
+              // search for all *.exe ;
+              // search for all *.bin (used by platorm idependent software like libreoffice, nomachine)
+              FindAllFiles(dirList, installdir, '*.exe;*.bin', True);
               // avoid double entries: remove allDirList from dirList
               if allDirList.Count > 0 then
               begin

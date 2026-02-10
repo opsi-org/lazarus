@@ -71,6 +71,7 @@ function getPid4user(const domain: string; const user: string; var pid: dword): 
   overload;
 function getPid4user(const domain: string; const user: string;
   var pid: dword; const searchexe: string): boolean; overload;
+function getpid4exe(const exename: string; var pid: dword): boolean;
 function Impersonate2User(const domain: string; const user: string): boolean; overload;
 function Impersonate2User(const domain: string; const user: string;
   const usercontextsid: string): boolean; overload;
@@ -78,6 +79,8 @@ function Impersonate2User(const domain: string; const user: string;
   const usercontextsid: string; var usertok: THandle): boolean; overload;
 function GetProcessUserBypid(pid: DWORD; var UserName, Domain: ansistring): boolean;
 function KillProcessbyname(const exename: string; var found: integer): integer;
+function KillProcessByNameAndUser(const exename: string; const killdomuser: string;
+  var found: integer): integer;
 function KillProcessbypid(pid: DWORD): boolean;
 function getWinProcessList: TStringList;
 function getWinProcessListWithPath: TStringList;
@@ -126,11 +129,15 @@ function resolveWinSymlink(filepath: string; recursive: boolean = True): string;
 
 implementation
 
+
 uses
+
   osfunc, osfuncwin, wispecfolder
+
 {$IFNDEF WIN64}
   , oslocaladmin
   {$ENDIF WIN64};
+
 
 (*
 type
@@ -943,47 +950,6 @@ begin
   CloseHandle(FSnapshotHandle);
 end;
 
-
-(*
-function getWinProcessList:TStringList;
-var PrIDs : Array [0..1000] of DWORD;
-      bia : DWORD;
-  PrCount : Integer;
-  ProzessHandle : HWND;
-  Modulhandle : HWND;
-  i : Integer;
-  PrName : Array [0..255] of Char;
-  resultstring : string;
-  var UserName, Domain: AnsiString;
-begin
-Result:=TStringList.Create;
-if EnumProcesses(@PrIDs, SizeOf(PrIDs), bia) then
- if bia < sizeof(PrIDs) then
-  begin
-   PrCount:=Bia div SizeOf(DWORD);
-   for i:=0 to PrCount do
-    begin
-     resultstring := '';
-     UserName := '';
-     domain :='';
-     ProzessHandle := OpenProcess(PROCESS_QUERY_INFORMATION or
-                                  PROCESS_VM_READ, false, PrIDS[i]);
-     if ProzessHandle<>0 then
-      begin
-       EnumProcessModules(ProzessHandle, @ModulHandle, SizeOf(modulhandle), bia);
-       //GetModuleFilenameEx(Prozesshandle, ModulHandle, PrName, SizeOf(PrName));
-       GetModuleBaseName(Prozesshandle, ModulHandle, PrName, SizeOf(PrName));
-       CloseHandle(ProzessHandle);
-      end;
-      resultstring := PrName+';'+IntToStr(PrIDS[i])+';';
-      if  GetProcessUserBypid(PrIDS[i],UserName, Domain) then
-          resultstring :=  resultstring + Domain+'\'+UserName;
-      Result.add(resultstring);
-    end;
-  end else Logdatei.Log('Error: getting process list',LLError);
- //else //RaiseLastOSError(); //if enumprocesses...
-end;
-*)
 function GetProcessUserBypid(pid: DWORD; var UserName, Domain: ansistring): boolean;
   // from http://www.delphigeist.com/2010/03/process-list.html
 var
@@ -1285,7 +1251,8 @@ begin
   CloseHandle(FSnapshotHandle);
 end;
 
-function KillProcessbyname(const exename: string; var found: integer): integer;
+function KillProcessByNameAndUser(const exename: string; const killdomuser: string;
+  var found: integer): integer;
 var
   pid: dword;
   //user, domain,
@@ -1295,6 +1262,7 @@ var
   procdetails: TXStringlist;
   i: integer;
   selfprocess: string;
+  killprocess : boolean = false;
 begin
   LogDatei.log('Start KillProcessbyname', LLDebug);
   LogDatei.log('LogDatei.force_min_loglevel: ' + IntToStr(LogDatei.force_min_loglevel),
@@ -1382,6 +1350,7 @@ begin
     proclist := getWinProcessList;
     for i := 0 to proclist.Count - 1 do
     begin
+      killprocess := false;
       procdetails.Clear;
       stringsplit(proclist.Strings[i], ';', procdetails);
       //Logdatei.Log(proclist.Strings[i],LLDebug);
@@ -1403,9 +1372,21 @@ begin
             '\' + selfuser, LLdebug);
           // we will only try to kill processes from the loged in user
           // or from the account we running with
+          // or from everybody if we running as SYSTEM
           if (domuser = mydomain + '\' + myuser) or
             (domuser = selfdom + '\' + selfuser) or (domuser = '') or
             (selfuser = 'SYSTEM') then
+          begin
+            killprocess := true;
+          end;
+            // if killusername, killdomainname are not empty
+            // we want to kill only processes from this user
+          if killprocess and not ((killdomuser = '') or (killdomuser = '\')) then
+          begin
+            if not (domuser = killdomuser) then
+              killprocess := false;
+          end;
+          if killprocess then
           begin
             LogDatei.log('Will kill exe: ' + foundexe + ' pid: ' +
               IntToStr(pid) + ' from user: ' + domuser, LLDebug);
@@ -1424,7 +1405,14 @@ begin
     FreeAndNil(proclist);
     FreeAndNil(procdetails);
   end;
+end;// KillProcessByNameAndUser(const exename: string; const killdomname: .....
+
+
+function KillProcessbyname(const exename: string; var found: integer): integer;
+begin
+  result := KillProcessByNameAndUser(exename,'',found);
 end;// KillProcessbyname(const exename : string;): Boolean;
+
 
 
 

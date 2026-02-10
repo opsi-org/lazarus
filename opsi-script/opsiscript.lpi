@@ -976,7 +976,7 @@
         <PackageName Value="FCL"/>
       </Item3>
     </RequiredPackages>
-    <Units Count="79">
+    <Units Count="80">
       <Unit0>
         <Filename Value="opsiscript.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -1331,6 +1331,10 @@
         <Filename Value="osbglistwinuser.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit78>
+      <Unit79>
+        <Filename Value="oswinandproclist.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit79>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

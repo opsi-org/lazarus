@@ -1,3 +1,9 @@
+ToDo for Background installation:
+
+* We should be able to detect windows from different users
+
+*. More tests with non admin users
+
 
 Changes for Background installation:
 
@@ -16,7 +22,7 @@ unit osbackgroundinstall:
 function userAreLoggedIn: boolean;
 
 3. read meta data
-osmeta: getMetaInstallDirs,getMetaCheckProcesses
+osmeta: getMetaCheckProcessData
 
 4. create process lists
 osbackgroundinstall.checkAndHandleRunningProductProcesses
