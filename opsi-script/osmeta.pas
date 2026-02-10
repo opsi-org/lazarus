@@ -1,4 +1,11 @@
 unit osmeta;
+(******************************************************************
+This unit is part of opsi-script background-install extension
+Winows only
+
+used to handle the meta data from file
+******************************************************************)
+
 
 {$mode Delphi}
 
@@ -20,8 +27,6 @@ var
 
 // are meta data about the processes we have to look for available
 function metaDataFound(pathToMeta: string): boolean;
-//function getMetacheckdirs: TStringList;
-//function getMetaCheckProcesses: TStringList;
 procedure getMetaCheckProcessData(var checkdirs: TStringList;
   var processes: TStringList);
 function getInstallInBackgroundFlag: boolean;
@@ -68,12 +73,12 @@ begin
   logdatei.log_prog('finished getMetaData', LLinfo);
 end;
 
-procedure AddListFromJsonObjectToStringList(const JsonObject:string; const Key: string; var List: TStringList);
+procedure AddListFromJsonObjectToStringList(const JsonObject: string;
+  const Key: string; var List: TStringList);
 var
   Value: string;
   HelperList: TStringList;
-  i : integer;
-
+  i: integer;
 begin
   HelperList := TStringList.Create;
   try
@@ -115,8 +120,6 @@ var
   found_os_arch: string = '';
   my_os_arch: string;
   json_processes: string = '';
-
-
 begin
   logdatei.log_prog('start getMetaCheckProcessData', LLinfo);
   {$IFDEF WINDOWS}
@@ -166,8 +169,9 @@ begin
               if LowerCase(found_os) = LowerCase(my_os) then
               begin
                 jsonAsObjectGetValueByKey(json_requirement, 'os_arch', found_os_arch);
-                logdatei.log('Installer ' + IntToStr(i) + ': Meta data: my os_arch: ' +
-                  my_os_arch + ' / required os_arch: ' + found_os_arch, LLinfo);
+                logdatei.log('Installer ' + IntToStr(i) +
+                  ': Meta data: my os_arch: ' + my_os_arch +
+                  ' / required os_arch: ' + found_os_arch, LLinfo);
                 // do we have the required OS_arch ?
                 if LowerCase(found_os_arch) = LowerCase(my_os_arch) then
                   installer_list_to_use.Add(installer_list[i])
@@ -205,10 +209,12 @@ begin
         ((json_installer_backround = '')) then
       begin
         // Add check_processes_from_dirs
-        AddListFromJsonObjectToStringList(installer_list_to_use[i],'check_processes_from_dirs', checkdirs);
+        AddListFromJsonObjectToStringList(installer_list_to_use[i],
+          'check_processes_from_dirs', checkdirs);
         // Add for processes
-        AddListFromJsonObjectToStringList(installer_list_to_use[i],'processes', processes);
-        install_in_background := true;
+        AddListFromJsonObjectToStringList(installer_list_to_use[i], 'processes',
+          processes);
+        install_in_background := True;
       end
       else
       begin
@@ -244,24 +250,9 @@ begin
     productStopped := True;
   end;
 
-
   FreeAndNil(installer_list);
   FreeAndNil(installer_list_to_use);
   logdatei.log_prog('finished getMetaCheckProcessData', LLinfo);
-end;
-
-
-
-function getMetacheckdirs: TStringList;
-begin
-  Result := TStringList.Create;
-  Result.Assign(checkdirs);
-end;
-
-function getMetaCheckProcesses: TStringList;
-begin
-  Result := TStringList.Create;
-  Result.Assign(processes);
 end;
 
 
