@@ -3,29 +3,31 @@ isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-pac
 mac getIpByName liefert name von IPnum
 
 opsi-script (4.12.20.0)
+ * [fix] UEFI detection on Linux systems (j.werner, commit 8061b98a71f8e1f306fde07772d1bdf648e7a4b7)
+ * [update] background install (experimental/undocumented feature, Windows only):
+   - [new] unit oswinandproclist   This unit handles to make a list of all windows over all desktops
+                                and put this together with the processlist
+                                In the case that a process has multiple windows,
+                                we will get the info of the last visible window.
+                                If no window is visible,
+                                we will get the info of the last unvisible window. (d.oertel, !278)
 
-* new unit oswinandproclist   This unit handles to make a list of all windows over all desktops
-                              and put this together with the processlist
-                              In the case that a process has multiple windows,
-                              we will get the info of the last visible window.
-                              If no window is visible,
-                              we will get the info of the last unvisible window.
+   - [new] oswinandproclist: function getWinProcessListWithPathAndWindowInfo: TStringList; (d.oertel, !278)
+   - [new] oswinandproclist: new: function getRunningForegroundProcesses: TStringList;
+                           // hereby means 'foreground' that a process has a visible window. (d.oertel, !278)
+   - [new] osbackgroundinstall:  function getSearchedRunningForgroundProcesses(procList); : TStringList; (d.oertel, !278)
+   - [new] osbackgroundinstall: checkAndHandleRunningProcFull : use getSearchedRunningForgroundProcesses (d.oertel, !278)
+   - [new] osfuncwin2: function: KillProcessByNameAndUser (allow to restrict killing to processe of given user (d.oertel, !278)
+   - [update] osfuncwin2: old function KillProcessByName now wrapper around KillProcessByNameAndUser (d.oertel, !278)
+   - [update] osbglistwinuser: function getLoggedInUserList(activeonly : boolean = false): TStringList;
+    can now list all logedon users or the active only (d.oertel, !278)
+   - [update]osbackgroundinstall: checkAndHandleRunningProcFull kills only user processes
+      via getSessionOwner  and getLoggedInUserList(true) (d.oertel, !278)
+   - [update] osbackgroundinstall: checkAndHandleRunningProductProcesses: search also
+      for all *.bin files (used by platorm idependent software like libreoffice, nomachine) (d.oertel, !278)
 
-* oswinandproclist: new: function getWinProcessListWithPathAndWindowInfo: TStringList;
-* oswinandproclist: new: function getRunningForegroundProcesses: TStringList;
-                         // hereby means 'foreground' that a process has a visible window.
-* osbackgroundinstall:  new: function getSearchedRunningForgroundProcesses(procList); : TStringList;
-* osbackgroundinstall: checkAndHandleRunningProcFull : use getSearchedRunningForgroundProcesses
-* osfuncwin2: new function: KillProcessByNameAndUser (allow to restrict killing to processe of given user
-* osfuncwin2: old function KillProcessByName now wrapper around KillProcessByNameAndUser
-* osbglistwinuser: function getLoggedInUserList(activeonly : boolean = false): TStringList;
-  can now list all logedon users or the active only
-* osbackgroundinstall: checkAndHandleRunningProcFull kills only user processes
-    via getSessionOwner  and getLoggedInUserList(true)
-* osbackgroundinstall: checkAndHandleRunningProductProcesses: search also
-    for all *.bin files (used by platorm idependent software like libreoffice, nomachine)
+-- j.werner <j.werner@uib.de> 2026-02-10
 
--- d.oertel <d.oertel@uib.de> 2025-11-04
 
  opsi-script (4.12.19.0)
 
@@ -38,7 +40,6 @@ opsi-script (4.12.20.0)
   (j.werner, !279)
 
 -- j.werner <j.werner@uib.de> 2025-11-14
-
 
 opsi-script (4.12.18.8)
 
@@ -173,6 +174,7 @@ opsi-script (4.12.16.1) unreleased/released (4.2/4.3); urgency=medium
 
 -- d.oertel <d.oertel@uib.de> 11 September 2024
 
+
 opsi-script (4.12.16.0) unreleased/released (4.2/4.3); urgency=medium
 
 * [fix] osparser: tssleep - handling of syntax and runtime errors (m.michaelis, !242)
@@ -232,7 +234,6 @@ opsi-script (4.12.15.0) unreleased/testing (4.2/4.3); urgency=medium
       if powershell execution policy was set by "UserPolicy" to "AllSigned" or "Restricted"
 * [fix] TOML file handling: now correctly escape backslash
 * [update] used openssl version is logged
->>>>>>> main
 
 -- j.werner <j.werner@uib.de> 07 June 2024
 
