@@ -24,7 +24,7 @@ var
 begin
   Result := '';
   Source := nil;
-  Source := TFileStream.Create(filename, fmOpenRead);
+  Source := TFileStream.Create(filename, fmOpenRead or fmShareDenyNone);
   if Source <> nil then
   begin
     case algo of
