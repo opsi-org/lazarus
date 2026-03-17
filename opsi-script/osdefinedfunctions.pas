@@ -1517,19 +1517,7 @@ begin
           begin
             if not skip(',', remaining, remaining, errorstr) then
               if skip(')', remaining, remaining, errorstr) then
-              begin
-                endOfParamlist := True;
-                // do we have all needed params ?
-                // paramcounter is the param index, so the first is zero
-                if DFparamCount > (paramcounter+1) then
-                begin
-                  // syntax error : not all params
-                  errorstr := errorstr + 'Missing parameter: '
-                    +IntToStr(DFparamCount)+' parameter(s) expected but only '
-                    +inttostr(paramcounter+1) + ' parameter(s) given.';
-                  syntax_ok := False;
-                end;
-              end
+                endOfParamlist := True
               else
               begin
                 // syntax error
