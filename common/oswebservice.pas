@@ -3485,6 +3485,16 @@ begin
       LogDatei.log('exception in finishOpsiConf: free omc ' + e.message, LLError);
     end;
   end;
+  try
+    { free some objects  }
+    if FOpsiModules <> nil then
+      FreeAndNil(FOpsiModules);
+  except
+    on e: Exception do
+    begin
+      LogDatei.log('exception in finishOpsiConf: free FOpsiModules ' + e.message, LLError);
+    end;
+  end;
   { free FJsonExecutioner gives a Access Violation }
 end;
 
@@ -4372,12 +4382,19 @@ var
 begin
   try
     Result := False;
+    if not Assigned(FOpsiModules) then
+    begin
+      FOpsiModules := getOpsiModules;
+    end;
     if Assigned(FOpsiModules) then
     begin
       index := FOpsiModules.IndexOf(Name);
-      FreeAndNil(FOpsiModules);
-    end;
-    if index >= 0 then Result := True;
+      if index >= 0 then Result := True;
+    end
+    else
+      LogDatei.log(
+      'Module Activation info not available',
+      LLError);
   except
     LogDatei.log(
       Name + ' info not found (exception in IsModuleActivated)',
