@@ -2,6 +2,14 @@ todo:
 isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-package-requires-a-reboot-of-my-system
 mac getIpByName liefert name von IPnum
 
+opsi-script (4.12.20.2)
+  * [fix] ExitScript: does not exit opsi-script anymore, only the relevant product.
+  * [fix] oswebservice.pas: isModuleActivated: This function was buggy.
+          It gives only on the first call the correct result.
+
+-- j.werner <j.werner@uib.de> 2026-05-07
+
+
 opsi-script (4.12.20.1)
   * [update] Revert "Merge branch 'os/fix/wrong_number_of_params_in_defined_func' into 'main'"
              This reverts commit 0e9516e5, reversing changes made to e0e0358c. (Due to failling of Abo+ packages)
