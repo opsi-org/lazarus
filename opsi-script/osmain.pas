@@ -1460,7 +1460,7 @@ begin
           ProcessProdukt(extremeErrorLevel);
 
 
-          if (PerformExitWindows < txrImmediateLogout) then
+          if (PerformExitWindows < txrImmediateLogout) and not scriptexitstate then
           begin
             LogDatei.log('BuildPC: standard update switches .....', LLDebug);
             opsidata.UpdateSwitches(extremeErrorLevel, logdatei.actionprogress);

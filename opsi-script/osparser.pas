@@ -21979,7 +21979,6 @@ end;
 function TuibInstScript.ExitScript(const Parameters: TStringList): TSectionResult;
 begin
   LogDatei.log('Exit script', LLnotice);
-  PerformExitWindows := txrImmediateLogout;
   runUpdate := False;
   script.ExitByCommand := True;
   scriptstopped := True;
