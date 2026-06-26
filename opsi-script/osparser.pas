@@ -14811,20 +14811,8 @@ begin
       {$ENDIF DARWIN}
     end
 
-
-
-
-    else if (LowerCase(s) = LowerCase('getFileInfoMap32')) then
-    begin
-      {$IFDEF WINDOWS}
-      s := 'getFileInfoMap';
-      {$ELSE WINDOWS}
-      LogDatei.log('getFileInfoMap32 is only implemented for Windows',
-        LLError);
-      {$ENDIF WINDOWS}
-    end
-
-    else if (LowerCase(s) = LowerCase('getFileInfoMap')) then
+    else if ((LowerCase(s) = LowerCase('getFileInfoMap')) or
+      (LowerCase(s) = LowerCase('getFileInfoMap32'))) then
     begin
       if Skip('(', r, r, InfoSyntaxError) then
         if EvaluateString(r, r, s1, InfoSyntaxError) then
@@ -14904,13 +14892,12 @@ begin
                   LogDatei.log_prog('getFileInfoMap: ' + tmpstr, LLdebug2);
                 end;
 
-
                 versionInfo.Free;
+                {$ELSE WINDOWS}
+                LogDatei.log(
+                  'getFileInfoMap / getFileInfoMap32 is only implemented for Windows',
+                  LLError);
                 {$ENDIF WINDOWS}
-                {$IFDEF UNIX}
-             (*
-             *)
-                {$ENDIF UNIX}
               end;
             end;
           end;
