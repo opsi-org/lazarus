@@ -1447,8 +1447,13 @@ begin
           extremeErrorLevel := Level_not_initialized;
           logdatei.ActionProgress := '';
           {$IFDEF GUI}
-          // maximize window
-          BatchWindowMode := bwmMaximized;
+          // if no window mode is set, set it to the default value
+          if BatchWindowMode = bwmNotActivated
+          then
+          begin
+            // maximize window is default in BuildPC
+            BatchWindowMode := bwmMaximized;
+          end;
           SavedBatchWindowMode := BatchWindowMode;
           FBatchOberflaeche.SetBatchWindowMode(BatchWindowMode);
           ProcessMess;
@@ -3558,6 +3563,7 @@ begin
         else if LowerCase(Parameter) = 'normalwindow' then
         begin
           {$IFDEF GUI}
+          // force to stay in normal mode even when not in Batch mode
           BatchWindowMode := bwmNormalWindow;
           SavedBatchWindowMode := BatchWindowMode;
           {$ENDIF GUI}
