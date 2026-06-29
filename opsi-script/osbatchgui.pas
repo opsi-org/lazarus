@@ -158,7 +158,9 @@ var
   //FBatchOberflaeche: TosGUIControl;//TFBatchOberflaeche;
   LableInfoDefaultFontSize: integer;
 
-  BatchWindowMode, SavedBatchWindowMode, aktBatchWindowMode: TBatchWindowMode;
+  BatchWindowMode: TBatchWindowMode = bwmNotActivated; // WindowMode we like to set
+  SavedBatchWindowMode: TBatchWindowMode; // WindowMode we had before the last change
+  aktBatchWindowMode: TBatchWindowMode; // actual WindowMode set by function SetBatchWindowMode
   FormMoving: boolean;
   MousePos: TPoint;
   z: TBitmap;
