@@ -11732,7 +11732,7 @@ begin
   try
     runAs := traInvoker;
     Result := tsrPositive;
-    showcmd := SW_SHOWMINIMIZED; // SW_SHOWNORMAL;
+    showcmd := SW_HIDE; // 2026-06-29: changed from SW_SHOWMINIMIZED to work like shellcall
     waitSecs := 0;
     showoutput := tsofHideOutput;
     force64 := False;
