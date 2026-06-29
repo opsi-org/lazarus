@@ -2,6 +2,17 @@ todo:
 isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-package-requires-a-reboot-of-my-system
 mac getIpByName liefert name von IPnum
 
+opsi-script (4.12.21.0)
+* [fix] fix getFileInfoMap32 in osparser: producestringlist (d.oertel, !285)
+* [change] osbatchgui: change that cli param /normalwindow also force a normal window if called
+           in system context and run in ProgramMode 'BuildPC' (d.oertel, j.werner, !285)
+* [change] osparser: function TuibInstScript.executeWith: showcmd := SW_HIDE; // 2026-06-29:
+           changed from SW_SHOWMINIMIZED to work like shellcall
+           see also: https://mattermost.uib.gmbh/uib/pl/caiyhyfagff1pfzuw1qr4x37oe (d.oertel, !287)
+* [change] switch on long path awareness in project settings (j.werner, uib#2026061117000111 - Pfadlaengen in opsi-script)
+
+-- j.werner <j.werner@uib.de> 2026-06-29
+
 opsi-script (4.12.20.2)
   * [fix] ExitScript: does not exit opsi-script anymore, only the relevant product.
   * [fix] oswebservice.pas: isModuleActivated: This function was buggy.
