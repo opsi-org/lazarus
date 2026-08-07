@@ -185,6 +185,9 @@ opsi-script to binaryindex:
     - cp compiler_out/binarys/x86_64-darwin/opsi-script-gui upload/mac64/opsi-script
     - opsi-dev-cli -l info signserver sign upload/win32/opsi-script/opsi-script.exe
     - opsi-dev-cli -l info signserver sign upload/win64/opsi-script/opsi-script.exe
+    - opsi-dev-cli -l info signserver sign upload/win32/opsi-script/shutdown.exe
+    - opsi-dev-cli -l info signserver sign upload/win64/opsi-script/shutdown.exe
+    - opsi-dev-cli -l info signserver sign upload/win32/opsi-script/opsiwinstxmlplugin.exe
     #- opsi-dev-cli -l info virustotal check upload/win32/opsi-script/opsi-script.exe upload/win64/opsi-script/opsi-script.exe --allow-detections=10
     - ls -lah upload/*/opsi-script
     - echo "${BINARY_VERSION}"
