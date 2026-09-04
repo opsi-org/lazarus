@@ -153,8 +153,8 @@ begin
   paramstr0enc := reencode(ParamStr(0),'system');
   if FileExists(skindirectory+PathDelim+'skin.ini') then
     skindir := skindirectory
-  else if FileExists(ExtractFilePath(paramstr0enc) + skindirectoryCustomWin+PathDelim+'skin.ini') then
-    skinDir := ExtractFilePath(paramstr0enc) + skindirectoryCustomWin
+  else if FileExists(skindirectoryCustomWin+PathDelim+'skin.ini') then
+    skinDir := skindirectoryCustomWin
   else if FileExists(ExtractFilePath(paramstr0enc) + skindirectoryDefault+PathDelim+'skin.ini') then
     skinDir := ExtractFilePath(paramstr0enc) + skindirectoryDefault
   else if FileExists(ExtractFilePath(paramstr0enc) + skindirectoryDevelopment+PathDelim+'skin.ini') then
