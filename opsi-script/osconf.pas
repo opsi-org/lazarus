@@ -52,6 +52,7 @@ uses
 function readConfig: boolean;
 function writeConfig: boolean;
 function readConfigsFromService: string;
+function BuildDepotPath(const DepotDrive, DepotPath: string): string;
 
 
 const
@@ -182,6 +183,22 @@ uses
   osjson,
   osmain,
   oslog;
+
+function HasDrivePrefix(const Path: string): Boolean;
+begin
+  Result :=
+    (Length(Path) >= 2) and
+    (Path[1] in ['A'..'Z', 'a'..'z']) and
+    (Path[2] = ':');
+end;
+
+function BuildDepotPath(const DepotDrive, DepotPath: string): string;
+begin
+  if HasDrivePrefix(DepotPath) then
+    Result := DepotPath  // z. B. C:\opsi.org\cache\depot
+  else
+    Result := IncludeTrailingPathDelimiter(DepotDrive) + DepotPath;
+end;
 
 function writeConfig: boolean;
 var
@@ -338,7 +355,7 @@ begin
       depotdrive := depotpath;
      {$IFDEF WINDOWS}
       depotdrive := ExtractFileDrive(depotpath);
-      depotdir := ExtractFileDir(depotpath);
+      depotdir := BuildDepotPath(depotdrive,depotpath);
      {$ENDIF}
     end;
 

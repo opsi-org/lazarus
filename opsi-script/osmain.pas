@@ -3241,7 +3241,7 @@ begin
                       depotdrive := depotpath;
                      {$ifdef windows}
                       depotdrive := extractfiledrive(depotpath);
-                      depotdir := extractfiledir(depotpath);
+                      depotdir := BuildDepotPath(depotdrive,depotpath);
                      {$endif}
                       startupmessages.Append(
                         'Depot drive+dir from parameters:  ' + depotdrive + depotdir);
