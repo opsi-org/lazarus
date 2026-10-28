@@ -383,16 +383,26 @@ var
   TranslationID: string;
   codepagelist: array [1..MAXCODEPAGE] of integer;
   cpage: integer = 1;
+  defaultCodePage, cpPartString: string;
+  cpPartInt: integer;
 begin
   TranslationID := Format('%.4x%.4x', [LanguageID, CharsetID]);
   Result := GetString(Key, TranslationID);
 
   if Result = '' then
   begin
-    //guess the code page
-    TranslationID := Format('%.4x%.4x',
-      [LanguageID, StrToInt(copy(GetDefaultTextEncoding, 3, 4))]);
-    Result := GetString(Key, TranslationID);
+    // avoid error if system encoding is UTF8
+    defaultCodePage := GetDefaultTextEncoding;
+    if (lowercase(defaultCodePage) <> 'utf8') then
+    begin
+      //guess the code page
+      cpPartString := copy(defaultCodePage, 3, 4);
+      if TryStrToInt(cpPartString, cpPartInt) then
+      begin
+        TranslationID := Format('%.4x%.4x', [LanguageID, cpPartInt]);
+        Result := GetString(Key, TranslationID);
+      end;
+    end;
   end;
 
   if Result = '' then
