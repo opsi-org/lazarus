@@ -46,7 +46,7 @@ begin
       pBuffer := nil;
       Bytes := 0;
     end;
-    if Username = '' then Exit;
+    if (Username = '') or (Username = #0) then Exit;
     // get also domain name
     if WTSQuerySessionInformationW(WTS_CURRENT_SERVER_HANDLE, sessionId,
       WTSDomainName, pBuffer, Bytes) then
@@ -59,7 +59,7 @@ begin
           Bytes := 0;
         end;
       end;
-     if (Domainname <> '') and (Username <> '') then
+     if (Domainname <> '') and (Domainname <> #0) then
        Result := UTF8Encode(Domainname) + '\' + UTF8Encode(Username)
      else
        Result := UTF8Encode(Username);
