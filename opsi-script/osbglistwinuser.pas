@@ -31,31 +31,47 @@ function getUsernameBySession(sessionId: DWord): string;
 var
   pBuffer: LPWSTR = nil;
   Bytes: DWORD = 0;
-  Username, Domainname: string;
+  Username: UnicodeString = '';
+  Domainname: UnicodeString = '';
 begin
-  Domainname := '';
+  Result:= '';
+  // get user name
   if WTSQuerySessionInformationW(WTS_CURRENT_SERVER_HANDLE, sessionId,
     WTSUserName, pBuffer, Bytes) then
   begin
     try
-      SetString(Username, pBuffer, lstrlenW(pBuffer)); //copy content of pBuffer to Username (not including the terminating null character)
-      // get also domain name
+      if (pBuffer <> nil) then SetString(Username, pBuffer, lstrlenW(pBuffer)); //copy content of pBuffer to Username (not including the terminating null character)
+    finally
+      if (pBuffer <> nil) then WTSFreeMemory(pBuffer);
       pBuffer := nil;
       Bytes := 0;
-      if WTSQuerySessionInformationW(WTS_CURRENT_SERVER_HANDLE, sessionId,
-        WTSDomainName, pBuffer, Bytes) then
-        begin
-         SetString(Domainname, pBuffer, lstrlenW(pBuffer));
-        end;
-      Result := UTF8Encode(Domainname)+'\'+UTF8Encode(Username);
-      LogDatei.log_prog('getUsernameBySession: ' + Result, LLnotice);
-    finally
-      WTSFreeMemory(pBuffer);
     end;
+    if Username = '' then Exit;
+    // get also domain name
+    if WTSQuerySessionInformationW(WTS_CURRENT_SERVER_HANDLE, sessionId,
+      WTSDomainName, pBuffer, Bytes) then
+      begin
+        try
+          if pBuffer <> nil then SetString(Domainname, pBuffer, lstrlenW(pBuffer));
+        finally
+          if (pBuffer <> nil) then WTSFreeMemory(pBuffer);
+          pBuffer := nil;
+          Bytes := 0;
+        end;
+      end;
+     if (Domainname <> '') and (Username <> '') then
+       Result := UTF8Encode(Domainname) + '\' + UTF8Encode(Username)
+     else
+       Result := UTF8Encode(Username);
+     LogDatei.log_prog('getUsernameBySession: ' + Result, LLnotice);
   end
   else
     LogDatei.log('getUsernameBySession: WTSQuerySessionInformationW failed', LLWarning);
 end;
+
+
+
+
 
 function ConStateToStr(const conState: TWTSConnectStateClass): string;
 begin
