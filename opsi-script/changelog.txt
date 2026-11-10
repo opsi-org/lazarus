@@ -8,6 +8,8 @@ opsi-script (4.12.22.0)
         logged with socket/TLS error details. TLS protocol and certificate errors are not retried.
         Connect timeout 10 s, receive timeout 60 s (120 s for log upload) unless set by omc.timeout.
 * [fix] oswebservice.pas: network failures no longer trigger the HTTP 500 communication mode fallback.
+* [change] oswebservice.pas: log an error if a product on client update (installationStatus,
+        actionProgress, ...) or the log upload to the service fails.
 
 -- j.schneider <j.schneider@uib.de> 2026-11-10
 
@@ -212,7 +214,7 @@ opsi-script (4.12.17.1) released/testing; urgency=medium
 opsi-script (4.12.17.0) released; urgency=medium
 
  * [fix] oslog.pas, opsiscript.lpr: include cwstring, clocale (j.werner. !249)
- * [fix] osparser.pas -> execwith powershell: remove empty string from output also for StartProcess 
+ * [fix] osparser.pas -> execwith powershell: remove empty string from output also for StartProcess
          and not only for RunCommandandCaptureOut, see changelog for opsi.script 4.12.16.1 (d.oertel, j.werner, !251)
  * [update] osfunc: FileGetWriteAccess: additional boolean parameter: handleDir, to fix performance problems in same cases (!252)
 
@@ -237,7 +239,7 @@ opsi-script (4.12.16.0) unreleased/released (4.2/4.3); urgency=medium
         osparser: evaluateBoolean: HasMinimumSpace: Handle first parameter (s1)
         s1 should be a directory at Unix (Linux / macOS)
         s1 = empty = actual dir ".", s1= %SYSTEMDRIVE% = warning and fallback to root dir: "/"
-        (d.oertel, !246) 
+        (d.oertel, !246)
 * [change] remove logging indents, set loglevel for IF-Conditions to "Debug2" (j.werner, !244)
 * [change] oswebservice.pas: refactor states and actions, cleanup unused variables, remove opsidata
            (d.oertel, !245)
@@ -381,7 +383,7 @@ opsi-script (4.12.10.0) experimental; urgency=medium
   * [fix] oslog: includelog with utf16lebom with unix compiler switch  (d.oertel, j.werner, !157, #4841)
   * [fix] osfunc.pas: getProfilesDirList: Fix memory issue (!154, a.schmitz)
   * [fix] osfunclin.pas: getLinuxReleaseInfo: Fix getting subrelease (#947, !148, a.schmitz)
-  * [fix] osconf.pas and osparser.pas: set computername on Unix only if it was not set before and is empty, 
+  * [fix] osconf.pas and osparser.pas: set computername on Unix only if it was not set before and is empty,
           set opsiserviceUser to opsiserviceClientId if opsiserviceUser is empty and opsiserviceClientId was set (j.werner, !150, #4816)
   * [new] osfunc.pas: DeleteShellLink: If the file ends on .url, then delete the url link, otherwise (as before) add a .lnk ending and delete the lnk link (#4399, !141, a.schmitz)
   * [new] osfunc.pas: AllDelete: Prevent deletion of program files directories (#3192, !142, a.schmitz)
@@ -419,7 +421,7 @@ opsi-script (4.12.8.1) testing; urgency=medium
 
   * [fix] osbatchgui.lfm, osbatchgui.pas: remove creation of TQProgressbar from method FormShow,
           move creation of TQProgressbar into the new method FormCreate.
-  * [fix] osfunc.pas: FileGetWriteAccess now set rigths only for the current file and directory 
+  * [fix] osfunc.pas: FileGetWriteAccess now set rigths only for the current file and directory
           but not for any subdirectories and files within.
 
 -- j.werner <j.werner@uib.de> 4 April 2023
@@ -527,7 +529,7 @@ opsi-script (4.12.6.1) unreleased; urgency=medium
   * [change] osparser: parse direct initialization of variables (string and stringlist) equal to 'set', i.e. for example logging is the same now (#4747, !65, a.schmitz)
   * [change] osregistry: synchronize data type handling with the documentation, i.e. supp does not change data types (!59, a.schmitz)
   * [change] osprocessux, osfuncwin: revise code of RunCommandAndCaptureOut (#4764, !73, a.schmitz)
-  * [change] oscrypt: function md5fromFile, now uses the new function HashFromFile (#4743, !74, j.werner) 
+  * [change] oscrypt: function md5fromFile, now uses the new function HashFromFile (#4743, !74, j.werner)
   * [fix] osparser: Adding new optional encoding parameter to function GetValueFromIniFile (#3071, !68, j.laajili)
   * [fix] osparser: parse and evaluate generic stringlist equal to createStringList for correct functionality (#4770, !77, a.schmitz)
   * [fix] osstartproc_cp: at Ux use waitForProcEndTimer to avoid zombies (d.oertel, 15.7.2022)
@@ -543,28 +545,28 @@ opsi-script (4.12.6.1) unreleased; urgency=medium
 opsi-script (4.12.5.6) stable; urgency=low
 
   * [fix] osfunc: Files section:  del command with emptystring e.g. del -sf "" does not create an exception anymore, gives only a warning (j.werner)
-    
+
 -- j.werner <j.werner@uib.de> 18 July 2022
 
 
 opsi-script (4.12.5.5) stable; urgency=low
 
   * [fix] osfunclin: adapted functions getLinuxVersionMap/getLinuxDistroType for new linux distributions where lsb_release does not work anymore (j.werner)
-    
+
 -- j.werner <j.werner@uib.de> 14 July 2022
 
 
 opsi-script (4.12.5.4) stable; urgency=low
 
   * [fix] osparser: parsing of powershellcall with no access string given resulted in an empty string instead of the default 'sysnative' (j.werner)
-    
+
 -- j.werner <j.werner@uib.de> 22 June 2022
 
 
 opsi-script (4.12.5.3) testing; urgency=low
 
   * [chg] osparser: execution of powershellcall with powershell.exe -ExecutionPolicy ByPass (j.werner)
-    
+
 -- j.werner <j.werner@uib.de> 09 June 2022
 
 
@@ -574,7 +576,7 @@ opsi-script (4.12.5.2) unreleased; urgency=low
   * [fix] oszip: handle division by zero if files to zip are empty (#4748, !66, a.schmitz)
   * [fix] osparser: execution of powershellcall as statement( tsPowershellcall)
               call of parsePowershellCall with remaining (instead of r) (d.oertel)
-    
+
 -- j.werner <j.werner@uib.de> 09 June 2022
 
 
@@ -592,7 +594,7 @@ opsi-script (4.12.5.1) unreleased; urgency=low
           function GetTOMLKeys(TOMLcontents: String): TStringList,
           function GetTOMLTableNames(TOMLcontents: String): TStringList,
           function GetTOMLTable(TOMLcontents: String; table : String): TStringList,
-          function ReadTOMLFile (TOMLfilePath: String): String, 
+          function ReadTOMLFile (TOMLfilePath: String): String,
           function GetTOMLAsString(TOMLcontents: String): String,
           function GetTOMLTableAsString(TOMLcontents: String; table : String): String,
           function GetValueFromTOML(TOMLcontents: String; keyPath: String; defaultValue: String): String,
@@ -637,16 +639,16 @@ opsi-script (4.12.5.1) unreleased; urgency=low
   * [fix] osparser: fix in parsing errorsOccurredSinceMark. (#4718, !37, a.schmitz)
   * [fix] osparser: sub files: TuibInstScript.LoadValidLinesFromFile does not cut away spaces around lines any more,
           so that e.g. python code in an ExecWith section keeps its syntax. (!61, a.schmitz)
-  * [fix] osparser: TuibInstScript.execPowershellCall now shows output also for piped commands e.g. powershellCall("Get-hotfix | Select HotfixId"). 
+  * [fix] osparser: TuibInstScript.execPowershellCall now shows output also for piped commands e.g. powershellCall("Get-hotfix | Select HotfixId").
           Note: Neverthless be carefull using piped commands in powershellCall! (#4736, !52, j.werner)
   * [fix] osfunc: "del" in files section now works with wildcards. (#4560, !36, a.schmitz)
   * [fix] osregistry: "deletekey" in registry section uses UTF8ToWinCP to handle umlauts correctly. (#3574, !49, a.schmitz)
-  * [fix] osprocesses: fix in function isprocessChildOf in function isParentByPid. 
-          repeat.. until loop now stops after 100 iterations when no other conditions were reached before 
+  * [fix] osprocesses: fix in function isprocessChildOf in function isParentByPid.
+          repeat.. until loop now stops after 100 iterations when no other conditions were reached before
           to avoid a pontential endless loop. (j.werner)
   * [fix] oswebservice: allow newline and tab in opsiservicecall. (#3522, a.schmitz)
   * [fix] oswebservice: do not use twisted version but response content type to detect opsi 4.0 (d.oertel)
-  
+
 -- j.werner <j.werner@uib.de> 25 Mai 2022
 
 
@@ -787,7 +789,7 @@ opsi-script (4.12.4.31) stable; urgency=low
 
 opsi-script (4.12.4.30) stable; urgency=low
 
- * osfuncwin: fixed that opsi-script crashed if Windows API function GetFirmwareType is not available in kernel32.dll 
+ * osfuncwin: fixed that opsi-script crashed if Windows API function GetFirmwareType is not available in kernel32.dll
    (for example on Windows 7/ Windows Server 2008)
 
 -- j.werner <j.werner@uib.de> Wed, 27 Oct 2021 12:22
@@ -3159,7 +3161,7 @@ opsi-winst (4.10.9.10-1) stable; urgency=low
         * wispecfolder: get folder locations now from API instead from Registry
         * new constants: %CommonStartmenuDir% ,%CommonDesktopDir%, %CommonStartupDir%, %CommonProgramsDir%, %AppDataDir%, %StartmenuDir%, %DesktopDir%, %StartupDir%, %ProgramsDir%, %SendToDir%, fixes #175
         (4.10.9.0b)
-        * new constants: %CurrentAppDataDir%, %ScriptDir%, %CommonProfileDir%, 
+        * new constants: %CurrentAppDataDir%, %ScriptDir%, %CommonProfileDir%,
         * constant names changed:  %StartmenuDir% -> %CurrentStartmenuDir%,
                                    %DesktopDir% -> %CurrentDesktopDir%,
                                    %StartupDir% -> %CurrentStartupDir%,
@@ -3258,7 +3260,7 @@ opsi-winst (4.10.8.2-1) testing; urgency=low
 
 opsi-winst (4.10.8.1-1) testing; urgency=low
 
-        * bugfix: winbatch: no retry to find if there is no parameter; fixes #87 
+        * bugfix: winbatch: no retry to find if there is no parameter; fixes #87
 
  -- Detlef Oertel <d.oertel@uib.de>  Wed,  9 Aug 2010:15:00:00 +0200
 
@@ -3319,8 +3321,8 @@ opsi-winst (4.10.8.0-1) experimental; urgency=low
         * change: wisynt: set command logs now varname and new value
         * new: superobject JSON library from http://www.progdigy.com/?page_id=6
         * new: FProductOnClient_aktobject is now from type ISuperobject
-        * new: widatamodul: opsi4data: using now opsi4 method productOnClient_update no set product states 
-         
+        * new: widatamodul: opsi4data: using now opsi4 method productOnClient_update no set product states
+
 
  -- Detlef Oertel <d.oertel@uib.de>  Wed,  22 Jun 2010:15:00:00 +0200
 
@@ -3427,7 +3429,7 @@ opsi-winst (4.10.1.0-1) stable; urgency=low
 	* New: HexStrToDecStr
 
  -- Detlef Oertel <d.oertel@uib.de>  Tue,  23 Mar 2010:15:00:00 +0200
- 
+
 opsi-winst (4.10.0.0-1) stable; urgency=low
 
 	* New: getMSVersionMap
@@ -3457,13 +3459,13 @@ opsi-winst (4.9.4.2-1) experimental; urgency=low
 opsi-winst (4.9.4.1-1) experimental; urgency=low
 
 	* in interactive mode, the batch gui is only shown when activated by
-	  a button          
+	  a button
 
  -- Rupert Roeder <r.roeder@uib.de>  Mon,  11 Jan 2009:10:31:43 +0200
 
 opsi-winst (4.9.4.0-1) experimental; urgency=low
 
-	* new experiment for getting a second entry in the taskbar          
+	* new experiment for getting a second entry in the taskbar
 
  -- Rupert Roeder <r.roeder@uib.de>  Thu,  07 Jan 2009:10:31:43 +0200
 
@@ -3528,13 +3530,13 @@ opsi-winst (4.9.1.1) experimental; urgency=low
 
 opsi-winst (4.9.1.0) experimental; urgency=low
 
-  * trying to reconnect when a connection error 10054 occured 
+  * trying to reconnect when a connection error 10054 occured
 
  -- Rupert Roeder <r.roeder@uib.de>  Wed,  17 Sep 2009 10:31:43 +0200
 
 opsi-winst (4.9.0.0) stable; urgency=low
 
-  * new functions GetProductProperty, GetSectionLines 
+  * new functions GetProductProperty, GetSectionLines
 
  -- Rupert Roeder <r.roeder@uib.de>  Wed,  16 Sep 2009 10:31:43 +0200
 
@@ -3587,7 +3589,7 @@ opsi-winst (4.8.6-2) stable; urgency=low
 opsi-winst (4.8.6-1) stable; urgency=low
 
   * new functions getLastServiceErrorClass, getLastServiceErrorMessage,
-    opsiLicenseManagementEnabled 
+    opsiLicenseManagementEnabled
 
  -- Rupert Roeder <r.roeder@uib.de>  Fri,  8 May 2009 14:21:43 +0200
 
@@ -3613,50 +3615,50 @@ opsi-winst (4.8.4-1) stable; urgency=low
 
   * new option -V for winst copy actions: version control only with regard
   * to target directory (not for windows system directory)
- 
+
  -- Rupert Roeder <r.roeder@uib.de>  Thu, 19 Mar 2009 09:00:00 +0200
 
 opsi-winst (4.8.3-1) stable; urgency=low
 
   * bugfix: winst crashed when connection to service failed
- 
+
  -- Rupert Roeder <r.roeder@uib.de>  Mon, 16 Mar 2009 09:00:00 +0200
 
 opsi-winst (4.8.2-1) stable; urgency=low
 
   * special option for products sorting
- 
+
  -- Rupert Roeder <r.roeder@uib.de>  Wed, 11 Mar 2009 09:00:00 +0200
 
 opsi-winst (4.8.1-1) stable; urgency=low
 
   * new functions for licence management
- 
+
  -- Rupert Roeder <r.roeder@uib.de>  Fri, 20 Feb 2009 09:00:00 +0200
 
 opsi-winst (4.8.0.1-2) stable; urgency=low
 
   * changed postinst chmod o+r  $DST_DIR/winst32.exe ... for domainlogins
- 
+
  -- Rupert Roeder <r.roeder@uib.de>  Wed, 28 Jan 2009 09:00:00 +0200
 
 opsi-winst (4.8.0.1-1) stable; urgency=low
 
   * the symbol ^ in the command line parameter service_options is replaced by "
- 
+
  -- Rupert Roeder <r.roeder@uib.de>  Tue, 27 Jan 2009 09:00:00 +0200
 
 opsi-winst (4.8.0-1) stable; urgency=low
 
   * supports parameter service_options
- 
+
  -- Rupert Roeder <r.roeder@uib.de>  Mon, 26 Jan 2009 09:00:00 +0200
 
 opsi-winst (4.7.4-6) stable; urgency=low
 
   * libeay32.dll version 0.9.8.8 (0.9.8 h)
   * ssleay32.dll version 0.9.8.8 (0.9.8 h)
- 
+
  -- detlef oertel <d.oertel@uib.de>  Tue, 20 Jan 2009 09:00:00 +0200
 
      Version history:
@@ -3665,7 +3667,7 @@ opsi-winst (4.7.4-6) stable; urgency=low
     <table> <tr><th>version</th><th>changes</th></tr>
 
     <tr><td>4.9.4.2</td>
-    <td>The interactive opsiservice logon window has an improved focus behaviour. 
+    <td>The interactive opsiservice logon window has an improved focus behaviour.
     </td>
     </tr>
 
@@ -3820,7 +3822,7 @@ opsi-winst (4.7.4-6) stable; urgency=low
 
     <tr><td>4.8.4</td>
     <td>            version check option -V for copy actions, meaning version check only with regard to files
-                  	in the target directory 
+                  	in the target directory
     </td>
     </tr>
 
@@ -3972,7 +3974,7 @@ opsi-winst (4.7.4-6) stable; urgency=low
     <tr><td>4.5.6</td>
     <td>            neu: ExitWindows /ShutdownWanted, produces RegistryFlag ShutdownRequested
     </td>
-    </tr>	
+    </tr>
 
     <tr><td>4.5.5</td>
     <td>            bugfix: Indentation in file sections is now ignored as in before 4.5
@@ -3986,7 +3988,7 @@ opsi-winst (4.7.4-6) stable; urgency=low
     <td></td>
     <td>            number of lines which are shown in the log view changed from 80 to 1000;
                     the log view can be shown in an own window;
-                    some minor GUI changes; 
+                    some minor GUI changes;
     </td>
     </tr>
 
@@ -4139,7 +4141,7 @@ opsi-winst (4.7.4-6) stable; urgency=low
     </td></tr>
     <tr>
     <td>      </td> <td>Bug bei der Verarbeitung von Regedit-Dateien entfernt. Das Zeichen "@" als Symbol fï¿½r
-                     den Default-Eintrag eines Registry-Keys wird jetzt bearbeitet. 
+                     den Default-Eintrag eines Registry-Keys wird jetzt bearbeitet.
     </td></tr>
     <td>4.3.5       </td> <td>Korrektur: setFatalError beendet jetzt auch die Abarbeitung des Skripts
 
@@ -4199,9 +4201,9 @@ opsi-winst (4.7.4-6) stable; urgency=low
 
     </tr>
    <tr>
-    <td>                 
+    <td>
      4.2.4
-                      </td> <td>    
+                      </td> <td>
                       Warnung, wenn beim Schreiben eines Registry-Eintrags der Typ der Registry-Variable
                       geaendert wird
                        <br/>
@@ -4223,8 +4225,8 @@ opsi-winst (4.7.4-6) stable; urgency=low
 
     </tr>
    <tr>
-    <td>                  
-     4.2.3     
+    <td>
+     4.2.3
                       </td> <td>
                       Bug in der Behandlung von failed-Zustaenden behoben
                        <br/>
@@ -4233,7 +4235,7 @@ opsi-winst (4.7.4-6) stable; urgency=low
     </tr>
    <tr>
     <td>
-     4.2.2     
+     4.2.2
                       </td> <td>
                             Der Defaultwert stayontop=false wird wieder beachtet.
                         <br/>
@@ -4274,13 +4276,13 @@ opsi-winst (4.7.4-6) stable; urgency=low
                        wird die Variable %UserProfileDir% interpretiert (und der Reihe nach fuer die
                        verschiedenen User mit den entsprechenden Verzeichnisnamen belegt)
                         <br/>
-                        
-                       </td> 
+
+                       </td>
 
    </tr>
    <tr>
     <td>
-     4.1.5            
+     4.1.5
                       </td> <td>
                       Anzeige "Systeminfo" (Befehl showmessagefile) repariert
                        Die winst-Konstanten (von %..% eingerahmt) koennen jetzt auch in sub-Sektionen
@@ -4302,14 +4304,14 @@ opsi-winst (4.7.4-6) stable; urgency=low
     </tr>
    <tr>
     <td>
-     4.1.3           
+     4.1.3
                       </td> <td>
                        Neuer Parameter /WaitForProcessEnding  fuer WinBatch-Aufruf,
                        kombinierbar mit nachfolgendem Parameter /timeoutSeconds
                        Wenn /timeoutSeconds nicht angegeben, ist ein Default von 20 min gesetzt
                        </td>
 
-                       
+
     </tr>
    <tr>
     <td>
@@ -4321,7 +4323,7 @@ opsi-winst (4.7.4-6) stable; urgency=low
     </tr>
    <tr>
     <td>
-     4.1.1      
+     4.1.1
                       </td> <td>
                        Neue Syntaxvariante /regedit fuer Registry-Sektionen
                        Anstelle einer Datei kann jetzt auch eine Stringliste als Inhalt einer Subsektion gesetzt werden
@@ -4334,28 +4336,28 @@ opsi-winst (4.7.4-6) stable; urgency=low
 
      </tr>
    <tr>
-    <td>                  
-     4.1            
+    <td>
+     4.1
                       </td> <td>
                        Einfuehrung des Umgangs mit "fatalen Fehlern"
                        </td>
 
     </tr>
-   
+
     </table>
-    
-    Version 4.05           
+
+    Version 4.05
                        (vgl. 3.24) Bugfix: Zaehlung der if-then-else-Ebenen wird jetzt in Subfunktionen fortgesetzt
                        (und nicht mehr neu initialisiert)
                        Bugfix: wenn Variable bootmode im Registry-Key nicht vorhanden ist, wird der Wert
                        der Umgebungsvariable entnommen (bisher nur,wenn der Registry-Key insgesamt nicht vorhanden ist)
 
-    Version 4.0         
+    Version 4.0
                           Kylix-Kompilierbarkeit
                        weitere Neuerungen:
                        - Stringlistenverarbeitung
                        - "Capture" von Ausgaben einer DosBatch/Shell-Aufrufen als Stringliste
-                       - Patchen von XML-Dateien 
+                       - Patchen von XML-Dateien
 
 
     Version 3.l9       Vorbereitung von Escaping von '"' in String-Konstanten mittels "\"
@@ -4384,10 +4386,10 @@ opsi-winst (4.7.4-6) stable; urgency=low
 
     Version 3.12       Modifizierte filecopy-Funktion, direkter winapi-Aufruf mit Shared-Zugriff
                        opsi-konforme Konfigurationsmoeglichkeit fuer Installationspfade
-                       
+
     Version 3.11       Variable ScriptDrive eingefhrt
 
-    Version 3.1        Konfigurationsoptionen werden der Registry entnommen                                                                     
+    Version 3.1        Konfigurationsoptionen werden der Registry entnommen
 
     Version 3.07       Versionscheck fr alle Dateitypen angeschaltet
     Version 3.06       Auswahlmoeglichkeit fr Hintergrundfarbe
@@ -4493,7 +4495,7 @@ opsi-winst (4.7.4-6) stable; urgency=low
 
     Version 2.8        Die gemaess den Produktreihenfolgeanweisungen sortierten Anwendungen
                        werden jetzt ans Ende der Produktliste gestellt.
-                       
+
                        Umbau von WinBatch-Aufrufen;
                        u.a. kann jetzt auch eine Wartezeit angegeben werden, bis zu dem der winst nicht
                        im Programmablauf weitergeht, z.B. 100 Sekunden Wartezeit mit dem

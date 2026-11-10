@@ -295,6 +295,7 @@ type
     function SetProductOnClientData(const ProductOnClientData: TStringList):TStringList;
     function GetSortedProductOnClientListFromService: TStringList;
     function ConvertJsonValueToString(Value:TJSONData):string;
+    procedure UpdateProductOnClientObject(const parastr, caller: string);
   protected
     actualProduct: string;
     actualVersion: string;
@@ -3760,6 +3761,7 @@ end;
 procedure TOpsi4Data.finishOpsiConf;
 var
   sendToLogFlag: boolean;
+  sendLogOk: boolean;
   omc: TOpsiMethodCall;
   jsonEntry: ISuperObject;
   sendtype: string;
@@ -3787,9 +3789,12 @@ begin
     Application.ProcessMessages;
     {$ENDIF}
     if LogDatei.Appendmode then
-      sendLog(sendtype, True)
+      sendLogOk := sendLog(sendtype, True)
     else
-      sendLog(sendtype);
+      sendLogOk := sendLog(sendtype);
+    if not sendLogOk then
+      LogDatei.log('Error: sending the log file to the service failed: ' +
+        FjsonExecutioner.LastError, LLError);
   end;
   try
     { close the session after all is done  }
@@ -4945,10 +4950,28 @@ begin
   FProductActionRequests.Values[actualProduct] := actionRequest;
 end;
 
-procedure TOpsi4Data.setActionProgress(const progress: string);
+// Sends the product on client object and logs an error if the service
+// did not accept it (no response after retries or error in the response).
+procedure TOpsi4Data.UpdateProductOnClientObject(const parastr, caller: string);
 var
   omc: TOpsiMethodCall;
   jO: ISuperObject;
+begin
+  omc := TOpsiMethodCall.Create('productOnClient_updateObject', [parastr]);
+  try
+    jO := FjsonExecutioner.retrieveJSONObject(omc);
+    if jO = nil then
+      LogDatei.log('Error: ' + caller +
+        ': productOnClient_updateObject failed, the service was not updated. Product: '
+        + actualProduct + ', error: ' + FjsonExecutioner.LastError +
+        ', params: ' + parastr, LLError);
+  finally
+    omc.Free;
+  end;
+end;
+
+procedure TOpsi4Data.setActionProgress(const progress: string);
+var
   parastr: string;
 begin
   try
@@ -4956,9 +4979,7 @@ begin
     begin
       FProductOnClient_aktobject.AsObject.S['actionProgress'] := progress;
       parastr := FProductOnClient_aktobject.asJson(False, False);
-      omc := TOpsiMethodCall.Create('productOnClient_updateObject', [parastr]);
-      jO := FjsonExecutioner.retrieveJSONObject(omc);
-      omc.Free;
+      UpdateProductOnClientObject(parastr, 'setActionProgress');
     end
     else
       LogDatei.log('Could not set action progress. ProductOnClient not assigned', LLWarning);
@@ -4970,8 +4991,6 @@ end;
 
 procedure TOpsi4Data.setProductState(newState: TProductState);
 var
-  omc: TOpsiMethodCall;
-  jO: ISuperObject;
   parastr: string;
 begin
   try
@@ -4982,9 +5001,7 @@ begin
     FProductOnClient_aktobject.AsObject.S['installationStatus'] :=
       installationStatusToString(newState);
     parastr := FProductOnClient_aktobject.asJson(False, False);
-    omc := TOpsiMethodCall.Create('productOnClient_updateObject', [parastr]);
-    jO := FjsonExecutioner.retrieveJSONObject(omc);
-    omc.Free;
+    UpdateProductOnClientObject(parastr, 'setProductState');
   except
     LogDatei.log('Exception in opsi4data.setProductState , parastr: ' +
       parastr, LLerror);
@@ -4996,8 +5013,6 @@ end;
 
 procedure TOpsi4Data.setProductProgress(newProgress: TActionProgress);
 var
-  omc: TOpsiMethodCall;
-  jO: ISuperObject;
   parastr: string;
 begin
   try
@@ -5009,9 +5024,7 @@ begin
       FProductOnClient_aktobject.AsObject.S['actionProgress'] :=
          actionProgressToString(newProgress);
       parastr := FProductOnClient_aktobject.asJson(False, False);
-      omc := TOpsiMethodCall.Create('productOnClient_updateObject', [parastr]);
-      jO := FjsonExecutioner.retrieveJSONObject(omc);
-      omc.Free;
+      UpdateProductOnClientObject(parastr, 'setProductProgress');
     end;
   except
     LogDatei.log('Exception in opsi4data.setProductState , parastr: ' +
@@ -5027,8 +5040,6 @@ procedure TOpsi4Data.ProductOnClient_update(actionProgressS: string;
   lastAction: TActionRequest; installationStatus: TProductstate);
 
 var
-  omc: TOpsiMethodCall;
-  jO: ISuperObject;
   installationStatusS, actionResultS, actionRequestS,
   lastActionS: string;
   parastr: string;
@@ -5084,9 +5095,7 @@ begin
     parastr := FProductOnClient_aktobject.asJson(False, False);
     LogDatei.log_prog('Opsi4Data.ProductOnClient_update, params (JSON) : ' +
       parastr, LLDebug);
-    omc := TOpsiMethodCall.Create('productOnClient_updateObject', [parastr]);
-    jO := FjsonExecutioner.retrieveJSONObject(omc);
-    omc.Free;
+    UpdateProductOnClientObject(parastr, 'ProductOnClient_update');
   except
     on e: Exception do
     begin
