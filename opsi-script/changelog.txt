@@ -2,6 +2,15 @@ todo:
 isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-package-requires-a-reboot-of-my-system
 mac getIpByName liefert name von IPnum
 
+opsi-script (4.12.22.0)
+* [change] oswebservice.pas: service requests are retried with reconnect on transport failures
+        (connection loss, timeouts, resets, changing network interfaces); failed attempts are
+        logged with socket/TLS error details. TLS protocol and certificate errors are not retried.
+        Connect timeout 10 s, receive timeout 60 s (120 s for log upload) unless set by omc.timeout.
+* [fix] oswebservice.pas: network failures no longer trigger the HTTP 500 communication mode fallback.
+
+-- j.schneider <j.schneider@uib.de> 2026-11-10
+
 opsi-script (4.12.21.2)
 * [fix] fixed functions getUsernameBySession and getLoggedinUserList in opsi-script/osbglistwinuser.pas,
         if username and domain was empty the resulting username was "\",

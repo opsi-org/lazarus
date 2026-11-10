@@ -25,6 +25,9 @@ unit oswebservice;
 interface
 
 uses
+  {$IFDEF SYNAPSE}
+  synsock,
+  {$ENDIF SYNAPSE}
   SysUtils, Classes, Variants,
   oslog,
   superobject,
@@ -135,6 +138,20 @@ type
 
   (************** opsidata-Service  *********************************************)
 
+  // classification of transport level failures (no HTTP response received)
+  TTransportErrorClass = (
+    tecTransient,        // network problem, retrying is likely to help
+    tecTransientLimited, // may be transient (e.g. proxy or captive portal), retry only briefly
+    tecPermanent);       // retrying will not help (e.g. TLS protocol or certificate errors)
+
+  // retry budget for one service request
+  TRetryPolicy = record
+    MaxAttempts: integer;
+    DelaysMs: array[0..4] of integer; // wait after failed attempt n (1-based)
+    DeadlineMs: integer;              // total time budget including waits
+    ReceiveTimeoutMs: integer;        // default socket timeout per attempt
+  end;
+
   // helper classes
 
   { TOpsiMethodCall }
@@ -174,8 +191,20 @@ type
     FResultLines: TStringList;
     mymemorystream: TMemoryStream;
     methodGET: boolean;
+    FLastTransportFailure: boolean;
+    FLastTransportInfo: string;
+    FLastAttemptCount: integer;
+    FLastSuccessTick: QWord;
     function GetSynapseSocketFamilyAsString: string;
     procedure LogHostIPs;
+    {$IFDEF SYNAPSE}
+    function ReadSslQueueError: integer;
+    function DescribeTransportError(sslQueueError: integer): string;
+    procedure ResetConnection;
+    procedure WaitBeforeRetry(waitMs: integer);
+    function HttpExchange(const method, url: string; const policy: TRetryPolicy;
+      timeoutMs: integer; allowRetry: boolean): boolean;
+    {$ENDIF SYNAPSE}
   protected
     {$IFDEF SYNAPSE}
     HTTPSender: THTTPSend;
@@ -422,6 +451,10 @@ function getOpsiServiceVersion(const serviceUrl: string; const username: string;
   const password: string; var sessionid: string): string;
 function escapeControlChars(t: string): string;
 procedure getStringlistFromJsonObject(const jO: ISuperObject; var list: TStringList);
+{$IFDEF SYNAPSE}
+function ClassifyTransportError(sockError, sslError, sslQueueError: integer;
+  sslLibLoaded: boolean): TTransportErrorClass;
+{$ENDIF SYNAPSE}
 
 resourcestring
   rsSendLog = 'Sending log file to server ...';
@@ -442,6 +475,23 @@ uses
   osmain;
 
 {$ENDIF}
+
+{$IFDEF SYNAPSE}
+const
+  // retry budget for normal service requests: 5 attempts, waits 2/5/10/20 s
+  RetryPolicyNormal: TRetryPolicy = (MaxAttempts: 5;
+    DelaysMs: (2000, 5000, 10000, 20000, 30000);
+    DeadlineMs: 90000; ReceiveTimeoutMs: 60000);
+  // retry budget for uploading the log file: 6 attempts, waits 2/5/10/20/30 s
+  RetryPolicyLog: TRetryPolicy = (MaxAttempts: 6;
+    DelaysMs: (2000, 5000, 10000, 20000, 30000);
+    DeadlineMs: 180000; ReceiveTimeoutMs: 120000);
+  ConnectTimeoutMs = 10000;
+  // reconnect instead of reusing a keep-alive connection that was idle longer than this
+  IdleReconnectMs = 60000;
+  // maximum attempts for failures classified as tecTransientLimited
+  LimitedMaxAttempts = 2;
+{$ENDIF SYNAPSE}
 
 var
   testresult: string;
@@ -1004,6 +1054,7 @@ begin
     //HTTPSender.Sock.PreferIP4:= False; //might be switched to false if IPv6 is standard
     //HTTPSender.Sock.Family:= SF_IP6; //do not set this if IPv4 addresses are still in use
     HTTPSender.Sock.CreateWithSSL(TSSLOpenSSL3);
+    HTTPSender.Sock.ConnectionTimeout := ConnectTimeoutMs;
     HTTPSender.Sock.Connect(ip, port);
     //LogDatei.log('IP: ' + ip + ' Resolved: ' + Httpsender.Sock.GetRemoteSinIP, LLDebug);
     if SSL_OPENSSL_LIB_UNIT.InitSSLInterface then
@@ -1213,6 +1264,279 @@ begin
   LogDatei.log('got Furl: ' + Furl, LLdebug3);
 end;
 
+{$IFDEF SYNAPSE}
+function IsTransientSocketError(code: integer): boolean;
+const
+  TransientSocketErrors: array[0..13] of integer = (
+    synsock.WSAETIMEDOUT, synsock.WSAECONNRESET, synsock.WSAECONNABORTED,
+    synsock.WSAENETDOWN, synsock.WSAENETUNREACH, synsock.WSAENETRESET,
+    synsock.WSAEHOSTUNREACH, synsock.WSAEHOSTDOWN, synsock.WSAECONNREFUSED,
+    synsock.WSAEADDRNOTAVAIL, synsock.WSAENOTCONN, synsock.WSAESHUTDOWN,
+    synsock.WSAHOST_NOT_FOUND, synsock.WSATRY_AGAIN);
+var
+  i: integer;
+begin
+  Result := False;
+  for i := Low(TransientSocketErrors) to High(TransientSocketErrors) do
+    if TransientSocketErrors[i] = code then
+    begin
+      Result := True;
+      Break;
+    end;
+end;
+
+// Decides whether a failed request (no HTTP response received) is worth retrying.
+// sockError: Sock.LastError, sslError: Sock.SSL.LastError,
+// sslQueueError: first entry of the OpenSSL error queue (0 if none).
+function ClassifyTransportError(sockError, sslError, sslQueueError: integer;
+  sslLibLoaded: boolean): TTransportErrorClass;
+const
+  // OpenSSL 3 SSL reason codes
+  ERR_LIB_SSL = 20;
+  SSL_R_PACKET_LENGTH_TOO_LONG = 198;
+  SSL_R_WRONG_VERSION_NUMBER = 267;
+  SSL_R_UNEXPECTED_EOF_WHILE_READING = 294;
+var
+  sslClass, code, lib, reason: cardinal;
+begin
+  Result := tecPermanent;
+  if sockError = 0 then
+    Exit;
+
+  // plain socket error
+  if sockError <> synsock.WSASYSNOTREADY then
+  begin
+    if IsTransientSocketError(sockError) then
+      Result := tecTransient;
+    Exit;
+  end;
+
+  // TLS error: Synapse reports every TLS failure as WSASYSNOTREADY
+  if not sslLibLoaded then
+    Exit;
+  sslClass := cardinal(sslError);
+  if (sslClass = SSL_OPENSSL_LIB_UNIT.SSL_ERROR_SYSCALL) or
+    (sslClass = SSL_OPENSSL_LIB_UNIT.SSL_ERROR_ZERO_RETURN) then
+  begin
+    // connection broken or closed by the peer while reading or writing
+    Result := tecTransient;
+    Exit;
+  end;
+  if (sslClass = 0) or (sslClass = SSL_OPENSSL_LIB_UNIT.SSL_ERROR_SSL) then
+    // read/write path (class only): reason is in the error queue.
+    // Handshake path with sslError = 0: no error recorded
+    // (handshake interrupted or timed out).
+    code := cardinal(sslQueueError)
+  else if sslClass > 255 then
+    // handshake path: sslError is the OpenSSL error code itself
+    code := sslClass
+  else
+    Exit; // other SSL_get_error classes
+
+  if code = 0 then
+  begin
+    if sslClass = 0 then
+      Result := tecTransient;
+    Exit;
+  end;
+
+  if (code and $80000000) <> 0 then
+  begin
+    // system error, errno in the lower bits
+    if IsTransientSocketError(integer(code and $7FFFFFFF)) then
+      Result := tecTransient;
+    Exit;
+  end;
+
+  lib := (code shr 23) and $FF;
+  reason := code and $7FFFFF;
+  if lib = ERR_LIB_SSL then
+    case reason of
+      SSL_R_UNEXPECTED_EOF_WHILE_READING:
+        Result := tecTransient;
+      SSL_R_WRONG_VERSION_NUMBER, SSL_R_PACKET_LENGTH_TOO_LONG:
+        Result := tecTransientLimited;
+    end;
+end;
+
+function TJsonThroughHTTPS.ReadSslQueueError: integer;
+begin
+  Result := 0;
+  try
+    if SSL_OPENSSL_LIB_UNIT.IsSSLloaded then
+    begin
+      Result := SSL_OPENSSL_LIB_UNIT.ErrGetError;
+      SSL_OPENSSL_LIB_UNIT.ErrClearError;
+    end;
+  except
+    Result := 0;
+  end;
+end;
+
+function TJsonThroughHTTPS.DescribeTransportError(sslQueueError: integer): string;
+var
+  s: AnsiString;
+begin
+  Result := 'socket error ' + IntToStr(HTTPSender.Sock.LastError);
+  if HTTPSender.Sock.LastError = synsock.WSASYSNOTREADY then
+  begin
+    Result := Result + ' (TLS), TLS error class/code ' +
+      IntToStr(HTTPSender.Sock.SSL.LastError) + ' [' +
+      HTTPSender.Sock.SSL.LastErrorDesc + ']';
+    if sslQueueError <> 0 then
+    begin
+      s := StringOfChar(#0, 256);
+      SSL_OPENSSL_LIB_UNIT.ErrErrorString(sslQueueError, s, Length(s));
+      SetLength(s, StrLen(PAnsiChar(s)));
+      Result := Result + ', OpenSSL error 0x' + IntToHex(cardinal(sslQueueError), 8) +
+        ' [' + s + ']';
+    end;
+  end
+  else
+    Result := Result + ' [' + HTTPSender.Sock.GetErrorDescEx + ']';
+  Result := Result + ', remote ' + HTTPSender.Sock.GetRemoteSinIP + ', local ' +
+    HTTPSender.Sock.GetLocalSinIP;
+end;
+
+// Close the connection. The next HTTPMethod call resolves the host name again,
+// connects and does a new TLS handshake. Cookies, user agent and credentials are kept.
+procedure TJsonThroughHTTPS.ResetConnection;
+begin
+  try
+    HTTPSender.Sock.CloseSocket;
+    HTTPSender.Sock.ResetLastError;
+  except
+    on ex: Exception do
+      LogDatei.log('Exception while closing service connection: ' + ex.Message, LLWarning);
+  end;
+end;
+
+procedure TJsonThroughHTTPS.WaitBeforeRetry(waitMs: integer);
+var
+  untilTick: QWord;
+begin
+  untilTick := GetTickCount64 + QWord(waitMs);
+  while GetTickCount64 < untilTick do
+  begin
+    {$IFDEF GUI}
+    Application.ProcessMessages;
+    {$ENDIF GUI}
+    Sleep(100);
+  end;
+end;
+
+// Executes one HTTP request with reconnect and retry on transport failures.
+// The request (headers, mime type, body) has to be prepared in HTTPSender before.
+// Returns True if a HTTP response was received (any status code).
+// Returns False if no response could be obtained; FLastTransportFailure is then True.
+// Note: THTTPSend.HTTPMethod clears the request, so it is restored before each retry.
+// A retry may repeat a request that the server already processed
+// if the failure occurred while waiting for the response.
+function TJsonThroughHTTPS.HttpExchange(const method, url: string;
+  const policy: TRetryPolicy; timeoutMs: integer; allowRetry: boolean): boolean;
+var
+  snapHeaders: TStringList;
+  snapBody: TMemoryStream;
+  snapMime: string;
+  attempt, maxAttempts, waitMs, delayIndex: integer;
+  startTick, elapsed: QWord;
+  sslQueueError: integer;
+  errClass: TTransportErrorClass;
+  retryable: boolean;
+  failureInfo: string;
+begin
+  Result := False;
+  FLastTransportFailure := False;
+  FLastTransportInfo := '';
+  FLastAttemptCount := 0;
+  maxAttempts := policy.MaxAttempts;
+  if not allowRetry then
+    maxAttempts := 1;
+  startTick := GetTickCount64;
+
+  if (FLastSuccessTick > 0) and (startTick - FLastSuccessTick > IdleReconnectMs) then
+  begin
+    LogDatei.log_prog('Service connection was idle for ' +
+      IntToStr((startTick - FLastSuccessTick) div 1000) + ' s, reconnecting', LLDebug);
+    ResetConnection;
+  end;
+
+  snapHeaders := TStringList.Create;
+  snapBody := TMemoryStream.Create;
+  try
+    snapHeaders.AddStrings(HTTPSender.Headers);
+    snapMime := HTTPSender.MimeType;
+    snapBody.LoadFromStream(HTTPSender.Document);
+
+    attempt := 0;
+    repeat
+      Inc(attempt);
+      FLastAttemptCount := attempt;
+      if attempt > 1 then
+      begin
+        HTTPSender.Clear;
+        HTTPSender.MimeType := snapMime;
+        HTTPSender.Headers.AddStrings(snapHeaders);
+        HTTPSender.Document.LoadFromStream(snapBody);
+      end;
+      HTTPSender.Timeout := timeoutMs;
+      Result := HTTPSender.HTTPMethod(method, url);
+      if Result then
+      begin
+        FLastSuccessTick := GetTickCount64;
+        if attempt > 1 then
+          LogDatei.log('Service connection recovered: request succeeded on attempt ' +
+            IntToStr(attempt) + ' after ' + IntToStr(FLastSuccessTick - startTick) +
+            ' ms', LLWarning);
+        Exit;
+      end;
+
+      // transport failure, no HTTP response received
+      FLastTransportFailure := True;
+      sslQueueError := ReadSslQueueError;
+      errClass := ClassifyTransportError(HTTPSender.Sock.LastError,
+        HTTPSender.Sock.SSL.LastError, sslQueueError,
+        SSL_OPENSSL_LIB_UNIT.IsSSLloaded);
+      FLastTransportInfo := DescribeTransportError(sslQueueError);
+      failureInfo := 'Service request ' + method + ' failed (attempt ' +
+        IntToStr(attempt) + '/' + IntToStr(maxAttempts) + ', class ' +
+        GetEnumName(TypeInfo(TTransportErrorClass), Ord(errClass)) + '): ' +
+        FLastTransportInfo;
+
+      retryable := (errClass <> tecPermanent) and (attempt < maxAttempts);
+      if (errClass = tecTransientLimited) and (attempt >= LimitedMaxAttempts) then
+        retryable := False;
+      waitMs := 0;
+      if retryable then
+      begin
+        delayIndex := attempt - 1;
+        if delayIndex > High(policy.DelaysMs) then
+          delayIndex := High(policy.DelaysMs);
+        waitMs := policy.DelaysMs[delayIndex];
+        // +/- 20 % jitter
+        waitMs := waitMs + (waitMs * (integer(GetTickCount64 mod 41) - 20)) div 100;
+        elapsed := GetTickCount64 - startTick;
+        if elapsed + QWord(waitMs) >= QWord(policy.DeadlineMs) then
+          retryable := False;
+      end;
+
+      if not retryable then
+      begin
+        LogDatei.log(failureInfo + ' - giving up', LLWarning);
+        Break;
+      end;
+      LogDatei.log(failureInfo + ' - retrying in ' + IntToStr(waitMs) + ' ms',
+        LLWarning);
+      WaitBeforeRetry(waitMs);
+      ResetConnection;
+    until False;
+  finally
+    snapBody.Free;
+    snapHeaders.Free;
+  end;
+end;
+{$ENDIF SYNAPSE}
+
 function TJsonThroughHTTPS.retrieveJSONObject(const omc: TOpsiMethodCall;
   logging: boolean = True; retry: boolean = True; readOmcMap: boolean = False;
   communicationmode: integer = 0): ISuperObject;
@@ -1234,6 +1558,7 @@ var
   {$IFDEF SYNAPSE}
   i: integer;
   finished: boolean;
+  callTimeoutMs: integer;
   {$ENDIF SYNAPSE}
   oldTwistedServer: string;
   oldTwistedServerVer: integer = 0;
@@ -1328,11 +1653,15 @@ begin
             //Logdatei.Log (DateTimeToStr(now) + ' JSON service request ' + Furl , LLnotice);
             LogDatei.log_prog('JSON service request ' + Furl + ' ' +
               omc.FOpsiMethodName, LLinfo);
+        // timeout is set for every call (a value from omc is not kept for later calls)
         if omc.Timeout > 0 then
         begin
-          HTTPSender.Timeout := omc.Timeout * 1000;
-          HTTPSender.Sock.SetRecvTimeout(omc.Timeout * 1000);
-        end;
+          callTimeoutMs := omc.Timeout * 1000;
+          HTTPSender.Sock.SetRecvTimeout(callTimeoutMs);
+        end
+        else
+          callTimeoutMs := RetryPolicyNormal.ReceiveTimeoutMs;
+        HTTPSender.Timeout := callTimeoutMs;
 
 
         if methodGet then
@@ -1423,7 +1752,7 @@ begin
                 GetSynapseSocketFamilyAsString, LLDebug);
               LogDatei.log_prog('PreferIP4: ' +
                 BoolToStr(HTTPSender.Sock.PreferIP4, True), LLDebug);
-              if HTTPSender.HTTPMethod('POST', Furl) then
+              if HttpExchange('POST', Furl, RetryPolicyNormal, callTimeoutMs, retry) then
               begin
                 { Evaluate Response Metadata/Headers}
                 LogDatei.log('HTTPSender Post succeeded', LLInfo);
@@ -1560,7 +1889,9 @@ begin
                   'Request failed (Method Post). No connection to server could be established. Server-FQDN: '
                   + HttpSender.TargetHost + ', Server-IP: ' +
                   HttpSender.Sock.GetRemoteSinIP + ' SLL lib loaded: ' +
-                  BoolToStr(SSL_OPENSSL_LIB_UNIT.IsSSLloaded, True);
+                  BoolToStr(SSL_OPENSSL_LIB_UNIT.IsSSLloaded, True) +
+                  ', attempts: ' + IntToStr(FLastAttemptCount) + ', last error: ' +
+                  FLastTransportInfo;
                 LogDatei.log_prog(
                   'Request failed (Method Post). No connection to server could be established. Line: '
                   + {$INCLUDE %LINE%}, LLError);
@@ -1599,7 +1930,10 @@ begin
                     readOmcMap, CommunicationMode);
                 end;
               end;
-              if (HTTPSender.ResultCode = 500) and (FCommunicationMode = -1) then
+              // ResultCode is 500 by default in THTTPSend, so it only means
+              // 'Internal Server Error' if a response was actually received
+              if (HTTPSender.ResultCode = 500) and (FCommunicationMode = -1) and
+                not FLastTransportFailure then
               begin
                 if (HttpSender.Sock.GetRemoteSinIP = '') then
                 begin
@@ -1978,21 +2312,10 @@ begin
         if logging then
           LogDatei.log('Error: retrieveJSONObject --- opsi service problem ---' +
             FError, LLerror);
-        if pos('10054', FError) > 0 //Socket error, connection reset by peer
-        then
-        begin
-          LogDatei.log('trying to rebuild connection', LLInfo);
-          sleep(1000);
-          //createSocket;
-          retrieveJSONObject(omc, logging, False);
-        end
-        else
-        begin
-          if pos('Stream read error', FError) = 0 then
-            if Assigned(ResultLines) and (resultLines.Count > 0) then
-              LogDatei.log('Received (first 512): ' +
-                copy(ResultLines.Strings[0], 1, 512), LLerror);
-        end;
+        if pos('Stream read error', FError) = 0 then
+          if Assigned(ResultLines) and (resultLines.Count > 0) then
+            LogDatei.log('Received (first 512): ' +
+              copy(ResultLines.Strings[0], 1, 512), LLerror);
       end;
     end;
   finally
@@ -2189,7 +2512,8 @@ begin
             raise Exception.Create(HTTPSender.Headers.Strings[0]);
           end
           else}
-          if HTTPSender.HTTPMethod('POST', Furl) then
+          if HttpExchange('POST', Furl, RetryPolicyLog,
+            RetryPolicyLog.ReceiveTimeoutMs, True) then
           begin
             { Communication successful }
             LogDatei.log_prog('HTTPSender Post succeeded', LLdebug);
@@ -2292,7 +2616,10 @@ begin
             LogDatei.log('HTTPSender result: ' + IntToStr(HTTPSender.ResultCode) +
               ' msg: ' + HTTPSender.ResultString, LLError);
             ErrorOccured := True;
-            raise Exception.Create(HTTPSender.Headers.Strings[0]);
+            FError := 'Request failed (Method Post). No connection to server could be established. Server-FQDN: ' +
+              HttpSender.TargetHost + ', attempts: ' + IntToStr(FLastAttemptCount) +
+              ', last error: ' + FLastTransportInfo;
+            raise Exception.Create(FError);
           end;
         end;
       except
