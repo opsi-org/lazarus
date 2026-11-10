@@ -196,6 +196,7 @@ type
     FLastAttemptCount: integer;
     FLastSuccessTick: QWord;
     FNoRetry: boolean;
+    FPendingEvents: TStringList;
     function GetSynapseSocketFamilyAsString: string;
     procedure LogHostIPs;
     {$IFDEF SYNAPSE}
@@ -203,7 +204,7 @@ type
     function DescribeTransportError(sslQueueError: integer): string;
     procedure ResetConnection;
     procedure WaitBeforeRetry(waitMs: integer);
-    function HttpExchange(const method, url: string; const policy: TRetryPolicy;
+    function HttpExchange(const what, method, url: string; const policy: TRetryPolicy;
       timeoutMs: integer; allowRetry: boolean): boolean;
     {$ENDIF SYNAPSE}
   protected
@@ -253,6 +254,11 @@ type
     function getSubListResult(const omc: TOpsiMethodCall; subkey: string): TStringList;
     function getFileFromDepot(filename: string; toStringList: boolean;
       var ListResult: TStringList): boolean;
+    // Logs a service connection event. As long as the log file does not exist
+    // (startup of opsi-script with -opsiservice) the event is also kept
+    // and can be fetched with TakePendingEvents.
+    procedure ServiceLog(const msg: string; level: integer);
+    procedure TakePendingEvents(target: TStrings);
     { properties }
     property resultLines: TStringList read FResultLines;
     property LastError: string read FError;
@@ -441,6 +447,9 @@ type
     // is a given method well known:
     function isMethodProvided(Method : string): boolean;
     procedure setUserAgent(UserAgent:string);
+    // moves the service connection events that were not written to a log file
+    // (log file not yet created) to target
+    procedure TakeConnectionEvents(target: TStrings);
     { properties }
     //property sslProtocol: TIdSSLVersion read FSslProtocol write FSslProtocol;
     property serviceUrl: string read FServiceURL;
@@ -1180,6 +1189,7 @@ end;
 destructor TJsonThroughHTTPS.Destroy;
 begin
   //nullO.free;
+  FPendingEvents.Free;
   {$IFDEF SYNAPSE}
   mymemorystream.Free;
   FResultLines.Free;
@@ -1225,6 +1235,39 @@ begin
     Result.LoadFromStream(Instream);
   end;
   //CompressedMemoryStream.Free;
+end;
+
+procedure TJsonThroughHTTPS.ServiceLog(const msg: string; level: integer);
+var
+  levelName: string;
+begin
+  LogDatei.log(msg, level);
+  // The log file does not exist yet while opsi-script connects to the service at
+  // startup (-opsiservice): keep the event for the startup messages.
+  if not LogDatei.LogFileExists then
+  begin
+    if not Assigned(FPendingEvents) then
+      FPendingEvents := TStringList.Create;
+    if FPendingEvents.Count < 200 then
+    begin
+      if level <= LLError then
+        levelName := 'Error'
+      else if level = LLWarning then
+        levelName := 'Warning'
+      else
+        levelName := 'Info';
+      FPendingEvents.Add(DateTimeToStr(Now) + ' ' + levelName + ': ' + msg);
+    end;
+  end;
+end;
+
+procedure TJsonThroughHTTPS.TakePendingEvents(target: TStrings);
+begin
+  if Assigned(FPendingEvents) then
+  begin
+    target.AddStrings(FPendingEvents);
+    FPendingEvents.Clear;
+  end;
 end;
 
 function TJsonThroughHTTPS.GetSynapseSocketFamilyAsString: string;
@@ -1394,7 +1437,14 @@ end;
 function TJsonThroughHTTPS.DescribeTransportError(sslQueueError: integer): string;
 var
   s: AnsiString;
+  remoteIp, localIp: string;
 begin
+  remoteIp := HTTPSender.Sock.GetRemoteSinIP;
+  if remoteIp = '' then
+    remoteIp := '-';
+  localIp := HTTPSender.Sock.GetLocalSinIP;
+  if localIp = '' then
+    localIp := '-';
   Result := 'socket error ' + IntToStr(HTTPSender.Sock.LastError);
   if HTTPSender.Sock.LastError = synsock.WSASYSNOTREADY then
   begin
@@ -1412,8 +1462,7 @@ begin
   end
   else
     Result := Result + ' [' + HTTPSender.Sock.GetErrorDescEx + ']';
-  Result := Result + ', remote ' + HTTPSender.Sock.GetRemoteSinIP + ', local ' +
-    HTTPSender.Sock.GetLocalSinIP;
+  Result := Result + ', remote ' + remoteIp + ', local ' + localIp;
 end;
 
 // Close the connection. The next HTTPMethod call resolves the host name again,
@@ -1443,6 +1492,22 @@ begin
   end;
 end;
 
+// Seconds with one decimal for log messages, e.g. 4.8 s
+function FormatSeconds(ms: int64): string;
+begin
+  Result := IntToStr(ms div 1000) + '.' + IntToStr((ms mod 1000) div 100) + ' s';
+end;
+
+function TransportErrorClassName(errClass: TTransportErrorClass): string;
+begin
+  case errClass of
+    tecTransient: Result := 'transient';
+    tecTransientLimited: Result := 'possibly transient';
+    else
+      Result := 'permanent';
+  end;
+end;
+
 // Executes one HTTP request with reconnect and retry on transport failures.
 // The request (headers, mime type, body) has to be prepared in HTTPSender before.
 // Returns True if a HTTP response was received (any status code).
@@ -1452,18 +1517,21 @@ end;
 // Note: THTTPSend.HTTPMethod clears the request, so it is restored before each retry.
 // A retry may repeat a request that the server already processed
 // if the failure occurred while waiting for the response.
-function TJsonThroughHTTPS.HttpExchange(const method, url: string;
+// what: name of the request (RPC method) for the log messages.
+function TJsonThroughHTTPS.HttpExchange(const what, method, url: string;
   const policy: TRetryPolicy; timeoutMs: integer; allowRetry: boolean): boolean;
 var
   snapHeaders: TStringList;
   snapBody: TMemoryStream;
   snapMime: string;
-  attempt, maxAttempts, waitMs, delayIndex, attemptTimeoutMs: integer;
+  attempt, maxAttempts, effMaxAttempts, waitMs, delayIndex,
+  attemptTimeoutMs: integer;
   remainingMs: int64;
-  startTick, elapsed: QWord;
+  startTick, attemptStartTick, elapsed: QWord;
   sslQueueError: integer;
   errClass: TTransportErrorClass;
-  retryable: boolean;
+  retriesDisabled: boolean;
+  giveUpReason: string;
   failureInfo: string;
 begin
   Result := False;
@@ -1471,7 +1539,8 @@ begin
   FLastTransportInfo := '';
   FLastAttemptCount := 0;
   maxAttempts := policy.MaxAttempts;
-  if (not allowRetry) or FNoRetry then
+  retriesDisabled := (not allowRetry) or FNoRetry;
+  if retriesDisabled then
     maxAttempts := 1;
   startTick := GetTickCount64;
 
@@ -1511,14 +1580,15 @@ begin
         HTTPSender.Sock.ConnectionTimeout := attemptTimeoutMs
       else
         HTTPSender.Sock.ConnectionTimeout := ConnectTimeoutMs;
+      attemptStartTick := GetTickCount64;
       Result := HTTPSender.HTTPMethod(method, url);
       if Result then
       begin
         FLastSuccessTick := GetTickCount64;
         if attempt > 1 then
-          LogDatei.log('Service connection recovered: request succeeded on attempt ' +
-            IntToStr(attempt) + ' after ' + IntToStr(FLastSuccessTick - startTick) +
-            ' ms', LLWarning);
+          ServiceLog('Service connection recovered: request ' + what +
+            ' succeeded on attempt ' + IntToStr(attempt) + ' after ' +
+            FormatSeconds(FLastSuccessTick - startTick), LLNotice);
         Exit;
       end;
 
@@ -1529,16 +1599,26 @@ begin
         HTTPSender.Sock.SSL.LastError, sslQueueError,
         SSL_OPENSSL_LIB_UNIT.IsSSLloaded);
       FLastTransportInfo := DescribeTransportError(sslQueueError);
-      failureInfo := 'Service request ' + method + ' failed (attempt ' +
-        IntToStr(attempt) + '/' + IntToStr(maxAttempts) + ', class ' +
-        GetEnumName(TypeInfo(TTransportErrorClass), Ord(errClass)) + '): ' +
-        FLastTransportInfo;
+      effMaxAttempts := maxAttempts;
+      if (errClass = tecTransientLimited) and (effMaxAttempts > LimitedMaxAttempts) then
+        effMaxAttempts := LimitedMaxAttempts;
+      failureInfo := 'Service request ' + what + ' to ' + url + ' failed (attempt ' +
+        IntToStr(attempt) + ' of ' + IntToStr(effMaxAttempts) + ', ' +
+        TransportErrorClassName(errClass) + ' error): ' + FLastTransportInfo +
+        ', after ' + FormatSeconds(GetTickCount64 - attemptStartTick);
 
-      retryable := (errClass <> tecPermanent) and (attempt < maxAttempts);
-      if (errClass = tecTransientLimited) and (attempt >= LimitedMaxAttempts) then
-        retryable := False;
+      giveUpReason := '';
+      if errClass = tecPermanent then
+        giveUpReason := 'permanent error'
+      else if attempt >= effMaxAttempts then
+      begin
+        if retriesDisabled then
+          giveUpReason := 'retries disabled'
+        else
+          giveUpReason := 'no attempts left';
+      end;
       waitMs := 0;
-      if retryable then
+      if giveUpReason = '' then
       begin
         delayIndex := attempt - 1;
         if delayIndex > High(policy.DelaysMs) then
@@ -1548,20 +1628,16 @@ begin
         waitMs := waitMs + (waitMs * (integer(GetTickCount64 mod 41) - 20)) div 100;
         elapsed := GetTickCount64 - startTick;
         if elapsed + QWord(waitMs) + MinAttemptMs >= QWord(policy.DeadlineMs) then
-        begin
-          retryable := False;
-          failureInfo := failureInfo + ' (time budget of ' +
-            IntToStr(policy.DeadlineMs div 1000) + ' s used up)';
-        end;
+          giveUpReason := 'time budget of ' + IntToStr(policy.DeadlineMs div 1000) +
+            ' s used up';
       end;
 
-      if not retryable then
+      if giveUpReason <> '' then
       begin
-        LogDatei.log(failureInfo + ' - giving up', LLWarning);
+        ServiceLog(failureInfo + ' - giving up (' + giveUpReason + ')', LLError);
         Break;
       end;
-      LogDatei.log(failureInfo + ' - retrying in ' + IntToStr(waitMs) + ' ms',
-        LLWarning);
+      ServiceLog(failureInfo + ' - retrying in ' + FormatSeconds(waitMs), LLWarning);
       WaitBeforeRetry(waitMs);
       ResetConnection;
     until False;
@@ -1696,6 +1772,8 @@ begin
         begin
           callTimeoutMs := omc.Timeout * 1000;
           callPolicy.DeadlineMs := callTimeoutMs;
+          LogDatei.log('Service request ' + omc.FOpsiMethodName + ': time budget ' +
+            IntToStr(omc.Timeout) + ' s (timeout), includes retries', LLDebug);
           HTTPSender.Sock.SetRecvTimeout(callTimeoutMs);
         end
         else
@@ -1791,7 +1869,7 @@ begin
                 GetSynapseSocketFamilyAsString, LLDebug);
               LogDatei.log_prog('PreferIP4: ' +
                 BoolToStr(HTTPSender.Sock.PreferIP4, True), LLDebug);
-              if HttpExchange('POST', Furl, callPolicy, callTimeoutMs, retry) then
+              if HttpExchange(omc.FOpsiMethodName, 'POST', Furl, callPolicy, callTimeoutMs, retry) then
               begin
                 { Evaluate Response Metadata/Headers}
                 LogDatei.log('HTTPSender Post succeeded', LLInfo);
@@ -1922,18 +2000,13 @@ begin
               end
               else
               begin
-                { Request failed }
+                { Request failed, the details were logged by HttpExchange }
                 ErrorOccured := True;
-                FError :=
-                  'Request failed (Method Post). No connection to server could be established. Server-FQDN: '
-                  + HttpSender.TargetHost + ', Server-IP: ' +
-                  HttpSender.Sock.GetRemoteSinIP + ' SLL lib loaded: ' +
-                  BoolToStr(SSL_OPENSSL_LIB_UNIT.IsSSLloaded, True) +
-                  ', attempts: ' + IntToStr(FLastAttemptCount) + ', last error: ' +
-                  FLastTransportInfo;
-                LogDatei.log_prog(
-                  'Request failed (Method Post). No connection to server could be established. Line: '
-                  + {$INCLUDE %LINE%}, LLError);
+                FError := 'Service request ' + omc.FOpsiMethodName +
+                  ' failed: no response from ' + Furl + ' after ' +
+                  IntToStr(FLastAttemptCount) + ' attempt(s), last error: ' +
+                  FLastTransportInfo + ', SSL library loaded: ' +
+                  BoolToStr(SSL_OPENSSL_LIB_UNIT.IsSSLloaded, True);
                 LogDatei.log_prog('Server-FQDN: ' +
                   HttpSender.TargetHost + ' Server-IP: ' +
                   HttpSender.Sock.GetRemoteSinIP + ' Line: ' + {$INCLUDE %LINE%}, LLInfo);
@@ -2551,7 +2624,7 @@ begin
             raise Exception.Create(HTTPSender.Headers.Strings[0]);
           end
           else}
-          if HttpExchange('POST', Furl, RetryPolicyLog,
+          if HttpExchange('log upload', 'POST', Furl, RetryPolicyLog,
             RetryPolicyLog.ReceiveTimeoutMs, True) then
           begin
             { Communication successful }
@@ -2651,13 +2724,12 @@ begin
           end
           else
           begin
-            LogDatei.log('HTTPSender Post failed', LLError);
-            LogDatei.log('HTTPSender result: ' + IntToStr(HTTPSender.ResultCode) +
-              ' msg: ' + HTTPSender.ResultString, LLError);
+            // the details were logged by HttpExchange
+            // (HTTPSender.ResultCode is only a default value without a response)
             ErrorOccured := True;
-            FError := 'Request failed (Method Post). No connection to server could be established. Server-FQDN: ' +
-              HttpSender.TargetHost + ', attempts: ' + IntToStr(FLastAttemptCount) +
-              ', last error: ' + FLastTransportInfo;
+            FError := 'Log upload failed: no response from ' + Furl + ' after ' +
+              IntToStr(FLastAttemptCount) + ' attempt(s), last error: ' +
+              FLastTransportInfo;
             raise Exception.Create(FError);
           end;
         end;
@@ -3148,8 +3220,8 @@ begin
       // the service could not be reached at all, a second request would only repeat the retries
       FServiceUnreachable := True;
       FServiceUnreachableInfo := FjsonExecutioner.LastTransportInfo;
-      LogDatei.log('Service not reachable, no module information: ' +
-        FServiceUnreachableInfo, LLError);
+      FjsonExecutioner.ServiceLog('Service not reachable, skipping the module ' +
+        'information request: ' + FServiceUnreachableInfo, LLInfo);
       Result := myModulesList;
       Exit;
     end;
@@ -3361,6 +3433,12 @@ begin
     on E: Exception do
       LogDatei.log('Exception in isMethodProvided: ' + E.Message, LLerror);
   end;
+end;
+
+procedure TOpsi4Data.TakeConnectionEvents(target: TStrings);
+begin
+  if Assigned(FJsonExecutioner) then
+    FJsonExecutioner.TakePendingEvents(target);
 end;
 
 procedure TOpsi4Data.setUserAgent(UserAgent: string);

@@ -16,6 +16,14 @@ opsi-script (4.12.22.0)
 * [fix] oswebservice.pas: network failures no longer trigger the HTTP 500 communication mode fallback.
 * [change] oswebservice.pas: log an error if a product on client update (installationStatus,
         actionProgress, ...) or the log upload to the service fails.
+* [change] oswebservice.pas: improved logging of service connection problems: messages name the
+        request (RPC method) and the service URL, the error class, the duration of the attempt and
+        the reason for giving up (permanent error, no attempts left, retries disabled, time budget
+        used up). Giving up is logged as error, a recovered connection as notice.
+* [fix] oswebservice.pas, osmain.pas: with -opsiservice the service connection events before the
+        log file is created (retries, failures) are written to the log as startup messages.
+* [fix] oswebservice.pas: removed the misleading "HTTPSender result: 500" message after a failed
+        log upload (no response received).
 
 -- j.schneider <j.schneider@uib.de> 2026-11-10
 

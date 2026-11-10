@@ -2285,6 +2285,8 @@ begin
               opsiserviceUser,
               opsiservicePassword,
               opsiserviceSessionId);
+            // service connection events from before the log file exists
+            opsidata.TakeConnectionEvents(startupmessages);
             startupmessages.Append('startmessage: opsidata initialized: ' +
               DateTimeToStr(Now));
             if opsidata.ServiceUnreachable then
@@ -2307,6 +2309,7 @@ begin
                 errorOccured := True;
                 testresult := 'backend_info request failed';
               end;
+              opsidata.TakeConnectionEvents(startupmessages);
             end;
             startTime := now;
             (*
