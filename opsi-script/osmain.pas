@@ -2287,10 +2287,27 @@ begin
               opsiserviceSessionId);
             startupmessages.Append('startmessage: opsidata initialized: ' +
               DateTimeToStr(Now));
-            //OpsiData.setOptions (opsiclientd_serviceoptions);
-            opsidata.setActualClient(computername);
-            startupmessages.Append(computername);
-            startupmessages.Append(readConfigsFromService);
+            if opsidata.ServiceUnreachable then
+            begin
+              // all retries of the first request were used up (about 90 s)
+              errorOccured := True;
+              testresult := 'service not reachable: ' +
+                opsidata.ServiceUnreachableInfo;
+            end
+            else
+            begin
+              //OpsiData.setOptions (opsiclientd_serviceoptions);
+              opsidata.setActualClient(computername);
+              startupmessages.Append(computername);
+              testresult := readConfigsFromService;
+              startupmessages.Append(testresult);
+              if testresult = '' then
+              begin
+                // readConfigsFromService returns an empty string if backend_info failed
+                errorOccured := True;
+                testresult := 'backend_info request failed';
+              end;
+            end;
             startTime := now;
             (*
             omc := TOpsiMethodCall.Create('backend_info', []);
@@ -2542,12 +2559,15 @@ begin
               begin
                 try
                   opsidata := TOpsi4Data.Create;
+                  // quick probe without retries, the fallback to localhost follows
+                  opsidata.NoRetry := True;
                   opsidata.initOpsiConf(opsiserviceurl,
                     opsiserviceUser,
                     opsiservicePassword,
                     opsiserviceSessionId);
                   if opsidata.isConnected then
                   begin
+                    opsidata.NoRetry := False;
                     { isConnected calls backendInfo so no need to call it again }
                       (*
                       startTime := now;

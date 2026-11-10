@@ -195,6 +195,7 @@ type
     FLastTransportInfo: string;
     FLastAttemptCount: integer;
     FLastSuccessTick: QWord;
+    FNoRetry: boolean;
     function GetSynapseSocketFamilyAsString: string;
     procedure LogHostIPs;
     {$IFDEF SYNAPSE}
@@ -256,6 +257,11 @@ type
     property resultLines: TStringList read FResultLines;
     property LastError: string read FError;
     property LastErrorInfo: TStringList read FErrorInfo;
+    // True if the last request got no HTTP response at all (network problem)
+    property LastTransportFailure: boolean read FLastTransportFailure;
+    property LastTransportInfo: string read FLastTransportInfo;
+    // True: every request is tried only once
+    property NoRetry: boolean read FNoRetry write FNoRetry;
   end;
 
   (****************************** Opsi Data *************************************)
@@ -283,6 +289,9 @@ type
     //mylist: TStringList;
     FOpsiModules: TStringList;
     FCommunicationMode: integer;
+    FNoRetry: boolean;
+    FServiceUnreachable: boolean;
+    FServiceUnreachableInfo: string;
     function IsModuleActivated(name:string):boolean;
     function ProductPropertyState_getValues_KeyValueMapp(var error: boolean): TStringList;
     function getProductRequirements(productname: string;
@@ -296,6 +305,7 @@ type
     function GetSortedProductOnClientListFromService: TStringList;
     function ConvertJsonValueToString(Value:TJSONData):string;
     procedure UpdateProductOnClientObject(const parastr, caller: string);
+    procedure SetNoRetry(value: boolean);
   protected
     actualProduct: string;
     actualVersion: string;
@@ -440,6 +450,11 @@ type
     property CommunicationMode: integer read FCommunicationMode
       write FCommunicationMode;
     property sortByServer: boolean read FSortByServer;
+    // True: requests to the service are tried only once (no retry)
+    property NoRetry: boolean read FNoRetry write SetNoRetry;
+    // True if the service could not be reached during initOpsiConf
+    property ServiceUnreachable: boolean read FServiceUnreachable;
+    property ServiceUnreachableInfo: string read FServiceUnreachableInfo;
   end;
 
 var
@@ -488,6 +503,8 @@ const
     DelaysMs: (2000, 5000, 10000, 20000, 30000);
     DeadlineMs: 180000; ReceiveTimeoutMs: 120000);
   ConnectTimeoutMs = 10000;
+  // an attempt is only started if at least this much of the total budget is left
+  MinAttemptMs = 1000;
   // reconnect instead of reusing a keep-alive connection that was idle longer than this
   IdleReconnectMs = 60000;
   // maximum attempts for failures classified as tecTransientLimited
@@ -1430,6 +1447,8 @@ end;
 // The request (headers, mime type, body) has to be prepared in HTTPSender before.
 // Returns True if a HTTP response was received (any status code).
 // Returns False if no response could be obtained; FLastTransportFailure is then True.
+// policy.DeadlineMs is the total budget for all attempts and waits. The connect and
+// receive timeouts of an attempt are shortened to the remaining budget.
 // Note: THTTPSend.HTTPMethod clears the request, so it is restored before each retry.
 // A retry may repeat a request that the server already processed
 // if the failure occurred while waiting for the response.
@@ -1439,7 +1458,8 @@ var
   snapHeaders: TStringList;
   snapBody: TMemoryStream;
   snapMime: string;
-  attempt, maxAttempts, waitMs, delayIndex: integer;
+  attempt, maxAttempts, waitMs, delayIndex, attemptTimeoutMs: integer;
+  remainingMs: int64;
   startTick, elapsed: QWord;
   sslQueueError: integer;
   errClass: TTransportErrorClass;
@@ -1451,7 +1471,7 @@ begin
   FLastTransportInfo := '';
   FLastAttemptCount := 0;
   maxAttempts := policy.MaxAttempts;
-  if not allowRetry then
+  if (not allowRetry) or FNoRetry then
     maxAttempts := 1;
   startTick := GetTickCount64;
 
@@ -1480,7 +1500,17 @@ begin
         HTTPSender.Headers.AddStrings(snapHeaders);
         HTTPSender.Document.LoadFromStream(snapBody);
       end;
-      HTTPSender.Timeout := timeoutMs;
+      remainingMs := int64(policy.DeadlineMs) - int64(GetTickCount64 - startTick);
+      if remainingMs < MinAttemptMs then
+        remainingMs := MinAttemptMs;
+      attemptTimeoutMs := timeoutMs;
+      if attemptTimeoutMs > remainingMs then
+        attemptTimeoutMs := integer(remainingMs);
+      HTTPSender.Timeout := attemptTimeoutMs;
+      if attemptTimeoutMs < ConnectTimeoutMs then
+        HTTPSender.Sock.ConnectionTimeout := attemptTimeoutMs
+      else
+        HTTPSender.Sock.ConnectionTimeout := ConnectTimeoutMs;
       Result := HTTPSender.HTTPMethod(method, url);
       if Result then
       begin
@@ -1517,8 +1547,12 @@ begin
         // +/- 20 % jitter
         waitMs := waitMs + (waitMs * (integer(GetTickCount64 mod 41) - 20)) div 100;
         elapsed := GetTickCount64 - startTick;
-        if elapsed + QWord(waitMs) >= QWord(policy.DeadlineMs) then
+        if elapsed + QWord(waitMs) + MinAttemptMs >= QWord(policy.DeadlineMs) then
+        begin
           retryable := False;
+          failureInfo := failureInfo + ' (time budget of ' +
+            IntToStr(policy.DeadlineMs div 1000) + ' s used up)';
+        end;
       end;
 
       if not retryable then
@@ -1560,6 +1594,7 @@ var
   i: integer;
   finished: boolean;
   callTimeoutMs: integer;
+  callPolicy: TRetryPolicy;
   {$ENDIF SYNAPSE}
   oldTwistedServer: string;
   oldTwistedServerVer: integer = 0;
@@ -1655,9 +1690,12 @@ begin
             LogDatei.log_prog('JSON service request ' + Furl + ' ' +
               omc.FOpsiMethodName, LLinfo);
         // timeout is set for every call (a value from omc is not kept for later calls)
+        // an explicit timeout is the total time budget of the call including retries
+        callPolicy := RetryPolicyNormal;
         if omc.Timeout > 0 then
         begin
           callTimeoutMs := omc.Timeout * 1000;
+          callPolicy.DeadlineMs := callTimeoutMs;
           HTTPSender.Sock.SetRecvTimeout(callTimeoutMs);
         end
         else
@@ -1753,7 +1791,7 @@ begin
                 GetSynapseSocketFamilyAsString, LLDebug);
               LogDatei.log_prog('PreferIP4: ' +
                 BoolToStr(HTTPSender.Sock.PreferIP4, True), LLDebug);
-              if HttpExchange('POST', Furl, RetryPolicyNormal, callTimeoutMs, retry) then
+              if HttpExchange('POST', Furl, callPolicy, callTimeoutMs, retry) then
               begin
                 { Evaluate Response Metadata/Headers}
                 LogDatei.log('HTTPSender Post succeeded', LLInfo);
@@ -2993,6 +3031,13 @@ end;
 
 {$ENDIF SYNAPSE}
 
+procedure TOpsi4Data.SetNoRetry(value: boolean);
+begin
+  FNoRetry := value;
+  if Assigned(FJsonExecutioner) then
+    FJsonExecutioner.NoRetry := value;
+end;
+
 procedure TOpsi4Data.initOpsiConf(serviceURL, username, password: string);
 begin
   initOpsiConf(serviceURL, username, password, '', '', '');
@@ -3019,6 +3064,9 @@ begin
       +serviceUrl+','+username+','+password+','+sessionid+','+ip+','+port+','+agentstring, LLDebug2);
     FjsonExecutioner := TJsonThroughHTTPS.Create(serviceUrl, username,
       password, sessionid, ip, port, agentstring);
+    FJsonExecutioner.NoRetry := FNoRetry;
+    FServiceUnreachable := False;
+    FServiceUnreachableInfo := '';
     ProfildateiChange := False;
     FServiceUrl := serviceURL;
     FDepotId := '';
@@ -3095,6 +3143,16 @@ begin
   end
   else
   begin
+    if FjsonExecutioner.LastTransportFailure then
+    begin
+      // the service could not be reached at all, a second request would only repeat the retries
+      FServiceUnreachable := True;
+      FServiceUnreachableInfo := FjsonExecutioner.LastTransportInfo;
+      LogDatei.log('Service not reachable, no module information: ' +
+        FServiceUnreachableInfo, LLError);
+      Result := myModulesList;
+      Exit;
+    end;
     //  no backend_getLicensingInfo - try with backend_info
     LogDatei.log(
       'No method backend_getLicensingInfo at service - perhaps old server or opsiclientd, we fallback to backend_info',

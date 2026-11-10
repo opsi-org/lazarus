@@ -7,6 +7,12 @@ opsi-script (4.12.22.0)
         (connection loss, timeouts, resets, changing network interfaces); failed attempts are
         logged with socket/TLS error details. TLS protocol and certificate errors are not retried.
         Connect timeout 10 s, receive timeout 60 s (120 s for log upload) unless set by omc.timeout.
+        An explicit timeout (e.g. in opsiservicecall) is the total time budget of the call
+        including all retries; without it the total budget is 90 s (180 s for log upload).
+* [change] osmain.pas: with -opsiservice opsi-script aborts with an error message if the service
+        is not reachable at startup (after the retries) or if backend_info fails.
+* [change] osmain.pas: with /productid the first connection probe is done without retries so
+        the fallback to https://localhost:4441/rpc starts immediately.
 * [fix] oswebservice.pas: network failures no longer trigger the HTTP 500 communication mode fallback.
 * [change] oswebservice.pas: log an error if a product on client update (installationStatus,
         actionProgress, ...) or the log upload to the service fails.
