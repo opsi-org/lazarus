@@ -1247,41 +1247,158 @@ begin
     Result := Copy(Result, 1, maxLen) + '...';
 end;
 
+function IsSensitiveKey(const key: string): boolean;
+var
+  k: string;
+begin
+  k := LowerCase(key);
+  Result := (Pos('password', k) > 0) or (Pos('passwd', k) > 0) or
+    (Pos('secret', k) > 0) or (Pos('token', k) > 0) or (Pos('hostkey', k) > 0) or
+    (Pos('credential', k) > 0) or (Pos('privatekey', k) > 0);
+end;
+
+// short description of a json value: scalars as text, nested objects as {...},
+// nested lists as [N items]
+function DescribeJsonValue(const v: ISuperObject): string;
+begin
+  Result := '';
+  if v = nil then
+    exit('null');
+  try
+    if v.IsType(stNull) then
+      Result := 'null'
+    else if v.IsType(stObject) then
+      Result := '{...}'
+    else if v.IsType(stArray) then
+      Result := '[' + IntToStr(v.AsArray.Length) + ' items]'
+    else if v.IsType(stString) then
+      Result := ShortenForLog(v.AsString, 40)
+    else
+      Result := v.AsString;
+  except
+    Result := '?';
+  end;
+end;
+
+// key=value pairs of a json object up to maxLen characters, rest as ", +N more"
+function DescribeJsonObject(const o: ISuperObject; maxLen: integer): string;
+var
+  iter: TSuperObjectIter;
+  item: string;
+  more: integer = 0;
+begin
+  Result := '';
+  try
+    if ObjectFindFirst(o, iter) then
+    begin
+      repeat
+        if IsSensitiveKey(iter.key) then
+          item := iter.key + '=***'
+        else
+          item := iter.key + '=' + DescribeJsonValue(iter.Val);
+        if (more = 0) and ((Result = '') or
+          (Length(Result) + Length(item) + 2 <= maxLen)) then
+        begin
+          if Result <> '' then
+            Result := Result + ', ';
+          Result := Result + item;
+        end
+        else
+          Inc(more);
+      until not ObjectFindNext(iter);
+      ObjectFindClose(iter);
+    end;
+  except
+    Result := Result + ', ...';
+  end;
+  if more > 0 then
+    Result := Result + ', +' + IntToStr(more) + ' more';
+  Result := '{' + Result + '}';
+end;
+
+// first items of a json list up to maxLen characters
+function DescribeJsonArray(const a: ISuperObject; maxLen: integer): string;
+var
+  i, n: integer;
+  item: string;
+  shown: string = '';
+  complete: boolean = True;
+begin
+  n := a.AsArray.Length;
+  for i := 0 to n - 1 do
+  begin
+    if a.AsArray.O[i].IsType(stObject) then
+      item := DescribeJsonObject(a.AsArray.O[i], 60)
+    else
+      item := DescribeJsonValue(a.AsArray.O[i]);
+    if (shown <> '') and (Length(shown) + Length(item) + 2 > maxLen) then
+    begin
+      complete := False;
+      break;
+    end;
+    if shown <> '' then
+      shown := shown + ', ';
+    shown := shown + item;
+  end;
+  if not complete then
+    shown := shown + ', ...';
+  if n = 0 then
+    Result := '[]'
+  else
+    Result := '[' + IntToStr(n) + ' items: ' + shown + ']';
+end;
+
 // readable one line description of a service call: method(arg, ...)
-// objects are shown as {...}, lists as [N items]
+// objects as {key=value, ...}, lists as [N items: ...], each argument limited in
+// length, values of sensitive keys (password, secret, ...) masked
 function DescribeServiceCall(omc: TOpsiMethodCall): string;
+const
+  maxArgLen = 150;
 var
   i: integer;
   p, arg: string;
   args: string = '';
-  n: integer;
+  jo: ISuperObject;
+  h: string = '';
 begin
   if Assigned(omc.FHashlist) and (omc.FHashlist.Count > 0) then
-    args := '{' + IntToStr(omc.FHashlist.Count) + ' entries}';
+  begin
+    for i := 0 to omc.FHashlist.Count - 1 do
+    begin
+      if IsSensitiveKey(omc.FHashlist.Names[i]) then
+        arg := omc.FHashlist.Names[i] + '=***'
+      else
+        arg := ShortenForLog(omc.FHashlist.Strings[i], 40);
+      if (h <> '') and (Length(h) + Length(arg) + 2 > maxArgLen) then
+      begin
+        h := h + ', ...';
+        break;
+      end;
+      if h <> '' then
+        h := h + ', ';
+      h := h + arg;
+    end;
+    args := '{' + h + '}';
+  end;
   if Assigned(omc.FParameterlist) then
     for i := 0 to omc.FParameterlist.Count - 1 do
     begin
       p := omc.FParameterlist.Strings[i];
-      if (Length(p) > 1) and (p[1] = '{') and (p[Length(p)] = '}') then
-        arg := '{...}'
-      else if (Length(p) > 1) and (p[1] = '[') and (p[Length(p)] = ']') then
+      arg := '';
+      jo := nil;
+      if (Length(p) > 1) and (((p[1] = '{') and (p[Length(p)] = '}')) or
+        ((p[1] = '[') and (p[Length(p)] = ']'))) then
       begin
-        if p = '[]' then
-          arg := '[]'
-        else
-        begin
-          n := -1;
-          try
-            n := SO(p).AsArray.Length;
-          except
-            n := -1;
-          end;
-          if n >= 0 then
-            arg := '[' + IntToStr(n) + ' items]'
-          else
-            arg := '[...]';
+        try
+          jo := SO(p);
+        except
+          jo := nil;
         end;
-      end
+      end;
+      if (jo <> nil) and jo.IsType(stObject) then
+        arg := DescribeJsonObject(jo, maxArgLen)
+      else if (jo <> nil) and jo.IsType(stArray) then
+        arg := DescribeJsonArray(jo, maxArgLen)
       else
         arg := ShortenForLog(p, 40);
       if args <> '' then

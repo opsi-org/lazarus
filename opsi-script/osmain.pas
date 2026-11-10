@@ -630,9 +630,12 @@ var
 begin
   LogDatei.log('Client name: ' + computername, level);
   envComputername := ValueOfEnvVar('computername');
-  if (envComputername <> '') and (computername <> envComputername) then
+  // the client name is normally the FQDN, COMPUTERNAME only the short host name
+  if (envComputername <> valueEnvVarNotFound) and (envComputername <> '') and
+    not SameText(envComputername, Copy(computername, 1, Pos('.', computername + '.') - 1)) and
+    not SameText(envComputername, computername) then
     LogDatei.log('Client name differs from the environment variable COMPUTERNAME: ' +
-      envComputername, LLwarning);
+      envComputername, LLinfo);
   if opsiserviceURL <> '' then
     LogDatei.log('OPSI service URL: ' + opsiserviceurl, level);
   LogDatei.log('Depot path: ' + depotdrive + depotdir, level);

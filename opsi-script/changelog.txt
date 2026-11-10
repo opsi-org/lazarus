@@ -34,6 +34,11 @@ opsi-script (4.12.22.0)
         read from the service, the log settings and the client info are logged as one line each;
         no plaintext password is written to the log; log level changes, registry variable changes,
         logged-in users and the client FQDN are logged more compactly; several typos were fixed.
+* [change] oswebservice.pas: the "Service call" log line shows the parameters in detail
+        (object keys with short values, the first items of lists, each parameter limited in
+        length; values of keys like password, secret, token, hostkey are masked).
+* [fix] osmain.pas: a client name that differs from COMPUTERNAME only by the domain part or
+        the case is no longer reported as warning.
 
 -- j.schneider <j.schneider@uib.de> 2026-11-10
 
