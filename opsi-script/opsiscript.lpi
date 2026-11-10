@@ -1134,7 +1134,7 @@
         <IsPartOfProject Value="True"/>
       </Unit33>
       <Unit34>
-        <Filename Value="changelog.txt"/>
+        <Filename Value="CHANGELOG.md"/>
         <IsPartOfProject Value="True"/>
       </Unit34>
       <Unit35>
