@@ -364,7 +364,7 @@ uses
 {$ENDIF OS2}
   SyncObjs
 {$IFDEF OPSISCRIPT}
-  ,osMain
+  ,osMain, osLog
 {$ENDIF OPSISCRIPT}
 ;
 
@@ -1247,23 +1247,23 @@ var
 begin
   Result := LoadLibrary(PChar(Value));
 {$IFDEF OPSISCRIPT}
-  if not Assigned(StartupMessages) then StartupMessages := TStringList.Create;
+  if not Assigned(StartupMessages) then StartupMessages := TStartupMessages.Create;
   if (Result = NilHandle) then
   begin
-    StartupMessages.Append('Could not load library: ' + Value);
+    StartupMessages.AddMsg('Could not load SSL library: ' + Value, LLwarning);
   end
   else
   begin
-    StartupMessages.Append('Load library: ' + Value);
+    StartupMessages.AddMsg('SSL library loaded: ' + Value, LLinfo);
     try
       GetOpenSSLVersion := GetProcAddress(SSLUtilHandle, PChar('OpenSSL_version'));
       if Assigned(GetOpenSSLVersion) then
       begin
-        StartupMessages.Append('OpenSSL version: ' + GetOpenSSLversion(0));
+        StartupMessages.AddMsg('OpenSSL version: ' + GetOpenSSLversion(0), LLessential);
         GetOpenSSLVersion := nil;
       end;
     except
-      StartupMessages.Append('WARNING: Could not get OpenSSL version.');
+      StartupMessages.AddMsg('Could not get the OpenSSL version', LLwarning);
     end;
   end;
 {$ENDIF OPSISCRIPT}

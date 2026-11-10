@@ -24,6 +24,16 @@ opsi-script (4.12.22.0)
         log file is created (retries, failures) are written to the log as startup messages.
 * [fix] oswebservice.pas: removed the misleading "HTTPSender result: 500" message after a failed
         log upload (no response received).
+* [change] log file: the format "[level] [date time] [product id] message" is unchanged, but the
+        content is more compact and consistent. Startup messages are written with their original
+        time and level (also those from before the log file was created); the log header and footer
+        use "Label: value" lines (script, encodings, start time, product, client, user, script mode,
+        system info, exit code, duration, number of errors and warnings); the service connection is
+        summarized (one "Service call: method(args) -> result, duration" line per call, slow calls
+        as notice/warning, server IP logged once and as warning if it changes); the configuration
+        read from the service, the log settings and the client info are logged as one line each;
+        no plaintext password is written to the log; log level changes, registry variable changes,
+        logged-in users and the client FQDN are logged more compactly; several typos were fixed.
 
 -- j.schneider <j.schneider@uib.de> 2026-11-10
 

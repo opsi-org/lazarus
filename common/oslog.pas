@@ -114,6 +114,10 @@ type
     FStandardPartLogPath: string;
     FUsedLogLevel: integer;
     FNoLogFiles: TStringList;
+    // time used for the log line instead of Now (0 = use Now)
+    FLineTime: TDateTime;
+    // true while buffered messages are written: they are not counted as warnings or errors
+    FReplaying: boolean;
 
 
   protected
@@ -151,6 +155,9 @@ type
     function getLine(var S: string): boolean;
     function getPartLine(var S: string): boolean;
     function log(const S: string; LevelOfLine: integer): boolean;
+    // writes a buffered message with the time it was created and without counting it
+    function logAt(const LineTime: TDateTime; const S: string;
+      LevelOfLine: integer): boolean;
     function log_prog(const S: string; LevelOfLine: integer): boolean;
     function log_list(const list: TStrings; LevelOfLine: integer): boolean;
     function log_exception(E: Exception; LevelOfLine: integer): boolean;
@@ -283,6 +290,27 @@ const
   lastPeakLen: integer = 0;
   peakIndicatorChar: char = '|';
 
+type
+  { Collects messages that are created before the log file exists.
+    Every entry remembers the time it was added and its log level, so that it can be
+    written to the log with the original time and level. }
+  TStartupMessages = class(TStringList)
+  private
+    FTimes: array of TDateTime;
+    FLevels: array of integer;
+    procedure RegisterEntry(Index: integer);
+  public
+    function Add(const S: string): integer; override;
+    function AddObject(const S: string; AObject: TObject): integer; override;
+    // adds a message with the given log level (plain Add uses LLinfo)
+    function AddMsg(const S: string; Level: integer): integer;
+    // adds the entries of another list including time and level
+    procedure AddMsgs(Source: TStartupMessages);
+    procedure Clear; override;
+    function TimeOf(Index: integer): TDateTime;
+    function LevelOf(Index: integer): integer;
+  end;
+
 
 var
   LogDatei: TLogInfo;
@@ -301,6 +329,8 @@ function getComputerName: string;
 //procedure CreateTheLogfile(var LogDateiname: string; check4append: boolean); overload;
 function GetContinueLogFile(var LogFilename: string): boolean;
 function getCallAddrStr: string;
+// adds a message with a log level to a startup message list; other lists get a plain entry
+procedure AddStartupMsg(List: TStrings; const S: string; Level: integer);
 
 implementation
 
@@ -457,6 +487,93 @@ begin
 end;
 
 
+(* TStartupMessages *)
+
+procedure TStartupMessages.RegisterEntry(Index: integer);
+var
+  i, oldLength: integer;
+begin
+  if Length(FTimes) < Count then
+  begin
+    oldLength := Length(FTimes);
+    SetLength(FTimes, Count);
+    SetLength(FLevels, Count);
+    for i := oldLength to Count - 1 do
+    begin
+      FTimes[i] := 0;
+      FLevels[i] := LLinfo;
+    end;
+  end;
+  if (Index >= 0) and (Index < Count) and (FTimes[Index] = 0) then
+    FTimes[Index] := Now;
+end;
+
+function TStartupMessages.Add(const S: string): integer;
+begin
+  Result := inherited Add(S);
+  RegisterEntry(Result);
+end;
+
+function TStartupMessages.AddObject(const S: string; AObject: TObject): integer;
+begin
+  Result := inherited AddObject(S, AObject);
+  RegisterEntry(Result);
+end;
+
+function TStartupMessages.AddMsg(const S: string; Level: integer): integer;
+begin
+  Result := Add(S);
+  if (Result >= 0) and (Result < Length(FLevels)) then
+    FLevels[Result] := Level;
+end;
+
+procedure TStartupMessages.AddMsgs(Source: TStartupMessages);
+var
+  i, idx: integer;
+begin
+  for i := 0 to Source.Count - 1 do
+  begin
+    idx := Add(Source.Strings[i]);
+    if (idx >= 0) and (idx < Length(FTimes)) then
+    begin
+      FTimes[idx] := Source.TimeOf(i);
+      FLevels[idx] := Source.LevelOf(i);
+    end;
+  end;
+end;
+
+procedure TStartupMessages.Clear;
+begin
+  inherited Clear;
+  SetLength(FTimes, 0);
+  SetLength(FLevels, 0);
+end;
+
+function TStartupMessages.TimeOf(Index: integer): TDateTime;
+begin
+  if (Index >= 0) and (Index < Length(FTimes)) and (FTimes[Index] <> 0) then
+    Result := FTimes[Index]
+  else
+    Result := Now;
+end;
+
+function TStartupMessages.LevelOf(Index: integer): integer;
+begin
+  if (Index >= 0) and (Index < Length(FLevels)) then
+    Result := FLevels[Index]
+  else
+    Result := LLinfo;
+end;
+
+procedure AddStartupMsg(List: TStrings; const S: string; Level: integer);
+begin
+  if List is TStartupMessages then
+    TStartupMessages(List).AddMsg(S, Level)
+  else
+    List.Add(S);
+end;
+
+
 
 function GetContinueLogFile(var LogFilename: string): boolean;
 
@@ -538,11 +655,11 @@ begin
     FStandardPartLogFilename := LogDateiname + '-part-';
   {$IFDEF OPSISCRIPT}
   // remove old partlog files
-  startupmessages.Add('Cleanup old part files at ' + DateTimeToStr(Now));
+  startupmessages.AddMsg('Removing old part log files (older than 7 days)', LLdebug);
   files := TuibFileInstall.Create;
   try
-    files.alldelete(FStandardPartLogPath + Pathdelim + FStandardPartLogFilename +
-      '*', False, True, 7);
+    files.alldelete(IncludeTrailingPathDelimiter(FStandardPartLogPath) +
+      FStandardPartLogFilename + '*', False, True, 7);
   except
   end;
   files.Free;
@@ -573,6 +690,11 @@ begin
   LogDateiName := FStandardMainLogPath + PathDelim + LogDateiName;
   {$ENDIF}
 
+  {$IFDEF OPSISCRIPT}
+  // lines written while the log is created get the time of the first buffered message
+  if Assigned(startupmessages) and (startupmessages.Count > 0) then
+    FLineTime := startupmessages.TimeOf(0);
+  {$ENDIF OPSISCRIPT}
   if not check4append then
   begin
     // normally called at login scripts
@@ -593,7 +715,8 @@ begin
       LogDatei.initiate(LogDateiName, False);
       Logdatei.Log('', LLessential);
       Logdatei.Log('', LLessential);
-      Logdatei.Log('======= APPEND   ' + DateTimeToStr(Now), LLessential);
+      Logdatei.Log('======= APPEND   ' + FormatDateTime('yyyy-mm-dd hh:nn:ss', Now),
+        LLessential);
     end
     else
     begin
@@ -601,12 +724,13 @@ begin
       LogDatei.Appendmode := False;
       {$IFDEF OPSISCRIPT}
       if assigned(startupmessages) then
-        startupmessages.Add('Backup old log files at ' + DateTimeToStr(Now));
+        startupmessages.AddMsg('Rotating old log files (keeping ' +
+          IntToStr(maxbaks) + ')', LLdebug);
       {$ENDIF OPSISCRIPT}
       MakeBakFiles(LogDateiName, maxbaks);
       {$IFDEF OPSISCRIPT}
       if assigned(startupmessages) then
-        startupmessages.Add('Initiate new log file at ' + DateTimeToStr(Now));
+        startupmessages.AddMsg('Creating new log file', LLdebug);
       {$ENDIF OPSISCRIPT}
       LogDatei.initiate(LogDateiName, False);
       LogDatei.Empty;
@@ -614,11 +738,18 @@ begin
   end;
   {$IFDEF OPSISCRIPT}
   //LogDatei.FWriteHistFile:=true;
-  Logdatei.log('opsi-script ' + OpsiscriptVersion + ' started at >> ' + starttimestr,
-    LLessential);
-  Logdatei.log('opsi-script log file with encoding ' + DefaultEncoding, LLessential);
+  // the buffered messages are written with the log level that is configured for
+  // this run (the final values are set by the caller afterwards)
+  Fforce_min_loglevel := osconf.force_min_loglevel;
+  LogLevel := osconf.default_loglevel;
+  Logdatei.logAt(startupmessages.TimeOf(0), 'opsi-script ' + OpsiscriptVersion +
+    ' started', LLessential);
+  Logdatei.log('Log file: ' + LogDateiName, LLessential);
+  Logdatei.log('Log file encoding: ' + DefaultEncoding, LLessential);
   for i := 0 to startupmessages.Count - 1 do
-    Logdatei.log(startupmessages.Strings[i], LLessential);
+    Logdatei.logAt(startupmessages.TimeOf(i), startupmessages.Strings[i],
+      startupmessages.LevelOf(i));
+  FLineTime := 0;
   {$ENDIF}
 end;
 
@@ -985,8 +1116,8 @@ begin
     {$ENDIF}
     if (FStandardPartLogFilename = 'noname-part-') and (Fname <> '') then
       FStandardPartLogFilename := Fname + '-part-';
-    PartFileName := FStandardPartLogPath + PathDelim + FStandardPartLogFilename +
-      myrandomstr + StandardPartLogFileext;
+    PartFileName := IncludeTrailingPathDelimiter(FStandardPartLogPath) +
+      FStandardPartLogFilename + myrandomstr + StandardPartLogFileext;
     //assignfile(LogPartFile, PartFileName);
     //writeln(PartFileName);
     try
@@ -1001,9 +1132,7 @@ begin
           '" could not be created as logfile. Exception "' + E.Message + '"';
     end;
 
-    Log('--', LLessential);
-    Log('--', LLessential);
-    Log(PartFileName, LLessential);
+    Log('Part log file: ' + PartFileName, LLessential);
   end;
 end;
 
@@ -1318,10 +1447,30 @@ begin
 end;
 
 
+function TLogInfo.logAt(const LineTime: TDateTime; const S: string;
+  LevelOfLine: integer): boolean;
+var
+  oldLineTime: TDateTime;
+  oldReplaying: boolean;
+begin
+  oldLineTime := FLineTime;
+  oldReplaying := FReplaying;
+  FLineTime := LineTime;
+  FReplaying := True;
+  try
+    Result := log(S, LevelOfLine);
+  finally
+    FLineTime := oldLineTime;
+    FReplaying := oldReplaying;
+  end;
+end;
+
+
 function TLogInfo.log(const S: string; LevelOfLine: integer): boolean;
 var
   PasS: string;
   st: string;
+  lineTimeStr: string;
   peaklen: integer = 0;
   //usedloglevel: integer = 0;
   i: integer;
@@ -1338,11 +1487,14 @@ begin
         LevelOfLine := LLdebug3;
 
       if LevelOfLine = LLWarning then
-        NumberOfWarnings := NumberOfWarnings + 1;
+        if not FReplaying then
+          NumberOfWarnings := NumberOfWarnings + 1;
       if LevelOfLine = LLError then
-        NumberOfErrors := NumberOfErrors + 1;
+        if not FReplaying then
+          NumberOfErrors := NumberOfErrors + 1;
       if LevelOfLine = LLCritical then
-        NumberOfErrors := NumberOfErrors + 1;
+        if not FReplaying then
+          NumberOfErrors := NumberOfErrors + 1;
 
       FUsedLogLevel := loglevel;
       if FUsedLogLevel < Fforce_min_loglevel then
@@ -1462,6 +1614,10 @@ begin
     if (FUsedLogLevel >= LevelOfLine) and LogFileExists then
     begin
       try
+        if FLineTime <> 0 then
+          lineTimeStr := FormatDateTime('yyyy-mm-dd hh:nn:ss.zzz', FLineTime)
+        else
+          lineTimeStr := FormatDateTime('yyyy-mm-dd hh:nn:ss.zzz', Now);
         if FLogProduktId then
         begin
          (*
@@ -1469,8 +1625,7 @@ begin
             FormatDateTime('mmm dd hh:nn:ss:zzz', Now) + '] [' +
             FAktProduktId + '] ' + LogSIndent + st;
             *)
-          PasS := '[' + IntToStr(LevelOfLine) + '] [' +
-            FormatDateTime('yyyy-mm-dd hh:nn:ss.zzz', Now) + '] [' +
+          PasS := '[' + IntToStr(LevelOfLine) + '] [' + lineTimeStr + '] [' +
             FAktProduktId + '] ' + LogSIndent + st;
 
         end
@@ -1480,8 +1635,8 @@ begin
           PasS := '[' + IntToStr(LevelOfLine) + '] [' +
             FormatDateTime('mmm dd hh:nn:ss:zzz', Now) + '] ' + LogSIndent + st;
             *)
-          PasS := '[' + IntToStr(LevelOfLine) + '] [' +
-            FormatDateTime('yyyy-mm-dd hh:nn:ss.zzz', Now) + '] [] ' + LogSIndent + st;
+          PasS := '[' + IntToStr(LevelOfLine) + '] [' + lineTimeStr + '] [] ' +
+            LogSIndent + st;
         end;
       except
         on E: Exception do
@@ -1751,8 +1906,8 @@ var
 begin
   bytesize := lazfileutils.FileSizeUtf8(PartFileName);
   mbsize := bytesize div (1024 * 1024);
-  Logdatei.log('Checking if partlog: ' + PartFileName + ' is bigger than ' +
-    IntToStr(maxsize) + ' MB - found: ' + IntToStr(mbsize) + ' MB', LLInfo);
+  Logdatei.log('Part log file ' + PartFileName + ': ' + IntToStr(bytesize div 1024) +
+    ' KB, limit for the log upload: ' + IntToStr(maxsize) + ' MB', LLdebug);
   Result := False;
   if PartLogFileExists then
   begin

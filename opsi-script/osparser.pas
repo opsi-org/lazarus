@@ -7044,10 +7044,10 @@ begin
               end
               else if opsiServiceVersion = '' then
                 LogDatei.log(
-                  'opsi service version could not retrieved, perhaps no connection',
+                  'OPSI service version could not be retrieved, perhaps no connection',
                   LLwarning)
               else
-                LogDatei.log('Internal Error: Unkown Opsi Service Version:>' +
+                LogDatei.log('Internal Error: Unknown OPSI service version: >' +
                   opsiServiceVersion + '<', LLerror);
             except
               on e: Exception do
@@ -7300,7 +7300,10 @@ begin
           end
           else
           begin
-            LogDatei.log('JSON result: ' + testresult, LLinfo);
+            if Trim(testresult) = '' then
+              LogDatei.log('JSON result: (empty)', LLinfo)
+            else
+              LogDatei.log('JSON result: ' + testresult, LLinfo);
             //Logdatei.log('Setup script name: '+opsidata.getProductScriptPath(tacSetup), LLessential);
           end;
         except
@@ -7689,7 +7692,7 @@ begin
           omc.Free;
         end
         else
-          LogDatei.log('Internal Error: Unkown Opsi Service Version:>' +
+          LogDatei.log('Internal Error: Unknown OPSI service version: >' +
             opsiServiceVersion + '<', LLerror);
       end;
 
@@ -7726,7 +7729,7 @@ begin
               omc.Free;
             end
             else
-              LogDatei.log('Internal Error: Unkown Opsi Service Version:>' +
+              LogDatei.log('Internal Error: Unknown OPSI service version: >' +
                 opsiServiceVersion + '<', LLerror);
 
             stopIt := not errorOccured;
@@ -7788,7 +7791,10 @@ begin
     end
     else
     begin
-      LogDatei.log('JSON result: ' + testresult, LLinfo);
+      if Trim(testresult) = '' then
+        LogDatei.log('JSON result: (empty)', LLinfo)
+      else
+        LogDatei.log('JSON result: ' + testresult, LLinfo);
     end;
   end;
 
@@ -25695,18 +25701,20 @@ begin
                   if not testSyntax then
                   try
                     LogLevel := StrToInt(Remaining);
-                    LogDatei.log('LogLevel was ' +
-                      IntToStr(LogDatei.LogLevel), LLinfo);
+                    if LogLevel <> LogDatei.LogLevel then
+                      LogDatei.log('Log level changed from ' +
+                        IntToStr(LogDatei.LogLevel) + ' to ' + IntToStr(LogLevel),
+                        LLinfo);
                     LogDatei.LogLevel := Loglevel;
-                    LogDatei.log('LogLevel set to ' + IntToStr(LogLevel), LLinfo);
                   except
                     try
                       EvaluateString(remaining, remaining, Parameter, infosyntaxerror);
                       LogLevel := StrToInt(Parameter);
-                      LogDatei.log('LogLevel was ' +
-                        IntToStr(LogDatei.LogLevel), LLinfo);
+                      if LogLevel <> LogDatei.LogLevel then
+                        LogDatei.log('Log level changed from ' +
+                          IntToStr(LogDatei.LogLevel) + ' to ' + IntToStr(LogLevel),
+                          LLinfo);
                       LogDatei.LogLevel := Loglevel;
-                      LogDatei.log('LogLevel set to ' + IntToStr(LogLevel), LLinfo);
                     except
                       LogDatei.log(
                         'Integer conversion error, LogLevel could not be set, it is ' +
@@ -27188,21 +27196,16 @@ begin
 
     ps := '============ ' + OpsiscriptVersionName + ' script "' + Scriptdatei + '"';
     LogDatei.log(ps, LLessential);
-    ps := '             used script encoding: ' + usedEncoding;
-    LogDatei.log(ps, LLessential);
-    ps := '             used system encoding: ' + mysystemEncoding;
-    LogDatei.log(ps, LLessential);
-
-    ps := FormatDateTime('yyyy-mm-dd  hh:mm:ss ', now);
-
-    ps := '             start: ' + ps;
-    LogDatei.log(ps, LLessential);
+    LogDatei.log('Script encoding: ' + usedEncoding, LLessential);
+    LogDatei.log('System encoding: ' + mysystemEncoding, LLessential);
+    LogDatei.log('Start time: ' + FormatDateTime('yyyy-mm-dd hh:nn:ss', now),
+      LLessential);
 
     if opsidata <> nil then
     begin
       try
         try
-          ps := '             installing product: ';
+          ps := 'Product: ';
           ps := ps + Topsi4data(opsidata).getActualProductId;
           ps := ps + '_' + opsidata.getActualProductVersion;
         except
@@ -27213,60 +27216,52 @@ begin
       end;
     end;
 
-    ps := '             on client named    "' + ScriptConstants.Values['%hostID%'] + '"';
-    LogDatei.log(ps, LLessential);
+    LogDatei.log('Client name: ' + ScriptConstants.Values['%hostID%'], LLessential);
 
-    ps := '             loggedin user    "' + getLoggedInUser + '"';
-    LogDatei.log(ps, LLessential);
+    ps := getLoggedInUser;
+    if ps = '' then
+      ps := '(none)';
+    LogDatei.log('Logged-in user: ' + ps, LLessential);
 
     GetNetUser('', ps, ErrorInfo);
-    ps := '             opsi-script running as    "' + ps + '"';
-    LogDatei.log(ps, LLessential);
-
     if runningAsAdmin then
-      LogDatei.log('             opsi-script running with admin privileges', LLessential)
+      LogDatei.log('Running as: ' + ps + ' (administrator)', LLessential)
     else
-      LogDatei.log('             opsi-script not running with admin privileges',
+      LogDatei.log('Running as: ' + ps + ' (without administrator privileges)',
         LLWarning);
 
     if runloginscripts then
     begin
-      LogDatei.log('             opsi-script running in loginscript mode', LLessential);
-      LogDatei.log('             using context: ' + usercontext +
+      LogDatei.log('Script mode: loginscript, context ' + usercontext +
         ' with SID ' + usercontextsid, LLessential);
     end
     else
     if runproductlist then
-      LogDatei.log('             opsi-script running in productlist script mode',
-        LLessential)
+      LogDatei.log('Script mode: productlist', LLessential)
     else if runprocessproducts then
-      LogDatei.log('             opsi-script running in processproducts script mode',
-        LLessential)
+      LogDatei.log('Script mode: processproducts', LLessential)
     else
-      LogDatei.log('             opsi-script running in standard script mode',
-        LLessential);
+      LogDatei.log('Script mode: standard', LLessential);
     {$IFDEF GUI}
-    LogDatei.log('Scaling for screen DPI: ' + IntToStr(screen.PixelsPerInch),
+    LogDatei.log('Screen DPI scaling: ' + IntToStr(screen.PixelsPerInch),
       LLessential);
     {$ENDIF GUI}
 
 
-    ps := 'executing: "' + reencode(ParamStr(0), 'system') + '"';
-    LogDatei.log(ps, LLessential);
+    LogDatei.log('Executable: ' + reencode(ParamStr(0), 'system'), LLessential);
 
     //LogDatei.log ('PC MAC address, method1 ' + getMACAddress1, LLinfo);
 
-    LogDatei.log('system infos:', LLessential);
+    LogDatei.log('System info:', LLessential);
 
     FindLocalIPData(ipName, ipAddress);
-    LogDatei.log(GetMACAddress2 + '  -  PC hardware address', LLessential);
-    LogDatei.log(ipName + '  -  IP name ', LLessential);
-    LogDatei.log(ipAddress + '  -  IP address', LLessential);
+    LogDatei.log('  MAC address: ' + GetMACAddress2, LLessential);
+    LogDatei.log('  Host name: ' + ipName, LLessential);
+    LogDatei.log('  IP address: ' + ipAddress, LLessential);
     {$IFDEF WINDOWS}
-    LogDatei.log(GetSystemDefaultLocale(LOCALE_SABBREVLANGNAME) +
-      '  -  System default locale ',
+    LogDatei.log('  Locale: ' + GetSystemDefaultLocale(LOCALE_SABBREVLANGNAME),
       LLessential);
-    tmpstr := 'MS Windows ' + GetMSVersionName + ' (' +
+    tmpstr := '  OS: MS Windows ' + GetMSVersionName + ' (' +
       GetSystemOSVersionInfoEx('major_version') + '.' +
       GetSystemOSVersionInfoEx('minor_version') + ')';
     if Is64BitSystem then
@@ -27286,7 +27281,7 @@ begin
     LogDatei.log(tmpstr, LLessential);
     {$ENDIF WINDOWS}
     {$IFDEF LINUX}
-    tmpstr := getLinuxDistroName + ' ' + getLinuxDistroDescription;
+    tmpstr := '  OS: ' + getLinuxDistroName + ' ' + getLinuxDistroDescription;
     if Is64BitSystem then
       tmpstr := tmpstr + ' 64 Bit'
     else
@@ -27294,13 +27289,13 @@ begin
     LogDatei.log(tmpstr, LLessential);
     {$ENDIF LINUX}
     {$IFDEF DARWIN}
-    tmpstr := 'macOS: ' + GetMacosVersionInfo;
+    tmpstr := '  OS: macOS ' + GetMacosVersionInfo;
     LogDatei.log(tmpstr, LLessential);
     {$ENDIF DARWIN}
 
     if opsidata <> nil then
     begin
-      LogDatei.log('opsi service version : ' + opsidata.getOpsiServiceVersion +
+      LogDatei.log('OPSI service version: ' + opsidata.getOpsiServiceVersion +
         ' (' + opsidata.getOpsiVersion + ')',
         LLessential);
       //Logdatei.log('Setup script name: '+opsidata.getProductScriptPath(tacSetup), LLessential);

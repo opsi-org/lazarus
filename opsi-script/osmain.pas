@@ -257,7 +257,7 @@ var
   testresult: string;
   teststringlist: TStringList;
   //{$IFNDEF GUI}
-  startupmessages: TStringList;
+  startupmessages: TStartupMessages;
   //{$ENDIF GUI}
 
   {If the command "reloadProductList" is called within a script, the variable FlagReloadProductList
@@ -588,8 +588,6 @@ begin
   testpassed := False;
   if (mytemppath <> '') and SysUtils.ForceDirectories(mytemppath) then
   begin
-    if logdatei <> nil then
-      logdatei.log('Testing as temp path: ' + mytemppath, LLdebug);
     testpassed := True;
     teststr := mytemppath + 'testing_write_privilege_for_opsiscript';
     if not fileexists(teststr) then
@@ -598,12 +596,11 @@ begin
       begin
         testpassed := False;
         if logdatei <> nil then
-          logdatei.log('Failed:Testing as temp path: ' + mytemppath, LLwarning);
+          logdatei.log('Failed: write test for temp path: ' + mytemppath, LLwarning);
       end
       else
       if logdatei <> nil then
-        logdatei.log('Succeeded: Testing as temp path: ' + mytemppath +
-          ' (' + DateTimeToStr(Now) + ')', LLdebug);
+        logdatei.log('Temp path: ' + mytemppath + ' (write test succeeded)', LLdebug);
     end;
     teststr := '';
   end;
@@ -627,6 +624,20 @@ begin
   Result := TempPath;
 end;
 
+procedure LogClientInfo(level: integer);
+var
+  envComputername: string;
+begin
+  LogDatei.log('Client name: ' + computername, level);
+  envComputername := ValueOfEnvVar('computername');
+  if (envComputername <> '') and (computername <> envComputername) then
+    LogDatei.log('Client name differs from the environment variable COMPUTERNAME: ' +
+      envComputername, LLwarning);
+  if opsiserviceURL <> '' then
+    LogDatei.log('OPSI service URL: ' + opsiserviceurl, level);
+  LogDatei.log('Depot path: ' + depotdrive + depotdir, level);
+end;
+
 procedure ProcessMess;
 begin
   {$IFDEF GUI}
@@ -643,15 +654,25 @@ begin
 end;
 
 procedure TerminateApp;
+var
+  startedAt: TDateTime;
+  durationStr: string;
 begin
   try
     if Assigned(ProductsRunnedUsingReloadProductList) then FreeAndNil(ProductsRunnedUsingReloadProductList);
     if LogDatei <> nil then
     begin
       LogDatei.LogSIndentLevel := 0;
+      startedAt := StrToDateTimeDef(starttimestr, 0);
+      if startedAt <> 0 then
+        durationStr := ', duration ' + IntToStr(Round((Now - startedAt) * 86400)) + ' s'
+      else
+        durationStr := '';
       LogDatei.log('============  opsi-script ' + OpsiscriptVersionname +
         ' is regularly exiting. Time ' + FormatDateTime(
-        'yyyy-mm-dd  hh:mm:ss ', now) + 'Exitcode: '+inttostr(system.ExitCode)+' .', LLessential);
+        'yyyy-mm-dd hh:nn:ss', now) + durationStr + ', exit code: ' +
+        inttostr(system.ExitCode) + ', errors: ' + IntToStr(LogDatei.NumberOfErrors) +
+        ', warnings: ' + IntToStr(LogDatei.NumberOfWarnings), LLessential);
 
       LogDatei.Close;
       sleep(500);
@@ -978,7 +999,7 @@ begin
   else
   begin
     LogDatei.log(
-      'No useres are logged in - so nothing to do about background install',
+      'No users are logged in - so nothing to do about background install',
       LLdebug);
   // end with background handling:
   end;
@@ -1032,7 +1053,7 @@ begin
     Verfahren := tacSetup
   else
     Verfahren := opsidata.getProductActionRequest;
-  Logdatei.log('Actionrequest for Product: ' + Produkt + ' is: ' +
+  Logdatei.log('Action request for product ' + Produkt + ': ' +
     opsidata.actionRequestToString(Verfahren), LLInfo);
   if Verfahren = tacNone then
     exit;
@@ -1197,8 +1218,7 @@ var
         ' the sorted list of maximum length is:',
         LLinfo)
     else
-      LogDatei.log('Resolved sequence of products (' + DateTimeToStr(Now) + '): ',
-        LLinfo);
+      LogDatei.log('Resolved sequence of products:', LLinfo);
 
     i := 0;
     while i < numberOfCorrectItems do
@@ -1214,8 +1234,8 @@ var
         LLinfo);
       if errorfound or (requestedAction <> tacNone) then
       begin
-        Zeile := 'Product ' + IntToStr(i) + ' ' + #9 + Produkte.Strings[i] +
-          ' : ' + opsidata.actionRequestToString(requestedAction);
+        Zeile := IntToStr(i + 1) + '. ' + Produkte.Strings[i] + ' (' +
+          opsidata.actionRequestToString(requestedAction) + ')';
         LogDatei.log(Zeile, LLinfo);
       end;
 
@@ -1330,16 +1350,7 @@ begin
       excludedProducts.Free;
       productscopy.Free;
     end;
-    LogDatei.log('Computername:' + computername, LLessential);
-    if computername <> ValueOfEnvVar('computername') then
-      LogDatei.log('Computername according to Environment Variable :' +
-        ValueOfEnvVar('computername'),
-        LLessential);
-    if opsiserviceURL <> '' then
-      LogDatei.log('opsi service URL ' + opsiserviceurl,
-        LLessential);
-    LogDatei.log('Depot path:  ' + depotdrive + depotdir, LLinfo);
-    LogDatei.log('', LLinfo);
+    LogClientInfo(LLessential);
     {$IFDEF GUI}
     FBatchOberflaeche.SetMessageText(rsProductCheck, mInfo);
     {$ENDIF GUI}
@@ -1401,9 +1412,12 @@ begin
         (not PerformExitProgram) do
       begin
         // Reset LogLevel to standard
-        Logdatei.LogLevel := osconf.default_loglevel;
-        logDatei.log('default_loglevel reset to: ' + IntToStr(osconf.default_loglevel),
-          LLessential);
+        if Logdatei.LogLevel <> osconf.default_loglevel then
+        begin
+          Logdatei.LogLevel := osconf.default_loglevel;
+          logDatei.log('Log level reset to the default: ' +
+            IntToStr(osconf.default_loglevel), LLessential);
+        end;
         // Init product flags at loop start
         processProduct := False;
         productStopped := False;
@@ -1424,9 +1438,9 @@ begin
           // get the actual (live) actionrequest
           aktActionRequestStr := opsidata.getActualProductActionRequest;
           aktAction := opsidata.actionRequestStringToActionRequest(aktActionRequestStr);
-          Logdatei.log('Actionrequest for product: ' + Produkt +
-            ' is (original/actual): (' + opsidata.actionRequestToString(
-            orgAction) + ' / ' + aktActionRequestStr + ')', LLInfo);
+          Logdatei.log('Action request for product ' + Produkt +
+            ' (original/actual): ' + opsidata.actionRequestToString(
+            orgAction) + ' / ' + aktActionRequestStr, LLInfo);
           ScriptDatei := ExtractFileDir(makeAbsoluteScriptPath(GetPathToScript,
             opsidata.getProductScriptPath(opsidata.getProductActionRequest)));
           ScriptConstants.Init(ScriptDatei);
@@ -1439,8 +1453,8 @@ begin
         end;
         initialProductState := opsidata.getActualProductInstallationState;
         initialActionRequest := opsidata.getActualProductActionRequest;
-        LogDatei.log('initialProductState: ' + initialProductState +
-          ' initialActionRequest : ' + initialActionRequest, LLInfo);
+        LogDatei.log('Initial product state: ' + initialProductState +
+          ', initial action request: ' + initialActionRequest, LLInfo);
         if processProduct then
         begin
           LogDatei.log('BuildPC: process product .....', LLDebug3);
@@ -1871,19 +1885,7 @@ begin
   Produkte := TOpsi4data(OpsiData).getMapOfLoginscripts2Run(allLoginScripts);
 
 
-  LogDatei.log('Computername:' + computername, LLinfo);
-
-  if computername <> ValueOfEnvVar('computername') then
-    LogDatei.log('Computername according to Environment Variable :' +
-      ValueOfEnvVar('computername'),
-      LLinfo);
-
-  if opsiserviceURL <> '' then
-    LogDatei.log('opsi service URL ' + opsiserviceurl,
-      LLinfo);
-
-  LogDatei.log('Depot path:  ' + depotdrive + depotdir, LLinfo);
-  LogDatei.log('', LLinfo);
+  LogClientInfo(LLinfo);
   {$IFDEF GUI}
   FBatchOberflaeche.SetMessageText(rsProductCheck, mInfo);
   //setInfoLabel(rsProductCheck);
@@ -1950,19 +1952,7 @@ begin
   Produkte.Assign(TStringList(scriptlist));
 
 
-  LogDatei.log('Computername:' + computername, LLinfo);
-
-  if computername <> ValueOfEnvVar('computername') then
-    LogDatei.log('Computername according to Environment Variable :' +
-      ValueOfEnvVar('computername'),
-      LLinfo);
-
-  if opsiserviceURL <> '' then
-    LogDatei.log('opsi service URL ' + opsiserviceurl,
-      LLinfo);
-
-  LogDatei.log('Depot path:  ' + depotdrive + depotdir, LLinfo);
-  LogDatei.log('', LLinfo);
+  LogClientInfo(LLinfo);
   {$IFDEF GUI}
   FBatchOberflaeche.SetMessageText(rsProductCheck, mInfo);
   //setInfoLabel(rsProductCheck);
@@ -2155,8 +2145,6 @@ var
 begin
   try
     //writeln('StartProgramModes');
-    startupmessages.Append('startmessage StartProgramModes and create log: ' +
-      DateTimeToStr(Now));
     //writeln('StartProgramModes1');
     if Logdatei <> nil then
       Logdatei.Free;
@@ -2166,14 +2154,11 @@ begin
       LogDateiName := LogPath + logdatei.StandardLogFilename +
         logdatei.StandardLogFileext;
     //writeln('StartProgramModes3');
-    Logdatei.log('opsi-script ' + OpsiscriptVersion + ' started at ' +
-      starttimestr, LLessential);
-    Logdatei.log('opsi-script log file with encoding ' + DefaultEncoding, LLessential);
     {$MACRO ON}
     //(*  comment this block for code formatting
-    startupmessages.Append(
+    startupmessages.AddMsg(
       'Compiled with FPC ' + {$i %FPCVERSION%} + ' for ' +
-      {$i %FPCTARGETOS%} + '-' + {$i %FPCTARGETCPU%} + ' at ' + {$i %TIME%} + ' on ' + {$i %DATE%});
+      {$i %FPCTARGETOS%} + '-' + {$i %FPCTARGETCPU%} + ' at ' + {$i %TIME%} + ' on ' + {$i %DATE%}, LLinfo);
     //*)
     {$MACRO OFF}
     //writeln('StartProgramModes4');
@@ -2182,8 +2167,8 @@ begin
     FBatchOberflaeche.SetBatchWindowMode(BatchWindowMode);
     //writeln('StartProgramModes5');
     {$ENDIF GUI}
-    LogDatei.log('program mode: ' + ProgramModeToString(ProgramMode), LLessential);
-    startupmessages.Append('program mode: ' + ProgramModeToString(ProgramMode));
+    startupmessages.AddMsg('Program mode: ' + ProgramModeToString(ProgramMode),
+      LLessential);
     sessionid := '';
 
     if ProgramMode = pmInfo then
@@ -2272,10 +2257,8 @@ begin
           else
             FBatchOberflaeche.SetElementVisible(True, eMainForm);
           {$ENDIF GUI}
-          startupmessages.Append('startmessage start opsi service connection: ' +
-            DateTimeToStr(Now));
+          startupmessages.AddMsg('Connecting to the OPSI service', LLdebug);
           //opsiServiceVersion := getOpsiServiceVersion(opsiserviceurl, opsiserviceUser, opsiservicePassword, sessionid);
-          //startupmessages.Append('startmessage opsi service version is : '+opsiServiceVersion+' at '+DateTimeToStr(Now));
           opsiServiceVersion := '4';
           if opsiServiceVersion = '4' then
           begin
@@ -2287,8 +2270,6 @@ begin
               opsiserviceSessionId);
             // service connection events from before the log file exists
             opsidata.TakeConnectionEvents(startupmessages);
-            startupmessages.Append('startmessage: opsidata initialized: ' +
-              DateTimeToStr(Now));
             if opsidata.ServiceUnreachable then
             begin
               // all retries of the first request were used up (about 90 s)
@@ -2300,9 +2281,7 @@ begin
             begin
               //OpsiData.setOptions (opsiclientd_serviceoptions);
               opsidata.setActualClient(computername);
-              startupmessages.Append(computername);
               testresult := readConfigsFromService;
-              startupmessages.Append(testresult);
               if testresult = '' then
               begin
                 // readConfigsFromService returns an empty string if backend_info failed
@@ -2312,26 +2291,16 @@ begin
               opsidata.TakeConnectionEvents(startupmessages);
             end;
             startTime := now;
-            (*
-            omc := TOpsiMethodCall.Create('backend_info', []);
-            //omc := TOpsiMethodCall.Create('authenticated', []);
-            testresult := opsidata.CheckAndRetrieve(omc, errorOccured);
-            startupmessages.Append('JSON Bench for ' + omc.opsimethodname + ' '
-                + copy(omc.getJsonUrlString,pos(',',omc.getJsonUrlString)+1,50)
-                +' Start: '+FormatDateTime('hh:nn:ss:zzz',startTime)
-                +' Time: '+FormatDateTime('hh:nn:ss:zzz',now-startTime));
-            omc.Free;
-            *)
           end
           else
-            startupmessages.Append('Internal Error: Unkown Opsi Service Version:>' +
-              opsiServiceVersion + '<');
+            startupmessages.AddMsg('Internal error: unknown OPSI service version: >' +
+              opsiServiceVersion + '<', LLcritical);
         except
           on e: Exception do
           begin
             //LogDatei.log('Exception in StartProgramModes: pmBuildPC_service' + e.message, LLError);
-            startupmessages.Append('Exception in StartProgramModes: pmBuildPC_service'
-              + e.message + ' ' + DateTimeToStr(Now));
+            startupmessages.AddMsg('Exception in StartProgramModes (pmBuildPC_service): '
+              + e.message, LLerror);
             errorOccured := True;
           end;
         end;
@@ -2341,7 +2310,6 @@ begin
         begin
           FindLocalIPData(ipName, ipAddress);
           LogPath := logdatei.StandardLogPath;
-          startupmessages.Append('startmessage create log: ' + DateTimeToStr(Now));
           LogDatei.CreateTheLogfile(LogDateiName);
           LogDatei.log('opsi-script cannot connect to service with URL: ' +
             opsiserviceurl + ' with user ' + opsiserviceUser +
@@ -2359,14 +2327,12 @@ begin
             LogDateiName := LogPath + getLoggedInUser + '_login.log';
             // do not write login script log to  Component log file (lastprodlog)
             LogDatei.WriteComponentFile := false;
-            startupmessages.Append('startmessage create log: ' + DateTimeToStr(Now));
             LogDatei.CreateTheLogfile(LogDateiName, False);
           end
           else
           begin
             LogDateiName := OpsiData.getLogFileName(LogDateiName);
             LogDatei.WriteComponentFile := osconf.configWriteProductLogFile;
-            startupmessages.Append('startmessage create log: ' + DateTimeToStr(Now));
             LogDatei.WriteHistFile := True;
             LogDatei.CreateTheLogfile(LogDateiName);
           end;
@@ -2374,12 +2340,11 @@ begin
           LogDatei.debug_prog := osconf.debug_prog;
           LogDatei.LogLevel := osconf.default_loglevel;
           LogDatei.debug_lib := osconf.debug_lib;
-          logDatei.log('force_min_loglevel: ' + IntToStr(osconf.force_min_loglevel),
-            LLessential);
-          logDatei.log('default_loglevel: ' + IntToStr(osconf.default_loglevel),
-            LLessential);
-          logDatei.log('debug_prog: ' + booleantostr(osconf.debug_prog), LLessential);
-          logDatei.log('debug_lib: ' + booleantostr(osconf.debug_lib), LLessential);
+          logDatei.log('Log settings: default_loglevel=' +
+            IntToStr(osconf.default_loglevel) + ', force_min_loglevel=' +
+            IntToStr(osconf.force_min_loglevel) + ', debug_prog=' +
+            booleantostr(osconf.debug_prog) + ', debug_lib=' +
+            booleantostr(osconf.debug_lib), LLessential);
 
           extractTmpPathFromLogdatei(LogDateiName);
           TempPath := GetTempPath;
@@ -2487,13 +2452,11 @@ begin
           LogDatei.debug_prog := osconf.debug_prog;
           LogDatei.LogLevel := osconf.default_loglevel;
           LogDatei.debug_lib := osconf.debug_lib;
-          logDatei.log_prog('force_min_loglevel: ' + IntToStr(
-            osconf.force_min_loglevel), LLessential);
-          logDatei.log_prog('default_loglevel: ' + IntToStr(
-            osconf.default_loglevel), LLessential);
-          logDatei.log_prog('debug_prog: ' + booleantostr(osconf.debug_prog),
-            LLessential);
-          logDatei.log_prog('debug_lib: ' + booleantostr(osconf.debug_lib), LLessential);
+          logDatei.log('Log settings: default_loglevel=' +
+            IntToStr(osconf.default_loglevel) + ', force_min_loglevel=' +
+            IntToStr(osconf.force_min_loglevel) + ', debug_prog=' +
+            booleantostr(osconf.debug_prog) + ', debug_lib=' +
+            booleantostr(osconf.debug_lib), LLessential);
 
           if not (batchproductid = '') then
           begin
@@ -3012,7 +2975,9 @@ begin
     // if paramcount > 0
     if ParamListe.Count > 0 then
     begin
-      startupmessages.Append('Called with parameter: ' + ParamListe.Text);
+      startupmessages.AddMsg('Command line: ' +
+        SysUtils.StringReplace(Trim(ParamListe.Text), LineEnding, ' ',
+        [rfReplaceAll]), LLessential);
       Parameter := ParamListe.Strings[0];
       if Parameter[1] = '?' then
       begin
@@ -3098,11 +3063,11 @@ begin
 
                 computername := '';
                 if not readconfig then
-                  startupmessages.Append(
-                    'Error: readconfig failed: Working with defaults ' +
-                    DateTimeToStr(Now));
-                startupmessages.Append('Depot path from readconfig:  ' +
-                  depotdrive + depotdir + ' ' + DateTimeToStr(Now));
+                  startupmessages.AddMsg(
+                    'Reading the configuration failed: working with defaults',
+                    LLwarning);
+                startupmessages.AddMsg('Depot path (from config): ' +
+                  depotdrive + depotdir, LLinfo);
                 Inc(i);
                 if i <= ParamListe.Count then
                 begin
@@ -3126,9 +3091,9 @@ begin
                 on e: Exception do
                 begin
                   ProgramMode := pmInfo;
-                  startupmessages.Append(
-                    'Exception in GetParameter: opsiserviceURL' +
-                    e.message + ' ' + DateTimeToStr(Now));
+                  startupmessages.AddMsg(
+                    'Exception in GetParameter (opsiserviceURL): ' +
+                    e.message, LLerror);
                   //LogDatei.log('Exception in GetParameter: opsiserviceURL' + e.message, LLError);
                 end;
               end;
@@ -3227,9 +3192,11 @@ begin
                     opsiserviceSessionId := list1.getStringValue('opsiserviceSessionId');
                     if opsiserviceSessionId = 'NULL' then
                       opsiserviceSessionId := '';
-                    startupmessages.Add('found as credentials:' +
-                      opsiserviceUser + ' ; ' + opsiservicePassword +
-                      ' ; ' + opsiserviceSessionId);
+                    startupmessages.AddMsg('Credentials read from file: user ' +
+                      opsiserviceUser + ', password ' +
+                      BoolToStr(opsiservicePassword <> '', 'set', 'empty') +
+                      ', session id ' +
+                      BoolToStr(opsiserviceSessionId <> '', 'set', 'empty'), LLinfo);
                     if (length(ParamListe.Strings[i - 1]) = 0) or
                       (ParamListe.Strings[i - 1][1] = ParamDelim) then
                     begin
@@ -3259,15 +3226,16 @@ begin
                     end
                     else
                     begin
-                      startupmessages.Append(
-                        'Depot path from parameters:  ' + depotpath);
+                      startupmessages.AddMsg(
+                        'Depot path (from parameters): ' + depotpath, LLinfo);
                       depotdrive := depotpath;
                      {$ifdef windows}
                       depotdrive := extractfiledrive(depotpath);
                       depotdir := BuildDepotPath(depotdrive,depotpath);
                      {$endif}
-                      startupmessages.Append(
-                        'Depot drive+dir from parameters:  ' + depotdrive + depotdir);
+                      startupmessages.AddMsg(
+                        'Depot drive and dir (from parameters): ' + depotdrive +
+                        depotdir, LLinfo);
                     end;
                     Inc(i);
                   end
@@ -3416,8 +3384,8 @@ begin
             begin
               ProgramMode := pmInfo;
               //LogDatei.log('Exception in GetParameter: opsiservice' + e.message, LLError);
-              startupmessages.Append('Exception in GetParameter: opsiservice'
-                + e.message + ' ' + DateTimeToStr(Now));
+              startupmessages.AddMsg('Exception in GetParameter (opsiservice): '
+                + e.message, LLerror);
             end;
           end;
         end
@@ -3645,8 +3613,8 @@ begin
     begin
       ProgramMode := pmInfo;
       //LogDatei.log('Exception in GetParameter: General' + e.message, LLError);
-      startupmessages.Append('Exception in GetParameter: General' +
-        e.message + ' ' + DateTimeToStr(Now));
+      startupmessages.AddMsg('Exception in GetParameter (general): ' +
+        e.message, LLerror);
     end;
   end;
 end;
@@ -3663,11 +3631,10 @@ begin
   starttimestr := DateTimeToStr(Now);
   if not Assigned(startupmessages) then
   begin
-    startupmessages := TStringList.Create;
+    startupmessages := TStartupMessages.Create;
     startupmessages.Clear;
   end;
-  startupmessages.Append('startmessage opsi-script created at main: ' +
-    DateTimeToStr(Now));
+  startupmessages.AddMsg('opsi-script main started', LLdebug);
   toggle := True;
   initEncoding;
   ProductvarsForPC := TStringList.Create;

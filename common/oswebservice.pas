@@ -196,9 +196,11 @@ type
     FLastAttemptCount: integer;
     FLastSuccessTick: QWord;
     FNoRetry: boolean;
-    FPendingEvents: TStringList;
+    FPendingEvents: TStartupMessages;
+    FLoggedServerIP: string;
     function GetSynapseSocketFamilyAsString: string;
     procedure LogHostIPs;
+    procedure LogConnectionSummary;
     {$IFDEF SYNAPSE}
     function ReadSslQueueError: integer;
     function DescribeTransportError(sslQueueError: integer): string;
@@ -1237,35 +1239,108 @@ begin
   //CompressedMemoryStream.Free;
 end;
 
-procedure TJsonThroughHTTPS.ServiceLog(const msg: string; level: integer);
+function ShortenForLog(const s: string; maxLen: integer): string;
+begin
+  Result := SysUtils.StringReplace(SysUtils.StringReplace(s, #13, ' ',
+    [rfReplaceAll]), #10, ' ', [rfReplaceAll]);
+  if Length(Result) > maxLen then
+    Result := Copy(Result, 1, maxLen) + '...';
+end;
+
+// readable one line description of a service call: method(arg, ...)
+// objects are shown as {...}, lists as [N items]
+function DescribeServiceCall(omc: TOpsiMethodCall): string;
 var
-  levelName: string;
+  i: integer;
+  p, arg: string;
+  args: string = '';
+  n: integer;
+begin
+  if Assigned(omc.FHashlist) and (omc.FHashlist.Count > 0) then
+    args := '{' + IntToStr(omc.FHashlist.Count) + ' entries}';
+  if Assigned(omc.FParameterlist) then
+    for i := 0 to omc.FParameterlist.Count - 1 do
+    begin
+      p := omc.FParameterlist.Strings[i];
+      if (Length(p) > 1) and (p[1] = '{') and (p[Length(p)] = '}') then
+        arg := '{...}'
+      else if (Length(p) > 1) and (p[1] = '[') and (p[Length(p)] = ']') then
+      begin
+        if p = '[]' then
+          arg := '[]'
+        else
+        begin
+          n := -1;
+          try
+            n := SO(p).AsArray.Length;
+          except
+            n := -1;
+          end;
+          if n >= 0 then
+            arg := '[' + IntToStr(n) + ' items]'
+          else
+            arg := '[...]';
+        end;
+      end
+      else
+        arg := ShortenForLog(p, 40);
+      if args <> '' then
+        args := args + ', ';
+      args := args + arg;
+    end;
+  Result := omc.FOpsiMethodName + '(' + args + ')';
+end;
+
+function DescribeServiceResult(res: ISuperObject): string;
+var
+  r: ISuperObject;
+begin
+  Result := 'no result';
+  if res = nil then
+    exit;
+  try
+    r := res.O['result'];
+    if (r = nil) or r.IsType(stNull) then
+      Result := 'no result'
+    else if r.IsType(stArray) then
+      Result := IntToStr(r.AsArray.Length) + ' results'
+    else if r.IsType(stObject) then
+      Result := 'object'
+    else if r.IsType(stBoolean) or r.IsType(stInt) or r.IsType(stDouble) then
+      Result := 'result ' + r.AsString
+    else
+      Result := 'string result';
+  except
+    Result := 'result';
+  end;
+end;
+
+procedure TJsonThroughHTTPS.ServiceLog(const msg: string; level: integer);
 begin
   LogDatei.log(msg, level);
   // The log file does not exist yet while opsi-script connects to the service at
-  // startup (-opsiservice): keep the event for the startup messages.
+  // startup (-opsiservice): keep the event (with time and level) for the startup
+  // messages.
   if not LogDatei.LogFileExists then
   begin
     if not Assigned(FPendingEvents) then
-      FPendingEvents := TStringList.Create;
+      FPendingEvents := TStartupMessages.Create;
     if FPendingEvents.Count < 200 then
-    begin
-      if level <= LLError then
-        levelName := 'Error'
-      else if level = LLWarning then
-        levelName := 'Warning'
-      else
-        levelName := 'Info';
-      FPendingEvents.Add(DateTimeToStr(Now) + ' ' + levelName + ': ' + msg);
-    end;
+      FPendingEvents.AddMsg(msg, level);
   end;
 end;
 
 procedure TJsonThroughHTTPS.TakePendingEvents(target: TStrings);
+var
+  i: integer;
 begin
   if Assigned(FPendingEvents) then
   begin
-    target.AddStrings(FPendingEvents);
+    if target is TStartupMessages then
+      TStartupMessages(target).AddMsgs(FPendingEvents)
+    else
+      for i := 0 to FPendingEvents.Count - 1 do
+        target.Add(FPendingEvents.Strings[i]);
     FPendingEvents.Clear;
   end;
 end;
@@ -1295,6 +1370,43 @@ begin
     LogDatei.log(' ' + IntToStr(i + 1) + '. IP: ' + IPAddrList.Strings[i],
       LLInfo);
   FreeAndNil(IPAddrList);
+end;
+
+// logs the connection once and again (as warning) if the server IP changes
+procedure TJsonThroughHTTPS.LogConnectionSummary;
+var
+  ip, tls, cipher: string;
+begin
+  {$IFDEF SYNAPSE}
+  try
+    ip := HTTPSender.Sock.GetRemoteSinIP;
+    if ip = FLoggedServerIP then
+      exit;
+    tls := '';
+    cipher := '';
+    try
+      tls := HTTPSender.Sock.SSL.GetSSLVersion;
+      cipher := HTTPSender.Sock.SSL.GetCipherName;
+    except
+      tls := '';
+    end;
+    if tls = '' then
+      tls := 'unknown';
+    if cipher <> '' then
+      tls := tls + ', cipher ' + cipher;
+    if FLoggedServerIP = '' then
+      LogDatei.log('Service connection: ' + FserviceURL + ' -> ' +
+        HTTPSender.TargetHost + ' (' + ip + '), TLS ' + tls +
+        ', server certificate is not verified, user ' + Fusername, LLinfo)
+    else
+      LogDatei.log('Service server IP changed from ' + FLoggedServerIP +
+        ' to ' + ip + ' (' + HTTPSender.TargetHost + '), TLS ' + tls, LLwarning);
+    FLoggedServerIP := ip;
+  except
+    on e: Exception do
+      LogDatei.log('Could not log the service connection: ' + e.message, LLdebug);
+  end;
+  {$ENDIF SYNAPSE}
 end;
 
 procedure TJsonThroughHTTPS.makeURL(const omc: TOpsiMethodCall);
@@ -1665,6 +1777,8 @@ var
   readcount: integer;
   compress: boolean;
   startTime: TDateTime;
+  callDurationMs: int64;
+  callLogLevel: integer;
   ContentType, Accept, ContentEncoding, AcceptEncoding: string;
   {$IFDEF SYNAPSE}
   i: integer;
@@ -1735,7 +1849,7 @@ begin
       end;
       else
       begin
-        LogDatei.log('Unkown communication mode', LLcritical);
+        LogDatei.log('Unknown communication mode', LLcritical);
         exit(nil);
       end;
     end;
@@ -1872,9 +1986,8 @@ begin
               if HttpExchange(omc.FOpsiMethodName, 'POST', Furl, callPolicy, callTimeoutMs, retry) then
               begin
                 { Evaluate Response Metadata/Headers}
-                LogDatei.log('HTTPSender Post succeeded', LLInfo);
-                LogDatei.log('Server-FQDN: ' + HttpSender.TargetHost + ' Server-IP: ' +
-                  HttpSender.Sock.GetRemoteSinIP, LLInfo);
+                LogDatei.log('HTTPSender Post succeeded', LLdebug);
+                LogConnectionSummary;
                 LogDatei.log_prog('HTTPSender result: ' +
                   IntToStr(HTTPSender.ResultCode) + ' msg: ' +
                   HTTPSender.ResultString, LLdebug);
@@ -1891,13 +2004,13 @@ begin
                     begin
                       LogDatei.log_prog('Communication mode is ' +
                         IntToStr(CommunicationMode) + '. ' +
-                        'Opsi Version should be >=4.1', LLDebug);
+                        'OPSI version should be >=4.1', LLDebug);
                     end
                     else
                     begin
                       LogDatei.log_prog('Communication mode is ' +
                         IntToStr(CommunicationMode) + '. ' +
-                        'Opsi Version should be 4.0', LLDebug);
+                        'OPSI version should be 4.0', LLDebug);
                     end;
                     // save the communication mode
                     FCommunicationMode := CommunicationMode;
@@ -2086,14 +2199,8 @@ begin
           //if FSessionId <> '' then
           // not the first call and we log
           if logging then
-          begin
-            LogDatei.log('JSON Bench for ' + omc.OpsiMethodName +
-              ' ' + copy(omc.getJsonUrlString, pos(',', omc.getJsonUrlString) +
-              1, 50) + ' Start: ' + FormatDateTime('hh:nn:ss:zzz', startTime) +
-              ' Time: ' + FormatDateTime('hh:nn:ss:zzz', now - startTime), LLinfo);
             LogDatei.log('JSON Call: ' + omc.getJsonUrlString + ' Time: ' +
               FormatDateTime('hh:nn:ss:zzz', now - startTime), LLDebug2);
-          end;
 
           for i := 0 to HTTPSender.Headers.Count - 1 do
             LogDatei.log_prog('HTTPSender Header.Strings: ' +
@@ -2422,12 +2529,25 @@ begin
       if Result = nil then
       begin
         if logging then
-          LogDatei.log('Error: retrieveJSONObject --- opsi service problem ---' +
+          LogDatei.log('Service call ' + DescribeServiceCall(omc) + ' failed: ' +
             FError, LLerror);
         if pos('Stream read error', FError) = 0 then
           if Assigned(ResultLines) and (resultLines.Count > 0) then
             LogDatei.log('Received (first 512): ' +
               copy(ResultLines.Strings[0], 1, 512), LLerror);
+      end
+      else if logging then
+      begin
+        callDurationMs := Round((Now - startTime) * 86400000);
+        if callDurationMs >= 30000 then
+          callLogLevel := LLwarning
+        else if callDurationMs >= 5000 then
+          callLogLevel := LLnotice
+        else
+          callLogLevel := LLinfo;
+        LogDatei.log('Service call: ' + DescribeServiceCall(omc) + ' -> ' +
+          DescribeServiceResult(Result) + ', ' + IntToStr(callDurationMs) +
+          ' ms', callLogLevel);
       end;
     end;
   finally
@@ -2513,7 +2633,7 @@ begin
     end;
     else
     begin
-      LogDatei.log('Unkown communication mode', LLcritical);
+      LogDatei.log('Unknown communication mode', LLcritical);
       exit(nil);
     end;
   end;
@@ -2645,13 +2765,13 @@ begin
                 begin
                   LogDatei.log_prog('Communication mode is ' +
                     IntToStr(CommunicationMode) + '. ' +
-                    'Opsi Version should be >=4.1', LLDebug);
+                    'OPSI version should be >=4.1', LLDebug);
                 end
                 else
                 begin
                   LogDatei.log_prog('Communication mode is ' +
                     IntToStr(CommunicationMode) + '. ' +
-                    'Opsi Version should be 4.0', LLDebug);
+                    'OPSI version should be 4.0', LLDebug);
                 end;
                 FCommunicationMode := CommunicationMode;
               end;
@@ -3206,7 +3326,7 @@ begin
           Result := myModulesList;
         end
       except
-        LogDatei.log_prog('Exeception backend_getLicensingInfo calling ', LLerror);
+        LogDatei.log_prog('Exception backend_getLicensingInfo calling ', LLerror);
       end;
     end
     else
@@ -3257,7 +3377,7 @@ begin
         else
           LogDatei.log('No modules data in backend_info', LLinfo);
       except
-        LogDatei.log_prog('Exeception backend_info calling ', LLerror);
+        LogDatei.log_prog('Exception backend_info calling ', LLerror);
       end;
     end
     else
@@ -3448,7 +3568,7 @@ begin
       if Assigned(FJsonExecutioner.HTTPSender) then
         FJsonExecutioner.HTTPSender.UserAgent := UserAgent;
   except
-     LogDatei.log('Exeception while setting user agent', LLerror);
+     LogDatei.log('Exception while setting user agent', LLerror);
   end;
 end;
 
@@ -3471,7 +3591,7 @@ begin
         else
           LogDatei.log('Problem getting backend_info from service', LLerror);
       except
-        LogDatei.log('Exeception getting backend_info from service', LLerror);
+        LogDatei.log('Exception getting backend_info from service', LLerror);
       end;
     end
     else
@@ -3489,7 +3609,6 @@ begin
   if FOpsiInformation = nil then
   begin
     try
-      loglist.Append('Starting Servicecall: backend_info');
       omc := TOpsiMethodCall.Create('backend_info', []);
       if omc <> nil then
       begin
@@ -3497,24 +3616,23 @@ begin
           FOpsiInformation := FjsonExecutioner.retrieveJsonObject(omc);
           if (FOpsiInformation <> nil) and (FOpsiInformation.O['result'] <>
             nil) then
-          begin
-            Result := True;
-            loglist.Append('Success Servicecall: backend_info');
-          end
+            Result := True
           else
-            loglist.Append('Problem getting backend_info from service');
+            AddStartupMsg(loglist, 'Problem getting backend_info from service',
+              LLerror);
         except
-          loglist.Append('Exeception getting backend_info from service');
+          AddStartupMsg(loglist, 'Exception getting backend_info from service',
+            LLerror);
         end;
       end
       else
-        loglist.Append('Problem creating OpsiMethodCall backend_info');
+        AddStartupMsg(loglist, 'Problem creating OpsiMethodCall backend_info',
+          LLerror);
 
     except
       on e: Exception do
       begin
-        loglist.Append('Exception in isConnected2: ' + e.message +
-          ' ' + DateTimeToStr(Now));
+        AddStartupMsg(loglist, 'Exception in isConnected2: ' + e.message, LLerror);
         Result := False;
       end;
     end;
@@ -4002,7 +4120,7 @@ begin
             LogDatei.log('Problem getting backend_getSystemConfiguration from service',
               LLerror);
         except
-          LogDatei.log('Exeception getting backend_getSystemConfiguration from service',
+          LogDatei.log('Exception getting backend_getSystemConfiguration from service',
             LLerror);
         end;
       end
@@ -4054,19 +4172,17 @@ begin
   { byte to MB }
   aktlogsize := aktlogsize div (1024 * 1024);
 
-  Logdatei.log('Checking if partlog: is bigger than ' + IntToStr(aktlogsize) +
-    ' MB :.', LLInfo);
   if Logdatei.PartbiggerthanMB(aktlogsize) then
   begin
-    Logdatei.log('Shrinking Logfile to ' + IntToStr(aktlogsize) + ' MB....', LLInfo);
+    Logdatei.log('Log upload: the log is bigger than the limit of ' +
+      IntToStr(aktlogsize) + ' MB: only the newest ' + IntToStr(aktlogsize) +
+      ' MB are sent, the oldest part is not included', LLNotice);
     Logdatei.PartShrinkToMB(aktlogsize);
-    Logdatei.log('Shrinking Logfile to ' + IntToStr(aktlogsize) +
-      ' MB finidhed.', LLInfo);
   end;
   Logdatei.setLogSIndentLevel(0);
-  Logdatei.log(
-    '-------- submitted part of log file ends here, see the rest of log file on client ----------',
-    LLNotice);
+  Logdatei.log('-------- End of the log part that is sent to the server. ' +
+    'The complete log file is on the client: ' + Logdatei.FileName +
+    ' --------', LLNotice);
   Logdatei.PartOpenForReading;
   try
     //LogDatei.log('->3',LLInfo);

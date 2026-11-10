@@ -380,27 +380,68 @@ begin
   Result:=JsonArray;
 end;
 
+var
+  // values received from the service, logged as one line after all configs are set
+  ConfigSummary: TStringList = nil;
+
+// the configuration is read before the log file exists (startup messages)
+// or later in the /serviceBatch mode (direct logging)
+procedure ConfigMsg(const msg: string; level: integer);
+begin
+  if Assigned(LogDatei) and LogDatei.LogFileExists then
+    LogDatei.log(msg, level)
+  else
+    osmain.startupmessages.AddMsg(msg, level);
+end;
+
+procedure AddToConfigSummary(const ConfigName, ConfigValue: string);
+begin
+  if ConfigSummary = nil then
+    ConfigSummary := TStringList.Create;
+  ConfigSummary.Values[ConfigName] := ConfigValue;
+end;
+
+procedure LogConfigSummary;
+var
+  i: integer;
+  s: string = '';
+begin
+  if (ConfigSummary <> nil) and (ConfigSummary.Count > 0) then
+  begin
+    for i := 0 to ConfigSummary.Count - 1 do
+    begin
+      if s <> '' then
+        s := s + ', ';
+      s := s + ConfigSummary.Names[i] + '=' + ConfigSummary.ValueFromIndex[i];
+    end;
+    ConfigMsg('Configuration from service: ' + s, LLinfo);
+    ConfigSummary.Clear;
+  end;
+end;
+
 function ConfigValueToBool(const Value: string; const ConfigName: string; Default:boolean): boolean;
 begin
   if TryStrToBool(Value, Result) then
-    osmain.startupmessages.Add('got ' + ConfigName + ': ' + BoolToStr(Result,True))
+    AddToConfigSummary(ConfigName, BoolToStr(Result, True))
   else
   begin
     Result := Default;
-    osmain.startupmessages.Add('Error: Not a Boolean: ' + ConfigName +
-      ': ' + Value + ' using default value: ' + BoolToStr(Result,True));
+    ConfigMsg('Configuration ' + ConfigName +
+      ' from service is not a boolean: >' + Value + '<, using default value: ' +
+      BoolToStr(Result,True), LLwarning);
   end;
 end;
 
 function ConfigValueToInt(const Value: string; const ConfigName: string; Default:integer): integer;
 begin
   if TryStrToInt(Value, Result) then
-    osmain.startupmessages.Add('got ' + ConfigName + ': ' + IntToStr(Result))
+    AddToConfigSummary(ConfigName, IntToStr(Result))
   else
   begin
     Result := Default;
-    osmain.startupmessages.Add('Error: Not an Integer: ' + ConfigName +
-      ': ' + Value + ' using default value: ' + IntToStr(Result));
+    ConfigMsg('Configuration ' + ConfigName +
+      ' from service is not an integer: >' + Value + '<, using default value: ' +
+      IntToStr(Result), LLwarning);
   end;
 end;
 
@@ -446,10 +487,9 @@ begin
   else if ConfigID = LowerCase('clientconfig.depot.user') then
   begin
     DepotUser := Value;
-    startupmessages.Append('got ' + ConfigID);
   end
   else if KeyConfigValue = 'defaultValues' then
-    startupmessages.Append('Unknown config: ' + ConfigID + ' (osconf.pas: procedure SetSingleConfig)');
+    startupmessages.AddMsg('Unknown config from service: ' + ConfigID, LLdebug);
 end;
 
 
@@ -480,8 +520,11 @@ begin
         SetSingleConfig(SingleConfig, KeyConfigID, KeyConfigValue);
       end;
     end
+    else if JSONResult <> nil then
+      startupmessages.AddMsg('No configs received from service, json result was: ' +
+        JSONResult.AsJSON, LLwarning)
     else
-      startupmessages.Append('Got no configs, json result was: '+ JSONResult.AsJSON);
+      startupmessages.AddMsg('No configs received from service', LLwarning);
   end;
 end;
 
@@ -530,8 +573,11 @@ begin
          DepotUser := ConfigValue;
        end;
     end
+    else if JSONResult <> nil then
+      startupmessages.AddMsg('No configs received from service, json result was: ' +
+        JSONResult.AsJSON, LLwarning)
     else
-      startupmessages.Append('Got no configs, json result was: '+ JSONResult.AsJSON);
+      startupmessages.AddMsg('No configs received from service', LLwarning);
   end;
 end;
 
@@ -582,12 +628,14 @@ begin
           JsonRpcResponse := OpsiData.getConfigStateObjectsFromService(ConfigIDsAsJsonArray);
           SetConfigs(JsonRpcResponse, 'configId', 'values');
         end;
-        Result := 'readConfigFromService: ok';
+        Result := 'Configuration read from service: ok';
+        LogConfigSummary;
       except
         on e: Exception do
         begin
-          startupmessages.Append('Exception in readConfigFromService: '
-            + e.message + ' ' + DateTimeToStr(Now));
+          LogConfigSummary;
+          ConfigMsg('Exception while reading the configuration from the service: '
+            + e.message, LLerror);
           Result := 'Could not read configs from service';
         end;
       end;

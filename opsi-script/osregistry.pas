@@ -1681,23 +1681,21 @@ begin
     begin
       if compareValue <> oldValue then
       begin
-        LogS := 'Variable "' + Name + '" had value  "' +
-          StringReplace(oldvalue, #13#10, MultiszVisualDelimiter) + '"';
-        LogDatei.log(LogS, LLInfo);
-        LogS := 'Info:    "' + Name + '" changed to "' +
+        LogS := 'Variable "' + Name + '" changed from "' +
+          StringReplace(oldvalue, #13#10, MultiszVisualDelimiter) + '" to "' +
           StringReplace(comparevalue, #10, MultiszVisualDelimiter) + '"';
         LogDatei.log(LogS, LLInfo);
         LogDatei.NumberOfHints := LogDatei.NumberOfHints + 1;
       end
       else
       begin
-        LogS := 'Variable "' + Name + '"  is keeping its value "' + compareValue + '"';
+        LogS := 'Variable "' + Name + '" unchanged: "' + compareValue + '"';
         LogDatei.log(LogS, LLInfo);
       end;
     end
     else
     begin
-      LogS := 'Variable "' + Name + '"  set to "' + Value + '"';
+      LogS := 'Variable "' + Name + '" set to "' + Value + '"';
       LogDatei.log(LogS, LLInfo);
     end;
   end

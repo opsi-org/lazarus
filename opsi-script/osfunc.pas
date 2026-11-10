@@ -10733,16 +10733,29 @@ begin
   Result := TryStrToBool(s, i);
 end;
 
+var
+  FQDNCache: string = '';
+  FQDNCached: boolean = False;
+
 function GetFQDN: string;
 begin
+  if FQDNCached then
+  begin
+    Result := FQDNCache;
+    exit;
+  end;
   {$IFDEF WINDOWS}
   Result := GetFQDNfromWMI;
   {$ENDIF WINDOWS}
   {$IFDEF UNIX}
   Result := GetFQDNUnix;
   {$ENDIF UNIX}
-  if not isValidFQDN(Result) then
-    LogDatei.log('"' + Result + '"' + ' is no valid fqdn', LLNotice);
+  FQDNCache := Result;
+  FQDNCached := True;
+  if isValidFQDN(Result) then
+    LogDatei.log('Client FQDN: ' + Result, LLInfo)
+  else
+    LogDatei.log('Client FQDN: ' + Result + ' (not a valid FQDN)', LLInfo);
 end;
 
 procedure noLockSleep(const Milliseconds: DWord);
