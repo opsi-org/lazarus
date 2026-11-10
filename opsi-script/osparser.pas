@@ -16026,8 +16026,20 @@ begin
 
                   {$ENDIF LINUX}
                   {$IFDEF DARWIN}
-                  StringResult := getCommandResult('dig +short -x  ' + s1);
-                  {$ENDIF LINUX}
+                  // forward lookup (not reverse: 'dig -x' returns a name for an IP)
+                  // output lines: 'name: host', 'ip_address: 1.2.3.4'
+                  slist.Text := getCommandResult('dscacheutil -q host -a name ' + s1);
+                  StringResult := '';
+                  for i := 0 to slist.Count - 1 do
+                    if (StringResult = '') and (pos('ip_address:', trim(slist.Strings[i])) = 1) then
+                      StringResult := trim(copy(trim(slist.Strings[i]),
+                        length('ip_address:') + 1, MaxInt));
+                  if not IsIP(StringResult) then
+                  begin
+                    LogDatei.log('Warning: no valid IP found for: ' + s1, LLwarning);
+                    StringResult := '';
+                  end;
+                  {$ENDIF DARWIN}
                   {$IFDEF WINDOWS}
                   StringResult := '';
                   Logdatei.log('Error: ' + s3, LLerror);
