@@ -87,6 +87,7 @@ var
 implementation
 
 uses
+  Types,
   notifierdatamodule,
   notifier_json,
   notifier_base;
@@ -807,43 +808,42 @@ var
   startx, starty, stopy, x, y, i: integer;
   tempHeight: integer;
   tmpstr2: string;
+  workArea: TRect;
 begin
   // position
+  workArea := Screen.PrimaryMonitor.WorkareaRect;
 
   case nformpos of
     fpTopRight:
     begin
-      x := screen.Width;
-      starty := 20;
-      startx := x - nform.Width - 20;
+      starty := workArea.Top + 20;
+      startx := workArea.Right - nform.Width - 20;
       LogDatei.log('Form position: fpTopRight', LLInfo);
     end;
     fpBottomRight:
     begin
-      x := screen.Width;
-      //y := screen.Height;
-      y := screen.WorkAreaHeight;
-      starty := y - nform.Height;
-      startx := x - nform.Width;
+      starty := workArea.Bottom - nform.Height;
+      startx := workArea.Right - nform.Width;
       LogDatei.log('Form position: fpBottomRight', LLInfo);
     end;
     fpTopLeft:
     begin
-      starty := 20;
-      startx := 20;
+      starty := workArea.Top + 20;
+      startx := workArea.Left + 20;
       LogDatei.log('Form position: fpTopLeft', LLInfo);
     end;
     fpCenter:
     begin
-      x := screen.Width div 2;
-      y := screen.Height div 2;
+      x := workArea.Left + (workArea.Right - workArea.Left) div 2;
+      y := workArea.Top + (workArea.Bottom - workArea.Top) div 2;
       starty := y - (nform.Height div 2);
       startx := x - (nform.Width div 2);
       LogDatei.log('Form position: fpCenter', LLInfo);
     end;
     fpCustom:
     begin
-      // nothing to change
+      startx := nform.Left;
+      starty := nform.Top;
       LogDatei.log('Form position: fpCustom', LLInfo);
     end;
     else
@@ -953,15 +953,10 @@ begin
         tmpstr2 := tmpstr2 + ' W:' + IntToStr(Width) + ' H:' + IntToStr(Height);
         LogDatei.log(tmpstr2, LLdebug);
       end;
-      x := screen.Width;
       stopy := nform.Height;
       nform.Height := 0;
       tempHeight := 0;
-      y := screen.WorkAreaHeight;
-      {$IFDEF LINUX}
-      { no valid control toolbar detection on Linux - so guess }
-      y := screen.WorkAreaHeight - 40;
-      {$ENDIF LINUX}
+      y := starty + stopy;
       nform.Top := y;
       nform.Left := startx;
       nform.AlphaBlend := True;
@@ -973,7 +968,6 @@ begin
       begin
         //Sleep(1);
         nform.AlphaBlendValue := i;
-        //y := screen.WorkAreaHeight;
         nform.Top := y - i;
         tempHeight := tempHeight + appearStepSize;
         // do not use this because nform.Height is not always what we expect (timing)
@@ -997,6 +991,7 @@ begin
       begin
         //sleep(1);
         nform.Height := stopy;
+        nform.Top := starty;
         nform.AlphaBlendValue := 255;
         nform.BringToFront;
         nform.Repaint;
@@ -1009,10 +1004,9 @@ begin
     fapFadeDown:
     begin
       LogDatei.log('Will show with appearmode : fapFadeDown', LLinfo);
-      x := screen.Width;
       stopy := nform.Height;
       nform.Height := 0;
-      y := 0;
+      y := starty;
       nform.Top := y;
       nform.Left := startx;
       nform.AlphaBlend := True;
@@ -1045,14 +1039,9 @@ begin
     fapUp:
     begin
       LogDatei.log('Will show with appearmode : fapUp', LLinfo);
-      x := screen.Width;
       stopy := nform.Height;
       nform.Height := 0;
-      y := screen.WorkAreaHeight;
-      {$IFDEF LINUX}
-      { no valid control toolbar detection on Linux - so guess }
-      y := screen.WorkAreaHeight - 40;
-      {$ENDIF LINUX}
+      y := starty + stopy;
       nform.Top := y;
       nform.Left := startx;
       nform.Show;
@@ -1061,7 +1050,6 @@ begin
       while i <= stopy do
       begin
         Sleep(1);
-        y := screen.WorkAreaHeight;
         nform.Top := y - i;
         nform.Height := nform.Height + appearStepSize;
         nform.BringToFront;
@@ -1073,6 +1061,7 @@ begin
       begin
         //sleep(1);
         nform.Height := stopy;
+        nform.Top := starty;
         nform.AlphaBlendValue := 255;
         nform.BringToFront;
         nform.Repaint;
@@ -1083,10 +1072,9 @@ begin
     fapDown:
     begin
       LogDatei.log('Will show with appearmode : fapDown', LLinfo);
-      x := screen.Width;
       stopy := nform.Height;
       nform.Height := 0;
-      y := 0;
+      y := starty;
       nform.Top := y;
       nform.Left := startx;
       nform.Show;
