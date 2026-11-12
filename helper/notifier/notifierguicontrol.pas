@@ -811,7 +811,14 @@ var
   workArea: TRect;
 begin
   // position
-  workArea := Screen.PrimaryMonitor.WorkareaRect;
+  // GTK2 can report a work area extending beyond the monitor bounds.
+  if not IntersectRect(workArea, Screen.PrimaryMonitor.WorkareaRect,
+    Screen.PrimaryMonitor.BoundsRect) then
+  begin
+    LogDatei.log('Invalid primary monitor work area; using monitor bounds',
+      LLWarning);
+    workArea := Screen.PrimaryMonitor.BoundsRect;
+  end;
 
   case nformpos of
     fpTopRight:
