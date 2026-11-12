@@ -1,5 +1,5 @@
 [changelog]
-opsi-notifier  unreleased
+opsi-notifier  4.2.0.11
 
   * Position automatic layouts within the primary monitor's work area,
     including its desktop offset and reserved panels.
