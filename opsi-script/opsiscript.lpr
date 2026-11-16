@@ -134,10 +134,9 @@ type
     logfilename: string;
   begin
     if not Assigned(startupmessages) then
-      startupmessages := TStringList.Create;
-    startupmessages.Append('startmessage opsi-script created at init logging lpr: ' +
-      DateTimeToStr(Now));
-    startupmessages.Append('running now gui-test');
+      startupmessages := TStartupMessages.Create;
+    startupmessages.AddMsg('Logging initialized (GUI test)', LLdebug);
+    startupmessages.AddMsg('Running GUI test', LLessential);
     logdatei := TLogInfo.Create;
     //logfilename := ExtractFileNameOnly(ParamStr(0)) + '.log';
     logfilename := logdatei.StandardMainLogPath + 'opsi-script-gui-test.log';

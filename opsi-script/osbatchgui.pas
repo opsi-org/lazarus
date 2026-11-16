@@ -401,7 +401,7 @@ var
 
 begin
   skinDir := GetSkinDirectory(SkinDirectory);
-  startupmessages.Append('Loading skin from: ' + skinDir);
+  startupmessages.AddMsg('Skin directory: ' + skinDir, LLinfo);
   skinFile := skinDir + PathDelim + 'skin.ini';
   if FileExists(skinFile) then
   begin

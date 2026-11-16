@@ -37,7 +37,7 @@ var
 begin
   //if not Assigned(LogDatei) then LogDatei := TLogInfo.Create;
   {$IFDEF OPSISCRIPT}
-  if not Assigned(StartupMessages) then StartupMessages := TStringList.Create;
+  if not Assigned(StartupMessages) then StartupMessages := TStartupMessages.Create;
   {$ENDIF OPSISCRIPT}
   //LogDatei.LogLevel := 7;
   Path := TStringList.Create;
@@ -94,13 +94,14 @@ begin
     end;
     {$IFDEF OPSISCRIPT}
     if (i < (Path.Count-1)) then
-      StartupMessages.Append('ssl library path: ' + Path.Strings[i])
+      StartupMessages.AddMsg('SSL library found: ' + Path.Strings[i], LLdebug)
     else
     begin
-      StartupMessages.Append('WARNING: SSL LIBRARY (' + Path.Strings[i] + ') NOT FOUND IN ANY EXPECTED PATH:');
+      StartupMessages.AddMsg('SSL library ' + Path.Strings[i] +
+        ' not found in any expected path:', LLwarning);
       for j := 0 to (Path.Count-2) do
-        startupMessages.Append('   - ' + Path.Strings[j]);
-      StartupMessages.Append('     Neverthless (' + Path.Strings[i] + ') might be found by the OS.');
+        startupMessages.AddMsg('  - ' + Path.Strings[j], LLwarning);
+      StartupMessages.AddMsg('The OS might still find ' + Path.Strings[i], LLwarning);
     end;
     {$ENDIF OPSISCRIPT}
     Result := Path.Strings[i];

@@ -931,10 +931,9 @@ var
 begin
   //writeln('TCentralForm.FormCreate');
   starttimestr := DateTimeToStr(Now);
-  if not Assigned(startupmessages) then startupmessages := TStringList.Create;
-  startupmessages.Append('startmessage opsi-script created at CentralForm.FormCreate: ' +
-    DateTimeToStr(Now));
-  startupmessages.Append('Detected Language is:' + SetDefaultLang(''));
+  if not Assigned(startupmessages) then startupmessages := TStartupMessages.Create;
+  startupmessages.AddMsg('Main form created', LLdebug);
+  startupmessages.AddMsg('Detected language: ' + SetDefaultLang(''), LLessential);
   toggle := True;
   Memo1.Clear;
   Memo1.Lines.add('');
@@ -998,8 +997,9 @@ begin
   //lang := GetDefaultLang;
   lang := '';
   SetDefaultLang(lang, localedir);
-  startupmessages.Append('Detected Language is:' + SetDefaultLang('') +
-    ' for: ' + ExtractFileName(ParamStrUTF8(0)) + ' from dir: ' + localedir);
+  startupmessages.AddMsg('Detected language: ' + SetDefaultLang('') +
+    ' (program: ' + ExtractFileName(ParamStrUTF8(0)) + ', locale dir: ' +
+    localedir + ')', LLinfo);
   {$ENDIF LINUX}
 
 

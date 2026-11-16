@@ -123,11 +123,14 @@ begin
             if Username <> '' then
             begin
               Result.Add(Username);
+              LogDatei.log('Found logged-in user: ' + Username + ' (session ' +
+                IntToStr(SessionID) + ')', LLDebug);
             end;
-            LogDatei.log('Found logged in user: ' + Username, LLDebug);
           end;
           Inc(pSessionInfo); // next structure
         end;
+        LogDatei.log('Logged-in users: ' + IntToStr(Result.Count) +
+          ' of ' + IntToStr(Count) + ' sessions', LLDebug);
       end
       else
         LogDatei.log('WtsEnum: WtsEnumerateSessions failed', LLWarning);

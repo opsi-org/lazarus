@@ -25,6 +25,9 @@ unit oswebservice;
 interface
 
 uses
+  {$IFDEF SYNAPSE}
+  synsock,
+  {$ENDIF SYNAPSE}
   SysUtils, Classes, Variants,
   oslog,
   superobject,
@@ -135,6 +138,20 @@ type
 
   (************** opsidata-Service  *********************************************)
 
+  // classification of transport level failures (no HTTP response received)
+  TTransportErrorClass = (
+    tecTransient,        // network problem, retrying is likely to help
+    tecTransientLimited, // may be transient (e.g. proxy or captive portal), retry only briefly
+    tecPermanent);       // retrying will not help (e.g. TLS protocol or certificate errors)
+
+  // retry budget for one service request
+  TRetryPolicy = record
+    MaxAttempts: integer;
+    DelaysMs: array[0..4] of integer; // wait after failed attempt n (1-based)
+    DeadlineMs: integer;              // total time budget including waits
+    ReceiveTimeoutMs: integer;        // default socket timeout per attempt
+  end;
+
   // helper classes
 
   { TOpsiMethodCall }
@@ -174,8 +191,24 @@ type
     FResultLines: TStringList;
     mymemorystream: TMemoryStream;
     methodGET: boolean;
+    FLastTransportFailure: boolean;
+    FLastTransportInfo: string;
+    FLastAttemptCount: integer;
+    FLastSuccessTick: QWord;
+    FNoRetry: boolean;
+    FPendingEvents: TStartupMessages;
+    FLoggedServerIP: string;
     function GetSynapseSocketFamilyAsString: string;
     procedure LogHostIPs;
+    procedure LogConnectionSummary;
+    {$IFDEF SYNAPSE}
+    function ReadSslQueueError: integer;
+    function DescribeTransportError(sslQueueError: integer): string;
+    procedure ResetConnection;
+    procedure WaitBeforeRetry(waitMs: integer);
+    function HttpExchange(const what, method, url: string; const policy: TRetryPolicy;
+      timeoutMs: integer; allowRetry: boolean): boolean;
+    {$ENDIF SYNAPSE}
   protected
     {$IFDEF SYNAPSE}
     HTTPSender: THTTPSend;
@@ -223,10 +256,20 @@ type
     function getSubListResult(const omc: TOpsiMethodCall; subkey: string): TStringList;
     function getFileFromDepot(filename: string; toStringList: boolean;
       var ListResult: TStringList): boolean;
+    // Logs a service connection event. As long as the log file does not exist
+    // (startup of opsi-script with -opsiservice) the event is also kept
+    // and can be fetched with TakePendingEvents.
+    procedure ServiceLog(const msg: string; level: integer);
+    procedure TakePendingEvents(target: TStrings);
     { properties }
     property resultLines: TStringList read FResultLines;
     property LastError: string read FError;
     property LastErrorInfo: TStringList read FErrorInfo;
+    // True if the last request got no HTTP response at all (network problem)
+    property LastTransportFailure: boolean read FLastTransportFailure;
+    property LastTransportInfo: string read FLastTransportInfo;
+    // True: every request is tried only once
+    property NoRetry: boolean read FNoRetry write FNoRetry;
   end;
 
   (****************************** Opsi Data *************************************)
@@ -254,6 +297,9 @@ type
     //mylist: TStringList;
     FOpsiModules: TStringList;
     FCommunicationMode: integer;
+    FNoRetry: boolean;
+    FServiceUnreachable: boolean;
+    FServiceUnreachableInfo: string;
     function IsModuleActivated(name:string):boolean;
     function ProductPropertyState_getValues_KeyValueMapp(var error: boolean): TStringList;
     function getProductRequirements(productname: string;
@@ -266,6 +312,8 @@ type
     function SetProductOnClientData(const ProductOnClientData: TStringList):TStringList;
     function GetSortedProductOnClientListFromService: TStringList;
     function ConvertJsonValueToString(Value:TJSONData):string;
+    procedure UpdateProductOnClientObject(const parastr, caller: string);
+    procedure SetNoRetry(value: boolean);
   protected
     actualProduct: string;
     actualVersion: string;
@@ -401,6 +449,9 @@ type
     // is a given method well known:
     function isMethodProvided(Method : string): boolean;
     procedure setUserAgent(UserAgent:string);
+    // moves the service connection events that were not written to a log file
+    // (log file not yet created) to target
+    procedure TakeConnectionEvents(target: TStrings);
     { properties }
     //property sslProtocol: TIdSSLVersion read FSslProtocol write FSslProtocol;
     property serviceUrl: string read FServiceURL;
@@ -410,6 +461,11 @@ type
     property CommunicationMode: integer read FCommunicationMode
       write FCommunicationMode;
     property sortByServer: boolean read FSortByServer;
+    // True: requests to the service are tried only once (no retry)
+    property NoRetry: boolean read FNoRetry write SetNoRetry;
+    // True if the service could not be reached during initOpsiConf
+    property ServiceUnreachable: boolean read FServiceUnreachable;
+    property ServiceUnreachableInfo: string read FServiceUnreachableInfo;
   end;
 
 var
@@ -422,6 +478,10 @@ function getOpsiServiceVersion(const serviceUrl: string; const username: string;
   const password: string; var sessionid: string): string;
 function escapeControlChars(t: string): string;
 procedure getStringlistFromJsonObject(const jO: ISuperObject; var list: TStringList);
+{$IFDEF SYNAPSE}
+function ClassifyTransportError(sockError, sslError, sslQueueError: integer;
+  sslLibLoaded: boolean): TTransportErrorClass;
+{$ENDIF SYNAPSE}
 
 resourcestring
   rsSendLog = 'Sending log file to server ...';
@@ -442,6 +502,25 @@ uses
   osmain;
 
 {$ENDIF}
+
+{$IFDEF SYNAPSE}
+const
+  // retry budget for normal service requests: 5 attempts, waits 2/5/10/20 s
+  RetryPolicyNormal: TRetryPolicy = (MaxAttempts: 5;
+    DelaysMs: (2000, 5000, 10000, 20000, 30000);
+    DeadlineMs: 90000; ReceiveTimeoutMs: 60000);
+  // retry budget for uploading the log file: 6 attempts, waits 2/5/10/20/30 s
+  RetryPolicyLog: TRetryPolicy = (MaxAttempts: 6;
+    DelaysMs: (2000, 5000, 10000, 20000, 30000);
+    DeadlineMs: 180000; ReceiveTimeoutMs: 120000);
+  ConnectTimeoutMs = 10000;
+  // an attempt is only started if at least this much of the total budget is left
+  MinAttemptMs = 1000;
+  // reconnect instead of reusing a keep-alive connection that was idle longer than this
+  IdleReconnectMs = 60000;
+  // maximum attempts for failures classified as tecTransientLimited
+  LimitedMaxAttempts = 2;
+{$ENDIF SYNAPSE}
 
 var
   testresult: string;
@@ -1004,6 +1083,7 @@ begin
     //HTTPSender.Sock.PreferIP4:= False; //might be switched to false if IPv6 is standard
     //HTTPSender.Sock.Family:= SF_IP6; //do not set this if IPv4 addresses are still in use
     HTTPSender.Sock.CreateWithSSL(TSSLOpenSSL3);
+    HTTPSender.Sock.ConnectionTimeout := ConnectTimeoutMs;
     HTTPSender.Sock.Connect(ip, port);
     //LogDatei.log('IP: ' + ip + ' Resolved: ' + Httpsender.Sock.GetRemoteSinIP, LLDebug);
     if SSL_OPENSSL_LIB_UNIT.InitSSLInterface then
@@ -1111,6 +1191,7 @@ end;
 destructor TJsonThroughHTTPS.Destroy;
 begin
   //nullO.free;
+  FPendingEvents.Free;
   {$IFDEF SYNAPSE}
   mymemorystream.Free;
   FResultLines.Free;
@@ -1158,6 +1239,229 @@ begin
   //CompressedMemoryStream.Free;
 end;
 
+function ShortenForLog(const s: string; maxLen: integer): string;
+begin
+  Result := SysUtils.StringReplace(SysUtils.StringReplace(s, #13, ' ',
+    [rfReplaceAll]), #10, ' ', [rfReplaceAll]);
+  if Length(Result) > maxLen then
+    Result := Copy(Result, 1, maxLen) + '...';
+end;
+
+function IsSensitiveKey(const key: string): boolean;
+var
+  k: string;
+begin
+  k := LowerCase(key);
+  Result := (Pos('password', k) > 0) or (Pos('passwd', k) > 0) or
+    (Pos('secret', k) > 0) or (Pos('token', k) > 0) or (Pos('hostkey', k) > 0) or
+    (Pos('credential', k) > 0) or (Pos('privatekey', k) > 0);
+end;
+
+// short description of a json value: scalars as text, nested objects as {...},
+// nested lists as [N items]
+function DescribeJsonValue(const v: ISuperObject): string;
+begin
+  Result := '';
+  if v = nil then
+    exit('null');
+  try
+    if v.IsType(stNull) then
+      Result := 'null'
+    else if v.IsType(stObject) then
+      Result := '{...}'
+    else if v.IsType(stArray) then
+      Result := '[' + IntToStr(v.AsArray.Length) + ' items]'
+    else if v.IsType(stString) then
+      Result := ShortenForLog(v.AsString, 40)
+    else
+      Result := v.AsString;
+  except
+    Result := '?';
+  end;
+end;
+
+// key=value pairs of a json object up to maxLen characters, rest as ", +N more"
+function DescribeJsonObject(const o: ISuperObject; maxLen: integer): string;
+var
+  iter: TSuperObjectIter;
+  item: string;
+  more: integer = 0;
+begin
+  Result := '';
+  try
+    if ObjectFindFirst(o, iter) then
+    begin
+      repeat
+        if IsSensitiveKey(iter.key) then
+          item := iter.key + '=***'
+        else
+          item := iter.key + '=' + DescribeJsonValue(iter.Val);
+        if (more = 0) and ((Result = '') or
+          (Length(Result) + Length(item) + 2 <= maxLen)) then
+        begin
+          if Result <> '' then
+            Result := Result + ', ';
+          Result := Result + item;
+        end
+        else
+          Inc(more);
+      until not ObjectFindNext(iter);
+      ObjectFindClose(iter);
+    end;
+  except
+    Result := Result + ', ...';
+  end;
+  if more > 0 then
+    Result := Result + ', +' + IntToStr(more) + ' more';
+  Result := '{' + Result + '}';
+end;
+
+// first items of a json list up to maxLen characters
+function DescribeJsonArray(const a: ISuperObject; maxLen: integer): string;
+var
+  i, n: integer;
+  item: string;
+  shown: string = '';
+  complete: boolean = True;
+begin
+  n := a.AsArray.Length;
+  for i := 0 to n - 1 do
+  begin
+    if a.AsArray.O[i].IsType(stObject) then
+      item := DescribeJsonObject(a.AsArray.O[i], 60)
+    else
+      item := DescribeJsonValue(a.AsArray.O[i]);
+    if (shown <> '') and (Length(shown) + Length(item) + 2 > maxLen) then
+    begin
+      complete := False;
+      break;
+    end;
+    if shown <> '' then
+      shown := shown + ', ';
+    shown := shown + item;
+  end;
+  if not complete then
+    shown := shown + ', ...';
+  if n = 0 then
+    Result := '[]'
+  else
+    Result := '[' + IntToStr(n) + ' items: ' + shown + ']';
+end;
+
+// readable one line description of a service call: method(arg, ...)
+// objects as {key=value, ...}, lists as [N items: ...], each argument limited in
+// length, values of sensitive keys (password, secret, ...) masked
+function DescribeServiceCall(omc: TOpsiMethodCall): string;
+const
+  maxArgLen = 150;
+var
+  i: integer;
+  p, arg: string;
+  args: string = '';
+  jo: ISuperObject;
+  h: string = '';
+begin
+  if Assigned(omc.FHashlist) and (omc.FHashlist.Count > 0) then
+  begin
+    for i := 0 to omc.FHashlist.Count - 1 do
+    begin
+      if IsSensitiveKey(omc.FHashlist.Names[i]) then
+        arg := omc.FHashlist.Names[i] + '=***'
+      else
+        arg := ShortenForLog(omc.FHashlist.Strings[i], 40);
+      if (h <> '') and (Length(h) + Length(arg) + 2 > maxArgLen) then
+      begin
+        h := h + ', ...';
+        break;
+      end;
+      if h <> '' then
+        h := h + ', ';
+      h := h + arg;
+    end;
+    args := '{' + h + '}';
+  end;
+  if Assigned(omc.FParameterlist) then
+    for i := 0 to omc.FParameterlist.Count - 1 do
+    begin
+      p := omc.FParameterlist.Strings[i];
+      arg := '';
+      jo := nil;
+      if (Length(p) > 1) and (((p[1] = '{') and (p[Length(p)] = '}')) or
+        ((p[1] = '[') and (p[Length(p)] = ']'))) then
+      begin
+        try
+          jo := SO(p);
+        except
+          jo := nil;
+        end;
+      end;
+      if (jo <> nil) and jo.IsType(stObject) then
+        arg := DescribeJsonObject(jo, maxArgLen)
+      else if (jo <> nil) and jo.IsType(stArray) then
+        arg := DescribeJsonArray(jo, maxArgLen)
+      else
+        arg := ShortenForLog(p, 40);
+      if args <> '' then
+        args := args + ', ';
+      args := args + arg;
+    end;
+  Result := omc.FOpsiMethodName + '(' + args + ')';
+end;
+
+function DescribeServiceResult(res: ISuperObject): string;
+var
+  r: ISuperObject;
+begin
+  Result := 'no result';
+  if res = nil then
+    exit;
+  try
+    r := res.O['result'];
+    if (r = nil) or r.IsType(stNull) then
+      Result := 'no result'
+    else if r.IsType(stArray) then
+      Result := IntToStr(r.AsArray.Length) + ' results'
+    else if r.IsType(stObject) then
+      Result := 'object'
+    else if r.IsType(stBoolean) or r.IsType(stInt) or r.IsType(stDouble) then
+      Result := 'result ' + r.AsString
+    else
+      Result := 'string result';
+  except
+    Result := 'result';
+  end;
+end;
+
+procedure TJsonThroughHTTPS.ServiceLog(const msg: string; level: integer);
+begin
+  LogDatei.log(msg, level);
+  // The log file does not exist yet while opsi-script connects to the service at
+  // startup (-opsiservice): keep the event (with time and level) for the startup
+  // messages.
+  if not LogDatei.LogFileExists then
+  begin
+    if not Assigned(FPendingEvents) then
+      FPendingEvents := TStartupMessages.Create;
+    if FPendingEvents.Count < 200 then
+      FPendingEvents.AddMsg(msg, level);
+  end;
+end;
+
+procedure TJsonThroughHTTPS.TakePendingEvents(target: TStrings);
+var
+  i: integer;
+begin
+  if Assigned(FPendingEvents) then
+  begin
+    if target is TStartupMessages then
+      TStartupMessages(target).AddMsgs(FPendingEvents)
+    else
+      for i := 0 to FPendingEvents.Count - 1 do
+        target.Add(FPendingEvents.Strings[i]);
+    FPendingEvents.Clear;
+  end;
+end;
+
 function TJsonThroughHTTPS.GetSynapseSocketFamilyAsString: string;
 var
   Family: string;
@@ -1183,6 +1487,43 @@ begin
     LogDatei.log(' ' + IntToStr(i + 1) + '. IP: ' + IPAddrList.Strings[i],
       LLInfo);
   FreeAndNil(IPAddrList);
+end;
+
+// logs the connection once and again (as warning) if the server IP changes
+procedure TJsonThroughHTTPS.LogConnectionSummary;
+var
+  ip, tls, cipher: string;
+begin
+  {$IFDEF SYNAPSE}
+  try
+    ip := HTTPSender.Sock.GetRemoteSinIP;
+    if ip = FLoggedServerIP then
+      exit;
+    tls := '';
+    cipher := '';
+    try
+      tls := HTTPSender.Sock.SSL.GetSSLVersion;
+      cipher := HTTPSender.Sock.SSL.GetCipherName;
+    except
+      tls := '';
+    end;
+    if tls = '' then
+      tls := 'unknown';
+    if cipher <> '' then
+      tls := tls + ', cipher ' + cipher;
+    if FLoggedServerIP = '' then
+      LogDatei.log('Service connection: ' + FserviceURL + ' -> ' +
+        HTTPSender.TargetHost + ' (' + ip + '), TLS ' + tls +
+        ', server certificate is not verified, user ' + Fusername, LLinfo)
+    else
+      LogDatei.log('Service server IP changed from ' + FLoggedServerIP +
+        ' to ' + ip + ' (' + HTTPSender.TargetHost + '), TLS ' + tls, LLwarning);
+    FLoggedServerIP := ip;
+  except
+    on e: Exception do
+      LogDatei.log('Could not log the service connection: ' + e.message, LLdebug);
+  end;
+  {$ENDIF SYNAPSE}
 end;
 
 procedure TJsonThroughHTTPS.makeURL(const omc: TOpsiMethodCall);
@@ -1213,6 +1554,329 @@ begin
   LogDatei.log('got Furl: ' + Furl, LLdebug3);
 end;
 
+{$IFDEF SYNAPSE}
+function IsTransientSocketError(code: integer): boolean;
+const
+  TransientSocketErrors: array[0..13] of integer = (
+    synsock.WSAETIMEDOUT, synsock.WSAECONNRESET, synsock.WSAECONNABORTED,
+    synsock.WSAENETDOWN, synsock.WSAENETUNREACH, synsock.WSAENETRESET,
+    synsock.WSAEHOSTUNREACH, synsock.WSAEHOSTDOWN, synsock.WSAECONNREFUSED,
+    synsock.WSAEADDRNOTAVAIL, synsock.WSAENOTCONN, synsock.WSAESHUTDOWN,
+    synsock.WSAHOST_NOT_FOUND, synsock.WSATRY_AGAIN);
+var
+  i: integer;
+begin
+  Result := False;
+  for i := Low(TransientSocketErrors) to High(TransientSocketErrors) do
+    if TransientSocketErrors[i] = code then
+    begin
+      Result := True;
+      Break;
+    end;
+end;
+
+// Decides whether a failed request (no HTTP response received) is worth retrying.
+// sockError: Sock.LastError, sslError: Sock.SSL.LastError,
+// sslQueueError: first entry of the OpenSSL error queue (0 if none).
+function ClassifyTransportError(sockError, sslError, sslQueueError: integer;
+  sslLibLoaded: boolean): TTransportErrorClass;
+const
+  // OpenSSL 3 SSL reason codes
+  ERR_LIB_SSL = 20;
+  SSL_R_PACKET_LENGTH_TOO_LONG = 198;
+  SSL_R_WRONG_VERSION_NUMBER = 267;
+  SSL_R_UNEXPECTED_EOF_WHILE_READING = 294;
+var
+  sslClass, code, lib, reason: cardinal;
+begin
+  Result := tecPermanent;
+  if sockError = 0 then
+    Exit;
+
+  // plain socket error
+  if sockError <> synsock.WSASYSNOTREADY then
+  begin
+    if IsTransientSocketError(sockError) then
+      Result := tecTransient;
+    Exit;
+  end;
+
+  // TLS error: Synapse reports every TLS failure as WSASYSNOTREADY
+  if not sslLibLoaded then
+    Exit;
+  sslClass := cardinal(sslError);
+  if (sslClass = SSL_OPENSSL_LIB_UNIT.SSL_ERROR_SYSCALL) or
+    (sslClass = SSL_OPENSSL_LIB_UNIT.SSL_ERROR_ZERO_RETURN) then
+  begin
+    // connection broken or closed by the peer while reading or writing
+    Result := tecTransient;
+    Exit;
+  end;
+  if (sslClass = 0) or (sslClass = SSL_OPENSSL_LIB_UNIT.SSL_ERROR_SSL) then
+    // read/write path (class only): reason is in the error queue.
+    // Handshake path with sslError = 0: no error recorded
+    // (handshake interrupted or timed out).
+    code := cardinal(sslQueueError)
+  else if sslClass > 255 then
+    // handshake path: sslError is the OpenSSL error code itself
+    code := sslClass
+  else
+    Exit; // other SSL_get_error classes
+
+  if code = 0 then
+  begin
+    if sslClass = 0 then
+      Result := tecTransient;
+    Exit;
+  end;
+
+  if (code and $80000000) <> 0 then
+  begin
+    // system error, errno in the lower bits
+    if IsTransientSocketError(integer(code and $7FFFFFFF)) then
+      Result := tecTransient;
+    Exit;
+  end;
+
+  lib := (code shr 23) and $FF;
+  reason := code and $7FFFFF;
+  if lib = ERR_LIB_SSL then
+    case reason of
+      SSL_R_UNEXPECTED_EOF_WHILE_READING:
+        Result := tecTransient;
+      SSL_R_WRONG_VERSION_NUMBER, SSL_R_PACKET_LENGTH_TOO_LONG:
+        Result := tecTransientLimited;
+    end;
+end;
+
+function TJsonThroughHTTPS.ReadSslQueueError: integer;
+begin
+  Result := 0;
+  try
+    if SSL_OPENSSL_LIB_UNIT.IsSSLloaded then
+    begin
+      Result := SSL_OPENSSL_LIB_UNIT.ErrGetError;
+      SSL_OPENSSL_LIB_UNIT.ErrClearError;
+    end;
+  except
+    Result := 0;
+  end;
+end;
+
+function TJsonThroughHTTPS.DescribeTransportError(sslQueueError: integer): string;
+var
+  s: AnsiString;
+  remoteIp, localIp: string;
+begin
+  remoteIp := HTTPSender.Sock.GetRemoteSinIP;
+  if remoteIp = '' then
+    remoteIp := '-';
+  localIp := HTTPSender.Sock.GetLocalSinIP;
+  if localIp = '' then
+    localIp := '-';
+  Result := 'socket error ' + IntToStr(HTTPSender.Sock.LastError);
+  if HTTPSender.Sock.LastError = synsock.WSASYSNOTREADY then
+  begin
+    Result := Result + ' (TLS), TLS error class/code ' +
+      IntToStr(HTTPSender.Sock.SSL.LastError) + ' [' +
+      HTTPSender.Sock.SSL.LastErrorDesc + ']';
+    if sslQueueError <> 0 then
+    begin
+      s := StringOfChar(#0, 256);
+      SSL_OPENSSL_LIB_UNIT.ErrErrorString(sslQueueError, s, Length(s));
+      SetLength(s, StrLen(PAnsiChar(s)));
+      Result := Result + ', OpenSSL error 0x' + IntToHex(cardinal(sslQueueError), 8) +
+        ' [' + s + ']';
+    end;
+  end
+  else
+    Result := Result + ' [' + HTTPSender.Sock.GetErrorDescEx + ']';
+  Result := Result + ', remote ' + remoteIp + ', local ' + localIp;
+end;
+
+// Close the connection. The next HTTPMethod call resolves the host name again,
+// connects and does a new TLS handshake. Cookies, user agent and credentials are kept.
+procedure TJsonThroughHTTPS.ResetConnection;
+begin
+  try
+    HTTPSender.Sock.CloseSocket;
+    HTTPSender.Sock.ResetLastError;
+  except
+    on ex: Exception do
+      LogDatei.log('Exception while closing service connection: ' + ex.Message, LLWarning);
+  end;
+end;
+
+procedure TJsonThroughHTTPS.WaitBeforeRetry(waitMs: integer);
+var
+  untilTick: QWord;
+begin
+  untilTick := GetTickCount64 + QWord(waitMs);
+  while GetTickCount64 < untilTick do
+  begin
+    {$IFDEF GUI}
+    Application.ProcessMessages;
+    {$ENDIF GUI}
+    Sleep(100);
+  end;
+end;
+
+// Seconds with one decimal for log messages, e.g. 4.8 s
+function FormatSeconds(ms: int64): string;
+begin
+  Result := IntToStr(ms div 1000) + '.' + IntToStr((ms mod 1000) div 100) + ' s';
+end;
+
+function TransportErrorClassName(errClass: TTransportErrorClass): string;
+begin
+  case errClass of
+    tecTransient: Result := 'transient';
+    tecTransientLimited: Result := 'possibly transient';
+    else
+      Result := 'permanent';
+  end;
+end;
+
+// Executes one HTTP request with reconnect and retry on transport failures.
+// The request (headers, mime type, body) has to be prepared in HTTPSender before.
+// Returns True if a HTTP response was received (any status code).
+// Returns False if no response could be obtained; FLastTransportFailure is then True.
+// policy.DeadlineMs is the total budget for all attempts and waits. The connect and
+// receive timeouts of an attempt are shortened to the remaining budget.
+// Note: THTTPSend.HTTPMethod clears the request, so it is restored before each retry.
+// A retry may repeat a request that the server already processed
+// if the failure occurred while waiting for the response.
+// what: name of the request (RPC method) for the log messages.
+function TJsonThroughHTTPS.HttpExchange(const what, method, url: string;
+  const policy: TRetryPolicy; timeoutMs: integer; allowRetry: boolean): boolean;
+var
+  snapHeaders: TStringList;
+  snapBody: TMemoryStream;
+  snapMime: string;
+  attempt, maxAttempts, effMaxAttempts, waitMs, delayIndex,
+  attemptTimeoutMs: integer;
+  remainingMs: int64;
+  startTick, attemptStartTick, elapsed: QWord;
+  sslQueueError: integer;
+  errClass: TTransportErrorClass;
+  retriesDisabled: boolean;
+  giveUpReason: string;
+  failureInfo: string;
+begin
+  Result := False;
+  FLastTransportFailure := False;
+  FLastTransportInfo := '';
+  FLastAttemptCount := 0;
+  maxAttempts := policy.MaxAttempts;
+  retriesDisabled := (not allowRetry) or FNoRetry;
+  if retriesDisabled then
+    maxAttempts := 1;
+  startTick := GetTickCount64;
+
+  if (FLastSuccessTick > 0) and (startTick - FLastSuccessTick > IdleReconnectMs) then
+  begin
+    LogDatei.log_prog('Service connection was idle for ' +
+      IntToStr((startTick - FLastSuccessTick) div 1000) + ' s, reconnecting', LLDebug);
+    ResetConnection;
+  end;
+
+  snapHeaders := TStringList.Create;
+  snapBody := TMemoryStream.Create;
+  try
+    snapHeaders.AddStrings(HTTPSender.Headers);
+    snapMime := HTTPSender.MimeType;
+    snapBody.LoadFromStream(HTTPSender.Document);
+
+    attempt := 0;
+    repeat
+      Inc(attempt);
+      FLastAttemptCount := attempt;
+      if attempt > 1 then
+      begin
+        HTTPSender.Clear;
+        HTTPSender.MimeType := snapMime;
+        HTTPSender.Headers.AddStrings(snapHeaders);
+        HTTPSender.Document.LoadFromStream(snapBody);
+      end;
+      remainingMs := int64(policy.DeadlineMs) - int64(GetTickCount64 - startTick);
+      if remainingMs < MinAttemptMs then
+        remainingMs := MinAttemptMs;
+      attemptTimeoutMs := timeoutMs;
+      if attemptTimeoutMs > remainingMs then
+        attemptTimeoutMs := integer(remainingMs);
+      HTTPSender.Timeout := attemptTimeoutMs;
+      if attemptTimeoutMs < ConnectTimeoutMs then
+        HTTPSender.Sock.ConnectionTimeout := attemptTimeoutMs
+      else
+        HTTPSender.Sock.ConnectionTimeout := ConnectTimeoutMs;
+      attemptStartTick := GetTickCount64;
+      Result := HTTPSender.HTTPMethod(method, url);
+      if Result then
+      begin
+        FLastSuccessTick := GetTickCount64;
+        if attempt > 1 then
+          ServiceLog('Service connection recovered: request ' + what +
+            ' succeeded on attempt ' + IntToStr(attempt) + ' after ' +
+            FormatSeconds(FLastSuccessTick - startTick), LLNotice);
+        Exit;
+      end;
+
+      // transport failure, no HTTP response received
+      FLastTransportFailure := True;
+      sslQueueError := ReadSslQueueError;
+      errClass := ClassifyTransportError(HTTPSender.Sock.LastError,
+        HTTPSender.Sock.SSL.LastError, sslQueueError,
+        SSL_OPENSSL_LIB_UNIT.IsSSLloaded);
+      FLastTransportInfo := DescribeTransportError(sslQueueError);
+      effMaxAttempts := maxAttempts;
+      if (errClass = tecTransientLimited) and (effMaxAttempts > LimitedMaxAttempts) then
+        effMaxAttempts := LimitedMaxAttempts;
+      failureInfo := 'Service request ' + what + ' to ' + url + ' failed (attempt ' +
+        IntToStr(attempt) + ' of ' + IntToStr(effMaxAttempts) + ', ' +
+        TransportErrorClassName(errClass) + ' error): ' + FLastTransportInfo +
+        ', after ' + FormatSeconds(GetTickCount64 - attemptStartTick);
+
+      giveUpReason := '';
+      if errClass = tecPermanent then
+        giveUpReason := 'permanent error'
+      else if attempt >= effMaxAttempts then
+      begin
+        if retriesDisabled then
+          giveUpReason := 'retries disabled'
+        else
+          giveUpReason := 'no attempts left';
+      end;
+      waitMs := 0;
+      if giveUpReason = '' then
+      begin
+        delayIndex := attempt - 1;
+        if delayIndex > High(policy.DelaysMs) then
+          delayIndex := High(policy.DelaysMs);
+        waitMs := policy.DelaysMs[delayIndex];
+        // +/- 20 % jitter
+        waitMs := waitMs + (waitMs * (integer(GetTickCount64 mod 41) - 20)) div 100;
+        elapsed := GetTickCount64 - startTick;
+        if elapsed + QWord(waitMs) + MinAttemptMs >= QWord(policy.DeadlineMs) then
+          giveUpReason := 'time budget of ' + IntToStr(policy.DeadlineMs div 1000) +
+            ' s used up';
+      end;
+
+      if giveUpReason <> '' then
+      begin
+        ServiceLog(failureInfo + ' - giving up (' + giveUpReason + ')', LLError);
+        Break;
+      end;
+      ServiceLog(failureInfo + ' - retrying in ' + FormatSeconds(waitMs), LLWarning);
+      WaitBeforeRetry(waitMs);
+      ResetConnection;
+    until False;
+  finally
+    snapBody.Free;
+    snapHeaders.Free;
+  end;
+end;
+{$ENDIF SYNAPSE}
+
 function TJsonThroughHTTPS.retrieveJSONObject(const omc: TOpsiMethodCall;
   logging: boolean = True; retry: boolean = True; readOmcMap: boolean = False;
   communicationmode: integer = 0): ISuperObject;
@@ -1230,10 +1894,14 @@ var
   readcount: integer;
   compress: boolean;
   startTime: TDateTime;
+  callDurationMs: int64;
+  callLogLevel: integer;
   ContentType, Accept, ContentEncoding, AcceptEncoding: string;
   {$IFDEF SYNAPSE}
   i: integer;
   finished: boolean;
+  callTimeoutMs: integer;
+  callPolicy: TRetryPolicy;
   {$ENDIF SYNAPSE}
   oldTwistedServer: string;
   oldTwistedServerVer: integer = 0;
@@ -1298,7 +1966,7 @@ begin
       end;
       else
       begin
-        LogDatei.log('Unkown communication mode', LLcritical);
+        LogDatei.log('Unknown communication mode', LLcritical);
         exit(nil);
       end;
     end;
@@ -1328,11 +1996,20 @@ begin
             //Logdatei.Log (DateTimeToStr(now) + ' JSON service request ' + Furl , LLnotice);
             LogDatei.log_prog('JSON service request ' + Furl + ' ' +
               omc.FOpsiMethodName, LLinfo);
+        // timeout is set for every call (a value from omc is not kept for later calls)
+        // an explicit timeout is the total time budget of the call including retries
+        callPolicy := RetryPolicyNormal;
         if omc.Timeout > 0 then
         begin
-          HTTPSender.Timeout := omc.Timeout * 1000;
-          HTTPSender.Sock.SetRecvTimeout(omc.Timeout * 1000);
-        end;
+          callTimeoutMs := omc.Timeout * 1000;
+          callPolicy.DeadlineMs := callTimeoutMs;
+          LogDatei.log('Service request ' + omc.FOpsiMethodName + ': time budget ' +
+            IntToStr(omc.Timeout) + ' s (timeout), includes retries', LLDebug);
+          HTTPSender.Sock.SetRecvTimeout(callTimeoutMs);
+        end
+        else
+          callTimeoutMs := RetryPolicyNormal.ReceiveTimeoutMs;
+        HTTPSender.Timeout := callTimeoutMs;
 
 
         if methodGet then
@@ -1423,12 +2100,11 @@ begin
                 GetSynapseSocketFamilyAsString, LLDebug);
               LogDatei.log_prog('PreferIP4: ' +
                 BoolToStr(HTTPSender.Sock.PreferIP4, True), LLDebug);
-              if HTTPSender.HTTPMethod('POST', Furl) then
+              if HttpExchange(omc.FOpsiMethodName, 'POST', Furl, callPolicy, callTimeoutMs, retry) then
               begin
                 { Evaluate Response Metadata/Headers}
-                LogDatei.log('HTTPSender Post succeeded', LLInfo);
-                LogDatei.log('Server-FQDN: ' + HttpSender.TargetHost + ' Server-IP: ' +
-                  HttpSender.Sock.GetRemoteSinIP, LLInfo);
+                LogDatei.log('HTTPSender Post succeeded', LLdebug);
+                LogConnectionSummary;
                 LogDatei.log_prog('HTTPSender result: ' +
                   IntToStr(HTTPSender.ResultCode) + ' msg: ' +
                   HTTPSender.ResultString, LLdebug);
@@ -1445,13 +2121,13 @@ begin
                     begin
                       LogDatei.log_prog('Communication mode is ' +
                         IntToStr(CommunicationMode) + '. ' +
-                        'Opsi Version should be >=4.1', LLDebug);
+                        'OPSI version should be >=4.1', LLDebug);
                     end
                     else
                     begin
                       LogDatei.log_prog('Communication mode is ' +
                         IntToStr(CommunicationMode) + '. ' +
-                        'Opsi Version should be 4.0', LLDebug);
+                        'OPSI version should be 4.0', LLDebug);
                     end;
                     // save the communication mode
                     FCommunicationMode := CommunicationMode;
@@ -1554,16 +2230,13 @@ begin
               end
               else
               begin
-                { Request failed }
+                { Request failed, the details were logged by HttpExchange }
                 ErrorOccured := True;
-                FError :=
-                  'Request failed (Method Post). No connection to server could be established. Server-FQDN: '
-                  + HttpSender.TargetHost + ', Server-IP: ' +
-                  HttpSender.Sock.GetRemoteSinIP + ' SLL lib loaded: ' +
+                FError := 'Service request ' + omc.FOpsiMethodName +
+                  ' failed: no response from ' + Furl + ' after ' +
+                  IntToStr(FLastAttemptCount) + ' attempt(s), last error: ' +
+                  FLastTransportInfo + ', SSL library loaded: ' +
                   BoolToStr(SSL_OPENSSL_LIB_UNIT.IsSSLloaded, True);
-                LogDatei.log_prog(
-                  'Request failed (Method Post). No connection to server could be established. Line: '
-                  + {$INCLUDE %LINE%}, LLError);
                 LogDatei.log_prog('Server-FQDN: ' +
                   HttpSender.TargetHost + ' Server-IP: ' +
                   HttpSender.Sock.GetRemoteSinIP + ' Line: ' + {$INCLUDE %LINE%}, LLInfo);
@@ -1599,7 +2272,10 @@ begin
                     readOmcMap, CommunicationMode);
                 end;
               end;
-              if (HTTPSender.ResultCode = 500) and (FCommunicationMode = -1) then
+              // ResultCode is 500 by default in THTTPSend, so it only means
+              // 'Internal Server Error' if a response was actually received
+              if (HTTPSender.ResultCode = 500) and (FCommunicationMode = -1) and
+                not FLastTransportFailure then
               begin
                 if (HttpSender.Sock.GetRemoteSinIP = '') then
                 begin
@@ -1640,14 +2316,8 @@ begin
           //if FSessionId <> '' then
           // not the first call and we log
           if logging then
-          begin
-            LogDatei.log('JSON Bench for ' + omc.OpsiMethodName +
-              ' ' + copy(omc.getJsonUrlString, pos(',', omc.getJsonUrlString) +
-              1, 50) + ' Start: ' + FormatDateTime('hh:nn:ss:zzz', startTime) +
-              ' Time: ' + FormatDateTime('hh:nn:ss:zzz', now - startTime), LLinfo);
             LogDatei.log('JSON Call: ' + omc.getJsonUrlString + ' Time: ' +
               FormatDateTime('hh:nn:ss:zzz', now - startTime), LLDebug2);
-          end;
 
           for i := 0 to HTTPSender.Headers.Count - 1 do
             LogDatei.log_prog('HTTPSender Header.Strings: ' +
@@ -1976,23 +2646,25 @@ begin
       if Result = nil then
       begin
         if logging then
-          LogDatei.log('Error: retrieveJSONObject --- opsi service problem ---' +
+          LogDatei.log('Service call ' + DescribeServiceCall(omc) + ' failed: ' +
             FError, LLerror);
-        if pos('10054', FError) > 0 //Socket error, connection reset by peer
-        then
-        begin
-          LogDatei.log('trying to rebuild connection', LLInfo);
-          sleep(1000);
-          //createSocket;
-          retrieveJSONObject(omc, logging, False);
-        end
+        if pos('Stream read error', FError) = 0 then
+          if Assigned(ResultLines) and (resultLines.Count > 0) then
+            LogDatei.log('Received (first 512): ' +
+              copy(ResultLines.Strings[0], 1, 512), LLerror);
+      end
+      else if logging then
+      begin
+        callDurationMs := Round((Now - startTime) * 86400000);
+        if callDurationMs >= 30000 then
+          callLogLevel := LLwarning
+        else if callDurationMs >= 5000 then
+          callLogLevel := LLnotice
         else
-        begin
-          if pos('Stream read error', FError) = 0 then
-            if Assigned(ResultLines) and (resultLines.Count > 0) then
-              LogDatei.log('Received (first 512): ' +
-                copy(ResultLines.Strings[0], 1, 512), LLerror);
-        end;
+          callLogLevel := LLinfo;
+        LogDatei.log('Service call: ' + DescribeServiceCall(omc) + ' -> ' +
+          DescribeServiceResult(Result) + ', ' + IntToStr(callDurationMs) +
+          ' ms', callLogLevel);
       end;
     end;
   finally
@@ -2078,7 +2750,7 @@ begin
     end;
     else
     begin
-      LogDatei.log('Unkown communication mode', LLcritical);
+      LogDatei.log('Unknown communication mode', LLcritical);
       exit(nil);
     end;
   end;
@@ -2189,7 +2861,8 @@ begin
             raise Exception.Create(HTTPSender.Headers.Strings[0]);
           end
           else}
-          if HTTPSender.HTTPMethod('POST', Furl) then
+          if HttpExchange('log upload', 'POST', Furl, RetryPolicyLog,
+            RetryPolicyLog.ReceiveTimeoutMs, True) then
           begin
             { Communication successful }
             LogDatei.log_prog('HTTPSender Post succeeded', LLdebug);
@@ -2209,13 +2882,13 @@ begin
                 begin
                   LogDatei.log_prog('Communication mode is ' +
                     IntToStr(CommunicationMode) + '. ' +
-                    'Opsi Version should be >=4.1', LLDebug);
+                    'OPSI version should be >=4.1', LLDebug);
                 end
                 else
                 begin
                   LogDatei.log_prog('Communication mode is ' +
                     IntToStr(CommunicationMode) + '. ' +
-                    'Opsi Version should be 4.0', LLDebug);
+                    'OPSI version should be 4.0', LLDebug);
                 end;
                 FCommunicationMode := CommunicationMode;
               end;
@@ -2288,11 +2961,13 @@ begin
           end
           else
           begin
-            LogDatei.log('HTTPSender Post failed', LLError);
-            LogDatei.log('HTTPSender result: ' + IntToStr(HTTPSender.ResultCode) +
-              ' msg: ' + HTTPSender.ResultString, LLError);
+            // the details were logged by HttpExchange
+            // (HTTPSender.ResultCode is only a default value without a response)
             ErrorOccured := True;
-            raise Exception.Create(HTTPSender.Headers.Strings[0]);
+            FError := 'Log upload failed: no response from ' + Furl + ' after ' +
+              IntToStr(FLastAttemptCount) + ' attempt(s), last error: ' +
+              FLastTransportInfo;
+            raise Exception.Create(FError);
           end;
         end;
       except
@@ -2665,6 +3340,13 @@ end;
 
 {$ENDIF SYNAPSE}
 
+procedure TOpsi4Data.SetNoRetry(value: boolean);
+begin
+  FNoRetry := value;
+  if Assigned(FJsonExecutioner) then
+    FJsonExecutioner.NoRetry := value;
+end;
+
 procedure TOpsi4Data.initOpsiConf(serviceURL, username, password: string);
 begin
   initOpsiConf(serviceURL, username, password, '', '', '');
@@ -2691,6 +3373,9 @@ begin
       +serviceUrl+','+username+','+password+','+sessionid+','+ip+','+port+','+agentstring, LLDebug2);
     FjsonExecutioner := TJsonThroughHTTPS.Create(serviceUrl, username,
       password, sessionid, ip, port, agentstring);
+    FJsonExecutioner.NoRetry := FNoRetry;
+    FServiceUnreachable := False;
+    FServiceUnreachableInfo := '';
     ProfildateiChange := False;
     FServiceUrl := serviceURL;
     FDepotId := '';
@@ -2758,7 +3443,7 @@ begin
           Result := myModulesList;
         end
       except
-        LogDatei.log_prog('Exeception backend_getLicensingInfo calling ', LLerror);
+        LogDatei.log_prog('Exception backend_getLicensingInfo calling ', LLerror);
       end;
     end
     else
@@ -2767,6 +3452,16 @@ begin
   end
   else
   begin
+    if FjsonExecutioner.LastTransportFailure then
+    begin
+      // the service could not be reached at all, a second request would only repeat the retries
+      FServiceUnreachable := True;
+      FServiceUnreachableInfo := FjsonExecutioner.LastTransportInfo;
+      FjsonExecutioner.ServiceLog('Service not reachable, skipping the module ' +
+        'information request: ' + FServiceUnreachableInfo, LLInfo);
+      Result := myModulesList;
+      Exit;
+    end;
     //  no backend_getLicensingInfo - try with backend_info
     LogDatei.log(
       'No method backend_getLicensingInfo at service - perhaps old server or opsiclientd, we fallback to backend_info',
@@ -2799,7 +3494,7 @@ begin
         else
           LogDatei.log('No modules data in backend_info', LLinfo);
       except
-        LogDatei.log_prog('Exeception backend_info calling ', LLerror);
+        LogDatei.log_prog('Exception backend_info calling ', LLerror);
       end;
     end
     else
@@ -2977,6 +3672,12 @@ begin
   end;
 end;
 
+procedure TOpsi4Data.TakeConnectionEvents(target: TStrings);
+begin
+  if Assigned(FJsonExecutioner) then
+    FJsonExecutioner.TakePendingEvents(target);
+end;
+
 procedure TOpsi4Data.setUserAgent(UserAgent: string);
 begin
   try
@@ -2984,7 +3685,7 @@ begin
       if Assigned(FJsonExecutioner.HTTPSender) then
         FJsonExecutioner.HTTPSender.UserAgent := UserAgent;
   except
-     LogDatei.log('Exeception while setting user agent', LLerror);
+     LogDatei.log('Exception while setting user agent', LLerror);
   end;
 end;
 
@@ -3007,7 +3708,7 @@ begin
         else
           LogDatei.log('Problem getting backend_info from service', LLerror);
       except
-        LogDatei.log('Exeception getting backend_info from service', LLerror);
+        LogDatei.log('Exception getting backend_info from service', LLerror);
       end;
     end
     else
@@ -3025,7 +3726,6 @@ begin
   if FOpsiInformation = nil then
   begin
     try
-      loglist.Append('Starting Servicecall: backend_info');
       omc := TOpsiMethodCall.Create('backend_info', []);
       if omc <> nil then
       begin
@@ -3033,24 +3733,23 @@ begin
           FOpsiInformation := FjsonExecutioner.retrieveJsonObject(omc);
           if (FOpsiInformation <> nil) and (FOpsiInformation.O['result'] <>
             nil) then
-          begin
-            Result := True;
-            loglist.Append('Success Servicecall: backend_info');
-          end
+            Result := True
           else
-            loglist.Append('Problem getting backend_info from service');
+            AddStartupMsg(loglist, 'Problem getting backend_info from service',
+              LLerror);
         except
-          loglist.Append('Exeception getting backend_info from service');
+          AddStartupMsg(loglist, 'Exception getting backend_info from service',
+            LLerror);
         end;
       end
       else
-        loglist.Append('Problem creating OpsiMethodCall backend_info');
+        AddStartupMsg(loglist, 'Problem creating OpsiMethodCall backend_info',
+          LLerror);
 
     except
       on e: Exception do
       begin
-        loglist.Append('Exception in isConnected2: ' + e.message +
-          ' ' + DateTimeToStr(Now));
+        AddStartupMsg(loglist, 'Exception in isConnected2: ' + e.message, LLerror);
         Result := False;
       end;
     end;
@@ -3433,6 +4132,7 @@ end;
 procedure TOpsi4Data.finishOpsiConf;
 var
   sendToLogFlag: boolean;
+  sendLogOk: boolean;
   omc: TOpsiMethodCall;
   jsonEntry: ISuperObject;
   sendtype: string;
@@ -3460,9 +4160,12 @@ begin
     Application.ProcessMessages;
     {$ENDIF}
     if LogDatei.Appendmode then
-      sendLog(sendtype, True)
+      sendLogOk := sendLog(sendtype, True)
     else
-      sendLog(sendtype);
+      sendLogOk := sendLog(sendtype);
+    if not sendLogOk then
+      LogDatei.log('Error: sending the log file to the service failed: ' +
+        FjsonExecutioner.LastError, LLError);
   end;
   try
     { close the session after all is done  }
@@ -3534,7 +4237,7 @@ begin
             LogDatei.log('Problem getting backend_getSystemConfiguration from service',
               LLerror);
         except
-          LogDatei.log('Exeception getting backend_getSystemConfiguration from service',
+          LogDatei.log('Exception getting backend_getSystemConfiguration from service',
             LLerror);
         end;
       end
@@ -3586,19 +4289,17 @@ begin
   { byte to MB }
   aktlogsize := aktlogsize div (1024 * 1024);
 
-  Logdatei.log('Checking if partlog: is bigger than ' + IntToStr(aktlogsize) +
-    ' MB :.', LLInfo);
   if Logdatei.PartbiggerthanMB(aktlogsize) then
   begin
-    Logdatei.log('Shrinking Logfile to ' + IntToStr(aktlogsize) + ' MB....', LLInfo);
+    Logdatei.log('Log upload: the log is bigger than the limit of ' +
+      IntToStr(aktlogsize) + ' MB: only the newest ' + IntToStr(aktlogsize) +
+      ' MB are sent, the oldest part is not included', LLNotice);
     Logdatei.PartShrinkToMB(aktlogsize);
-    Logdatei.log('Shrinking Logfile to ' + IntToStr(aktlogsize) +
-      ' MB finidhed.', LLInfo);
   end;
   Logdatei.setLogSIndentLevel(0);
-  Logdatei.log(
-    '-------- submitted part of log file ends here, see the rest of log file on client ----------',
-    LLNotice);
+  Logdatei.log('-------- End of the log part that is sent to the server. ' +
+    'The complete log file is on the client: ' + Logdatei.FileName +
+    ' --------', LLNotice);
   Logdatei.PartOpenForReading;
   try
     //LogDatei.log('->3',LLInfo);
@@ -4618,10 +5319,28 @@ begin
   FProductActionRequests.Values[actualProduct] := actionRequest;
 end;
 
-procedure TOpsi4Data.setActionProgress(const progress: string);
+// Sends the product on client object and logs an error if the service
+// did not accept it (no response after retries or error in the response).
+procedure TOpsi4Data.UpdateProductOnClientObject(const parastr, caller: string);
 var
   omc: TOpsiMethodCall;
   jO: ISuperObject;
+begin
+  omc := TOpsiMethodCall.Create('productOnClient_updateObject', [parastr]);
+  try
+    jO := FjsonExecutioner.retrieveJSONObject(omc);
+    if jO = nil then
+      LogDatei.log('Error: ' + caller +
+        ': productOnClient_updateObject failed, the service was not updated. Product: '
+        + actualProduct + ', error: ' + FjsonExecutioner.LastError +
+        ', params: ' + parastr, LLError);
+  finally
+    omc.Free;
+  end;
+end;
+
+procedure TOpsi4Data.setActionProgress(const progress: string);
+var
   parastr: string;
 begin
   try
@@ -4629,9 +5348,7 @@ begin
     begin
       FProductOnClient_aktobject.AsObject.S['actionProgress'] := progress;
       parastr := FProductOnClient_aktobject.asJson(False, False);
-      omc := TOpsiMethodCall.Create('productOnClient_updateObject', [parastr]);
-      jO := FjsonExecutioner.retrieveJSONObject(omc);
-      omc.Free;
+      UpdateProductOnClientObject(parastr, 'setActionProgress');
     end
     else
       LogDatei.log('Could not set action progress. ProductOnClient not assigned', LLWarning);
@@ -4643,8 +5360,6 @@ end;
 
 procedure TOpsi4Data.setProductState(newState: TProductState);
 var
-  omc: TOpsiMethodCall;
-  jO: ISuperObject;
   parastr: string;
 begin
   try
@@ -4655,9 +5370,7 @@ begin
     FProductOnClient_aktobject.AsObject.S['installationStatus'] :=
       installationStatusToString(newState);
     parastr := FProductOnClient_aktobject.asJson(False, False);
-    omc := TOpsiMethodCall.Create('productOnClient_updateObject', [parastr]);
-    jO := FjsonExecutioner.retrieveJSONObject(omc);
-    omc.Free;
+    UpdateProductOnClientObject(parastr, 'setProductState');
   except
     LogDatei.log('Exception in opsi4data.setProductState , parastr: ' +
       parastr, LLerror);
@@ -4669,8 +5382,6 @@ end;
 
 procedure TOpsi4Data.setProductProgress(newProgress: TActionProgress);
 var
-  omc: TOpsiMethodCall;
-  jO: ISuperObject;
   parastr: string;
 begin
   try
@@ -4682,9 +5393,7 @@ begin
       FProductOnClient_aktobject.AsObject.S['actionProgress'] :=
          actionProgressToString(newProgress);
       parastr := FProductOnClient_aktobject.asJson(False, False);
-      omc := TOpsiMethodCall.Create('productOnClient_updateObject', [parastr]);
-      jO := FjsonExecutioner.retrieveJSONObject(omc);
-      omc.Free;
+      UpdateProductOnClientObject(parastr, 'setProductProgress');
     end;
   except
     LogDatei.log('Exception in opsi4data.setProductState , parastr: ' +
@@ -4700,8 +5409,6 @@ procedure TOpsi4Data.ProductOnClient_update(actionProgressS: string;
   lastAction: TActionRequest; installationStatus: TProductstate);
 
 var
-  omc: TOpsiMethodCall;
-  jO: ISuperObject;
   installationStatusS, actionResultS, actionRequestS,
   lastActionS: string;
   parastr: string;
@@ -4757,9 +5464,7 @@ begin
     parastr := FProductOnClient_aktobject.asJson(False, False);
     LogDatei.log_prog('Opsi4Data.ProductOnClient_update, params (JSON) : ' +
       parastr, LLDebug);
-    omc := TOpsiMethodCall.Create('productOnClient_updateObject', [parastr]);
-    jO := FjsonExecutioner.retrieveJSONObject(omc);
-    omc.Free;
+    UpdateProductOnClientObject(parastr, 'ProductOnClient_update');
   except
     on e: Exception do
     begin

@@ -3,7 +3,7 @@
 `lazarus/opsi-script/opsiscript.lpi` (version in the lazarus project)  
 `lazarus/opsi-script/info-os.plist` and  
 `lazarus/opsi-script/info-osgui.plist` (this is important for MacOS code signing).
-`lazarus/opsi-script/changelog.txt`
+`lazarus/opsi-script/CHANGELOG.md`
 
 2. Check gitlab runners: 
 In GitLab under `uib/lazarus` go to `Settings -> CI/CD -> Runners` and check that all VMs for compiling opsi-script are running. The VMs are
