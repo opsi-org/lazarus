@@ -1,4 +1,12 @@
 [changelog]
+opsi-notifier  4.2.0.11
+
+  * Position automatic layouts within the primary monitor's work area,
+    including its desktop offset and reserved panels.
+  * Clip the reported work area to monitor bounds (GTK2 can exceed them).
+  * Keep slide-in animations aligned with the configured target position.
+  * Preserve custom coordinates when showing the form.
+
 opsi-notifier  4.2.0.10
 
   * notifierbase: main: Starting thread even if no port given (port <=0)
