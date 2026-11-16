@@ -54,3 +54,6 @@ helper/opsiclientkiosk/opsiclientkiosk
 
 /opsi-script/locale/opsi-script-gui.pot
 /opsi-script/locale/opsi-script.pot
+
+# opsi-notifier (bin)
+helper/notifier/opsi-notifier
