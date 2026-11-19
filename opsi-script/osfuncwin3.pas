@@ -26,7 +26,8 @@ uses
   JwaWindows,
   Windows,
   oswmi,
-  oslog;
+  oslog,
+  Registry;
 //,  DSiWin32;
 
 var
@@ -180,11 +181,31 @@ function GetSystemOSVersionInfoEx(const typeOfValue: string): string;
 function GetNTVersionMajor: Dword;
 function GetNTVersionMinor: Dword;
 function GetMSVersionName: string;
+function GetUpdateBuildRevision:string;
 
 function GetFQDNfromWMI: string;
 
 
 implementation
+
+function GetUpdateBuildRevision:string;
+var
+  Reg: TRegistry;
+begin
+  // UBR = Update Build Revision (the part after the build number: <build number>.<UBR>)
+  Reg := TRegistry.Create(KEY_READ or KEY_WOW64_64KEY);
+  try
+    Reg.RootKey := HKEY_LOCAL_MACHINE;
+    if Reg.OpenKeyReadOnly(
+      'SOFTWARE\Microsoft\Windows NT\CurrentVersion'
+    ) and Reg.ValueExists('UBR') then
+      Result := IntToStr(Cardinal(Reg.ReadInteger('UBR')))
+    else
+      Result := '(UBR nicht verfügbar)';
+  finally
+    Reg.Free;
+  end;
+end;
 
 function GetNTVersionMajor: Dword;
 var

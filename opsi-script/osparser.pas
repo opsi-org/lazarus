@@ -27290,7 +27290,7 @@ begin
         *)
     end;
     tmpstr := tmpstr + ', Edition: ' + getProductInfoStrByNum(OSGetProductInfoNum);
-    tmpstr := tmpstr + ', Build: ' + GetSystemOSVersionInfoEx('build_number');
+    tmpstr := tmpstr + ', Build: ' + GetSystemOSVersionInfoEx('build_number')+ '.' + GetUpdateBuildRevision;
     LogDatei.log(tmpstr, LLessential);
     {$ENDIF WINDOWS}
     {$IFDEF LINUX}
