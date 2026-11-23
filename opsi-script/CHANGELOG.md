@@ -4,6 +4,12 @@ All notable changes to opsi-script are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 Each entry ends with the name of the person who made the change.
 
+## [4.12.23.0] - 2026-11-23
+
+### New
+
+ - logging Windows Build Number and Update Build Revision (UBR) at startup (j.werner <j.werner@uib.de>)
+
 ## [4.12.22.0] - 2026-11-10
 
 ### Changed
